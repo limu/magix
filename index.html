@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Magix App</title>
+    </head>
+    <body>
+        <script type="text/javascript" src="libs/seajs/sea-debug.js">
+        </script>
+        <script type="text/javascript">
+            (function(){
+            
+                if (!window.console) {
+                    window.console = {
+                        log: function(s){
+                            alert(s);
+                        },
+                        dir: function(s){
+                            alert(s);
+                        }
+                    };
+                }
+                
+                var pagePath = location.href.split("index.html")[0];
+                
+                seajs.config({
+                    debug: true,
+                    alias: {
+                        'backbone': 'backbone-debug',
+                        'underscore': 'underscore-debug',
+                        'jquery': 'jquery-debug',
+                        'app': pagePath + 'app',
+                        'config': pagePath + 'config',
+                        'libs': pagePath + 'libs'
+                    },
+                    charset: 'utf-8',
+                    timeout: 20000
+                });
+                
+                
+                window.onload = function(){
+                    seajs.use(['libs/magix/main', 'config/global', 'app/resources/init'], function(main, config, resource){
+                        main(config, resource);
+                    });
+                };
+            })();
+        </script>
+    </body>
+</html>
