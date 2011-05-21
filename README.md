@@ -1,23 +1,23 @@
-MagixJS�ǻ���backbone.js��ģ�黯��չ,�ʺ������������ϴ��͵Ļ���Hash������ҳ��WebӦ��.
+﻿MagixJS是基于backbone.js的模块化扩展,适合用其来构建较大型的基于Hash驱动单页面Web应用.
 
 <http://magixjs.github.com/>
 
 
-## ���
+## 简介
 
-MagixJSʹ��seajs(<http://seajs.com/>)��ΪJavaScript Loader.���ģ��������ϵ,�첽����,���������ϵ������.
+MagixJS使用seajs(<http://seajs.com/>)作为JavaScript Loader.解决模块依赖关系,异步加载,打包发布等系列问题.
 
-MagixJS��MVC���ֻ���backbone.js(<http://documentcloud.github.com/backbone/>),ͨ��seajs��ģ�黯ʹ�ð�����س�Ϊ����.
+MagixJS的MVC划分基于backbone.js(<http://documentcloud.github.com/backbone/>),通过seajs做模块化使得按需加载成为可能.
 
-MagixJS�������µ�Router,��ԭ�����е�Backbone Controller��ɢ,Router������Լ����Hash�Զ��ַ�����Ӧ��controllerģ��.
+MagixJS定义了新的Router,将原本集中的Backbone Controller打散,Router将按照约定将Hash自动分发给对应的controller模块.
 
-MagixJS������VOM(View Object Model)�����,���Թ������и��ӹ�ϵ��Backbone View��չʾ��������.
+MagixJS进行了VOM(View Object Model)层抽象,用以管理带有父子关系的Backbone View的展示生命周期.
 
-MagixJSʹ�����ö����ֶ�,���ⵥҳӦ�õ�������ڴ�������ۺ��ڴ�й¶.����:
-	����JQuery��ʹ��(Backbone����JQuery),����������Dom�ڵ��ͷ�.
-	����ȫ�µ��¼���������,��Ч����Dom�ڵ����¼���Ӧ��.
+MagixJS使用内置多种手段,避免单页应用的浏览器内存大量积累和内存泄露.包括:
+	限制JQuery的使用(Backbone依赖JQuery),避免结果集中Dom节点释放.
+	采用全新的事件代理方案,高效解耦Dom节点与事件响应体.
 
-MagixJSʹ��Mustache.js��Ϊģ������
+MagixJS使用Mustache.js作为模板引擎
 
-MagixJS����"Լ����������"���ԭ��,���Կ��ٹ�������չ�Ĵ��͵�ҳ��WebӦ��.ͬʱҲ�ر�ע�Ᵽ�Ͽ������ԺͿ���չ��.
+MagixJS基于"约定大于配置"设计原则,可以快速构建可扩展的大型单页面Web应用.同时也特别注意保障可配置性和可扩展性.
 
