@@ -7,7 +7,13 @@
             },
             dir: function(s){
                 alert(s);
-            }
+            },
+			warn:function(s){
+				alert("[warn]:"+s);
+			},
+			error:function(s){
+				alert("[error]:"+s);
+			}
         };
     }
     //当前页面路径
