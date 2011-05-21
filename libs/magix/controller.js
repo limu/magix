@@ -75,7 +75,6 @@ define(function(require){
         this.query = this.router.query;
         this.referrer = this.router.referrer;
         this.config = this.router.config;
-        this.resource = this.router.resource;
         this.view = this.options.view || (this.query.para && this.query.para.__view__) || this.config.defaultView;
         this.initialize();
     };

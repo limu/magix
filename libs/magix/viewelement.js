@@ -1,4 +1,4 @@
-define(function(require, exports, module){
+define(function(require){
     //hack for custom tag for ie
     var mxview = document.createElement("mxview");
     mxview = null;

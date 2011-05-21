@@ -1,4 +1,4 @@
-define(function(require, exports, module){
+define(function(require){
     var Backbone = require("backbone");
     var MxView = Backbone.View.extend({
         initialize: function(){
