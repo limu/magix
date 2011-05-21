@@ -1,4 +1,4 @@
-﻿MagixJS是基于backbone.js的模块化扩展,适合用其来构建较大型的基于Hash驱动单页面Web应用.
+﻿MagixJS是backbone.js的模块化扩展,适合用来构建大型基于Hash驱动的单页面Web应用.
 
 <http://magixjs.github.com/>
 
