@@ -1,26 +1,23 @@
 define(function(require){
     var _ = require("underscore");
-    var MxViewElement = require("./viewelement");
+    var MxVCElement = require("./mxvc_element");
     var vom = _.extend({
         _idMap: {},
+        root: null,
         init: function(){
-            var ve = vom.createElement();
-            document.body.insertBefore(ve.getOnce(), document.body.firstChild);
-            vom.body = ve;
+            var vc = vom.createElement();
+            document.body.insertBefore(vc.getOnce(), document.body.firstChild);
+            vom.root = vc;
             return vom;
         },
-        push: function(ve){
-            vom._idMap[ve.id] = ve.id;
+        push: function(vc){
+            vom._idMap[vc.id] = vc.id;
         },
         createElement: function(ele){
-            var ve = new MxViewElement(ele);
-            vom.push(ve);
-            return ve;
+            var vc = new MxVCElement(ele);
+            vom.push(vc);
+            return vc;
         }
-        //,
-        //        getElements: function(){
-        //            //return document.getElementsByTagName("mxview");
-        //        }
     });
     window.vom = vom;//todo del
     return vom.init();

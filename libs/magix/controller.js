@@ -61,7 +61,7 @@
 /**
  * VOM根对应的view模块名,将从这个view从外向内渲染.
  * view首先以传入位置,如果没有传入以query.para.__view__为准,再没有取config.defaultView的值.
- * @property view
+ * @property viewMod
  * @type String
  */
 define(function(require){
@@ -75,7 +75,7 @@ define(function(require){
         this.query = this.router.query;
         this.referrer = this.router.referrer;
         this.config = this.router.config;
-        this.view = this.options.view || (this.query.para && this.query.para.__view__) || this.config.defaultView;
+        this.viewMod = this.options.viewMod || (this.query.para && this.query.para.__view__) || this.config.defaultViewMod;
         this.initialize();
     };
     _.extend(MxController.prototype, {});

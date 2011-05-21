@@ -83,6 +83,7 @@ define(function(require,exports,module){
                     });
                 }//query.path对应Controller不存在,说明页面notFound,展示404页面
                 else {
+					console.warn("page not found,go to 404");
                     module.load("app/controllers" + self.config.notFoundPath, function(Controller){
                         if (Controller) {
                             controller = new Controller({
