@@ -1,8 +1,7 @@
-define(function(require,exports,module){
+define(function(require, exports, module){
     //hack for custom tag for ie
     var mxview = document.createElement("mxvc");
     mxview = null;
-    //
     var _ = require("underscore");
     var El = function(node){
         this.id = El.uniqueId();
@@ -21,9 +20,10 @@ define(function(require,exports,module){
         },
         render: function(viewMod, options){
             var oldViewMod = this.getAttribute("view_mod");
+            this.setAttribute("view_mod", viewMod);
             var self = this;
             if (viewMod == oldViewMod) {
-                this.view.set(options);
+                this.view.queryModel.change();
             }
             else {
                 if (this.view) {
@@ -34,13 +34,16 @@ define(function(require,exports,module){
                     self.view = new View(_.extend(options, {
                         vcid: self.id
                     }));
-                    self.view.render();
                 });
             }
         },
         getAttribute: function(s){
             var node = document.getElementById(this.id);
             return node.getAttribute(s) || "";
+        },
+        setAttribute: function(k, v){
+            var node = document.getElementById(this.id);
+            return node.setAttribute(k, v);
         }
     });
     _.extend(El, {

@@ -36,12 +36,22 @@ define(function(require){
     var _ = require("underscore");
     var Backbone = require("backbone");
     var config = require("config/ini");
+    var vom = require("libs/magix/vom");
     var MxController = function(options){
         this.queryModel = options.queryModel;
         this.viewMod = this.queryModel.get("__view__") || this.viewMod || config.defaultViewMod;
         this.initialize();
+        this.render();
     };
-    _.extend(MxController.prototype, {});
+    _.extend(MxController.prototype, {
+        initialize: function(){
+        },
+        render: function(){
+            vom.root.render(this.viewMod, {
+                queryModel: this.queryModel
+            });
+        }
+    });
     //重用Backbone的extend
     MxController.extend = Backbone.Controller.extend;
     return MxController;

@@ -47,15 +47,15 @@ define(function(require, exports, module){
             "!*query": "_route",
             "*query": "_route"
         },
-		//记录原始query和referrer并开始构造queryModel
-        _route: function(query){
+        //记录原始query和referrer并开始构造queryModel
+        _route: function(query){			
             this.referrer = this.query || "";
             this.query = query;
             this._buildQueryModel(query);
         },
-		//当pathname发生变化时构造queryModel并引入pathname对应的新页面,pathname不变时根据参数改变其属性值
+        //当pathname发生变化时构造queryModel并引入pathname对应的新页面,pathname不变时根据参数改变其属性值
         _buildQueryModel: function(query){
-            var i, tmpArr, paraArr, kv, k, v, paraObj = {};
+            var i, tmpArr, paraArr, kv, k, v, paraObj = {}, dogoto = true;
             this.pathName = this.config.indexPath;
             if (query) {
                 tmpArr = query.split("/");
@@ -68,22 +68,33 @@ define(function(require, exports, module){
                     }
                 }
             }
-            if (this.queryModel && (this.queryModel.get("pathname") === this.pathName)) {
-                this.queryModel.set({
+			//debugger;
+            if (this.queryModel) {
+				if (this.queryModel.get("pathname") != this.pathName) {
+					//this.queryModel.unbind()
+				}else{
+					dogoto = false;
+				}
+                this.queryModel.clear({
+                    silent: true
+                });				
+                this.queryModel.set(_.extend(paraObj, {
                     referrer: this.referrer,
-                    query: this.query
+                    query: this.query,
+                    pathname: this.pathName
+                }),{
+                    silent: dogoto
                 });
             }
             else {
-                if (this.queryModel) {
-                    this.queryModel.destory();
-                }
                 this.queryModel = new MxQuery(_.extend(paraObj, {
                     referrer: this.referrer,
                     query: this.query,
                     pathname: this.pathName
-                }));
-				this._goto();
+                }));                
+            }
+            if (dogoto) {
+                this._goto();
             }
             window.MXQueryMode = this.queryModel; //TODO del
         },

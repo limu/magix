@@ -1,0 +1,1 @@
+<span>{{query}}</span>

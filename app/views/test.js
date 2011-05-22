@@ -11,7 +11,7 @@ define(function(require, exports, module){
 					self.render();
 				}                
             });
-            this.getTemplate(function(data){
+            this.template = this.getTemplate(function(data){
                 self.template = data;
                 self.render();
             });
