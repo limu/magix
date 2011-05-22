@@ -19,6 +19,6 @@ define(function(require){
             return vc;
         }
     });
-    window.vom = vom;//todo del
+    window.MXVom = vom;//TODO del
     return vom.init();
 });

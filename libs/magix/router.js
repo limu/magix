@@ -1,19 +1,20 @@
 /**
- * Magix Router 负责监控hash变化,并根据变化后的hash值path部分,分发给相应的controller模块.
+ * Magix Router 负责监控hash变化,并根据变化后的hash值pathname部分,分发给相应的controller模块.
  * @module	magix/router
  * @author limu@taobao.com
  * @reqiure "backbone"
  * @usage hash与模块对应关系规则:
- * 由"#!"开始最后一个斜线之前的部分为path,由对应app/controllers/path负责展现
+ * 由"#!"开始最后一个斜线之前的部分为pathname,由对应app/controllers/ + pathname负责展现
  * 最后一个斜线之后的部分,对应参数对象,键值对将被解析为JS Object
  * hash为空时对应由config/init的indexPath属性指定首页controller
  * 响应controller没有找到,则由config/ini的notFoundPath属性指定404页面controller
- * 		"#!/x/" => path:"app/controllers/x" para:{}
- * 		"#!/x/a=1&b=2 => path:"app/controllers/x" para:{a:1,b:2}
- * 		"#!/y/z" => path:"app/controllers/y" para:{z:""}
- * 		"#!/y/z/" => path:"app/controllers/y/z" para:{}
- * 		"" => config/ini.indexPath
- * 		#!/notfound/ => config/ini.notFoundPath
+ * hash被解析为queryModel,是一个Backbone.Model,包含所有query参数和pathname,query,referrer信息.
+ * 		"#!/x/"       => queryModel:{pathname:"app/controllers/x"    }
+ * 		"#!/x/a=1&b=2 => queryModel:{pathname:"app/controllers/x",   a:1,b:2}
+ * 		"#!/y/z"      => queryModel:{pathname:"app/controllers/y",   z:""}
+ * 		"#!/y/z/"     => queryModel:{pathname:"app/controllers/y/z"  }
+ * 		""            => queryModel:{pathname:config/ini.indexPath   } 
+ * 		#!/notfound/  => queryModel:{pathname:config/ini.notFoundPath}  
  */
 /**
  * MxRouter router构造器,传入config/ini后生成单例
@@ -22,25 +23,20 @@
  * @param {Object} options {config:ini}
  * @singleton
  */
+
 /**
- * hash值解析后的包含path和para的对象
- * @property query
- * @type Object
+ * MxQuery queryModel构造器,
+ * @class MxQuery
+ * @extend Backbone.Model
+ * @param {Object} attributes 包含pathname,query,referrer和所有解析为键值对的url参数
+ * @constructor
  */
-/**
- * 前一个页面的query对象,结构同query
- * @property referrer
- * @type Object
- */
-/**
- * 初始化配置数据
- * @property config
- * @type Object
- */
-define(function(require,exports,module){
+define(function(require, exports, module){
     var Backbone = require("backbone");
-	//router继承自Backbone.Controller,将其中router功能提取出来加以扩展,为hash生成query对象.
-	//将每个页面的controller独立成单独的文件,同query.path一一对应,由router根据path载入对应controller运行
+    var _ = require("underscore");
+    var MxQuery = require("./query_model");
+    //router继承自Backbone.Controller,将其中router功能提取出来加以扩展,为hash生成queryModel对象.
+    //将每个页面的controller独立成单独的文件,queryModel.pathname一一对应,由router根据pathname载入对应controller运行
     var MxRouter = Backbone.Controller.extend({
         //生成实例,为config赋值
         initialize: function(o){
@@ -48,53 +44,71 @@ define(function(require,exports,module){
         },
         //hash值除去了开始的!部分,成为我们的原始query.
         routes: {
-            "!*hash": "_route",
-            "*hash": "_route"
+            "!*query": "_route",
+            "*query": "_route"
         },
-        //对原始hash进行parse.生成query和referrer.
-        _route: function(hash){
-            var i, tmpArr, paraArr, kv, k, v;
-            
-            this.referrer = this.query || null;
-            
-            this.query = {
-                path: this.config.indexPath,
-                para: {}
-            };
-            if (hash) {
-                tmpArr = hash.split("/");
+		//记录原始query和referrer并开始构造queryModel
+        _route: function(query){
+            this.referrer = this.query || "";
+            this.query = query;
+            this._buildQueryModel(query);
+        },
+		//当pathname发生变化时构造queryModel并引入pathname对应的新页面,pathname不变时根据参数改变其属性值
+        _buildQueryModel: function(query){
+            var i, tmpArr, paraArr, kv, k, v, paraObj = {};
+            this.pathName = this.config.indexPath;
+            if (query) {
+                tmpArr = query.split("/");
                 paraArr = tmpArr.pop().split("&");
-                this.query.path = tmpArr.join("/");
+                this.pathName = tmpArr.join("/");
                 for (i = 0; i < paraArr.length; i++) {
                     kv = paraArr[i].split("=");
-                    this.query.para[kv[0]] = kv[1] || "";
+                    if (kv[0]) {
+                        paraObj[kv[0]] = kv[1] || "";
+                    }
                 }
             }
-            this._goto();
+            if (this.queryModel && (this.queryModel.get("pathname") === this.pathName)) {
+                this.queryModel.set({
+                    referrer: this.referrer,
+                    query: this.query
+                });
+            }
+            else {
+                if (this.queryModel) {
+                    this.queryModel.destory();
+                }
+                this.queryModel = new MxQuery(_.extend(paraObj, {
+                    referrer: this.referrer,
+                    query: this.query,
+                    pathname: this.pathName
+                }));
+				this._goto();
+            }
+            window.MXQueryMode = this.queryModel; //TODO del
         },
-        //调用当前query.path对应的controller,当controller模块不存在是使用404页面的controller.
+        //调用当前queryModel.pathname发生变化时,载入相应的controller,进入页面.
         _goto: function(){
             var self = this;
             var controller;
-            module.load("app/controllers" + self.query.path, function(Controller){
+            module.load("app/controllers" + self.queryModel.get("pathname"), function(Controller){
                 if (Controller) {
                     controller = new Controller({
-                        router: self
+                        queryModel: self.queryModel
                     });
-                }//query.path对应Controller不存在,说明页面notFound,展示404页面
+                }//queryModel.pathname对应Controller不存在,说明页面notFound,展示404页面
                 else {
-					console.warn("page not found,go to 404");
+                    console.warn("page not found,go to 404");
                     module.load("app/controllers" + self.config.notFoundPath, function(Controller){
                         if (Controller) {
                             controller = new Controller({
-                                router: self
+                                queryModel: self.queryModel
                             });
                         }
                     });
                 }
             });
-            window.ctrl = controller;//todo del
         }
     });
-	return MxRouter;
+    return MxRouter;
 });

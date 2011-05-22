@@ -24,7 +24,7 @@ define(function(require){
         });
         //启动Backbone历史服务,启动之后系统将响应hashchange事件,并将hash参数自动分发给router处理.
         Backbone.history.start();
-        window.router = mxRouter;//todo delete
+        window.MXRouter = mxRouter;//TODO del
     };
     return main;
 });
