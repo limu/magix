@@ -11,10 +11,6 @@ define(function(require, exports, module){
 					self.render();
 				}                
             });
-            this.template = this.getTemplate(function(data){
-                self.template = data;
-                self.render();
-            });
         },
         render: function(){
             var node = document.getElementById(this.vcid);

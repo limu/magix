@@ -5,12 +5,6 @@ define(function(require, exports, module){
     var View = MxView.extend({
         init: function(o){
             this.modUri = module.uri;
-            var self = this;
-            this.queryModel.bind("change", function(){
-				if(self.rendered){
-					self.render();
-				}                
-            });
         },
         render: function(){
             var node = document.getElementById(this.vcid);
