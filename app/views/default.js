@@ -5,10 +5,14 @@ define(function(require){
             this.options = o;
             this.vcid = o.vcid;
             this.queryModel = o.queryModel;
+            var self = this;
+            this.queryModel.bind("change", function(){
+                self.render();
+            });
         },
         render: function(){
             var node = document.getElementById(this.vcid);
-            node.innerHTML = this.queryModel.get("pathname");
+            node.innerHTML = this.queryModel.get("query");
         },
         destory: function(){
             var node = document.getElementById(this.vcid);
