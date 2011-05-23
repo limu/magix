@@ -1,1 +1,1 @@
-<span>{{query}}</span>
+<span>{{query}}___{{referrer}}</span>

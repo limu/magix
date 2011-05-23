@@ -9,12 +9,12 @@
  * hash为空时对应由config/init的indexPath属性指定首页controller
  * 响应controller没有找到,则由config/ini的notFoundPath属性指定404页面controller
  * hash被解析为queryModel,是一个Backbone.Model,包含所有query参数和pathname,query,referrer信息.
- * 		"#!/x/"       => queryModel:{pathname:"app/controllers/x"    }
- * 		"#!/x/a=1&b=2 => queryModel:{pathname:"app/controllers/x",   a:1,b:2}
- * 		"#!/y/z"      => queryModel:{pathname:"app/controllers/y",   z:""}
- * 		"#!/y/z/"     => queryModel:{pathname:"app/controllers/y/z"  }
- * 		""            => queryModel:{pathname:config/ini.indexPath   } 
- * 		#!/notfound/  => queryModel:{pathname:config/ini.notFoundPath}  
+ * 		"#!/x/"       => queryModel:{pathname:"app/controllers/x",            query:"/x/",        referrer:""}
+ * 		"#!/x/a=1&b=2 => queryModel:{pathname:"app/controllers/x",   a:1,b:2  query:"/x/a=1&b=2", referrer:""}
+ * 		"#!/y/z"      => queryModel:{pathname:"app/controllers/y",   z:""     query:"/y/z",       referrer:""}
+ * 		"#!/y/z/"     => queryModel:{pathname:"app/controllers/y/z",          query:"/y/z/",      referrer:""}
+ * 		""            => queryModel:{pathname:config/ini.indexPath,           query:"",           referrer:""} 
+ * 		"#!/notfound/"=> queryModel:{pathname:config/ini.notFoundPath,        query:"",           referrer:""}  
  */
 /**
  * MxRouter router构造器,传入config/ini后生成单例

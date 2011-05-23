@@ -1,12 +1,12 @@
 /**
- * Magix Controller 基类,所有具体页面的controller要集成这个类.
+ * Magix Controller 基类,所有具体页面的controller要继承这个类.
  * @module	magix/controller
  * @author limu@taobao.com
  * @reqiure "backbone","underscore","./vom"
  * @usage app中每个具体的controller需要继承此类
  * var MxController = require("libs/magix/controller");
  * var Ctrl = MxController.extend({
- *     viewMode: "module name of the outer view" //最外层view对应的模块名
+ *     viewMode: "module name of the root view" //最外层view对应的模块名
  * });
  */
 /**

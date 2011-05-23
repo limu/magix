@@ -1,5 +1,5 @@
 /**
- * Magix 主程序入口,提供一个函数,接收配置和数据并启动Magix.
+ * Magix 主程序入口,提供一个函数,接收配置数据并启动Magix.
  * @module	magix/main
  * @author limu@taobao.com
  * @reqiure "backbone","./router"

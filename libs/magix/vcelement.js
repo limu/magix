@@ -16,7 +16,6 @@ define(function(require, exports, module){
     };
     _.extend(El.prototype, Backbone.Events, {
         view: null,
-        parentNode: null,
         idIt: function(node, id){
             node.id = (node && node.id) || id || El.uniqueId();
             return node.id;
@@ -56,7 +55,7 @@ define(function(require, exports, module){
         },
         setAttribute: function(k, v){
             var node = document.getElementById(this.id);
-            return node.setAttribute(k, v);
+            return node.setAttribute(k, v);			
         },
         getElements: function(){
             var node = document.getElementById(this.id);

@@ -1,4 +1,4 @@
-define(function(require){
+define(function(require,exports,module){
     var Backbone = require("backbone");
     var Templates = require("app/resources/templates");
     var vom = require("libs/magix/vom");
@@ -8,12 +8,7 @@ define(function(require){
             this.options = o;
             this.vcid = o.vcid;
             this.queryModel = o.queryModel;
-            this.init();
-            this.getTemplate(function(data){
-                self.template = data;
-                self.render();
-                self.trigger("rendered");
-            });
+            this.init();			
             this.bind("rendered", function(){
                 var vc = vom.getElementById(this.vcid);
                 var childVcs = vc.getElements();
@@ -26,6 +21,12 @@ define(function(require){
                     });
                 }
             });
+            this.getTemplate(function(data){
+                self.template = data;
+                self.render();
+                self.trigger("rendered");
+            });
+            
         },
         render: function(){
         

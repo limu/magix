@@ -26,6 +26,7 @@
             'backbone': 'backbone-debug',
             'underscore': 'underscore-debug',
             'jquery': 'jquery-debug',
+			'mustache':'mustache-debug',
             'app': pagePath + 'app',
             'config': pagePath + 'config',
             'libs': pagePath + 'libs'
