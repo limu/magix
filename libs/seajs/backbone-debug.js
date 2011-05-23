@@ -752,7 +752,7 @@ define('backbone-debug', ['underscore-debug', 'jquery-debug'], function(require,
 
   });
 
-  // Backbone.`
+  // Backbone.View
   // -------------
 
   // Creating a Backbone.View creates its initial element outside of the DOM,
