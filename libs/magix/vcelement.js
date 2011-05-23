@@ -29,7 +29,7 @@ define(function(require, exports, module){
             this._node = null;
             return node;
         },
-        render: function(viewMod, options){
+        mountView: function(viewMod, options){
             this.mounted = true;
             var oldViewMod = this.getAttribute("view_mod");
             if (viewMod) {

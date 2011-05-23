@@ -16,7 +16,7 @@ define(function(require, exports, module){
                 for (i = 0; i < childVcs.length; i++) {
                     child = vom.createElement(childVcs[i]);
                     vc.appendChild(child);
-                    child.render(null, {
+                    child.mountView(null, {
                         queryModel: this.queryModel
                     });
                 }

@@ -47,7 +47,7 @@ define(function(require){
         initialize: function(){
         },
         render: function(){
-            vom.root.render(this.viewMod, {
+            vom.root.mountView(this.viewMod, {
                 queryModel: this.queryModel
             });
         }
