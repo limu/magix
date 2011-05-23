@@ -1,5 +1,5 @@
-<div style="padding:20px;">
+<div style="padding:5px;">
 	<div style="background:#eeeeee;">
-		<br>inner<br>
+		inner
     </div>
 </div>

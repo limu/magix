@@ -39,7 +39,7 @@ define(function(require){
     var vom = require("libs/magix/vom");
     var MxController = function(options){
         this.queryModel = options.queryModel;
-        this.viewMod = this.queryModel.get("__view__") || this.viewMod || config.defaultViewMod;
+        this.viewMod = (this.queryModel.get("__view__") && this.queryModel.get("__view__").split("-").join("/")) || this.viewMod || config.defaultViewMod;
         this.initialize();
         this.render();
     };

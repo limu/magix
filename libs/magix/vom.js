@@ -14,6 +14,9 @@ define(function(require){
         push: function(vc){
             vom._idMap[vc.id] = vc;
         },
+		pop:function(vc){
+			delete vom._idMap[vc.id];
+		},
         createElement: function(ele, id){
             if (_.isString(ele)) {
                 ele = document.getElementById(ele);
