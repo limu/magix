@@ -1,7 +1,8 @@
 define(function(require){
     var _ = require("underscore");
-    var MxVCElement = require("./mxvc_element");
-    var vom = _.extend({
+    var MxVCElement = require("./vcelement");
+    var Backbone = require("backbone");
+    var vom = _.extend(Backbone.Events, {
         _idMap: {},
         root: null,
         init: function(){

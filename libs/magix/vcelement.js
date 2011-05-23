@@ -1,20 +1,22 @@
 define(function(require, exports, module){
-    var VCTAG = "mxvc"
+    var VCTAG = "mxvc";
     //hack for custom tag for ie
     var mxview = document.createElement(VCTAG);
     mxview = null;
     var _ = require("underscore");
+    var Backbone = require("backbone");
     var El = function(node, id){
         this._node = node || document.createElement(VCTAG);
         this.id = this.idIt(this._node, id);
-		if(node){
-			this.getOnce();
-		}
+        this.childNodes = [];
+        this.parentNode = null;
+        if (node) {
+            this.getOnce();
+        }
     };
-    _.extend(El.prototype, {
+    _.extend(El.prototype, Backbone.Events, {
         view: null,
-        childNodes: [],
-		parentNode:null,
+        parentNode: null,
         idIt: function(node, id){
             node.id = (node && node.id) || id || El.uniqueId();
             return node.id;
@@ -29,9 +31,9 @@ define(function(require, exports, module){
         },
         render: function(viewMod, options){
             var oldViewMod = this.getAttribute("view_mod");
-			if(viewMod){
-				this.setAttribute("view_mod", viewMod);
-			}            
+            if (viewMod) {
+                this.setAttribute("view_mod", viewMod);
+            }
             var self = this;
             if (viewMod && viewMod == oldViewMod) {
                 this.view.queryModel.change();
@@ -42,7 +44,8 @@ define(function(require, exports, module){
                     this.view = null;
                 }
                 module.load(this.getAttribute("view_mod"), function(View){
-					options.vcid = self.id;
+                    options.vcid = self.id;
+                    options.el = self.id;
                     self.view = new View(options);
                 });
             }
@@ -65,8 +68,9 @@ define(function(require, exports, module){
             return res;
         },
         appendChild: function(c){
+            //this.childNodes = this.childNodes ||[];
             this.childNodes.push(c);
-			c.parentNode = this;
+            c.parentNode = this;
         }
     });
     _.extend(El, {

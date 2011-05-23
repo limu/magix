@@ -1,4 +1,4 @@
-<table style="background:yellow;width:600px;height:100px;" border=1>
+<table style="background:#666666;color:orange;width:600px;height:100px;" border=1>
     <tbody>
         <tr style="height:50px">
             <td width="200px">
@@ -10,7 +10,7 @@
         </tr>
         <tr>
             <td>
-                <mxvc id='vc-mid-left' view_mod="app/views/colors/mid"></mxvc>
+                left
             </td>
             <td>
                 <mxvc id='vc-mid-right' view_mod="app/views/colors/mid"></mxvc>
