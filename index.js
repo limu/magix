@@ -26,9 +26,8 @@
             'backbone': 'backbone-debug',
             'underscore': 'underscore-debug',
             'jquery': 'jquery-debug',
-			'mustache':'mustache-debug',
+            'mustache': 'mustache-debug',
             'app': pagePath + 'app',
-            'config': pagePath + 'config',
             'libs': pagePath + 'libs'
         },
         charset: 'utf-8',
@@ -36,8 +35,8 @@
     });
     //onload中安全启动Magix
     window.onload = function(){
-        seajs.use(['libs/magix/main', 'config/ini'], function(main, ini){
-            main(ini);
+        seajs.use(['libs/magix/main'], function(main){
+            main();
         });
     };
 })();

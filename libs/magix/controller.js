@@ -35,7 +35,7 @@
 define(function(require){
     var _ = require("underscore");
     var Backbone = require("backbone");
-    var config = require("config/ini");
+    var config = require("app/config/ini");
     var vom = require("libs/magix/vom");
     var MxController = function(options){
         this.queryModel = options.queryModel;

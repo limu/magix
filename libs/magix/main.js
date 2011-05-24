@@ -19,9 +19,7 @@ define(function(require){
         var Backbone = require("backbone");
         var MxRouter = require("./router");
         //使用配置和数据实例化Router
-        var mxRouter = new MxRouter({
-            config: config
-        });
+        var mxRouter = new MxRouter();
         //启动Backbone历史服务,启动之后系统将响应hashchange事件,并将hash参数自动分发给router处理.
         Backbone.history.start();
         window.MXRouter = mxRouter;//TODO del

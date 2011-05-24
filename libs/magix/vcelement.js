@@ -117,7 +117,7 @@ define(function(require, exports, module){
             this.mounted = false;
         }
     });
-    _.extend(El, {
+    _.extend(VCElement, {
         uniqueId: function(){
             return _.uniqueId("vc-");
         }

@@ -5,20 +5,53 @@
         <title>A Magix Web Application</title>
     </head>
     <body>
-    	<button onclick="MXRootView.destory()">view unload</button>
-    	<br/>
-    	<a href="#!/colors/">colors</a>&nbsp;&nbsp;<a href="#!/colors/a=1">colorsA</a>
+        <button onclick="MXRootView.destory()">
+            view unload
+        </button>
+        <br/>
+        <a href="#!/colors/">colors</a>&nbsp;&nbsp;<a href="#!/colors/a=1">colorsA</a>
         <br/>
         <br/>
-		<a href="#!/home/">home</a>&nbsp;&nbsp;<a href="#!/home/a=b&c=d">homepara</a>&nbsp;&nbsp;<a href="#!/404/">404</a>&nbsp;&nbsp;<a href="#!/test/">test</a>
-		<br/>
-		<br/>
-		<a href="#!/others/">others</a>
+        <a href="#!/home/">home</a>&nbsp;&nbsp;<a href="#!/home/a=b&c=d">homepara</a>&nbsp;&nbsp;<a href="#!/404/">404</a>&nbsp;&nbsp;<a href="#!/test/">test</a>
+        <br/>
+        <br/>
+        <a href="#!/others/">others</a>
         <!--引入seajs作为带依赖关系的异步模块管理类库,参见:http://seajs.com-->
         <script type="text/javascript" src="libs/seajs/sea-debug.js?0.9.1">
         </script>
         <!--当前App启动脚本-->
         <script type="text/javascript" src="index.js">
+            seajs.use("backbone", function(bb){
+				debugger;
+                z = new bb.Model({
+                    a: 1,
+                    b: 1
+                });
+				z.bind("change:a",function(){
+					console.log("a");
+				});
+				z.bind("change:b",function(){
+					console.log("b");
+				});
+				z.bind("change:c",function(){
+					console.log("c");
+				});
+				z.bind("change",function(){
+					console.log("all");
+					console.log(z.changedAttributes());
+				});
+				nz = {a:2,c:3};
+				oz = z.toJSON();
+				for(k in oz){
+					if(!(k in nz)){
+						z.unset(k);
+					}
+				}
+				z.set(nz);
+				z.change();
+				z.change();
+				z.change();
+            });
         </script>
     </body>
 </html>

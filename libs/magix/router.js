@@ -35,12 +35,13 @@ define(function(require, exports, module){
     var Backbone = require("backbone");
     var _ = require("underscore");
     var MxQuery = require("./query_model");
+	var config = require("app/config/ini");
     //router继承自Backbone.Controller,将其中router功能提取出来加以扩展,为hash生成queryModel对象.
     //将每个页面的controller独立成单独的文件,queryModel.pathname一一对应,由router根据pathname载入对应controller运行
     var MxRouter = Backbone.Controller.extend({
         //生成实例,为config赋值
         initialize: function(o){
-            this.config = o.config;
+            this.config = config;
         },
         //hash值除去了开始的!部分,成为我们的原始query.
         routes: {
