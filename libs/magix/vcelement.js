@@ -18,7 +18,7 @@ define(function(require, exports, module){
     _.extend(VCElement.prototype, Backbone.Events, {
         view: null,
         idIt: function(node, id){
-            node.id = (node && node.id) || id || El.uniqueId();
+            node.id = (node && node.id) || id || VCElement.uniqueId();
             return node.id;
         },
         getOnce: function(){
@@ -29,14 +29,31 @@ define(function(require, exports, module){
             this._node = null;
             return node;
         },
-        mountView: function(viewMod, options){
+        mountView: function(viewName, options){
+            var self = this;
             this.mounted = true;
-            var oldViewMod = this.getAttribute("view_mod");
-            if (viewMod) {
-                this.setAttribute("view_mod", viewMod);
+            if (this.view) {
+                this.view.destory();
+                this.view = null;
+            }
+            module.load(viewName, function(View){
+                options.vcid = self.id;
+                options.el = self.id;
+                options.viewName = viewName;
+                self.view = new View(options);
+                if (!window.MXRootView) {//TODO delete
+                    window.MXRootView = self.view;
+                }
+            });
+        },
+        mountViewOld: function(viewName, options){
+            this.mounted = true;
+            var oldViewName = this.getAttribute("view_name");
+            if (viewName) {
+                this.setAttribute("view_name", viewName);
             }
             var self = this;
-            if (viewMod && viewMod == oldViewMod) {
+            if (viewName && viewName == oldViewName) {
                 this.view.queryModel.change();
             }
             else {
@@ -44,10 +61,10 @@ define(function(require, exports, module){
                     this.view.destory();
                     this.view = null;
                 }
-                module.load(this.getAttribute("view_mod"), function(View){
+                module.load(this.getAttribute("view_name"), function(View){
                     options.vcid = self.id;
                     options.el = self.id;
-                    options.mod = self.getAttribute("view_mode");
+                    options.viewName = self.getAttribute("view_name");
                     self.view = new View(options);
                     if (!window.MXRootView) {//TODO delete
                         window.MXRootView = self.view;

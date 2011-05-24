@@ -8,6 +8,7 @@ define(function(require, exports, module){
             this.options = o;
             this.vcid = o.vcid;
             this.queryModel = o.queryModel;
+			this.viewName = o.viewName;
             this.init();
             this.bind("rendered", function(){
                 var vc = vom.getElementById(this.vcid);
@@ -16,7 +17,7 @@ define(function(require, exports, module){
                 for (i = 0; i < childVcs.length; i++) {
                     child = vom.createElement(childVcs[i]);
                     vc.appendChild(child);
-                    child.mountView(null, {
+                    child.mountView(child.getAttribute("view_name"), {
                         queryModel: this.queryModel
                     });
                 }

@@ -2,13 +2,13 @@ define(function(){
     var config = {};
     config.indexPath = "/home";
     config.notFoundPath = "/404";
-    config.defaultViewMod = "app/views/default";
-    var c2v = {
+    config.defaultViewName = "app/views/default";
+    var p2v = {
         "/404": "",
         "/home": "",
         "/test": "app/views/test",
         "/colors": "app/views/colors/outer"
     };
-    config.controller2view = c2v;
+    config.pathViewMap = p2v;
     return config;
 });

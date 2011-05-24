@@ -11,12 +11,12 @@
         <tr>
             <td>
                 left
-                <mxvc id='vc-mid-left' view_mod="app/views/colors/inner">
+                <mxvc id='vc-mid-left' view_name="app/views/colors/inner">
                 </mxvc>
             </td>
             <td>
                 right
-                <mxvc id='vc-mid-right' view_mod="app/views/colors/mid">
+                <mxvc id='vc-mid-right' view_name="app/views/colors/mid">
                 </mxvc>
             </td>
         </tr>

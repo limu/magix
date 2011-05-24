@@ -1,58 +1,114 @@
 /**
- * Magix Controller 基类,所有具体页面的controller要继承这个类.
- * @module	magix/controller
+ * Magix Router 负责监控hash变化,并根据变化后的hash值pathname部分,分发给相应的controller模块.
+ * @module	magix/router
  * @author limu@taobao.com
- * @reqiure "backbone","underscore","./vom"
- * @usage app中每个具体的controller需要继承此类
- * var MxController = require("libs/magix/controller");
- * var Ctrl = MxController.extend({
- *     viewMode: "module name of the root view" //最外层view对应的模块名
- * });
+ * @reqiure "backbone"
+ * @usage hash与模块对应关系规则:
+ * 由"#!"开始最后一个斜线之前的部分为pathname,由对应app/controllers/ + pathname负责展现
+ * 最后一个斜线之后的部分,对应参数对象,键值对将被解析为JS Object
+ * hash为空时对应由config/init的indexPath属性指定首页controller
+ * 响应controller没有找到,则由config/ini的notFoundPath属性指定404页面controller
+ * hash被解析为queryModel,是一个Backbone.Model,包含所有query参数和pathname,query,referrer信息.
+ * 		"#!/x/"       => queryModel:{pathname:"app/controllers/x",            query:"/x/",        referrer:""}
+ * 		"#!/x/a=1&b=2 => queryModel:{pathname:"app/controllers/x",   a:1,b:2  query:"/x/a=1&b=2", referrer:""}
+ * 		"#!/y/z"      => queryModel:{pathname:"app/controllers/y",   z:""     query:"/y/z",       referrer:""}
+ * 		"#!/y/z/"     => queryModel:{pathname:"app/controllers/y/z",          query:"/y/z/",      referrer:""}
+ * 		""            => queryModel:{pathname:config/ini.indexPath,           query:"",           referrer:""} 
+ * 		"#!/notfound/"=> queryModel:{pathname:config/ini.notFoundPath,        query:"",           referrer:""}  
  */
-/**
- * Magix Controller
- * @class MxController
- * @abstract
- */
-/**
- * Class MxController To Be Extend
- * @method MxController.extend
- * @param {Object} properties
- * @param {Object} optional classProperties
- * @abstract
- */
-/**
- * 当前queryModel对象
- * @property queryModel
- * @type magix/query_model
- */
-/**
- * VOM根对应的view模块名,将从这个view从外向内渲染.
- * viewMode以queryMode.__view__为最高优先级,如果没有则以this.viewMod为准,如再未指定,取config/ini的defaultView的值.
- * @property viewMod
- * @type String
- */
-define(function(require){
-    var _ = require("underscore");
+
+define(function(require, exports, module){
     var Backbone = require("backbone");
+    var _ = require("underscore");
+    var vom = require("./vom");
     var config = require("app/config/ini");
-    var vom = require("libs/magix/vom");
-    var MxController = function(options){
-        this.queryModel = options.queryModel;
-        this.viewMod = (this.queryModel.get("__view__") && this.queryModel.get("__view__").split("-").join("/")) || this.viewMod || config.defaultViewMod;
-        this.initialize();
-        this.render();
-    };
-    _.extend(MxController.prototype, {
-        initialize: function(){
+    var MxController = Backbone.Controller.extend({
+        initialize: function(o){
+            var p2v = config.pathViewMap, viewName;
+            for (var k in p2v) {
+                if (!p2v[k]) {
+                    p2v[k] = config.defaultViewName;
+                }
+            }
         },
-        render: function(){
-            vom.root.mountView(this.viewMod, {
-                queryModel: this.queryModel
+        routes: {
+            "!*query": "_route",
+            "*query": "_route"
+        },
+        _route: function(query){
+            this.referrer = this.query || null;
+            this.query = query;
+            this.pathName = config.indexPath;
+            this.paraObj = {};
+            this._fixPathPara(query);
+            this.oldViewName = this.viewName;
+            this.viewName = this._getViewName();
+            this._mountView();
+            this.postData = null;
+        },
+        setPostData: function(o){
+            this.postData = o;
+        },
+        _mountView: function(){
+            var queryObject = this._getQueryObject();
+            if (this.viewName == this.oldViewName) {
+                this._fixQueryObject(queryObject);
+                this.queryModel.set(queryObject);
+            }
+            else {
+                this.queryModel = new Backbone.Model(queryObject);
+                vom.root.mountView(this.viewName, {
+                    queryModel: this.queryModel
+                });
+            }
+        },
+        _fixQueryObject: function(queryObject){
+            if (this.queryMode) {
+                var k, old = this.queryModel.toJSON();
+                for (k in old) {
+                    if (!(k in queryObject)) {
+                        queryObject[k] = "";
+                    }
+                }
+            }
+        },
+        _getQueryObject: function(){
+            var queryObject = _.extend(this.paraObj, {
+                referrer: this.referrer,
+                query: this.query,
+                pathname: this.pathName,
+                postdata: this.postData || null
             });
+            return queryObject;
+        },
+        _getViewName: function(){
+            var p2v = config.pathViewMap, viewName;
+            if (p2v[this.pathName]) {
+                viewName = p2v[this.pathName];
+            }
+            else {
+                viewName = p2v[config.notFoundPath];
+            }
+			if(this.paraObj.__view__){
+				viewName = this.paraObj.__view__.split("-").join("/");
+			}
+            return viewName;
+        },
+        _fixPathPara: function(query){
+            var i, tmpArr, paraArr, kv;
+            if (query) {
+                tmpArr = query.split("/");
+                paraArr = tmpArr.pop().split("&");
+                this.pathName = tmpArr.join("/");
+                for (i = 0; i < paraArr.length; i++) {
+                    kv = paraArr[i].split("=");
+                    if (kv[0]) {
+                        this.paraObj[kv[0]] = kv[1] || "";
+                    }
+                }
+            }
         }
     });
-    //重用Backbone的extend
-    MxController.extend = Backbone.Controller.extend;
-    return MxController;
+    MxController.inst = MxController.inst || new MxController();
+    return MxController.inst;
 });
