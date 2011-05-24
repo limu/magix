@@ -35,8 +35,8 @@
     });
     //onload中安全启动Magix
     window.onload = function(){
-        seajs.use(['libs/magix/main'], function(main){
-            main();
+        seajs.use(['backbone', 'libs/magix/controller'], function(Backbone){
+            Backbone.history.start();
         });
     };
 })();

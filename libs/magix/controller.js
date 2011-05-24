@@ -110,5 +110,6 @@ define(function(require, exports, module){
         }
     });
     MxController.inst = MxController.inst || new MxController();
+	window.MXController = MxController.inst;
     return MxController.inst;
 });
