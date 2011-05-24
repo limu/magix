@@ -5,7 +5,7 @@ define(function(require, exports, module){
     mxview = null;
     var _ = require("underscore");
     var Backbone = require("backbone");
-    var El = function(node, id){
+    var VCElement = function(node, id){
         this._node = node || document.createElement(VCTAG);
         this.id = this.idIt(this._node, id);
         this.childNodes = [];
@@ -15,7 +15,7 @@ define(function(require, exports, module){
             this.getOnce();
         }
     };
-    _.extend(El.prototype, Backbone.Events, {
+    _.extend(VCElement.prototype, Backbone.Events, {
         view: null,
         idIt: function(node, id){
             node.id = (node && node.id) || id || El.uniqueId();
@@ -122,5 +122,5 @@ define(function(require, exports, module){
             return _.uniqueId("vc-");
         }
     });
-    return El;
+    return VCElement;
 });
