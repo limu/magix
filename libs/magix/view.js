@@ -2,14 +2,15 @@ define(function(require, exports, module){
     var Backbone = require("backbone");
     var Templates = require("app/resources/templates");
     var vom = require("libs/magix/vom");
+    var _ = require("underscore");
     var MxView = Backbone.View.extend({
         initialize: function(o){
             var self = this;
+            this.subViewsChange = [];
             this.options = o;
             this.vcid = o.vcid;
             this.queryModel = o.queryModel;
-			this.viewName = o.viewName;
-            this.init();
+            this.viewName = o.viewName;
             this.bind("rendered", function(){
                 var vc = vom.getElementById(this.vcid);
                 var childVcs = vc.getElements();
@@ -22,12 +23,47 @@ define(function(require, exports, module){
                     });
                 }
             });
+            
+            var vc = vom.getElementById(this.vcid);
+            if (vc == vom.root) {
+                this.queryModel.bind("change", function(){
+                    console.log("QM CHANG: Root View Query change " + self.viewName);
+                    var res = self.queryModelChange(this);
+                    self._changeChain(res, this);
+                });
+            }
+            this.init();
             this.getTemplate(function(data){
                 self.template = data;
                 self.render();
                 self.trigger("rendered");
             });
             
+        },
+        _queryModelChange: function(model){
+            console.log("QM CHANG: Sub View Query change" + this.viewName);
+            var res = this.queryModelChange(model);
+			this._changeChain(res, model);
+        },
+        _changeChain: function(res, model){
+            var vcs = [], i;
+            var vc = vom.getElementById(this.vcid);
+            if (res === false) {
+                return;
+            }
+            if (res === true || res === undefined) {
+                vcs = vc.childNodes;
+            }
+            else 
+                if (_.isArray(res)) {
+                    vcs = res;
+                }
+            for (i = 0; i < vcs.length; i++) {
+                vcs[i].view._queryModelChange(model);
+            }
+        },
+        queryModelChange: function(){
+        
         },
         render: function(){
         
@@ -59,7 +95,7 @@ define(function(require, exports, module){
             var root = vom.getElementById(this.vcid);
             root.unmountView();
             //this.dest();
-            this.queryModel.unbind();
+            //this.queryModel.unbind();
             console.log("VIEW DESTORY:5.destory view complete OK!! @" + this.modUri);
         },
         getDestoryQueue: function(){

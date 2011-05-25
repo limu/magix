@@ -30,6 +30,10 @@ define(function(require, exports, module){
             return node;
         },
         mountView: function(viewName, options){
+			options = options||{};
+            if (!viewName) {
+                return;
+            }
             var self = this;
             this.mounted = true;
             if (this.view) {
