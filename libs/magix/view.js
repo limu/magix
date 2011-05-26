@@ -1,8 +1,10 @@
 define(function(require, exports, module){
     var Backbone = require("backbone");
     var Templates = require("app/resources/templates");
-    var vom = require("libs/magix/vom");
+    var vom = require("./vom");
     var _ = require("underscore");
+    var ctrl = require("./controller");
+    var helper = require("./helper");
     var MxView = Backbone.View.extend({
         initialize: function(o){
             var self = this;
@@ -32,7 +34,9 @@ define(function(require, exports, module){
                     self._changeChain(res, this);
                 });
             }
-            this.init();
+			if(this.init){
+				 this.init();
+			}
             this.getTemplate(function(data){
                 self.template = data;
                 var autoRendered = self.render();
@@ -74,14 +78,14 @@ define(function(require, exports, module){
         
         },
         getTemplate: function(cb, name){
-            var url = this.modUri.split(".js")[0] + ".mu";
+            var url = ctrl.env.appHome + this.viewName;
             if (name) {
-                url = this.modUri.split(".js")[0] + "." + "name" + ".mu";
+                url = url + "." + "name" + ".mu";
             }
             else {
-                url = this.modUri.split(".js")[0] + ".mu";
+                url = url + ".mu";
             }
-            Templates.getTemplate(url, function(data){
+            helper.getTemplate(url, function(data){
                 cb(data);
             });
         },
@@ -115,6 +119,5 @@ define(function(require, exports, module){
             return queue;
         }
     });
-    
     return MxView;
 });

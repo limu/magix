@@ -30,6 +30,10 @@ define(function(require, exports, module){
                     p2v[k] = config.defaultViewName;
                 }
             }
+			this.env = {
+				appHome : config.uri.split("app/config/ini")[0],
+				templates :{}
+			};			
         },
         routes: {
             "!*query": "_route",

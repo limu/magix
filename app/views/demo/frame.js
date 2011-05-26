@@ -6,8 +6,6 @@ define(function(require, exports, module){
     var _ = require("underscore");
     var View = MxView.extend({
         init: function(o){
-			//下面这句现在还是要写下,等有时间把模板获取那里改动下,这个句话就没用了
-            this.modUri = module.uri;
             //rendered事件在渲染了主模板后触发,内置rendered响应,此时会遍历住模板中的<mxvc>,并且mxvc如果有viewname直接mount.
             this.bind("rendered", this.mountMainView);
         },

@@ -4,9 +4,6 @@ define(function(require, exports, module){
     var MxView = require("libs/magix/view");
     var vom = require("libs/magix/vom");
     var View = MxView.extend({
-        init: function(o){
-            this.modUri = module.uri;
-        },
         render: function(){
             var node = document.getElementById(this.vcid);
             node.innerHTML = Mustache.to_html(this.template, this.queryModel.toJSON());
