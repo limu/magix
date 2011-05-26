@@ -14,7 +14,7 @@ define(function(require, exports, module){
             this.queryModel = o.queryModel;
             this.viewName = o.viewName;
             this.bind("rendered", function(){
-				this.trigger("beforeSubviewRender");
+				this.trigger("beforeSubviewsRender");
                 var vc = vom.getElementById(this.vcid);
                 var childVcs = vc.getElements();
                 var i, child;
