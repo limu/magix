@@ -10,14 +10,28 @@ define(function(require, exports, module){
         this.id = this.idIt(this._node, id);
         this.childNodes = [];
         this.mounted = false;
+        this.isLink = false;
         this.parentNode = null;
         if (node) {
-            this.getOnce();
+            this.freeNode();
         }
     };
     _.extend(VCElement.prototype, Backbone.Events, {
         view: null,
         idIt: function(node, id){
+            var tid, vn, tnode;
+            if (node && node.getAttribute("link_to")) {
+                tid = node.getAttribute("link_to");
+                tnode = document.getElementById(tid);
+                vn = node.getAttribute("view_name");
+                if (tnode && vn) {
+                    tnode.setAttribute("view_name", vn);
+                }
+                node.id = VCElement.uniqueId();
+                this.isLink = true;
+                this.linkid = node.id;
+                return tid;
+            }
             node.id = (node && node.id) || id || VCElement.uniqueId();
             return node.id;
         },
@@ -26,11 +40,17 @@ define(function(require, exports, module){
             if (!node) {
                 console.warn("always get once");
             }
-            this._node = null;
+            this.freeNode();
             return node;
         },
+        freeNode: function(){
+            this._node = null;
+        },
         mountView: function(viewName, options){
-			options = options||{};
+            options = options ||
+            {
+                queryModel: require("./controller").queryModel
+            };
             if (!viewName) {
                 return;
             }
@@ -104,6 +124,10 @@ define(function(require, exports, module){
             console.log("VCELE DESTORY:2 remove mxvc dom element @" + this.id);
             var node = document.getElementById(this.id);
             node.parentNode.removeChild(node);
+            if (this.linkid) {
+                node = document.getElementById(linkid);
+                node.parentNode.removeChild(node);
+            }
             node = null;
             console.log("VCELE DESTORY:3 remove self(vcelement) from vom @" + this.id);
             this.parentNode.removeChild(this);
