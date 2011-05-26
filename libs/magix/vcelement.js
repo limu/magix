@@ -130,11 +130,10 @@ define(function(require, exports, module){
         unmountView: function(){
             console.log("VCELE UNMOUNT:1 fire view's unload @" + this.view.modUri);
             this.view.trigger("unload");
-            console.log("VCELE UNMOUNT:2 unbind lisnter to querymodel TODO!! @" + this.view.modUri);
-            console.log("VCELE UNMOUNT:3 inner dom unload @" + this.view.modUri);
+            console.log("VCELE UNMOUNT:2 inner dom unload @" + this.view.modUri);
             document.getElementById(this.view.vcid).innerHTML = "";
-            console.log("VCELE UNMOUNT:4 unbind event delegation on vcelement TODO!!@" + this.id);
-            console.log("VCELE UNMOUNT:5 chg vcelement.mounted to false @" + this.id);
+            console.log("VCELE UNMOUNT:3 unbind event delegation on vcelement TODO!!@" + this.id);
+            console.log("VCELE UNMOUNT:4 chge vcelement.mounted to false @" + this.id);
             this.mounted = false;
         }
     });

@@ -35,15 +35,17 @@ define(function(require, exports, module){
             this.init();
             this.getTemplate(function(data){
                 self.template = data;
-                self.render();
-                self.trigger("rendered");
+                var autoRendered = self.render();
+                if (autoRendered !== false) {
+                    self.trigger("rendered");
+                }
             });
             
         },
         _queryModelChange: function(model){
             console.log("QM CHANG: Sub View Query change" + this.viewName);
             var res = this.queryModelChange(model);
-			this._changeChain(res, model);
+            this._changeChain(res, model);
         },
         _changeChain: function(res, model){
             var vcs = [], i;
