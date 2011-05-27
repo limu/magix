@@ -53,6 +53,14 @@ define(function(require, exports, module){
         setPostData: function(o){
             this.postData = o;
         },
+		navigateTo:function(q){
+			var np = this._unParam(q);
+			var nps = this._param(_.extend(_.clone(this.ParaObj),np));
+			this._goto(this.pathName+"/"+nps);
+		},
+		_goto:function(url){
+			location.hash = "!"+url;
+		},
         _mountView: function(){
             var queryObject = this._getQueryObject();
             if (this.viewName == this.oldViewName) {
@@ -99,19 +107,32 @@ define(function(require, exports, module){
             return viewName;
         },
         _fixPathPara: function(query){
-            var i, tmpArr, paraArr, kv;
+            var tmpArr, paraStr, kv;
             if (query) {
                 tmpArr = query.split("/");
-                paraArr = tmpArr.pop().split("&");
+                paraStr = tmpArr.pop();
                 this.pathName = tmpArr.join("/");
-                for (i = 0; i < paraArr.length; i++) {
-                    kv = paraArr[i].split("=");
-                    if (kv[0]) {
-                        this.paraObj[kv[0]] = kv[1] || "";
-                    }
+				this.paraObj = this._unParam(paraStr);
+            }
+        },
+        _unParam: function(s){
+            var paraArr = s.split("&");
+            var kv, res = {};
+            for (var i = 0; i < paraArr.length; i++) {
+                kv = paraArr[i].split("=");
+                if (kv[0]) {
+                    res[kv[0]] = kv[1] || "";
                 }
             }
-        }
+			return res;
+        },
+		_param:function(o){
+			var res = [];
+			for (var k in o){
+				res.push(k+"="+o[k]);
+			}
+			return res.join("&");
+		}
     });
     MxController.inst = MxController.inst || new MxController();
 	window.MXController = MxController.inst;
