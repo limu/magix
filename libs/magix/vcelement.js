@@ -159,7 +159,6 @@ define(function(require, exports, module){
             document.getElementById(this.view.vcid).innerHTML = "";
             console.log("VCELE UNMOUNT:3 unbind event delegation on vcelement @" + this.id);
             if (this.view.events) {
-				debugger;
                 var node = document.getElementById(this.id);
                 for (var eventType in this.view.events) {
                     node["on" + eventType] = null;
