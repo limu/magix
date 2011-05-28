@@ -5,9 +5,10 @@
         <title>A Magix Web Application</title>
     </head>
     <body>
-    	<div id="linking"></div>
+        <div id="linking">
+        </div>
         <br/>
-		<br/>
+        <br/>
         <a href="#!/target/a/">target id</a>
         <br/>
         <br/>
@@ -24,7 +25,52 @@
         <script type="text/javascript" src="libs/seajs/sea-debug.js?0.9.1">
         </script>
         <!--当前App启动脚本-->
-        <script type="text/javascript" src="index.js">
+        <script type="text/javascript" src1="index.js">
+            seajs.use("mustache-debug", function(mu){
+                var d = document.getElementById("linking");
+                var json = {
+                    "list": [{
+                        "id": "1",
+                        "name": "a",
+                        calc: function(){
+                            return (parseInt(this.id, 10) + 21).toString();
+                            return "4";
+                        }
+                    }, {
+                        "id": "2",
+                        "name": "b",
+                        calc: function(){
+                            return (parseInt(this.id, 10) + 21).toString();
+                            return "4";
+                        }
+                    }, {
+                        "id": "3",
+                        "name": "c"
+                    }, {
+                        "id": "4",
+                        "name": "d"
+                    }],
+                    calc: function(){
+                        return "<b style='color:red'>" + (parseInt(this.id, 10) + 21).toString() + "</b>";
+                        return "4";
+                    },
+                    ad: 21
+                };
+                var temp = "{{#list}}No. {{{calc}}} : --{{name}}--<br/>{{/list}}";
+                
+                
+                json1 = {
+                    title: "Joe",
+                    calc: function(){
+                        debugger;
+                        return this.title + "4";
+                    }
+                };
+                temp1 = "{{title}} -- {{calc}}";
+                var ss = mu.to_html(temp, json);
+                debugger;
+                d.innerHTML = ss;
+            });
         </script>
     </body>
 </html>

@@ -63,6 +63,7 @@ define(function(require, exports, module){
             module.load(viewName, function(View){
                 options.vcid = self.id;
                 options.el = self.id;
+                options.id = self.id;
                 options.viewName = viewName;
                 self.view = new View(options);
                 if (!window.MXRootView) {//TODO delete
@@ -156,7 +157,15 @@ define(function(require, exports, module){
             this.view.trigger("unload");
             console.log("VCELE UNMOUNT:2 inner dom unload @" + this.view.modUri);
             document.getElementById(this.view.vcid).innerHTML = "";
-            console.log("VCELE UNMOUNT:3 unbind event delegation on vcelement TODO!!@" + this.id);
+            console.log("VCELE UNMOUNT:3 unbind event delegation on vcelement @" + this.id);
+            if (this.view.events) {
+				debugger;
+                var node = document.getElementById(this.id);
+                for (var eventType in this.view.events) {
+                    node["on" + eventType] = null;
+                }
+                node = null;
+            }
             console.log("VCELE UNMOUNT:4 chge vcelement.mounted to false @" + this.id);
             this.mounted = false;
         }

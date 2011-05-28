@@ -5,6 +5,7 @@ define(function(require, exports, module){
     var _ = require("underscore");
     var ctrl = require("./controller");
     var helper = require("./helper");
+    var Mustache = require("mustache");
     var MxView = Backbone.View.extend({
         initialize: function(o){
             var self = this;
@@ -14,7 +15,7 @@ define(function(require, exports, module){
             this.queryModel = o.queryModel;
             this.viewName = o.viewName;
             this.bind("rendered", function(){
-				this.trigger("beforeSubviewsRender");
+                this.trigger("beforeSubviewsRender");
                 var vc = vom.getElementById(this.vcid);
                 var childVcs = vc.getElements();
                 var i, child;
@@ -35,9 +36,9 @@ define(function(require, exports, module){
                     self._changeChain(res, this);
                 });
             }
-			if(this.init){
-				 this.init();
-			}
+            if (this.init) {
+                this.init();
+            }
             this.getTemplate(function(data){
                 self.template = data;
                 var autoRendered = self.render();
@@ -73,7 +74,9 @@ define(function(require, exports, module){
         
         },
         render: function(){
-        
+            var node = document.getElementById(this.vcid);
+            node.innerHTML = Mustache.to_html(this.template, this.queryModel.toJSON());
+            this.rendered = true;
         },
         refresh: function(){
         
@@ -101,8 +104,6 @@ define(function(require, exports, module){
             console.log("VIEW DESTORY:4.unmount reference vcelement @" + this.modUri);
             var root = vom.getElementById(this.vcid);
             root.unmountView();
-            //this.dest();
-            //this.queryModel.unbind();
             console.log("VIEW DESTORY:5.destory view complete OK!! @" + this.modUri);
         },
         getDestoryQueue: function(){
@@ -118,6 +119,59 @@ define(function(require, exports, module){
             rc(root);
             console.log("VIEW DESTORY:2.depth traversal all vcelements @" + this.modUri);
             return queue;
+        },
+        setData: function(data){
+            this.data = data;
+            for (var k in data) {
+                if (data[k].toJSON) {
+                    data[k] = data[k].toJSON();
+                }
+            }
+            data.query = this.queryModel.toJSON();
+            this.setRenderer();
+        },
+        setRenderer: function(){
+            var self = this, fn, rr = this.renderer, mcName, wrapperName;
+            if (rr) {
+                for (mcName in rr) {
+                    for (wrapperName in rr[mcName]) {
+                        (function(){
+                            var mn = mcName, wn = wrapperName;
+                            var fn = rr[mn][wn];
+                            self.data[mn + "_" + wn] = function(){
+                                return fn.call(this, mn, self[mn], self);
+                            };
+                        })();
+                    }
+                }
+            }
+        },
+        delegateEvents: function(){
+            var events = this.events;
+            var node = document.getElementById(this.el);
+            for (var type in events) {
+                node["on" + type] = function(){
+                    var event = arguments[0] || window.event;
+                    var target = event.target || event.srcElement;
+                    var root = this;
+                    if (target.nodeType != 1) {
+                        target = target.parentNode;
+                    }
+                    var eventinfo = target.getAttribute("mx" + type);
+                    if (eventinfo) {
+                        var events = eventinfo.split("|"), eventArr, eventKey;
+                        var vc = vom.getElementById(root.id);
+                        var view = vc.view;
+                        for (var i = 0; i < events.length; i++) {
+                            eventArr = events[i].split(":");
+                            eventKey = eventArr.shift();
+                            if (view.events && view.events[type] && view.events[type][eventKey]) {
+                                view.events[type][eventKey](view,eventArr);
+                            }
+                        }
+                    }
+                };
+            }
         }
     });
     return MxView;
