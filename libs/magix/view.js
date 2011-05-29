@@ -5,7 +5,7 @@ define(function(require, exports, module){
     var _ = require("underscore");
     var ctrl = require("./controller");
     var helper = require("./helper");
-    var Mustache = require("mustache");
+    var Mustache = require("libs/magix/mu");
     var MxView = Backbone.View.extend({
         initialize: function(o){
             var self = this;

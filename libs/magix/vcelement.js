@@ -27,7 +27,7 @@ define(function(require, exports, module){
                 if (tnode && vn) {
                     tnode.setAttribute("view_name", vn);
                 }
-                node.id = VCElement.uniqueId();
+                node.id = node.id || VCElement.uniqueId();
                 this.isLink = true;
                 this.linkid = node.id;
                 return tid;
@@ -126,7 +126,7 @@ define(function(require, exports, module){
             var node = document.getElementById(this.id);
             node.parentNode.removeChild(node);
             if (this.linkid) {
-                node = document.getElementById(linkid);
+                node = document.getElementById(this.linkid);
                 node.parentNode.removeChild(node);
             }
             node = null;
