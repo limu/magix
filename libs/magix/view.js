@@ -166,12 +166,23 @@ define(function(require, exports, module){
                             eventArr = events[i].split(":");
                             eventKey = eventArr.shift();
                             if (view.events && view.events[type] && view.events[type][eventKey]) {
-                                view.events[type][eventKey](view,eventArr);
+                                view.events[type][eventKey](view, view.idIt(target), eventArr);
                             }
                         }
                     }
+                    target = null;
+                    root = null;
                 };
             }
+        },
+        idIt: function(node){
+            var id = "";
+            if (!node.id) {
+                node.id = _.uniqueId("mxevt-");
+            }
+            id = node.id;
+            node = null;
+            return id;
         }
     });
     return MxView;
