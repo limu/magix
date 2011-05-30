@@ -10,6 +10,7 @@ define(function(require, exports, module){
         this.id = this.idIt(this._node, id);
         this.childNodes = [];
         this.mounted = false;
+        this.mounting = false;
         this.isLink = false;
         this.parentNode = null;
         if (node) {
@@ -55,7 +56,7 @@ define(function(require, exports, module){
                 return;
             }
             var self = this;
-            this.mounted = true;
+            this.mounting = true;
             if (this.view) {
                 this.view.destory();
                 this.view = null;
@@ -66,6 +67,11 @@ define(function(require, exports, module){
                 options.id = self.id;
                 options.viewName = viewName;
                 self.view = new View(options);
+                self.view.bind("rendered", function(){
+                    this.mounting = false;
+                    this.mounted = true;
+                    self.trigger("mounted", self.view);
+                });
                 if (!window.MXRootView) {//TODO delete
                     window.MXRootView = self.view;
                 }

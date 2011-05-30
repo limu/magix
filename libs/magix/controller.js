@@ -54,8 +54,8 @@ define(function(require, exports, module){
             this.postData = o;
         },
 		navigateTo:function(q){
-			var np = this._unParam(q);
-			var nps = this._param(_.extend(_.clone(this.ParaObj),np));
+			var np = this.unParam(q);
+			var nps = this.param(_.extend(_.clone(this.ParaObj),np));
 			this._goto(this.pathName+"/"+nps);
 		},
 		_goto:function(url){
@@ -112,10 +112,10 @@ define(function(require, exports, module){
                 tmpArr = query.split("/");
                 paraStr = tmpArr.pop();
                 this.pathName = tmpArr.join("/");
-				this.paraObj = this._unParam(paraStr);
+				this.paraObj = this.unParam(paraStr);
             }
         },
-        _unParam: function(s){
+        unParam: function(s){
             var paraArr = s.split("&");
             var kv, res = {};
             for (var i = 0; i < paraArr.length; i++) {
@@ -126,7 +126,7 @@ define(function(require, exports, module){
             }
 			return res;
         },
-		_param:function(o){
+		param:function(o){
 			var res = [];
 			for (var k in o){
 				res.push(k+"="+o[k]);
