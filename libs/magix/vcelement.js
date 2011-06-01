@@ -67,11 +67,20 @@ define(function(require, exports, module){
                 options.id = self.id;
                 options.viewName = viewName;
                 self.view = new View(options);
-                self.view.bind("rendered", function(){
-                    this.mounting = false;
+				if(options.message&&typeof options.message == 'function'){
+					self.view.bind("message", options.message);
+				}
+				if(self.view.rendered){
+					this.mounting = false;
                     this.mounted = true;
                     self.trigger("mounted", self.view);
-                });
+				}else{
+					self.view.bind("rendered", function(){
+						this.mounting = false;
+						this.mounted = true;
+						self.trigger("mounted", self.view);
+					});
+				}
                 if (!window.MXRootView) {//TODO delete
                     window.MXRootView = self.view;
                 }

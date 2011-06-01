@@ -49,6 +49,7 @@ define(function(require, exports, module){
             this.viewName = this._getViewName();
             this._mountView();
             this.postData = null;
+			this.saveLocation("!"+this.query);
         },
         setPostData: function(o){
             this.postData = o;

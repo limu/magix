@@ -53,8 +53,42 @@ define(function(require){
         };
         return res;
     }
+    function findArray(o, depth){
+        var k, v;
+        for (k in o) {
+            v = o[k];
+            if (v instanceof Array) {
+                addArrayIndex(v);
+            }
+            else 
+                if (typeof(v)=="object" && depth < 5) {
+                    findArray(v, depth + 1);
+                }
+        }
+    }
+    function addArrayIndex(v){
+        for (var i = 0; i < v.length; i++) {
+            o = v[i];
+            if (typeof(o)=="object") {
+                if (i === 0) {
+                    o.__first__ = true;
+                }
+                else 
+                    if (i == (v.length - 1)) {
+                        o.__last__ = true;
+                    }
+                    else {
+                        o.__mid__ = true;
+                    }
+                o.__index__ = i;
+            }
+        }
+    }
     return {
         to_html: function(template, data){
+            if (typeof(data) == "object") {
+                findArray(data, 0);
+            }
             addFns(template, data);
             return Mustache.to_html.apply(this, arguments);
         }

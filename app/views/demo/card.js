@@ -10,7 +10,6 @@ define(function(require, exports, module){
             this.rendered = true;
         },
 		queryModelChange:function(model){
-			//这个事件由父mxvcElement传递下来,model依然是改变状态(包含新值,旧值)的QM.
 			var node = document.getElementById(this.vcid);
 			node.innerHTML = node.innerHTML + " => " + model.get("query");
 		}
