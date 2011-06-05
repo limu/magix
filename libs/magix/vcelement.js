@@ -135,8 +135,11 @@ define(function(require, exports, module){
             c.parentNode = this;
         },
         removeNode: function(){
-            console.log("VCELE DESTORY:1 unmount current view @" + this.id);
-            this.unmountView();
+			console.log("VCELE DESTORY:1 unmount current view @" + this.id);
+			if(this.mounted){
+				this.unmountView();
+			}
+            
             console.log("VCELE DESTORY:2 remove mxvc dom element @" + this.id);
             var node = document.getElementById(this.id);
             node.parentNode.removeChild(node);

@@ -149,30 +149,33 @@ define(function(require, exports, module){
         delegateEvents: function(){
             var events = this.events;
             var node = document.getElementById(this.el);
-            for (var type in events) {
-                node["on" + type] = function(){
-                    var event = arguments[0] || window.event;
-                    var target = event.target || event.srcElement;
-                    var root = this;
-                    if (target.nodeType != 1) {
-                        target = target.parentNode;
-                    }
-                    var eventinfo = target.getAttribute("mx" + type);
-                    if (eventinfo) {
-                        var events = eventinfo.split("|"), eventArr, eventKey;
-                        var vc = vom.getElementById(root.id);
-                        var view = vc.view;
-                        for (var i = 0; i < events.length; i++) {
-                            eventArr = events[i].split(":");
-                            eventKey = eventArr.shift();
-                            if (view.events && view.events[type] && view.events[type][eventKey]) {
-                                view.events[type][eventKey](view, view.idIt(target), eventArr);
+            for (var _type in events) {
+                (function(){
+                    var type = _type;
+                    node["on" + type] = function(){
+                        var event = arguments[0] || window.event;
+                        var target = event.target || event.srcElement;
+                        var root = this;
+                        if (target.nodeType != 1) {
+                            target = target.parentNode;
+                        }
+                        var eventinfo = target.getAttribute("mx" + type);
+                        if (eventinfo) {
+                            var events = eventinfo.split("|"), eventArr, eventKey;
+                            var vc = vom.getElementById(root.id);
+                            var view = vc.view;
+                            for (var i = 0; i < events.length; i++) {
+                                eventArr = events[i].split(":");
+                                eventKey = eventArr.shift();
+                                if (view.events && view.events[type] && view.events[type][eventKey]) {
+                                    view.events[type][eventKey](view, view.idIt(target), eventArr);
+                                }
                             }
                         }
-                    }
-                    target = null;
-                    root = null;
-                };
+                        target = null;
+                        root = null;
+                    };
+                })();
             }
         },
         idIt: function(node){

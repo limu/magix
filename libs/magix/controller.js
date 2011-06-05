@@ -22,7 +22,10 @@ define(function(require, exports, module){
     var _ = require("underscore");
     var vom = require("./vom");
     var config = require("app/config/ini");
-    var MxController = Backbone.Controller.extend({
+	var  MxController = function(){
+		this.initialize();
+	};
+    _.extend(MxController.prototype,Backbone.Event, {
         initialize: function(o){
             var p2v = config.pathViewMap, viewName;
             for (var k in p2v) {
@@ -30,14 +33,11 @@ define(function(require, exports, module){
                     p2v[k] = config.defaultViewName;
                 }
             }
-			this.env = {				
-				appHome : config.uri.split("app/config/ini")[0],
-				templates :{}
-			};			
-        },
-        routes: {
-            "!*query": "_route",
-            "*query": "_route"
+            this.env = {
+                appHome: config.uri.split("app/config/ini")[0],
+                templates: {}
+            };
+            return this;
         },
         _route: function(query){
             this.referrer = this.query || null;
@@ -49,14 +49,21 @@ define(function(require, exports, module){
             this.viewName = this._getViewName();
             this._mountView();
             this.postData = null;
-			this.saveLocation("!"+this.query);
+            //this.saveLocation("!"+this.query);
         },
         setPostData: function(o){
             this.postData = o;
         },
 		navigateTo:function(q){
 			var np = this.unParam(q);
-			var nps = this.param(_.extend(_.clone(this.ParaObj),np));
+			var v1 = _.clone(this.paraObj);
+			delete v1.referrer;
+			delete v1.pathname;
+			delete v1.query;
+			delete v1.postdata;
+			var v2 = _.extend(v1,np);
+			var nps = this.param(v2);
+			//var nps = this.param(_.extend(_.clone(this.paraObj),np));
 			this._goto(this.pathName+"/"+nps);
 		},
 		_goto:function(url){
@@ -102,9 +109,9 @@ define(function(require, exports, module){
             else {
                 viewName = p2v[config.notFoundPath];
             }
-			if(this.paraObj.__view__){
-				viewName = this.paraObj.__view__.split("-").join("/");
-			}
+            if (this.paraObj.__view__) {
+                viewName = this.paraObj.__view__.split("-").join("/");
+            }
             return viewName;
         },
         _fixPathPara: function(query){
@@ -113,7 +120,7 @@ define(function(require, exports, module){
                 tmpArr = query.split("/");
                 paraStr = tmpArr.pop();
                 this.pathName = tmpArr.join("/");
-				this.paraObj = this.unParam(paraStr);
+                this.paraObj = this.unParam(paraStr);
             }
         },
         unParam: function(s){
@@ -125,17 +132,19 @@ define(function(require, exports, module){
                     res[kv[0]] = kv[1] || "";
                 }
             }
-			return res;
+            return res;
         },
-		param:function(o){
-			var res = [];
-			for (var k in o){
-				res.push(k+"="+o[k]);
-			}
-			return res.join("&");
-		}
+        param: function(o){
+            var res = [];
+            for (var k in o) {
+                res.push(k + "=" + o[k]);
+            }
+            return res.join("&");
+        }
     });
-    MxController.inst = MxController.inst || new MxController();
-	window.MXController = MxController.inst;
+    if (!MxController.inst) {
+        MxController.inst = new MxController();
+    }
+    window.MXController = MxController.inst;
     return MxController.inst;
 });
