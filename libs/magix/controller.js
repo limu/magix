@@ -19,12 +19,14 @@
 
 define(function(require, exports, module){
     var Backbone = require("backbone");
-    var _ = require("underscore");
+	var _ = require("underscore");
     var vom = require("./vom");
     var config = require("app/config/ini");
+	
 	var  MxController = function(){
 		this.initialize();
 	};
+	
     _.extend(MxController.prototype,Backbone.Event, {
         initialize: function(o){
             var p2v = config.pathViewMap, viewName;
@@ -83,11 +85,13 @@ define(function(require, exports, module){
             }
         },
         _fixQueryObject: function(queryObject){
-            if (this.queryMode) {
+            if (this.queryModel) {
                 var k, old = this.queryModel.toJSON();
                 for (k in old) {
                     if (!(k in queryObject)) {
                         queryObject[k] = "";
+						//this.queryModel.unset(k);
+
                     }
                 }
             }

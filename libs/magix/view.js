@@ -131,7 +131,7 @@ define(function(require, exports, module){
             this.setRenderer();
         },
         setRenderer: function(){
-            var self = this, fn, rr = this.renderer, mcName, wrapperName;
+            var self = this, rr = this.renderer, mcName, wrapperName;
             if (rr) {
                 for (mcName in rr) {
                     for (wrapperName in rr[mcName]) {
@@ -139,7 +139,7 @@ define(function(require, exports, module){
                             var mn = mcName, wn = wrapperName;
                             var fn = rr[mn][wn];
                             self.data[mn + "_" + wn] = function(){
-                                return fn.call(this, mn, self[mn], self);
+                                return fn.call(this, self, mn);
                             };
                         })();
                     }
