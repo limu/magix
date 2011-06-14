@@ -67,7 +67,9 @@ define(function(require, exports, module){
                     vcs = res;
                 }
             for (i = 0; i < vcs.length; i++) {
-                vcs[i].view._queryModelChange(model);
+                if (vcs[i].view) {
+                    vcs[i].view._queryModelChange(model);
+                }
             }
         },
         queryModelChange: function(){
@@ -109,6 +111,7 @@ define(function(require, exports, module){
         getDestoryQueue: function(){
             var queue = [];
             var root = vom.getElementById(this.vcid);
+            
             function rc(e){
                 var i;
                 queue.push(e);
@@ -116,6 +119,7 @@ define(function(require, exports, module){
                     rc(e.childNodes[i]);
                 }
             }
+            
             rc(root);
             console.log("VIEW DESTORY:2.depth traversal all vcelements @" + this.modUri);
             return queue;
