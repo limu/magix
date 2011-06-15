@@ -61,26 +61,27 @@ define(function(require, exports, module){
                 this.view.destory();
                 this.view = null;
             }
-            module.load(viewName, function(View){
+            (module.load || require.async)(viewName, function(View){
                 options.vcid = self.id;
                 options.el = self.id;
                 options.id = self.id;
                 options.viewName = viewName;
                 self.view = new View(options);
-				if(options.message&&typeof options.message == 'function'){
-					self.view.bind("message", options.message);
-				}
-				if(self.view.rendered){
-					this.mounting = false;
+                if (options.message && typeof options.message == 'function') {
+                    self.view.bind("message", options.message);
+                }
+                if (self.view.rendered) {
+                    this.mounting = false;
                     this.mounted = true;
                     self.trigger("mounted", self.view);
-				}else{
-					self.view.bind("rendered", function(){
-						this.mounting = false;
-						this.mounted = true;
-						self.trigger("mounted", self.view);
-					});
-				}
+                }
+                else {
+                    self.view.bind("rendered", function(){
+                        this.mounting = false;
+                        this.mounted = true;
+                        self.trigger("mounted", self.view);
+                    });
+                }
                 if (!window.MXRootView) {//TODO delete
                     window.MXRootView = self.view;
                 }
@@ -135,10 +136,10 @@ define(function(require, exports, module){
             c.parentNode = this;
         },
         removeNode: function(){
-			console.log("VCELE DESTORY:1 unmount current view @" + this.id);
-			if(this.mounted){
-				this.unmountView();
-			}
+            console.log("VCELE DESTORY:1 unmount current view @" + this.id);
+            if (this.mounted) {
+                this.unmountView();
+            }
             
             console.log("VCELE DESTORY:2 remove mxvc dom element @" + this.id);
             var node = document.getElementById(this.id);

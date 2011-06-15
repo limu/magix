@@ -1,5 +1,4 @@
 (function(){
-    //简易控制台
     if (!window.console) {
         window.console = {
             log: function(s){

@@ -1,6 +1,5 @@
 define(function(require, exports, module){
     var Backbone = require("backbone");
-    var Templates = require("app/resources/templates");
     var vom = require("./vom");
     var _ = require("underscore");
     var ctrl = require("./controller");
@@ -26,8 +25,7 @@ define(function(require, exports, module){
                         queryModel: this.queryModel
                     });
                 }
-            });
-            
+            });            
             var vc = vom.getElementById(this.vcid);
             if (vc == vom.root) {
                 this.queryModel.bind("change", function(){
