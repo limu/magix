@@ -102,7 +102,7 @@ define(function(require, exports, module){
                     this.view.destory();
                     this.view = null;
                 }
-                module.load(this.getAttribute("view_name"), function(View){
+                (module.load || require.async)(this.getAttribute("view_name"), function(View){
                     options.vcid = self.id;
                     options.el = self.id;
                     options.viewName = self.getAttribute("view_name");

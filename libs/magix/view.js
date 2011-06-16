@@ -25,7 +25,7 @@ define(function(require, exports, module){
                         queryModel: this.queryModel
                     });
                 }
-            });            
+            });
             var vc = vom.getElementById(this.vcid);
             if (vc == vom.root) {
                 this.queryModel.bind("change", function(){
@@ -84,10 +84,10 @@ define(function(require, exports, module){
         getTemplate: function(cb, name){
             var url = ctrl.env.appHome + this.viewName;
             if (name) {
-                url = url + "." + "name" + ".mu";
+                url = url + "." + "name" + ".html";
             }
             else {
-                url = url + ".mu";
+                url = url + ".html";
             }
             helper.getTemplate(url, function(data){
                 cb(data);

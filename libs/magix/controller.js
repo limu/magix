@@ -23,6 +23,7 @@ define(function(require, exports, module){
             return this;
         },
         _route: function(query){
+			
             this.referrer = this.query || null;
             this.query = query;
             this.pathName = config.indexPath;
