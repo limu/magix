@@ -1,3 +1,7 @@
+/**
+ * magix API文档
+ * @module magix
+ */
 (function(){
     if (!window.console) {
         window.console = {

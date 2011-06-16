@@ -1,0 +1,290 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<title>API: magix   view.js  (MagixJS)</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
+	<link rel="stylesheet" type="text/css" href="assets/api.css" />
+
+    <script type="text/javascript" src="assets/api-js"></script>
+    <script type="text/javascript" src="assets/ac-js"></script>
+</head>
+
+<body id="yahoo-com">
+
+<div id="doc3" class="yui-t2">
+	<div id="hd">
+        <h1><a href="../" title="MagixJS">MagixJS</a></h1>
+        <h3>magix&nbsp; <span class="subtitle">0.2.0</span></h3>
+        <a href="../" title="MagixJS">MagixJS</a> 
+            &gt; <a href="./module_magix.html" title="magix">magix</a>
+                
+                 &gt; view.js (source view) 
+        <form onsubmit="return false">
+            <div id="propertysearch">
+                Search: <input autocomplete="off" id="searchinput" />
+                <div id="searchresults">
+                    &nbsp;
+                </div>
+            </div>
+        </form>
+	</div>
+
+	<div id="bd">
+		<div id="yui-main">
+			<div class="yui-b">
+            <form action="#" name="yui-classopts-form" method="get" id="yui-classopts-form">
+                <fieldset>
+                    <legend>Filters</legend>
+                <span class="classopts"><input type="checkbox" name="show_private" id="show_private" /> <label for="show_private">Show Private</label></span>
+                <span class="classopts"><input type="checkbox" name="show_protected" id="show_protected" /> <label for="show_protected">Show Protected</label></span>
+                <span class="classopts"><input type="checkbox" name="show_deprecated" id="show_deprecated" /> <label for="show_deprecated">Show Deprecated</label></span>
+                </fieldset>
+            </form>
+
+                    <div id="srcout">
+                        <style>
+                            #doc3 .classopts { display:none; }
+                        </style>
+                        <div class="highlight"><pre><span class="nx">define</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">require</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">module</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;backbone&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">vom</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./vom&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;underscore&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">ctrl</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./controller&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">helper</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./helper&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">Mustache</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;libs/magix/mu&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">MxView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">subViewsChange</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">options</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">vcid</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">vcid</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">viewName</span> <span class="o">=</span> <span class="nx">o</span><span class="p">.</span><span class="nx">viewName</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s2">&quot;rendered&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;beforeSubviewsRender&quot;</span><span class="p">);</span>
+                <span class="kd">var</span> <span class="nx">vc</span> <span class="o">=</span> <span class="nx">vom</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">vcid</span><span class="p">);</span>
+                <span class="kd">var</span> <span class="nx">childVcs</span> <span class="o">=</span> <span class="nx">vc</span><span class="p">.</span><span class="nx">getElements</span><span class="p">();</span>
+                <span class="kd">var</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">child</span><span class="p">;</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">childVcs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">child</span> <span class="o">=</span> <span class="nx">vom</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="nx">childVcs</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                    <span class="nx">vc</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">child</span><span class="p">);</span>
+                    <span class="nx">child</span><span class="p">.</span><span class="nx">mountView</span><span class="p">(</span><span class="nx">child</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">&quot;view_name&quot;</span><span class="p">),</span> <span class="p">{</span>
+                        <span class="nx">queryModel</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span>
+                    <span class="p">});</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+            <span class="kd">var</span> <span class="nx">vc</span> <span class="o">=</span> <span class="nx">vom</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">vcid</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">vc</span> <span class="o">==</span> <span class="nx">vom</span><span class="p">.</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s2">&quot;change&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+                    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;QM CHANG: Root View Query change &quot;</span> <span class="o">+</span> <span class="nx">self</span><span class="p">.</span><span class="nx">viewName</span><span class="p">);</span>
+                    <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">queryModelChange</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+                    <span class="nx">self</span><span class="p">.</span><span class="nx">_changeChain</span><span class="p">(</span><span class="nx">res</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">this</span><span class="p">.</span><span class="nx">init</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">getTemplate</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+                <span class="nx">self</span><span class="p">.</span><span class="nx">template</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+                <span class="kd">var</span> <span class="nx">autoRendered</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">autoRendered</span> <span class="o">!==</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">self</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;rendered&quot;</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">});</span>
+            
+        <span class="p">},</span>
+        <span class="nx">_queryModelChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">){</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;QM CHANG: Sub View Query change&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">viewName</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">queryModelChange</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_changeChain</span><span class="p">(</span><span class="nx">res</span><span class="p">,</span> <span class="nx">model</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="nx">_changeChain</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">res</span><span class="p">,</span> <span class="nx">model</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">vcs</span> <span class="o">=</span> <span class="p">[],</span> <span class="nx">i</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">vc</span> <span class="o">=</span> <span class="nx">vom</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">vcid</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">false</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">res</span> <span class="o">===</span> <span class="kc">true</span> <span class="o">||</span> <span class="nx">res</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">vcs</span> <span class="o">=</span> <span class="nx">vc</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> 
+                <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">res</span><span class="p">))</span> <span class="p">{</span>
+                    <span class="nx">vcs</span> <span class="o">=</span> <span class="nx">res</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">vcs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">vcs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">view</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">vcs</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">view</span><span class="p">.</span><span class="nx">_queryModelChange</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">queryModelChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+        
+        <span class="p">},</span>
+        <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+            <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">vcid</span><span class="p">);</span>
+            <span class="nx">node</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">Mustache</span><span class="p">.</span><span class="nx">to_html</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">());</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">rendered</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">refresh</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+        
+        <span class="p">},</span>
+        <span class="nx">getTemplate</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">cb</span><span class="p">,</span> <span class="nx">name</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="nx">ctrl</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">appHome</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">viewName</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">url</span> <span class="o">=</span> <span class="nx">url</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="s2">&quot;name&quot;</span> <span class="o">+</span> <span class="s2">&quot;.html&quot;</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">else</span> <span class="p">{</span>
+                <span class="nx">url</span> <span class="o">=</span> <span class="nx">url</span> <span class="o">+</span> <span class="s2">&quot;.html&quot;</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">helper</span><span class="p">.</span><span class="nx">getTemplate</span><span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+                <span class="nx">cb</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+            <span class="p">});</span>
+        <span class="p">},</span>
+        <span class="nx">destory</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+            <span class="kd">var</span> <span class="nx">vcQueue</span><span class="p">,</span> <span class="nx">i</span><span class="p">;</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;VIEW DESTORY:1.begin unmount view @&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">modUri</span><span class="p">);</span>
+            <span class="nx">vcQueue</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">getDestoryQueue</span><span class="p">();</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;VIEW DESTORY:3.destory vcelement from the end of the queue util this vcelement total &quot;</span> <span class="o">+</span> <span class="p">(</span><span class="nx">vcQueue</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; vcelements @&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">modUri</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="nx">vcQueue</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">vcQueue</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">removeNode</span><span class="p">();</span>
+            <span class="p">}</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;VIEW DESTORY:4.unmount reference vcelement @&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">modUri</span><span class="p">);</span>
+            <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">vom</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">vcid</span><span class="p">);</span>
+            <span class="nx">root</span><span class="p">.</span><span class="nx">unmountView</span><span class="p">();</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;VIEW DESTORY:5.destory view complete OK!! @&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">modUri</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="nx">getDestoryQueue</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+            <span class="kd">var</span> <span class="nx">queue</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">vom</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">vcid</span><span class="p">);</span>
+            
+            <span class="kd">function</span> <span class="nx">rc</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+                <span class="kd">var</span> <span class="nx">i</span><span class="p">;</span>
+                <span class="nx">queue</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">e</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">rc</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            
+            <span class="nx">rc</span><span class="p">(</span><span class="nx">root</span><span class="p">);</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;VIEW DESTORY:2.depth traversal all vcelements @&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">modUri</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">queue</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">setData</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">[</span><span class="nx">k</span><span class="p">].</span><span class="nx">toJSON</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">data</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="nx">k</span><span class="p">].</span><span class="nx">toJSON</span><span class="p">();</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="nx">data</span><span class="p">.</span><span class="nx">query</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">setRenderer</span><span class="p">();</span>
+        <span class="p">},</span>
+        <span class="nx">setRenderer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+            <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">rr</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">renderer</span><span class="p">,</span> <span class="nx">mcName</span><span class="p">,</span> <span class="nx">wrapperName</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">rr</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="nx">mcName</span> <span class="k">in</span> <span class="nx">rr</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="nx">wrapperName</span> <span class="k">in</span> <span class="nx">rr</span><span class="p">[</span><span class="nx">mcName</span><span class="p">])</span> <span class="p">{</span>
+                        <span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                            <span class="kd">var</span> <span class="nx">mn</span> <span class="o">=</span> <span class="nx">mcName</span><span class="p">,</span> <span class="nx">wn</span> <span class="o">=</span> <span class="nx">wrapperName</span><span class="p">;</span>
+                            <span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">rr</span><span class="p">[</span><span class="nx">mn</span><span class="p">][</span><span class="nx">wn</span><span class="p">];</span>
+                            <span class="nx">self</span><span class="p">.</span><span class="nx">data</span><span class="p">[</span><span class="nx">mn</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nx">wn</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+                                <span class="k">return</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">self</span><span class="p">,</span> <span class="nx">mn</span><span class="p">);</span>
+                            <span class="p">};</span>
+                        <span class="p">})();</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">delegateEvents</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+            <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span>
+            <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">_type</span> <span class="k">in</span> <span class="nx">events</span><span class="p">)</span> <span class="p">{</span>
+                <span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+                    <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="nx">_type</span><span class="p">;</span>
+                    <span class="nx">node</span><span class="p">[</span><span class="s2">&quot;on&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+                        <span class="kd">var</span> <span class="nx">event</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">event</span><span class="p">;</span>
+                        <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="nx">event</span><span class="p">.</span><span class="nx">srcElement</span><span class="p">;</span>
+                        <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">target</span><span class="p">.</span><span class="nx">nodeType</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+                        <span class="p">}</span>
+                        <span class="kd">var</span> <span class="nx">eventinfo</span> <span class="o">=</span> <span class="nx">target</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">&quot;mx&quot;</span> <span class="o">+</span> <span class="nx">type</span><span class="p">);</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">eventinfo</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="nx">eventinfo</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">),</span> <span class="nx">eventArr</span><span class="p">,</span> <span class="nx">eventKey</span><span class="p">;</span>
+                            <span class="kd">var</span> <span class="nx">vc</span> <span class="o">=</span> <span class="nx">vom</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">root</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+                            <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="nx">vc</span><span class="p">.</span><span class="nx">view</span><span class="p">;</span>
+                            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">events</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                                <span class="nx">eventArr</span> <span class="o">=</span> <span class="nx">events</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">);</span>
+                                <span class="nx">eventKey</span> <span class="o">=</span> <span class="nx">eventArr</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+                                <span class="k">if</span> <span class="p">(</span><span class="nx">view</span><span class="p">.</span><span class="nx">events</span> <span class="o">&amp;&amp;</span> <span class="nx">view</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">]</span> <span class="o">&amp;&amp;</span> <span class="nx">view</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">][</span><span class="nx">eventKey</span><span class="p">])</span> <span class="p">{</span>
+                                    <span class="nx">view</span><span class="p">.</span><span class="nx">events</span><span class="p">[</span><span class="nx">type</span><span class="p">][</span><span class="nx">eventKey</span><span class="p">](</span><span class="nx">view</span><span class="p">,</span> <span class="nx">view</span><span class="p">.</span><span class="nx">idIt</span><span class="p">(</span><span class="nx">target</span><span class="p">),</span> <span class="nx">eventArr</span><span class="p">);</span>
+                                <span class="p">}</span>
+                            <span class="p">}</span>
+                        <span class="p">}</span>
+                        <span class="nx">target</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                        <span class="nx">root</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+                    <span class="p">};</span>
+                <span class="p">})();</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nx">idIt</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">id</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">node</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">uniqueId</span><span class="p">(</span><span class="s2">&quot;mxevt-&quot;</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="nx">id</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+            <span class="nx">node</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nx">id</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">});</span>
+    <span class="k">return</span> <span class="nx">MxView</span><span class="p">;</span>
+<span class="p">});</span>
+</pre></div>
+
+                    </div>
+			</div>
+		</div>
+		<div class="yui-b">
+            <div class="nav">
+
+                    <div id="moduleList" class="module">
+                        <h4>Modules</h4>
+                        <ul class="content">
+                                <li class="selected"><a href="module_magix.html" title="magix">magix</a></li>
+                        </ul>
+                    </div>
+
+
+                    <div id="fileList" class="module">
+                        <h4>Files</h4>
+                        <ul class="content">        
+                                <li class=""><a href="controller.js.html" title="controller.js">controller.js</a></li>
+                                <li class=""><a href="helper.js.html" title="helper.js">helper.js</a></li>
+                                <li class=""><a href="magix.js.html" title="magix.js">magix.js</a></li>
+                                <li class=""><a href="mu.js.html" title="mu.js">mu.js</a></li>
+                                <li class=""><a href="vcelement.js.html" title="vcelement.js">vcelement.js</a></li>
+                                <li class="selected"><a href="view.js.html" title="view.js">view.js</a></li>
+                                <li class=""><a href="vom.js.html" title="vom.js">vom.js</a></li>
+                        </ul>
+                    </div>
+
+
+
+
+
+            </div>
+		</div>
+	</div>
+	<div id="ft">
+        <hr />
+        Copyright &copy; 2011 magixjs.com All rights reserved.
+	</div>
+</div>
+<script type="text/javascript">
+
+    var ALL_YUI_PROPS = [];
+</script>
+</body>
+</html>
