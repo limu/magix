@@ -1,3 +1,14 @@
+/**
+ * Magix View 模块
+ * @module view
+ * @requires backbone,underscore,libs/magix/vom,libs.magix/controller,libs/magix/helper,libs/magix/mu
+ */
+/**
+ * Magix View基类.继承自Backbone.View.用于管理View声明周期,事件代理,渲染数据,以及响应Hash变化.
+ * @class View
+ * @param {Object} config
+ * @constructor 
+ */
 define(function(require, exports, module){
     var Backbone = require("backbone");
     var vom = require("./vom");

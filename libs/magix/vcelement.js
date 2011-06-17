@@ -1,3 +1,17 @@
+/**
+ * Magix ViewContainer节点元素
+ * @module vcelement
+ * @requires underscore,backbone,libs/magix/controller
+ * @require.asynces libs/magix/vom
+ */
+/**
+ * ViewContainer节点元素,对应一个HTMLElement,可以通过mount,unMount将Magix View渲染至这个节点内.
+ * @class Vcelement
+ * @namespace libs.magix
+ * @constructor
+ * @param {HTMLElement} node (可选)View根节点
+ * @param {String} id (可选)View根节点id 
+ */
 define(function(require, exports, module){
     var VCTAG = "mxvc";
     //hack for custom tag for ie
@@ -86,32 +100,6 @@ define(function(require, exports, module){
                     window.MXRootView = self.view;
                 }
             });
-        },
-        mountViewOld: function(viewName, options){
-            this.mounted = true;
-            var oldViewName = this.getAttribute("view_name");
-            if (viewName) {
-                this.setAttribute("view_name", viewName);
-            }
-            var self = this;
-            if (viewName && viewName == oldViewName) {
-                this.view.queryModel.change();
-            }
-            else {
-                if (this.view) {
-                    this.view.destory();
-                    this.view = null;
-                }
-                (module.load || require.async)(this.getAttribute("view_name"), function(View){
-                    options.vcid = self.id;
-                    options.el = self.id;
-                    options.viewName = self.getAttribute("view_name");
-                    self.view = new View(options);
-                    if (!window.MXRootView) {//TODO delete
-                        window.MXRootView = self.view;
-                    }
-                });
-            }
         },
         getAttribute: function(s){
             var node = document.getElementById(this.id);

@@ -1,3 +1,13 @@
+/**
+ * VOM(View Object Model)  管理vcelement
+ * @module vom
+ * @requires underscore,backbone,libs/magix/vcelement
+ */
+/**
+ * @class Vom
+ * @namespace libs.magix
+ * @static
+ */
 define(function(require){
     var _ = require("underscore");
     var MxVCElement = require("./vcelement");

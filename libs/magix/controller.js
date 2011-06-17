@@ -1,3 +1,14 @@
+/**
+ * Controller负责按照规则将hash值Route至指定的View.
+ * @module controller
+ * @requires backbone,undersocre,app/config/ini
+ */
+/**
+ * Controller负责按照规则将hash值Route至指定的View.
+ * @class Controller
+ * @namespace libs.magix
+ * @static
+ */
 define(function(require, exports, module){
     var Backbone = require("backbone");
     var _ = require("underscore");
@@ -16,6 +27,12 @@ define(function(require, exports, module){
                     p2v[k] = config.defaultViewName;
                 }
             }
+			/**
+			 * 存储全局共享信息,<br/>
+			 * 如require("libs/magix/controller").env.templates存储模板
+			 * @property env
+			 * @type Object
+			 */
             this.env = {
                 appHome: config.uri.split("app/config/ini")[0],
                 templates: {}
@@ -23,7 +40,6 @@ define(function(require, exports, module){
             return this;
         },
         _route: function(query){
-			
             this.referrer = this.query || null;
             this.query = query;
             this.pathName = config.indexPath;
@@ -37,6 +53,14 @@ define(function(require, exports, module){
         setPostData: function(o){
             this.postData = o;
         },
+        /**
+         * 将传入的queryString Merge到当前的hashQuery中,生成新的query.<br/>
+         * 原hash: #!/a/b/x=1&y=2&offset=20<br/>
+         * reqiure("libs/magix/controller").navigateTo("z=1&offset=0");<br/>
+         * 新hash: #!/a/b/x=1&y=2&z=3&offset=0<br/>
+         * @method navigateTo
+         * @param {Object} queryString
+         */
         navigateTo: function(q){
             var np = this.unParam(q);
             var v1 = _.clone(this.paraObj);
@@ -111,6 +135,25 @@ define(function(require, exports, module){
                 this.paraObj = this.unParam(paraStr);
             }
         },
+        /**
+         * 将传入的queryObject转化为key1=value1&key2=value2的queryString
+         * @method param
+         * @param {Object} queryObject
+         * @return {String}
+         */
+        param: function(o){
+            var res = [];
+            for (var k in o) {
+                res.push(k + "=" + o[k]);
+            }
+            return res.join("&");
+        },
+        /**
+         * 与param方法的相反,将传入的queryString转化为Object
+         * @method unParam
+         * @param {String} queryString
+         * @return {Object}
+         */
         unParam: function(s){
             var paraArr = s.split("&");
             var kv, res = {};
@@ -121,13 +164,6 @@ define(function(require, exports, module){
                 }
             }
             return res;
-        },
-        param: function(o){
-            var res = [];
-            for (var k in o) {
-                res.push(k + "=" + o[k]);
-            }
-            return res.join("&");
         }
     });
     if (!MxController.inst) {

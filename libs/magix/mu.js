@@ -1,3 +1,23 @@
+/**
+ * Magix扩展的Mustache
+ * @module mu
+ * @require mustache
+ */
+/**
+ * 扩展的Mustache类<br/>
+ * 支持简单的条件判断 如:
+<pre>
+{{#list}}
+&nbsp;&nbsp;&nbsp;&nbsp;{{#if(status==P)}}ID:{{id}},status:&lt;b style='color:green'>通过&lt;/b>{{/if(status==P)}}
+&nbsp;&nbsp;&nbsp;&nbsp;{{#if(status==W)}}ID:{{id}},status:等待{{/if(status==W)}}
+&nbsp;&nbsp;&nbsp;&nbsp;{{#if(status==R)}}ID:{{id}},status&lt;b style='color:red'>拒绝&lt;/b>{{/if(status==R)}}
+{{/list}}
+</pre>
+ * 对于数组对象可以通过{{__index__}}访问数组下标
+ * @class Mu
+ * @namespace lib.magix
+ * @static
+ */
 define(function(require){
     var Mustache = require("mustache");
     function addFns(template, data){
@@ -61,7 +81,7 @@ define(function(require){
                 addArrayIndex(v);
             }
             else 
-                if (typeof(v)=="object" && depth < 5) {
+                if (typeof(v) == "object" && depth < 5) {
                     findArray(v, depth + 1);
                 }
         }
@@ -69,7 +89,7 @@ define(function(require){
     function addArrayIndex(v){
         for (var i = 0; i < v.length; i++) {
             o = v[i];
-            if (typeof(o)=="object") {
+            if (typeof(o) == "object") {
                 if (i === 0) {
                     o.__first__ = true;
                 }
@@ -85,6 +105,13 @@ define(function(require){
         }
     }
     return {
+        /**
+         * 输出模板和数据,返回渲染后结果字符串,接口与Mustache完全一致
+         * @method to_html
+         * @param {String} template 模板字符串
+         * @param {Object} data 数据Object
+         * @return {String}
+         */
         to_html: function(template, data){
             if (typeof(data) == "object") {
                 findArray(data, 0);

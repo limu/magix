@@ -2,7 +2,7 @@
 <html xmlns:yui="http://yuilibrary.com/rdf/1.0/yui.rdf#">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<title>API: magix   controller.js  (MagixJS)</title>
+	<title>API: controller   controller.js  (MagixJS)</title>
 
 	<link rel="stylesheet" type="text/css" href="assets/reset-fonts-grids-min.css" />
 	<link rel="stylesheet" type="text/css" href="assets/api.css" />
@@ -15,10 +15,10 @@
 
 <div id="doc3" class="yui-t2">
 	<div id="hd">
-        <h1><a href="../" title="MagixJS">MagixJS</a></h1>
-        <h3>magix&nbsp; <span class="subtitle">0.2.0</span></h3>
-        <a href="../" title="MagixJS">MagixJS</a> 
-            &gt; <a href="./module_magix.html" title="magix">magix</a>
+        <h1><a href="index.html" title="MagixJS">MagixJS API DOC</a></h1>
+        <h3>controller&nbsp; <span class="subtitle">0.2.0</span></h3>
+        <a href="index.html" title="MagixJS">MagixJS API</a> 
+            &gt; <a href="./module_controller.html" title="controller">controller</a>
                 
                  &gt; controller.js (source view) 
         <form onsubmit="return false">
@@ -47,7 +47,18 @@
                         <style>
                             #doc3 .classopts { display:none; }
                         </style>
-                        <div class="highlight"><pre><span class="nx">define</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">require</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">module</span><span class="p">){</span>
+                        <div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Controller负责按照规则将hash值Route至指定的View.</span>
+<span class="cm"> * @module controller</span>
+<span class="cm"> * @requires backbone,undersocre,app/config/ini</span>
+<span class="cm"> */</span>
+<span class="cm">/**</span>
+<span class="cm"> * Controller负责按照规则将hash值Route至指定的View.</span>
+<span class="cm"> * @class Controller</span>
+<span class="cm"> * @namespace libs.magix</span>
+<span class="cm"> * @static</span>
+<span class="cm"> */</span>
+<span class="nx">define</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">require</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">module</span><span class="p">){</span>
     <span class="kd">var</span> <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;backbone&quot;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;underscore&quot;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;app/config/ini&quot;</span><span class="p">);</span>
@@ -65,6 +76,12 @@
                     <span class="nx">p2v</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">defaultViewName</span><span class="p">;</span>
                 <span class="p">}</span>
             <span class="p">}</span>
+			<span class="cm">/**</span>
+<span class="cm">			 * 存储全局共享信息,&lt;br/&gt;</span>
+<span class="cm">			 * 如require(&quot;libs/magix/controller&quot;).env.templates存储模板</span>
+<span class="cm">			 * @property env</span>
+<span class="cm">			 * @type Object</span>
+<span class="cm">			 */</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="nx">appHome</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">uri</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;app/config/ini&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
                 <span class="nx">templates</span><span class="o">:</span> <span class="p">{}</span>
@@ -72,7 +89,6 @@
             <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
         <span class="p">},</span>
         <span class="nx">_route</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">query</span><span class="p">){</span>
-			
             <span class="k">this</span><span class="p">.</span><span class="nx">referrer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">query</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">query</span> <span class="o">=</span> <span class="nx">query</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">pathName</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">indexPath</span><span class="p">;</span>
@@ -86,6 +102,14 @@
         <span class="nx">setPostData</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">){</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">postData</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
         <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * 将传入的queryString Merge到当前的hashQuery中,生成新的query.&lt;br/&gt;</span>
+<span class="cm">         * 原hash: #!/a/b/x=1&amp;y=2&amp;offset=20&lt;br/&gt;</span>
+<span class="cm">         * reqiure(&quot;libs/magix/controller&quot;).navigateTo(&quot;z=1&amp;offset=0&quot;);&lt;br/&gt;</span>
+<span class="cm">         * 新hash: #!/a/b/x=1&amp;y=2&amp;z=3&amp;offset=0&lt;br/&gt;</span>
+<span class="cm">         * @method navigateTo</span>
+<span class="cm">         * @param {Object} queryString</span>
+<span class="cm">         */</span>
         <span class="nx">navigateTo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">q</span><span class="p">){</span>
             <span class="kd">var</span> <span class="nx">np</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unParam</span><span class="p">(</span><span class="nx">q</span><span class="p">);</span>
             <span class="kd">var</span> <span class="nx">v1</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span><span class="p">);</span>
@@ -160,6 +184,25 @@
                 <span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unParam</span><span class="p">(</span><span class="nx">paraStr</span><span class="p">);</span>
             <span class="p">}</span>
         <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * 将传入的queryObject转化为key1=value1&amp;key2=value2的queryString</span>
+<span class="cm">         * @method param</span>
+<span class="cm">         * @param {Object} queryObject</span>
+<span class="cm">         * @return {String}</span>
+<span class="cm">         */</span>
+        <span class="nx">param</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">){</span>
+            <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="p">[];</span>
+            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">k</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">[</span><span class="nx">k</span><span class="p">]);</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">);</span>
+        <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * 与param方法的相反,将传入的queryString转化为Object</span>
+<span class="cm">         * @method unParam</span>
+<span class="cm">         * @param {String} queryString</span>
+<span class="cm">         * @return {Object}</span>
+<span class="cm">         */</span>
         <span class="nx">unParam</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">){</span>
             <span class="kd">var</span> <span class="nx">paraArr</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">);</span>
             <span class="kd">var</span> <span class="nx">kv</span><span class="p">,</span> <span class="nx">res</span> <span class="o">=</span> <span class="p">{};</span>
@@ -170,13 +213,6 @@
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
-        <span class="p">},</span>
-        <span class="nx">param</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">){</span>
-            <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="p">[];</span>
-            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">k</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">[</span><span class="nx">k</span><span class="p">]);</span>
-            <span class="p">}</span>
-            <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">});</span>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">MxController</span><span class="p">.</span><span class="nx">inst</span><span class="p">)</span> <span class="p">{</span>
@@ -196,21 +232,28 @@
                     <div id="moduleList" class="module">
                         <h4>Modules</h4>
                         <ul class="content">
-                                <li class="selected"><a href="module_magix.html" title="magix">magix</a></li>
+                                <li class="selected"><a href="module_controller.html" title="controller">controller</a></li>
+                                <li class=""><a href="module_helper.html" title="helper">helper</a></li>
+                                <li class=""><a href="module_magix.html" title="magix">magix</a></li>
+                                <li class=""><a href="module_mu.html" title="mu">mu</a></li>
+                                <li class=""><a href="module_vcelement.html" title="vcelement">vcelement</a></li>
+                                <li class=""><a href="module_view.html" title="view">view</a></li>
+                                <li class=""><a href="module_vom.html" title="vom">vom</a></li>
                         </ul>
                     </div>
 
+                    <div id="classList" class="module">
+                        <h4>Classes</h4>
+                        <ul class="content">
+                                <li class=""><a href="libs.magix.Controller.html" title="libs.magix.Controller">libs.magix.Controller</a></li>
+                        </ul>
+                    </div>
 
                     <div id="fileList" class="module">
                         <h4>Files</h4>
                         <ul class="content">        
                                 <li class="selected"><a href="controller.js.html" title="controller.js">controller.js</a></li>
                                 <li class=""><a href="helper.js.html" title="helper.js">helper.js</a></li>
-                                <li class=""><a href="magix.js.html" title="magix.js">magix.js</a></li>
-                                <li class=""><a href="mu.js.html" title="mu.js">mu.js</a></li>
-                                <li class=""><a href="vcelement.js.html" title="vcelement.js">vcelement.js</a></li>
-                                <li class=""><a href="view.js.html" title="view.js">view.js</a></li>
-                                <li class=""><a href="vom.js.html" title="vom.js">vom.js</a></li>
                         </ul>
                     </div>
 
@@ -228,7 +271,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [];
+    var ALL_YUI_PROPS = [{"url": "libs.magix.Controller.html#property_env", "access": "", "host": "libs.magix.Controller", "type": "property", "name": "env"}, {"url": "libs.magix.Controller.html#method_navigateTo", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "navigateTo"}, {"url": "libs.magix.Controller.html#method_param", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "param"}, {"url": "libs.magix.Controller.html#method_unParam", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "unParam"}];
 </script>
 </body>
 </html>

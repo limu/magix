@@ -2,6 +2,12 @@
  * magix API文档
  * @module magix
  */
+/**
+ * magix History 服务
+ * @class History
+ * @namespace Magix
+ * @static
+ */
 (function(){
     if (!window.console) {
         window.console = {
@@ -31,7 +37,25 @@
         interval: 50,
         intervalId: 0,
         iframeSrc: "",
-        init: function(iframeSrc,router){
+        /**
+         * Magix应用程序入口 启动History服务
+         * <pre>
+         * &lt;script src="seajs.js">&lt;/script>
+         * &lt;script src="magix.js">&lt;/script>
+         * &lt;script>
+         * 	Magix.History.init("mxhistory.html", function(query){
+         * 	&nbsp;&nbsp;&nbsp;&nbsp;seajs.use(['libs/magix/controller'], function(ctrl){
+         * 	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ctrl._route(query);
+         * 	&nbsp;&nbsp;&nbsp;&nbsp;});
+         * 	});
+         * &lt;/script>
+         * </pre>
+         * @method init
+         * @param {String} iframeSrc 用于IE6/7记录历史的iframe地址,注意需要填写相对于主页的相对路径.
+         * @param {Function} router 回调函数,在hash发生变化时触发,将会接到一个参数query.
+         * @namespace Magix
+         */
+        init: function(iframeSrc, router){
             this.iframeSrc = iframeSrc;
             this.hash = location.hash;
             this.oldHash = this.hash;
@@ -40,7 +64,7 @@
             this.showIframe = this.isIE && (!docMode || docMode < 7);
             this.wirteFrame(iframeSrc);
             this.regHashChange();
-			this.router = router;
+            this.router = router;
             if (!this.showIframe) {
                 this.route(this.hash);
             }
@@ -78,8 +102,8 @@
                 h.hash = h.oldHash = "#" + ns;
                 location.hash = ns;
             }//else{
-				this.route(this.hash);
-			//}
+            this.route(this.hash);
+            //}
         },
         route: function(query){
             if (query.indexOf("#") === 0) {
@@ -98,7 +122,7 @@
             var self = this;
             if (this.showIframe) {
                 //document.write("<iframe onload='Magix.History.frameLoad();' id='MxHistory' src='" + this.iframeSrc + "?" + (this.hash ? this.hash.substr(1) : "") + "' width='90%'></iframe>");
-				document.write("<iframe onload='Magix.History.frameLoad();' id='MxHistory' src='" + this.iframeSrc + "?" + (this.hash ? this.hash.substr(1) : "") + "' style='z-index:99998;visibility:hidden;position:absolute;' border='0' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' ></iframe>");
+                document.write("<iframe onload='Magix.History.frameLoad();' id='MxHistory' src='" + this.iframeSrc + "?" + (this.hash ? this.hash.substr(1) : "") + "' style='z-index:99998;visibility:hidden;position:absolute;' border='0' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' ></iframe>");
             }
             window.setTimeout((function(){
                 self.iframe = document.getElementById("MxHistory");
