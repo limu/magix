@@ -1,7 +1,7 @@
 /*
-Copyright 2011, SeaJS v0.9.3
+Copyright 2011, SeaJS v0.9.5
 MIT Licensed
-build time: Jun 7 15:40
+build time: Jun 20 20:52
 */
 
 
@@ -21,7 +21,7 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '0.9.3';
+seajs.version = '0.9.5';
 
 
 // Module status：
@@ -110,13 +110,15 @@ seajs._fn = {};
       };
 
 
-  var forEach = util.each = function(arr, fn) {
-    var val, i = 0, len = arr.length;
-    for (val = arr[0];
-         i < len && fn(val, i, arr) !== false;
-         val = arr[++i]) {
-    }
-  };
+  var forEach = util.each = AP.forEach ?
+      function(arr, fn) {
+        arr.forEach(fn);
+      } :
+      function(arr, fn) {
+        for (var i = 0, len = arr.length; i < len; i++) {
+          fn(arr[i], i, arr);
+        }
+      };
 
 
   util.map = AP.map ?
@@ -674,7 +676,7 @@ seajs._fn = {};
   };
 
 
-  var noCacheTimeStamp = 'seajs-timestamp=' + util.now();
+  var noCacheTimeStamp = 'seajs_t=' + util.now();
 
   util.addNoCacheTimeStamp = function(url) {
     return url + (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
@@ -861,6 +863,29 @@ seajs._fn = {};
 })(seajs._util, seajs._data, seajs._fn, this);
 
 /**
+ * @fileoverview Module Constructor.
+ */
+
+(function(fn) {
+
+  /**
+   * Module constructor.
+   * @constructor
+   * @param {string=} id The module id.
+   * @param {Array.<string>|string=} deps The module dependencies.
+   * @param {function()|Object} factory The module factory function.
+   */
+  fn.Module = function(id, deps, factory) {
+
+    this.id = id;
+    this.dependencies = deps || [];
+    this.factory = factory;
+
+  };
+
+})(seajs._fn);
+
+/**
  * @fileoverview Module authoring format.
  */
 
@@ -869,7 +894,7 @@ seajs._fn = {};
   /**
    * Defines a module.
    * @param {string=} id The module id.
-   * @param {Array.<string>=} deps The module dependencies.
+   * @param {Array.<string>|string=} deps The module dependencies.
    * @param {function()|Object} factory The module factory function.
    */
   fn.define = function(id, deps, factory) {
@@ -889,7 +914,7 @@ seajs._fn = {};
       id = '';
     }
 
-    var mod = { id: id, dependencies: deps || [], factory: factory };
+    var mod = new fn.Module(id, deps, factory);
     var url;
 
     if (document.attachEvent && !window.opera) {
