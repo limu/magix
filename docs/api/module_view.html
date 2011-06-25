@@ -60,7 +60,7 @@
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Magix View基类.继承自Backbone.View.用于管理View声明周期,事件代理,渲染数据,以及响应Hash变化.", "guessedname": "libs.magix.View", "name": "libs.magix.View"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Magix View基类.继承自Backbone.View.用于管理View声明周期,事件代理,渲染数据,以及响应Hash变化.<br/>\r\nMagixView子类位于app/views目录之下,通过重写init,render,queryModelChange,renderer,events来扩展出具体子类,如:<br/>\r\ndefine(function(){<br/>\r\n&nbsp;&nbsp;&nbsp;&nbsp;require(\"libs/magix/view\").extend({init:...,render:...});<br/>\r\n}<br/>\r\n通常不会直接通过new View(config)来创建类的实例,而是通过vcElement.mountView(\"viewName\")的方式将view装载入一个容器(<a href=\"module_vcelement.html\">vcelement</a>)时进行实例化.", "guessedname": "libs.magix.View", "name": "libs.magix.View"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>
@@ -119,7 +119,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [];
+    var ALL_YUI_PROPS = [{"url": "libs.magix.View.html#property_events", "access": "", "host": "libs.magix.View", "type": "property", "name": "events"}, {"url": "libs.magix.View.html#method_init", "access": "", "host": "libs.magix.View", "type": "method", "name": "init"}, {"url": "libs.magix.View.html#method_queryModelChange", "access": "", "host": "libs.magix.View", "type": "method", "name": "queryModelChange"}, {"url": "libs.magix.View.html#method_render", "access": "", "host": "libs.magix.View", "type": "method", "name": "render"}, {"url": "libs.magix.View.html#property_renderer", "access": "", "host": "libs.magix.View", "type": "property", "name": "renderer"}, {"url": "libs.magix.View.html#method_setData", "access": "", "host": "libs.magix.View", "type": "method", "name": "setData"}];
 </script>
 </body>
 </html>

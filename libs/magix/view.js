@@ -4,9 +4,14 @@
  * @requires backbone,underscore,libs/magix/vom,libs.magix/controller,libs/magix/helper,libs/magix/mu
  */
 /**
- * Magix View基类.继承自Backbone.View.用于管理View声明周期,事件代理,渲染数据,以及响应Hash变化.
+ * Magix View基类.继承自Backbone.View.用于管理View声明周期,事件代理,渲染数据,以及响应Hash变化.<br/>
+ * MagixView子类位于app/views目录之下,通过重写init,render,queryModelChange,renderer,events来扩展出具体子类,如:<br/>
+ * define(function(){<br/>
+ * &nbsp;&nbsp;&nbsp;&nbsp;require("libs/magix/view").extend({init:...,render:...});<br/>
+ * }<br/>
+ * 通常不会直接通过new View(config)来创建类的实例,而是通过vcElement.mountView("viewName")的方式将view装载入一个容器(<a href="module_vcelement.html">vcelement</a>)时进行实例化.
  * @class View
- * @param {Object} config
+ * @param {Object} config config其中必须包含viewName,vcid和queryModel三项,指明view的名字,展示view的容器id和当前的query
  * @constructor 
  */
 define(function(require, exports, module){
@@ -17,6 +22,10 @@ define(function(require, exports, module){
     var helper = require("./helper");
     var Mustache = require("libs/magix/mu");
     var MxView = Backbone.View.extend({
+		/**
+		 * 实例化过程会调用init方法,在这个方法中可以完成一些初始化任务,比如载入将要使用的Model/Collection对象
+		 * @method init
+		 */
         initialize: function(o){
             var self = this;
             this.subViewsChange = [];
@@ -81,9 +90,21 @@ define(function(require, exports, module){
                 }
             }
         },
+		/**
+		 * query发生变化事件响应函数,基类中是个空方法,各子类在需要时实现这个方法<br/>
+		 * 注意,并非query发生变化一定会触发这个方法,需要由父View决定是否将change事件下发给子View.<br/>
+		 * 相应的return true将会下发change事件给子view,false反之,return vcid数组,将事件传递给指定的子View.
+		 * @method queryModelChange
+		 * @return {Boolean|Array}
+		 */
         queryModelChange: function(){
         
         },
+		/**
+		 * view渲染方法,各子类可以覆盖<br/>
+		 * 默认会将query交给同名的模板文件,渲染至vcelement内.
+		 * @method render
+		 */
         render: function(){
             var node = document.getElementById(this.vcid);
             node.innerHTML = Mustache.to_html(this.template, this.queryModel.toJSON());
@@ -133,6 +154,11 @@ define(function(require, exports, module){
             console.log("VIEW DESTORY:2.depth traversal all vcelements @" + this.modUri);
             return queue;
         },
+		/**
+		 * 设置数据到this.data,内部会自动把renderer附加到data中<br/>
+		 * mustahce.tohtml(template,this.setData({list:...}));
+		 * @method setData
+		 */
         setData: function(data){
             this.data = data;
             for (var k in data) {
@@ -143,6 +169,11 @@ define(function(require, exports, module){
             data.query = this.queryModel.toJSON();
             this.setRenderer();
         },
+		/**
+		 * 为复杂数据渲染构建renderer<br/>
+		 * TODO:细化方法使用
+		 * @property renderer
+		 */
         setRenderer: function(){
             var self = this, rr = this.renderer, mcName, wrapperName;
             if (rr) {
@@ -159,6 +190,11 @@ define(function(require, exports, module){
                 }
             }
         },
+		/**
+		 * 所有事件处理函数
+		 * TODO:细化方法使用
+		 * @property events
+		 */
         delegateEvents: function(){
             var events = this.events;
             var node = document.getElementById(this.el);

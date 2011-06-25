@@ -48,11 +48,22 @@
                             #doc3 .classopts { display:none; }
                         </style>
                         <div class="highlight"><pre><span class="cm">/**</span>
-<span class="cm"> * magix API文档</span>
+<span class="cm"> * 开始建立一个Magix应用:&lt;br/&gt;</span>
+<span class="cm"> * 1.简历libs目录,放置libs/seajs,libs/magix相关文件&lt;br/&gt;</span>
+<span class="cm"> * 2.建立index.html.&lt;br/&gt;</span>
+<span class="cm"> * 3.建立名为mxhistory.html的空白html文件,与index.html放置在同一目录下.&lt;br/&gt;</span>
+<span class="cm"> * 4.建立app,app/views,app/config目录,和app/config/ini.js文件.&lt;br/&gt;</span>
+<span class="cm"> * 5.在index.html中先后引入seajs.js和magix.js&lt;br/&gt;</span>
+<span class="cm"> * 6.通过seajs.config(alieas{libs:&quot;path/to/libs&quot;,app:&quot;path/to/app&quot;});指定libs和app的实际地址.&lt;br/&gt;</span>
+<span class="cm"> * 7.添加启动Maigx历史服务:Magix.History.init();&lt;br/&gt;</span>
+<span class="cm"> * 8.参照ini_sample.js填写app/config/ini.js文件,主要填写首页和404页面地址,以及配置pathname对应的viewname.&lt;br/&gt;</span>
+<span class="cm"> * TODO:创建应用详情链接</span>
 <span class="cm"> * @module magix</span>
 <span class="cm"> */</span>
 <span class="cm">/**</span>
-<span class="cm"> * magix History 服务</span>
+<span class="cm"> * Magix History 服务,为使基于Magix的Ajax应用能够在各种浏览器中都能够正常使用其&quot;前进&quot;,&quot;后退&quot;功能&lt;br/&gt;</span>
+<span class="cm"> * 因为Backbone.History在IE6/7下存在&lt;a href=&quot;https://github.com/documentcloud/backbone/issues/228&quot; target=&quot;_blank&quot;&gt;bug&lt;/a&gt;,所以Maigx重写了这部分代码&lt;br/&gt;</span>
+<span class="cm"> * 因为这部分代码中包含document.write.所以无法封装为seajs模块使用.且必须将magix.js通过外联方式&amp;lt;script src=&#39;magix.js&#39;&gt;&amp;lt;/script&gt;节点直接引入页面.</span>
 <span class="cm"> * @class History</span>
 <span class="cm"> * @namespace Magix</span>
 <span class="cm"> * @static</span>
@@ -88,24 +99,12 @@
         <span class="nx">iframeSrc</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="cm">/**</span>
 <span class="cm">         * Magix应用程序入口 启动History服务</span>
-<span class="cm">         * &lt;pre&gt;</span>
-<span class="cm">         * &amp;lt;script src=&quot;seajs.js&quot;&gt;&amp;lt;/script&gt;</span>
-<span class="cm">         * &amp;lt;script src=&quot;magix.js&quot;&gt;&amp;lt;/script&gt;</span>
-<span class="cm">         * &amp;lt;script&gt;</span>
-<span class="cm">         * 	Magix.History.init(&quot;mxhistory.html&quot;, function(query){</span>
-<span class="cm">         * 	&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;seajs.use([&#39;libs/magix/controller&#39;], function(ctrl){</span>
-<span class="cm">         * 	&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;ctrl._route(query);</span>
-<span class="cm">         * 	&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;});</span>
-<span class="cm">         * 	});</span>
-<span class="cm">         * &amp;lt;/script&gt;</span>
-<span class="cm">         * &lt;/pre&gt;</span>
 <span class="cm">         * @method init</span>
-<span class="cm">         * @param {String} iframeSrc 用于IE6/7记录历史的iframe地址,注意需要填写相对于主页的相对路径.</span>
-<span class="cm">         * @param {Function} router 回调函数,在hash发生变化时触发,将会接到一个参数query.</span>
+<span class="cm">         * @param {String} iframeSrc (可选,默认为&quot;mxhistory.html&quot;) 用于IE6/7记录历史的iframe地址,注意需要填写相对于主页的相对路径.</span>
 <span class="cm">         * @namespace Magix</span>
 <span class="cm">         */</span>
         <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">iframeSrc</span><span class="p">,</span> <span class="nx">router</span><span class="p">){</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">iframeSrc</span> <span class="o">=</span> <span class="nx">iframeSrc</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">iframeSrc</span> <span class="o">=</span> <span class="nx">iframeSrc</span> <span class="o">||</span> <span class="s2">&quot;mxhistory.html&quot;</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">oldHash</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">hash</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">isIE</span> <span class="o">=</span> <span class="nx">navigator</span><span class="p">.</span><span class="nx">userAgent</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;msie&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
@@ -113,7 +112,11 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">showIframe</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">isIE</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="o">!</span><span class="nx">docMode</span> <span class="o">||</span> <span class="nx">docMode</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">wirteFrame</span><span class="p">(</span><span class="nx">iframeSrc</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">regHashChange</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">router</span> <span class="o">=</span> <span class="nx">router</span><span class="p">;</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">router</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">query</span><span class="p">){</span>
+                <span class="nx">seajs</span><span class="p">.</span><span class="nx">use</span><span class="p">([</span><span class="s1">&#39;libs/magix/controller&#39;</span><span class="p">],</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ctrl</span><span class="p">){</span>
+                    <span class="nx">ctrl</span><span class="p">.</span><span class="nx">_route</span><span class="p">(</span><span class="nx">query</span><span class="p">);</span>
+                <span class="p">});</span>
+            <span class="p">};</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">showIframe</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">this</span><span class="p">.</span><span class="nx">route</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hash</span><span class="p">);</span>
             <span class="p">}</span>
@@ -178,7 +181,6 @@
             <span class="p">}),</span> <span class="mi">0</span><span class="p">);</span>
         <span class="p">}</span>
     <span class="p">};</span>
-    <span class="c1">//Magix.History.init(&quot;mxhistory.html&quot;);</span>
 <span class="p">})();</span>
 </pre></div>
 
@@ -204,7 +206,7 @@
                     <div id="classList" class="module">
                         <h4>Classes</h4>
                         <ul class="content">
-                                <li class=""><a href="lib.magix.Helper.html" title="lib.magix.Helper">lib.magix.Helper</a></li>
+                                <li class=""><a href="libs.magix.Helper.html" title="libs.magix.Helper">libs.magix.Helper</a></li>
                         </ul>
                     </div>
 
@@ -229,7 +231,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"url": "lib.magix.Helper.html#method_getTemplate", "access": "", "host": "lib.magix.Helper", "type": "method", "name": "getTemplate"}];
+    var ALL_YUI_PROPS = [{"url": "libs.magix.Helper.html#method_getTemplate", "access": "", "host": "libs.magix.Helper", "type": "method", "name": "getTemplate"}];
 </script>
 </body>
 </html>

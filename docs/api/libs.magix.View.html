@@ -59,7 +59,12 @@
   
 
                     <div class="summary description" property="yui:description">
-                        Magix View基类.继承自Backbone.View.用于管理View声明周期,事件代理,渲染数据,以及响应Hash变化.
+                        Magix View基类.继承自Backbone.View.用于管理View声明周期,事件代理,渲染数据,以及响应Hash变化.<br/>
+MagixView子类位于app/views目录之下,通过重写init,render,queryModelChange,renderer,events来扩展出具体子类,如:<br/>
+define(function(){<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;require("libs/magix/view").extend({init:...,render:...});<br/>
+}<br/>
+通常不会直接通过new View(config)来创建类的实例,而是通过vcElement.mountView("viewName")的方式将view装载入一个容器(<a href="module_vcelement.html">vcelement</a>)时进行实例化.
                     </div>
 
                         <div class="section constructor details" rel="yui:constructor" resource="#constructor">
@@ -82,7 +87,7 @@
                                                     <code><span property="yui:name">config</span>
                                                     &lt;<span property="yui:type">Object</span>&gt;
                                                     </code>
-                                                    <span property="yui:description"></span>
+                                                    <span property="yui:description"> config其中必须包含viewName,vcid和queryModel三项,指明view的名字,展示view的容器id和当前的query</span>
                                                 </dd>
                                         </dl>
                                     
@@ -93,10 +98,176 @@
                     </div>
                     
                     <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:property" resource="#property_events">
+                                    <h4><a name="property_events" property="yui:name">events</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            所有事件处理函数
+TODO:细化方法使用
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_renderer">
+                                    <h4><a name="property_renderer" property="yui:name">renderer</a>
+                                        - <code><span property="yui:type">object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            为复杂数据渲染构建renderer<br/>
+TODO:细化方法使用
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
                     </div>
 
                     <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:method" resource="#method_init">
+                                    <h4>
+                                        <a name="method_init">init</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">init</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            实例化过程会调用init方法,在这个方法中可以完成一些初始化任务,比如载入将要使用的Model/Collection对象
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_queryModelChange">
+                                    <h4>
+                                        <a name="method_queryModelChange">queryModelChange</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        Boolean|Array
+                                            <strong property="yui:name">queryModelChange</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            query发生变化事件响应函数,基类中是个空方法,各子类在需要时实现这个方法<br/>
+注意,并非query发生变化一定会触发这个方法,需要由父View决定是否将change事件下发给子View.<br/>
+相应的return true将会下发change事件给子view,false反之,return vcid数组,将事件传递给指定的子View.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_render">
+                                    <h4>
+                                        <a name="method_render">render</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">render</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            view渲染方法,各子类可以覆盖<br/>
+默认会将query交给同名的模板文件,渲染至vcelement内.
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_setData">
+                                    <h4>
+                                        <a name="method_setData">setData</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">setData</strong>
+                                           (
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            设置数据到this.data,内部会自动把renderer附加到data中<br/>
+mustahce.tohtml(template,this.setData({list:...}));
+                                        </div>
+
+                                        <div class="description">
+
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -141,7 +312,23 @@
                         </ul>
                     </div>
 
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property_events" title="events">events</a></li>
+                                <li class=""><a href="#property_renderer" title="renderer">renderer</a></li>
+                        </ul>
+                    </div>
 
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#method_init" title="init">init</a></li>
+                                <li class=""><a href="#method_queryModelChange" title="queryModelChange">queryModelChange</a></li>
+                                <li class=""><a href="#method_render" title="render">render</a></li>
+                                <li class=""><a href="#method_setData" title="setData">setData</a></li>
+                        </ul>
+                    </div>
 
 
 
@@ -155,7 +342,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [];
+    var ALL_YUI_PROPS = [{"url": "libs.magix.View.html#property_events", "access": "", "host": "libs.magix.View", "type": "property", "name": "events"}, {"url": "libs.magix.View.html#method_init", "access": "", "host": "libs.magix.View", "type": "method", "name": "init"}, {"url": "libs.magix.View.html#method_queryModelChange", "access": "", "host": "libs.magix.View", "type": "method", "name": "queryModelChange"}, {"url": "libs.magix.View.html#method_render", "access": "", "host": "libs.magix.View", "type": "method", "name": "render"}, {"url": "libs.magix.View.html#property_renderer", "access": "", "host": "libs.magix.View", "type": "property", "name": "renderer"}, {"url": "libs.magix.View.html#method_setData", "access": "", "host": "libs.magix.View", "type": "method", "name": "setData"}];
 </script>
 </body>
 </html>

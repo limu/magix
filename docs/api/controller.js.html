@@ -68,8 +68,7 @@
     <span class="p">};</span>
     
     <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">MxController</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span> <span class="p">{</span>
-        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">){</span>
-        
+        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">){</span>        
             <span class="kd">var</span> <span class="nx">p2v</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">pathViewMap</span><span class="p">,</span> <span class="nx">viewName</span><span class="p">;</span>
             <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">p2v</span><span class="p">)</span> <span class="p">{</span>
                 <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">p2v</span><span class="p">[</span><span class="nx">k</span><span class="p">])</span> <span class="p">{</span>
@@ -125,6 +124,22 @@
         <span class="nx">_goto</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">){</span>
             <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="s2">&quot;!&quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">;</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * 查询对象,包含query,pathname,referrer,postData和hash包含的众多参数&lt;br/&gt;</span>
+<span class="cm">		 * 这是一个Backbone.Model对象实例,可以通过监听该对象的change事件,监视url的变化.&lt;br/&gt;</span>
+<span class="cm">		 * hash解析规则,&quot;#!/a/b/x=1&amp;y=2&amp;z=3&quot; 等同于 &quot;#/a/b/x=1&amp;y=2&amp;z=3&quot;,将被解析为:&lt;br/&gt;</span>
+<span class="cm">		 * {&lt;br/&gt;</span>
+<span class="cm">		 * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;referrer:null,&lt;br/&gt;</span>
+<span class="cm">		 * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;postdata:null,&lt;br/&gt;</span>
+<span class="cm">		 * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;pathname:&quot;/a/b&quot;,&lt;br/&gt;</span>
+<span class="cm">		 * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;query:&quot;/a/b/x=1&amp;y=2&amp;z=3&quot;,&lt;br/&gt;</span>
+<span class="cm">		 * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;x:&quot;1&quot;,&lt;br/&gt;</span>
+<span class="cm">		 * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;y:&quot;2&quot;,&lt;br/&gt;</span>
+<span class="cm">		 * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;z:&quot;3&quot;&lt;br/&gt;</span>
+<span class="cm">		 * }</span>
+<span class="cm">		 * @property queryModel</span>
+<span class="cm">		 * @type Backbone.Model</span>
+<span class="cm">		 */</span>
         <span class="nx">_mountView</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
             <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">queryObject</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getQueryObject</span><span class="p">();</span>
@@ -271,7 +286,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"url": "libs.magix.Controller.html#property_env", "access": "", "host": "libs.magix.Controller", "type": "property", "name": "env"}, {"url": "libs.magix.Controller.html#method_navigateTo", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "navigateTo"}, {"url": "libs.magix.Controller.html#method_param", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "param"}, {"url": "libs.magix.Controller.html#method_unParam", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "unParam"}];
+    var ALL_YUI_PROPS = [{"url": "libs.magix.Controller.html#property_env", "access": "", "host": "libs.magix.Controller", "type": "property", "name": "env"}, {"url": "libs.magix.Controller.html#method_navigateTo", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "navigateTo"}, {"url": "libs.magix.Controller.html#method_param", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "param"}, {"url": "libs.magix.Controller.html#property_queryModel", "access": "", "host": "libs.magix.Controller", "type": "property", "name": "queryModel"}, {"url": "libs.magix.Controller.html#method_unParam", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "unParam"}];
 </script>
 </body>
 </html>

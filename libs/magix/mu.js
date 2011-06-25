@@ -15,7 +15,7 @@
 </pre>
  * 对于数组对象可以通过{{__index__}}访问数组下标
  * @class Mu
- * @namespace lib.magix
+ * @namespace libs.magix
  * @static
  */
 define(function(require){

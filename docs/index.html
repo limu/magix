@@ -23,11 +23,7 @@
                     }
                 });
                 //启动Magix
-                Magix.History.init("mxhistory.html", function(query){
-                    seajs.use(['libs/magix/controller'], function(ctrl){
-                        ctrl._route(query);
-                    });
-                });
+                Magix.History.init();
             })();
         </script>
     </body>

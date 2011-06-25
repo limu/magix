@@ -83,6 +83,32 @@
 
                                     <hr />
                                     </div>
+                                    <div class="" rel="yui:property" resource="#property_queryModel">
+                                    <h4><a name="property_queryModel" property="yui:name">queryModel</a>
+                                        - <code><span property="yui:type">Backbone.Model</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            查询对象,包含query,pathname,referrer,postData和hash包含的众多参数<br/>
+这是一个Backbone.Model对象实例,可以通过监听该对象的change事件,监视url的变化.<br/>
+hash解析规则,"#!/a/b/x=1&y=2&z=3" 等同于 "#/a/b/x=1&y=2&z=3",将被解析为:<br/>
+{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;referrer:null,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;postdata:null,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;pathname:"/a/b",<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;query:"/a/b/x=1&y=2&z=3",<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;x:"1",<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;y:"2",<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;z:"3"<br/>
+}
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
                             </div>
                         </div>
 
@@ -278,6 +304,7 @@ reqiure("libs/magix/controller").navigateTo("z=1&offset=0");<br/>
                         <h4>Properties</h4>
                         <ul class="content">        
                                 <li class=""><a href="#property_env" title="env">env</a></li>
+                                <li class=""><a href="#property_queryModel" title="queryModel">queryModel</a></li>
                         </ul>
                     </div>
 
@@ -302,7 +329,7 @@ reqiure("libs/magix/controller").navigateTo("z=1&offset=0");<br/>
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [{"url": "libs.magix.Controller.html#property_env", "access": "", "host": "libs.magix.Controller", "type": "property", "name": "env"}, {"url": "libs.magix.Controller.html#method_navigateTo", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "navigateTo"}, {"url": "libs.magix.Controller.html#method_param", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "param"}, {"url": "libs.magix.Controller.html#method_unParam", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "unParam"}];
+    var ALL_YUI_PROPS = [{"url": "libs.magix.Controller.html#property_env", "access": "", "host": "libs.magix.Controller", "type": "property", "name": "env"}, {"url": "libs.magix.Controller.html#method_navigateTo", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "navigateTo"}, {"url": "libs.magix.Controller.html#method_param", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "param"}, {"url": "libs.magix.Controller.html#property_queryModel", "access": "", "host": "libs.magix.Controller", "type": "property", "name": "queryModel"}, {"url": "libs.magix.Controller.html#method_unParam", "access": "", "host": "libs.magix.Controller", "type": "method", "name": "unParam"}];
 </script>
 </body>
 </html>

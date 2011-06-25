@@ -50,7 +50,16 @@
 
                     </h3>
                     <div class="description summary">
-                        magix API文档
+                        开始建立一个Magix应用:<br/>
+1.简历libs目录,放置libs/seajs,libs/magix相关文件<br/>
+2.建立index.html.<br/>
+3.建立名为mxhistory.html的空白html文件,与index.html放置在同一目录下.<br/>
+4.建立app,app/views,app/config目录,和app/config/ini.js文件.<br/>
+5.在index.html中先后引入seajs.js和magix.js<br/>
+6.通过seajs.config(alieas{libs:"path/to/libs",app:"path/to/app"});指定libs和app的实际地址.<br/>
+7.添加启动Maigx历史服务:Magix.History.init();<br/>
+8.参照ini_sample.js填写app/config/ini.js文件,主要填写首页和404页面地址,以及配置pathname对应的viewname.<br/>
+TODO:创建应用详情链接
                     </div>
 
 
@@ -60,7 +69,7 @@
 
                             <p>This module contains the following classes:</p>
                             <script>
-                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "magix History 服务", "guessedname": "Magix.History", "name": "Magix.History"}];
+                            //var YUI_CLASS_LIST = [{"extends": {"superclass": {}, "events": {}, "configs": {}, "properties": {}, "methods": {}}, "description": "Magix History 服务,为使基于Magix的Ajax应用能够在各种浏览器中都能够正常使用其\"前进\",\"后退\"功能<br/>\r\n因为Backbone.History在IE6/7下存在<a href=\"https://github.com/documentcloud/backbone/issues/228\" target=\"_blank\">bug</a>,所以Maigx重写了这部分代码<br/>\r\n因为这部分代码中包含document.write.所以无法封装为seajs模块使用.且必须将magix.js通过外联方式&lt;script src='magix.js'>&lt;/script>节点直接引入页面.", "guessedname": "Magix.History", "name": "Magix.History"}];
                             </script>
                             <div id="splash_classList">
                                 <ul>

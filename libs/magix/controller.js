@@ -19,8 +19,7 @@ define(function(require, exports, module){
     };
     
     _.extend(MxController.prototype, Backbone.Event, {
-        initialize: function(o){
-        
+        initialize: function(o){        
             var p2v = config.pathViewMap, viewName;
             for (var k in p2v) {
                 if (!p2v[k]) {
@@ -76,6 +75,22 @@ define(function(require, exports, module){
         _goto: function(url){
             location.hash = "!" + url;
         },
+		/**
+		 * 查询对象,包含query,pathname,referrer,postData和hash包含的众多参数<br/>
+		 * 这是一个Backbone.Model对象实例,可以通过监听该对象的change事件,监视url的变化.<br/>
+		 * hash解析规则,"#!/a/b/x=1&y=2&z=3" 等同于 "#/a/b/x=1&y=2&z=3",将被解析为:<br/>
+		 * {<br/>
+		 * &nbsp;&nbsp;&nbsp;&nbsp;referrer:null,<br/>
+		 * &nbsp;&nbsp;&nbsp;&nbsp;postdata:null,<br/>
+		 * &nbsp;&nbsp;&nbsp;&nbsp;pathname:"/a/b",<br/>
+		 * &nbsp;&nbsp;&nbsp;&nbsp;query:"/a/b/x=1&y=2&z=3",<br/>
+		 * &nbsp;&nbsp;&nbsp;&nbsp;x:"1",<br/>
+		 * &nbsp;&nbsp;&nbsp;&nbsp;y:"2",<br/>
+		 * &nbsp;&nbsp;&nbsp;&nbsp;z:"3"<br/>
+		 * }
+		 * @property queryModel
+		 * @type Backbone.Model
+		 */
         _mountView: function(){
             var self = this;
             var queryObject = this._getQueryObject();

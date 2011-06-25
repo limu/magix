@@ -53,9 +53,14 @@
 <span class="cm"> * @requires backbone,underscore,libs/magix/vom,libs.magix/controller,libs/magix/helper,libs/magix/mu</span>
 <span class="cm"> */</span>
 <span class="cm">/**</span>
-<span class="cm"> * Magix View基类.继承自Backbone.View.用于管理View声明周期,事件代理,渲染数据,以及响应Hash变化.</span>
+<span class="cm"> * Magix View基类.继承自Backbone.View.用于管理View声明周期,事件代理,渲染数据,以及响应Hash变化.&lt;br/&gt;</span>
+<span class="cm"> * MagixView子类位于app/views目录之下,通过重写init,render,queryModelChange,renderer,events来扩展出具体子类,如:&lt;br/&gt;</span>
+<span class="cm"> * define(function(){&lt;br/&gt;</span>
+<span class="cm"> * &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;require(&quot;libs/magix/view&quot;).extend({init:...,render:...});&lt;br/&gt;</span>
+<span class="cm"> * }&lt;br/&gt;</span>
+<span class="cm"> * 通常不会直接通过new View(config)来创建类的实例,而是通过vcElement.mountView(&quot;viewName&quot;)的方式将view装载入一个容器(&lt;a href=&quot;module_vcelement.html&quot;&gt;vcelement&lt;/a&gt;)时进行实例化.</span>
 <span class="cm"> * @class View</span>
-<span class="cm"> * @param {Object} config</span>
+<span class="cm"> * @param {Object} config config其中必须包含viewName,vcid和queryModel三项,指明view的名字,展示view的容器id和当前的query</span>
 <span class="cm"> * @constructor </span>
 <span class="cm"> */</span>
 <span class="nx">define</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">require</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">module</span><span class="p">){</span>
@@ -66,6 +71,10 @@
     <span class="kd">var</span> <span class="nx">helper</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./helper&quot;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">Mustache</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;libs/magix/mu&quot;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">MxView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * 实例化过程会调用init方法,在这个方法中可以完成一些初始化任务,比如载入将要使用的Model/Collection对象</span>
+<span class="cm">		 * @method init</span>
+<span class="cm">		 */</span>
         <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">){</span>
             <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">subViewsChange</span> <span class="o">=</span> <span class="p">[];</span>
@@ -130,9 +139,21 @@
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * query发生变化事件响应函数,基类中是个空方法,各子类在需要时实现这个方法&lt;br/&gt;</span>
+<span class="cm">		 * 注意,并非query发生变化一定会触发这个方法,需要由父View决定是否将change事件下发给子View.&lt;br/&gt;</span>
+<span class="cm">		 * 相应的return true将会下发change事件给子view,false反之,return vcid数组,将事件传递给指定的子View.</span>
+<span class="cm">		 * @method queryModelChange</span>
+<span class="cm">		 * @return {Boolean|Array}</span>
+<span class="cm">		 */</span>
         <span class="nx">queryModelChange</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
         
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * view渲染方法,各子类可以覆盖&lt;br/&gt;</span>
+<span class="cm">		 * 默认会将query交给同名的模板文件,渲染至vcelement内.</span>
+<span class="cm">		 * @method render</span>
+<span class="cm">		 */</span>
         <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
             <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">vcid</span><span class="p">);</span>
             <span class="nx">node</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">Mustache</span><span class="p">.</span><span class="nx">to_html</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">template</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">());</span>
@@ -182,6 +203,11 @@
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;VIEW DESTORY:2.depth traversal all vcelements @&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">modUri</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">queue</span><span class="p">;</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * 设置数据到this.data,内部会自动把renderer附加到data中&lt;br/&gt;</span>
+<span class="cm">		 * mustahce.tohtml(template,this.setData({list:...}));</span>
+<span class="cm">		 * @method setData</span>
+<span class="cm">		 */</span>
         <span class="nx">setData</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
             <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
@@ -192,6 +218,11 @@
             <span class="nx">data</span><span class="p">.</span><span class="nx">query</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">setRenderer</span><span class="p">();</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * 为复杂数据渲染构建renderer&lt;br/&gt;</span>
+<span class="cm">		 * TODO:细化方法使用</span>
+<span class="cm">		 * @property renderer</span>
+<span class="cm">		 */</span>
         <span class="nx">setRenderer</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
             <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">rr</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">renderer</span><span class="p">,</span> <span class="nx">mcName</span><span class="p">,</span> <span class="nx">wrapperName</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">rr</span><span class="p">)</span> <span class="p">{</span>
@@ -208,6 +239,11 @@
                 <span class="p">}</span>
             <span class="p">}</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * 所有事件处理函数</span>
+<span class="cm">		 * TODO:细化方法使用</span>
+<span class="cm">		 * @property events</span>
+<span class="cm">		 */</span>
         <span class="nx">delegateEvents</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
             <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">events</span><span class="p">;</span>
             <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">);</span>

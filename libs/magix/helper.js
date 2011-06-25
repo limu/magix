@@ -6,7 +6,7 @@
 /**
  * 通用方法静态类
  * @class Helper
- * @namespace lib.magix
+ * @namespace libs.magix
  * @static
  */
 define(function(require){

@@ -10,7 +10,7 @@
  * @namespace libs.magix
  * @constructor
  * @param {HTMLElement} node (可选)View根节点
- * @param {String} id (可选)View根节点id 
+ * @param {String} id (可选)View根节点id
  */
 define(function(require, exports, module){
     var VCTAG = "mxvc";
