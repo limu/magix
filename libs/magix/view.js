@@ -64,7 +64,6 @@ define(function(require, exports, module){
                     self.trigger("rendered");
                 }
             });
-            
         },
         _queryModelChange: function(model){
             console.log("QM CHANG: Sub View Query change" + this.viewName);

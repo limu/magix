@@ -112,9 +112,7 @@ define(function(require, exports, module){
                 var k, old = this.queryModel.toJSON();
                 for (k in old) {
                     if (!(k in queryObject)) {
-                        queryObject[k] = "";
-                        //this.queryModel.unset(k);
-                    
+                        this.queryModel.unset(k,{silent:true});
                     }
                 }
             }
