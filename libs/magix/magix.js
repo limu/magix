@@ -23,7 +23,7 @@
     if (!window.console) {
         window.console = {
             log: function(s){
-                //alert(s);
+               // alert(s);
             },
             dir: function(s){
                 //alert(s);
@@ -63,7 +63,7 @@
             this.showIframe = this.isIE && (!docMode || docMode < 7);
             this.wirteFrame(iframeSrc);
             this.regHashChange();
-            this.router = function(query){
+            this.router = router || function(query){
                 seajs.use(['libs/magix/controller'], function(ctrl){
                     ctrl._route(query);
                 });
