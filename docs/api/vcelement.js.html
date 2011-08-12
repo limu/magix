@@ -59,7 +59,7 @@
 <span class="cm"> * @namespace libs.magix</span>
 <span class="cm"> * @constructor</span>
 <span class="cm"> * @param {HTMLElement} node (可选)View根节点</span>
-<span class="cm"> * @param {String} id (可选)View根节点id </span>
+<span class="cm"> * @param {String} id (可选)View根节点id</span>
 <span class="cm"> */</span>
 <span class="nx">define</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">require</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">module</span><span class="p">){</span>
     <span class="kd">var</span> <span class="nx">VCTAG</span> <span class="o">=</span> <span class="s2">&quot;mxvc&quot;</span><span class="p">;</span>
@@ -81,7 +81,18 @@
         <span class="p">}</span>
     <span class="p">};</span>
     <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">VCElement</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Events</span><span class="p">,</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * 容器中的view&lt;br/&gt;</span>
+<span class="cm">         * @property view</span>
+<span class="cm">         * @type Object</span>
+<span class="cm">         */</span>
         <span class="nx">view</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="cm">/**</span>
+<span class="cm">         * 为dom元素增加唯一id&lt;br/&gt;</span>
+<span class="cm">         * @method idIt</span>
+<span class="cm">         * @param {Element} 节点</span>
+<span class="cm">         * @param {id} id</span>
+<span class="cm">         */</span>
         <span class="nx">idIt</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">node</span><span class="p">,</span> <span class="nx">id</span><span class="p">){</span>
             <span class="kd">var</span> <span class="nx">tid</span><span class="p">,</span> <span class="nx">vn</span><span class="p">,</span> <span class="nx">tnode</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">&quot;link_to&quot;</span><span class="p">))</span> <span class="p">{</span>
@@ -99,6 +110,11 @@
             <span class="nx">node</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="p">(</span><span class="nx">node</span> <span class="o">&amp;&amp;</span> <span class="nx">node</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="o">||</span> <span class="nx">id</span> <span class="o">||</span> <span class="nx">VCElement</span><span class="p">.</span><span class="nx">uniqueId</span><span class="p">();</span>
             <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
         <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * 从vcelement中得到vc对应元素节点,并将节点释放&lt;br/&gt;</span>
+<span class="cm">         * @method getOnce</span>
+<span class="cm">         * @return {Element} 返回节点</span>
+<span class="cm">         */</span>
         <span class="nx">getOnce</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
             <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_node</span><span class="p">;</span>
             <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">node</span><span class="p">)</span> <span class="p">{</span>
@@ -107,9 +123,20 @@
             <span class="k">this</span><span class="p">.</span><span class="nx">freeNode</span><span class="p">();</span>
             <span class="k">return</span> <span class="nx">node</span><span class="p">;</span>
         <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * 释放vcelement中的节点引用&lt;br/&gt;</span>
+<span class="cm">         * @method freeNode</span>
+<span class="cm">         */</span>
         <span class="nx">freeNode</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">_node</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * 装载view&lt;br/&gt;</span>
+<span class="cm">         * @method mountView</span>
+<span class="cm">         * @param {String} viewName view名称</span>
+<span class="cm">         * @param {Object} options view配置信息</span>
+<span class="cm">         * @return {Element} 返回节点</span>
+<span class="cm">         */</span>
         <span class="nx">mountView</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">viewName</span><span class="p">,</span> <span class="nx">options</span><span class="p">){</span>
             <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span>
             <span class="p">{</span>
@@ -150,14 +177,31 @@
                 <span class="p">}</span>
             <span class="p">});</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">         * 获取mxvc元素上的属性值&lt;br/&gt;</span>
+<span class="cm">         * @method getAttribute</span>
+<span class="cm">         * @param {String} s 属性名称</span>
+<span class="cm">         * @return {String} 属性值</span>
+<span class="cm">         */</span>
         <span class="nx">getAttribute</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">){</span>
             <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">         * 设置mxvc元素上的属性值&lt;br/&gt;</span>
+<span class="cm">         * @method getAttribute</span>
+<span class="cm">         * @param {String} k 属性名称</span>
+<span class="cm">         * @param {String} v 属性名称</span>
+<span class="cm">         */</span>
         <span class="nx">setAttribute</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">){</span>
             <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
             <span class="k">return</span> <span class="nx">node</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="nx">v</span><span class="p">);</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">         * 获取当前mxvc下所有子mxvc节点集合&lt;br/&gt;</span>
+<span class="cm">         * @method getElements</span>
+<span class="cm">         * @return {Array}</span>
+<span class="cm">         */</span>
         <span class="nx">getElements</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
             <span class="kd">var</span> <span class="nx">node</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
             <span class="kd">var</span> <span class="nx">nodes</span> <span class="o">=</span> <span class="nx">node</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="nx">VCTAG</span><span class="p">);</span>
@@ -167,11 +211,20 @@
             <span class="p">}</span>
             <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">         * 将传入vcelement,追加到本vcelement的childNodes中&lt;br/&gt;</span>
+<span class="cm">         * @method appendChild</span>
+<span class="cm">         * @param {Vcelement}</span>
+<span class="cm">         */</span>
         <span class="nx">appendChild</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">c</span><span class="p">){</span>
             <span class="c1">//this.childNodes = this.childNodes ||[];</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">c</span><span class="p">);</span>
             <span class="nx">c</span><span class="p">.</span><span class="nx">parentNode</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">         * 销毁自身vcelement,首先卸载view,然后从dom中移出自身节点,从vom中移出自身并销毁&lt;br/&gt;</span>
+<span class="cm">         * @method removeNode</span>
+<span class="cm">         */</span>
         <span class="nx">removeNode</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;VCELE DESTORY:1 unmount current view @&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
             <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">mounted</span><span class="p">)</span> <span class="p">{</span>
@@ -189,6 +242,10 @@
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;VCELE DESTORY:3 remove self(vcelement) from vom @&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">         * 销毁某个子Vcelment&lt;br/&gt;</span>
+<span class="cm">         * @method removeChild</span>
+<span class="cm">         */</span>
         <span class="nx">removeChild</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">child</span><span class="p">){</span>
             <span class="c1">//TODO strengthen removeChild for single call(not by removeNode);</span>
             <span class="c1">//			if(child.mounted){</span>
@@ -207,7 +264,11 @@
                 <span class="p">}</span>
             <span class="p">}</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">childNodes</span> <span class="o">=</span> <span class="nx">newChildNodes</span><span class="p">;</span>
-        <span class="p">},</span>
+        <span class="p">},</span>		
+		<span class="cm">/**</span>
+<span class="cm">         * 从Vclement中卸载view,出发vclement.unload事件,清除内部节点,注销vc上的事件,改变mounted状态&lt;br/&gt;</span>
+<span class="cm">         * @method unmountView</span>
+<span class="cm">         */</span>
         <span class="nx">unmountView</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
             <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;VCELE UNMOUNT:1 fire view&#39;s unload @&quot;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="nx">modUri</span><span class="p">);</span>
             <span class="k">this</span><span class="p">.</span><span class="nx">view</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s2">&quot;unload&quot;</span><span class="p">);</span>

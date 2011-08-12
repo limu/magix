@@ -161,9 +161,7 @@
                 <span class="kd">var</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">old</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
                 <span class="k">for</span> <span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">old</span><span class="p">)</span> <span class="p">{</span>
                     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">queryObject</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="nx">queryObject</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
-                        <span class="c1">//this.queryModel.unset(k);</span>
-                    
+                        <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">unset</span><span class="p">(</span><span class="nx">k</span><span class="p">,{</span><span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
                     <span class="p">}</span>
                 <span class="p">}</span>
             <span class="p">}</span>

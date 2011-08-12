@@ -32,7 +32,18 @@ define(function(require, exports, module){
         }
     };
     _.extend(VCElement.prototype, Backbone.Events, {
+        /**
+         * 容器中的view<br/>
+         * @property view
+         * @type Object
+         */
         view: null,
+        /**
+         * 为dom元素增加唯一id<br/>
+         * @method idIt
+         * @param {Element} 节点
+         * @param {id} id
+         */
         idIt: function(node, id){
             var tid, vn, tnode;
             if (node && node.getAttribute("link_to")) {
@@ -50,6 +61,11 @@ define(function(require, exports, module){
             node.id = (node && node.id) || id || VCElement.uniqueId();
             return node.id;
         },
+        /**
+         * 从vcelement中得到vc对应元素节点,并将节点释放<br/>
+         * @method getOnce
+         * @return {Element} 返回节点
+         */
         getOnce: function(){
             var node = this._node;
             if (!node) {
@@ -58,9 +74,20 @@ define(function(require, exports, module){
             this.freeNode();
             return node;
         },
+        /**
+         * 释放vcelement中的节点引用<br/>
+         * @method freeNode
+         */
         freeNode: function(){
             this._node = null;
         },
+        /**
+         * 装载view<br/>
+         * @method mountView
+         * @param {String} viewName view名称
+         * @param {Object} options view配置信息
+         * @return {Element} 返回节点
+         */
         mountView: function(viewName, options){
             options = options ||
             {
@@ -101,14 +128,31 @@ define(function(require, exports, module){
                 }
             });
         },
+		/**
+         * 获取mxvc元素上的属性值<br/>
+         * @method getAttribute
+         * @param {String} s 属性名称
+         * @return {String} 属性值
+         */
         getAttribute: function(s){
             var node = document.getElementById(this.id);
             return node.getAttribute(s) || "";
         },
+		/**
+         * 设置mxvc元素上的属性值<br/>
+         * @method getAttribute
+         * @param {String} k 属性名称
+         * @param {String} v 属性名称
+         */
         setAttribute: function(k, v){
             var node = document.getElementById(this.id);
             return node.setAttribute(k, v);
         },
+		/**
+         * 获取当前mxvc下所有子mxvc节点集合<br/>
+         * @method getElements
+         * @return {Array}
+         */
         getElements: function(){
             var node = document.getElementById(this.id);
             var nodes = node.getElementsByTagName(VCTAG);
@@ -118,11 +162,20 @@ define(function(require, exports, module){
             }
             return res;
         },
+		/**
+         * 将传入vcelement,追加到本vcelement的childNodes中<br/>
+         * @method appendChild
+         * @param {Vcelement}
+         */
         appendChild: function(c){
             //this.childNodes = this.childNodes ||[];
             this.childNodes.push(c);
             c.parentNode = this;
         },
+		/**
+         * 销毁自身vcelement,首先卸载view,然后从dom中移出自身节点,从vom中移出自身并销毁<br/>
+         * @method removeNode
+         */
         removeNode: function(){
             console.log("VCELE DESTORY:1 unmount current view @" + this.id);
             if (this.mounted) {
@@ -140,6 +193,10 @@ define(function(require, exports, module){
             console.log("VCELE DESTORY:3 remove self(vcelement) from vom @" + this.id);
             this.parentNode.removeChild(this);
         },
+		/**
+         * 销毁某个子Vcelment<br/>
+         * @method removeChild
+         */
         removeChild: function(child){
             //TODO strengthen removeChild for single call(not by removeNode);
             //			if(child.mounted){
@@ -158,7 +215,11 @@ define(function(require, exports, module){
                 }
             }
             this.childNodes = newChildNodes;
-        },
+        },		
+		/**
+         * 从Vclement中卸载view,出发vclement.unload事件,清除内部节点,注销vc上的事件,改变mounted状态<br/>
+         * @method unmountView
+         */
         unmountView: function(){
             console.log("VCELE UNMOUNT:1 fire view's unload @" + this.view.modUri);
             this.view.trigger("unload");
