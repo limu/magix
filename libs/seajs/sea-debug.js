@@ -1,9 +1,4 @@
-/*
-Copyright 2011, SeaJS v0.9.5
-MIT Licensed
-build time: Jun 20 20:52
-*/
-
+/* SeaJS v1.0.1 | seajs.com | MIT Licensed */
 
 /**
  * @fileoverview A CommonJS module loader, focused on web.
@@ -21,10 +16,10 @@ this.seajs = { _seajs: this.seajs };
  * @type {string} The version of the framework. It will be replaced
  * with "major.minor.patch" when building.
  */
-seajs.version = '0.9.5';
+seajs.version = '1.0.1';
 
 
-// Module status：
+// Module status:
 //  1. downloaded - The script file has been downloaded to the browser.
 //  2. define()d - The define() has been executed.
 //  3. memoize()d - The module info has been added to memoizedMods.
@@ -44,7 +39,12 @@ seajs._data = {
      * Debug mode. It will be turned off automatically when compressing.
      * @const
      */
-    debug: '%DEBUG%'
+    debug: '%DEBUG%',
+
+    /**
+     * Modules that are needed to load before all other modules.
+     */
+    preload: []
   },
 
   /**
@@ -91,12 +91,12 @@ seajs._fn = {};
   };
 
 
-  util.isArray = Array.isArray ? Array['isArray'] : function(val) {
+  util.isArray = Array.isArray || function(val) {
     return toString.call(val) === '[object Array]';
   };
 
 
-  util.indexOf = Array.prototype.indexOf ?
+  util.indexOf = AP.indexOf ?
       function(arr, item) {
         return arr.indexOf(item);
       } :
@@ -110,7 +110,7 @@ seajs._fn = {};
       };
 
 
-  var forEach = util.each = AP.forEach ?
+  var forEach = util.forEach = AP.forEach ?
       function(arr, fn) {
         arr.forEach(fn);
       } :
@@ -149,7 +149,7 @@ seajs._fn = {};
       };
 
 
-  util.now = Date.now ? Date.now : function() {
+  util.now = Date.now || function() {
     return new Date().getTime();
   };
 
@@ -288,19 +288,28 @@ seajs._fn = {};
 
     function parse(parts, i) {
       var part = parts[i];
-      var m;
-
       if (alias && alias.hasOwnProperty(part)) {
         parts[i] = alias[part];
-      }
-      // jquery:1.6.1 => jquery/1.6.1/jquery
-      // jquery:1.6.1-debug => jquery/1.6.1/jquery-debug
-      else if ((m = part.match(/(.+):([\d\.]+)(-debug)?/))) {
-        parts[i] = m[1] + '/' + m[2] + '/' + m[1] + (m[3] ? m[3] : '');
       }
     }
 
     return parts.join('/');
+  }
+
+
+  /**
+   * Maps the module id.
+   */
+  function parseMap(url) {
+    // config.map: [[match, replace], ...]
+
+    util.forEach(config['map'], function(rule) {
+      if (rule && rule.length === 2) {
+        url = url.replace(rule[0], rule[1]);
+      }
+    });
+
+    return url;
   }
 
 
@@ -314,6 +323,12 @@ seajs._fn = {};
 
   var loc = global['location'];
   var pageUrl = loc.protocol + '//' + loc.host + loc.pathname;
+
+  // local file in IE: C:\path\to\xx.js
+  if (pageUrl.indexOf('\\') !== -1) {
+    pageUrl = pageUrl.replace(/\\/g, '/');
+  }
+
   var id2UriCache = {};
 
   /**
@@ -328,12 +343,17 @@ seajs._fn = {};
       return id;
     }
 
-    if (!noAlias) {
+    if (!noAlias && config['alias']) {
       id = parseAlias(id);
     }
     refUrl = refUrl || pageUrl;
 
     var ret;
+
+    // Converts inline id to relative id: '~/xx' -> './xx'
+    if (isInlineMod(id)) {
+      id = '.' + id.substring(1);
+    }
 
     // absolute id
     if (id.indexOf('://') !== -1) {
@@ -355,8 +375,11 @@ seajs._fn = {};
     }
 
     ret = normalize(ret);
-    id2UriCache[ret] = true;
+    if (config['map']) {
+      ret = parseMap(ret);
+    }
 
+    id2UriCache[ret] = true;
     return ret;
   }
 
@@ -416,7 +439,7 @@ seajs._fn = {};
    * Set mod.ready to true when all the requires of the module is loaded.
    */
   function setReadyState(uris) {
-    util.each(uris, function(uri) {
+    util.forEach(uris, function(uri) {
       if (memoizedMods[uri]) {
         memoizedMods[uri].ready = true;
       }
@@ -475,11 +498,22 @@ seajs._fn = {};
    * to host.dependencies
    */
   function augmentPackageHostDeps(hostDeps, guestDeps) {
-    util.each(guestDeps, function(guestDep) {
+    util.forEach(guestDeps, function(guestDep) {
       if (util.indexOf(hostDeps, guestDep) === -1) {
         hostDeps.push(guestDep);
       }
     });
+  }
+
+
+  /**
+   * define module in html page:
+   *   define('~/init', deps, fn)
+   *
+   * @param {string} id The module id.
+   */
+  function isInlineMod(id) {
+    return id.charAt(0) === '~';
   }
 
 
@@ -492,8 +526,10 @@ seajs._fn = {};
   util.setReadyState = setReadyState;
   util.getUnReadyUris = getUnReadyUris;
   util.removeCyclicWaitingUris = removeCyclicWaitingUris;
+  util.isInlineMod = isInlineMod;
+  util.pageUrl = pageUrl;
 
-  if (data.config.debug) {
+  if (config.debug) {
     util.realpath = realpath;
     util.normalize = normalize;
     util.parseAlias = parseAlias;
@@ -626,7 +662,8 @@ seajs._fn = {};
           isLoaded = true;
         }
       } catch (ex) {
-        if (ex.name === 'NS_ERROR_DOM_SECURITY_ERR') {
+        // NS_ERROR_DOM_SECURITY_ERR
+        if (ex.code === 1000) {
           isLoaded = true;
         }
       }
@@ -660,6 +697,7 @@ seajs._fn = {};
     for (var i = 0; i < scripts.length; i++) {
       var script = scripts[i];
       if (script.readyState === 'interactive') {
+        interactiveScript = script;
         return script;
       }
     }
@@ -676,7 +714,7 @@ seajs._fn = {};
   };
 
 
-  var noCacheTimeStamp = 'seajs_t=' + util.now();
+  var noCacheTimeStamp = 'seajs-ts=' + util.now();
 
   util.addNoCacheTimeStamp = function(url) {
     return url + (url.indexOf('?') === -1 ? '?' : '&') + noCacheTimeStamp;
@@ -820,7 +858,7 @@ seajs._fn = {};
     function cb() {
 
       if (data.pendingMods) {
-        util.each(data.pendingMods, function(pendingMod) {
+        util.forEach(data.pendingMods, function(pendingMod) {
           util.memoize(pendingMod.id, uri, pendingMod);
         });
 
@@ -902,9 +940,6 @@ seajs._fn = {};
     // define(factory)
     if (arguments.length === 1) {
       factory = id;
-      if (util.isFunction(factory)) {
-        deps = parseDependencies(factory.toString());
-      }
       id = '';
     }
     // define([], factory)
@@ -914,10 +949,18 @@ seajs._fn = {};
       id = '';
     }
 
+    // parse deps
+    if (!util.isArray(deps) && util.isFunction(factory)) {
+      deps = parseDependencies(factory.toString());
+    }
+
     var mod = new fn.Module(id, deps, factory);
     var url;
 
-    if (document.attachEvent && !window.opera) {
+    if (util.isInlineMod(id)) {
+      url = util.pageUrl;
+    }
+    else if (document.attachEvent && !window.opera) {
       // For IE6-9 browsers, the script onload event may not fire right
       // after the the script is evaluated. Kris Zyp found that it
       // could query the script nodes and the one that is in "interactive"
@@ -1098,7 +1141,7 @@ seajs._fn = {};
  * @fileoverview The configuration.
  */
 
-(function(util, data, fn) {
+(function(util, data, fn, global) {
 
   var config = data.config;
 
@@ -1112,16 +1155,16 @@ seajs._fn = {};
     loaderScript = scripts[scripts.length - 1];
   }
 
-  var src = util.getScriptAbsoluteSrc(loaderScript);
-  if (src) {
-    src = util.dirname(src);
+  var loaderSrc = util.getScriptAbsoluteSrc(loaderScript), loaderDir;
+  if (loaderSrc) {
+    var base = loaderDir = util.dirname(loaderSrc);
     // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
     // to "http://test.com/libs/"
-    var match = src.match(/^(.+\/)seajs\/[\d\.]+\/$/);
+    var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/);
     if (match) {
-      src = match[1];
+      base = match[1];
     }
-    config.base = src;
+    config.base = base;
   }
   // When script is inline code, src is empty.
 
@@ -1133,6 +1176,15 @@ seajs._fn = {};
   config.timeout = 20000;
 
 
+  // seajs-debug
+  if (loaderDir &&
+      (global.location.search.indexOf('seajs-debug') !== -1 ||
+          document.cookie.indexOf('seajs=1') !== -1)) {
+    config.debug = true;
+    config.preload.push(loaderDir + 'plugin-map');
+  }
+
+
   /**
    * The function to configure the framework.
    * config({
@@ -1142,6 +1194,10 @@ seajs._fn = {};
    *     'jquery': 'jquery-1.5.2',
    *     'cart': 'cart?t=20110419'
    *   },
+   *   'map': [
+   *     ['test.cdn.cn', 'localhost']
+   *   ],
+   *   preload: [],
    *   charset: 'utf-8',
    *   timeout: 20000, // 20s
    *   debug: false,
@@ -1152,11 +1208,31 @@ seajs._fn = {};
    */
   fn.config = function(o) {
     for (var k in o) {
-      var sub = config[k];
-      if (typeof sub === 'object') {
-        mix(sub, o[k]);
-      } else {
-        config[k] = o[k];
+      var previous = config[k];
+      var current = o[k];
+
+      if (previous && k === 'alias') {
+        for (var p in current) {
+          if (current.hasOwnProperty(p)) {
+            checkConflict(previous[p], current[p]);
+            previous[p] = current[p];
+          }
+        }
+      }
+      else if (previous && (k === 'map' || k === 'preload')) {
+        // for config({ preload: 'some-module' })
+        if (!util.isArray(current)) {
+          current = [current];
+        }
+        util.forEach(current, function(item) {
+          if (item) { // Ignore empty string.
+            previous.push(item);
+          }
+        });
+        // NOTICE: no need to check conflict for map and preload.
+      }
+      else {
+        config[k] = current;
       }
     }
 
@@ -1170,13 +1246,19 @@ seajs._fn = {};
   };
 
 
-  function mix(r, s) {
-    for (var k in s) {
-      r[k] = s[k];
+  function checkConflict(previous, current) {
+    if (previous !== undefined && previous !== current) {
+      util.error({
+        'message': 'config is conflicted',
+        'previous': previous,
+        'current': current,
+        'from': 'config',
+        'type': 'error'
+      });
     }
   }
 
-})(seajs._util, seajs._data, seajs._fn);
+})(seajs._util, seajs._data, seajs._fn, this);
 
 /**
  * @fileoverview The bootstrap and entrances.
@@ -1186,14 +1268,36 @@ seajs._fn = {};
 
   var config = data.config;
 
-  fn.use = fn.load;
 
+  /**
+   * Loads modules to the environment.
+   * @param {Array.<string>} ids An array composed of module id.
+   * @param {function(*)=} callback The callback function.
+   */
+  fn.use = function(ids, callback) {
+    var preloadMods = config.preload;
+    var len = preloadMods.length;
+
+    if (len) {
+      fn.load(preloadMods, function() {
+        config.preload = preloadMods.slice(len);
+        fn.use(ids, callback);
+      });
+    }
+    else {
+      fn.load(ids, callback);
+    }
+  };
+
+
+  // main
   var mainModuleId = config.main;
   if (mainModuleId) {
     fn.use([mainModuleId]);
   }
 
-  // Parses the pre-call of seajs.config/seajs.boot/define.
+
+  // Parses the pre-call of seajs.config/seajs.use/define.
   // Ref: test/bootstrap/async-3.html
   (function(args) {
     if (args) {
@@ -1231,6 +1335,7 @@ seajs._fn = {};
   var previousDefine = global.define;
   global.define = fn.define;
 
+
   // For custom loader name.
   host.noConflict = function(all) {
     global.seajs = host._seajs;
@@ -1240,6 +1345,7 @@ seajs._fn = {};
     }
     return host;
   };
+
 
   // Keeps clean!
   if (!data.config.debug) {
