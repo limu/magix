@@ -62,29 +62,66 @@
     <span class="kd">var</span> <span class="nx">MxVCElement</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./vcelement&quot;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;backbone&quot;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">vom</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Backbone</span><span class="p">.</span><span class="nx">Events</span><span class="p">,</span> <span class="p">{</span>
+        <span class="cm">/**</span>
+<span class="cm">         * _idMap 所有vcelment的索引&lt;br/&gt;</span>
+<span class="cm">         * @property _idMap</span>
+<span class="cm">         * @type Object</span>
+<span class="cm">         */</span>
         <span class="nx">_idMap</span><span class="o">:</span> <span class="p">{},</span>
+        <span class="cm">/**</span>
+<span class="cm">         * root vcelement对象,最外层view容器元素&lt;br/&gt;</span>
+<span class="cm">         * @property root</span>
+<span class="cm">         * @type Vcelement</span>
+<span class="cm">         */</span>
         <span class="nx">root</span><span class="o">:</span> <span class="kc">null</span><span class="p">,</span>
+        <span class="cm">/**</span>
+<span class="cm">         * vom初始化,创建vom.root,插入到dom中.&lt;br/&gt;</span>
+<span class="cm">         * @method init</span>
+<span class="cm">         * @param {Object} queryString</span>
+<span class="cm">         */</span>
         <span class="nx">init</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
             <span class="kd">var</span> <span class="nx">vc</span> <span class="o">=</span> <span class="nx">vom</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="s2">&quot;vc-root&quot;</span><span class="p">);</span>
             <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">vc</span><span class="p">.</span><span class="nx">getOnce</span><span class="p">(),</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">);</span>
             <span class="nx">vom</span><span class="p">.</span><span class="nx">root</span> <span class="o">=</span> <span class="nx">vc</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">vom</span><span class="p">;</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * 将Vcelement加入_idMap索引</span>
+<span class="cm">		 * @method push</span>
+<span class="cm">		 * @param {Vcelement} vc</span>
+<span class="cm">		 */</span>
         <span class="nx">push</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">vc</span><span class="p">){</span>
             <span class="nx">vom</span><span class="p">.</span><span class="nx">_idMap</span><span class="p">[</span><span class="nx">vc</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span> <span class="o">=</span> <span class="nx">vc</span><span class="p">;</span>
         <span class="p">},</span>
-		<span class="nx">pop</span><span class="o">:</span><span class="kd">function</span><span class="p">(</span><span class="nx">vc</span><span class="p">){</span>
-			<span class="k">delete</span> <span class="nx">vom</span><span class="p">.</span><span class="nx">_idMap</span><span class="p">[</span><span class="nx">vc</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
-		<span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * 将Vcelement移出_idMap索引</span>
+<span class="cm">		 * @method pop</span>
+<span class="cm">		 * @param {Vcelement} vc</span>
+<span class="cm">		 */</span>
+        <span class="nx">pop</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">vc</span><span class="p">){</span>
+            <span class="k">delete</span> <span class="nx">vom</span><span class="p">.</span><span class="nx">_idMap</span><span class="p">[</span><span class="nx">vc</span><span class="p">.</span><span class="nx">id</span><span class="p">];</span>
+        <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * 创建一个view容器(Vcelement)</span>
+<span class="cm">		 * @method pop</span>
+<span class="cm">		 * @param {element|string} ele </span>
+<span class="cm">		 * @param {string} vc id</span>
+<span class="cm">		 * @return Vcelement</span>
+<span class="cm">		 */</span>
         <span class="nx">createElement</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">ele</span><span class="p">,</span> <span class="nx">id</span><span class="p">){</span>
             <span class="k">if</span> <span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">isString</span><span class="p">(</span><span class="nx">ele</span><span class="p">))</span> <span class="p">{</span>
                 <span class="nx">ele</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">ele</span><span class="p">);</span>
             <span class="p">}</span>
             <span class="kd">var</span> <span class="nx">vc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MxVCElement</span><span class="p">(</span><span class="nx">ele</span><span class="p">,</span> <span class="nx">id</span><span class="p">);</span>
             <span class="nx">vom</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">vc</span><span class="p">);</span>
-			<span class="nx">ele</span><span class="o">=</span><span class="kc">null</span><span class="p">;</span>
             <span class="k">return</span> <span class="nx">vc</span><span class="p">;</span>
         <span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * 根据id获取vcelement对象</span>
+<span class="cm">		 * @method getElementById</span>
+<span class="cm">		 * @param {string} vc id</span>
+<span class="cm">		 * @return Vcelement</span>
+<span class="cm">		 */</span>
         <span class="nx">getElementById</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">){</span>
             <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_idMap</span><span class="p">[</span><span class="nx">id</span><span class="p">]</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
         <span class="p">}</span>

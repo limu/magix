@@ -64,10 +64,232 @@
 
                     
                     <div rel="yui:properties" resource="#properties">
+                        <div class="section field details">
+                            <h3 id="properties">Properties</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:property" resource="#property__idMap">
+                                    <h4><a name="property__idMap" property="yui:name">_idMap</a>
+                                        - <code><span property="yui:type">Object</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            _idMap 所有vcelment的索引<br/>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:property" resource="#property_root">
+                                    <h4><a name="property_root" property="yui:name">root</a>
+                                        - <code><span property="yui:type">Vcelement</span></code>
+                                    </h4>
+                                    <div class="detail">
+                                        <div class="description" property="yui:description">
+                                            root vcelement对象,最外层view容器元素<br/>
+                                        </div>
+                                    </div>
+     
+                                        
+
+
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
                     </div>
 
                     <div rel="yui:methods" resource="#methods">
+                        <div class="section method details">
+                            <h3 id="methods">Methods</h3>
+                            <div class="content">
+                                    <div class="" rel="yui:method" resource="#method_getElementById">
+                                    <h4>
+                                        <a name="method_getElementById">getElementById</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">getElementById</strong>
+                                           (
+                                                
+                                                        
+                                                         vc
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            根据id获取vcelement对象
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">vc</span>
+                                                        &lt;<span property="yui:type">string</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"> id</span>
+                                                        </dd>
+                                                </dl>
+
+                                                <dl>
+                                                    <dt>Returns:
+                                                    <code property="yui:return">
+                                                    </code></dt>
+                                                    <dd property="yui:returnInfo">Vcelement</dd>
+                                                </dl>
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_init">
+                                    <h4>
+                                        <a name="method_init">init</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">init</strong>
+                                           (
+                                                
+                                                        
+                                                         queryString
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            vom初始化,创建vom.root,插入到dom中.<br/>
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">queryString</span>
+                                                        &lt;<span property="yui:type">Object</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_pop">
+                                    <h4>
+                                        <a name="method_pop">pop</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        
+                                            <strong property="yui:name">pop</strong>
+                                           (
+                                                
+                                                        
+                                                         vc
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            将Vcelement移出_idMap索引
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">vc</span>
+                                                        &lt;<span property="yui:type">Vcelement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                                    <div class="" rel="yui:method" resource="#method_push">
+                                    <h4>
+                                        <a name="method_push">push</a></h4>
+                                    <div class="detail" >
+                                        <code>
+                                        
+                                        
+                                        
+                                        void
+                                            <strong property="yui:name">push</strong>
+                                           (
+                                                
+                                                        
+                                                         vc
+                                                    
+                                                
+                                            )
+                                        </code>
+                                        
+                                        <div class="description" property="yui:description">
+                                            将Vcelement加入_idMap索引
+                                        </div>
+
+                                        <div class="description">
+
+                                                <dl rel="yui:parameters">
+                                                    <dt>Parameters:</dt>
+                                                        <dd rel="yui:parameter">
+                                                        <code><span property="yui:name">vc</span>
+                                                        &lt;<span property="yui:type">Vcelement</span>&gt;
+                                                        </code>
+                                                        <span property="yui:description"></span>
+                                                        </dd>
+                                                </dl>
+
+
+
+             
+
+                                        </div>
+
+                                    </div>
+                                    <hr />
+                                    </div>
+                            </div>
+                        </div>
 
                     </div>
 
@@ -106,7 +328,23 @@
                     </div>
 
 
+                    <div id="propertyList" class="module">
+                        <h4>Properties</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#property__idMap" title="_idMap">_idMap</a></li>
+                                <li class=""><a href="#property_root" title="root">root</a></li>
+                        </ul>
+                    </div>
 
+                    <div id="methodsList" class="module">
+                        <h4>Methods</h4>
+                        <ul class="content">        
+                                <li class=""><a href="#method_getElementById" title="getElementById">getElementById</a></li>
+                                <li class=""><a href="#method_init" title="init">init</a></li>
+                                <li class=""><a href="#method_pop" title="pop">pop</a></li>
+                                <li class=""><a href="#method_push" title="push">push</a></li>
+                        </ul>
+                    </div>
 
 
 
@@ -120,7 +358,7 @@
 </div>
 <script type="text/javascript">
 
-    var ALL_YUI_PROPS = [];
+    var ALL_YUI_PROPS = [{"url": "libs.magix.Vom.html#method_getElementById", "access": "", "host": "libs.magix.Vom", "type": "method", "name": "getElementById"}, {"url": "libs.magix.Vom.html#property__idMap", "access": "", "host": "libs.magix.Vom", "type": "property", "name": "_idMap"}, {"url": "libs.magix.Vom.html#method_init", "access": "", "host": "libs.magix.Vom", "type": "method", "name": "init"}, {"url": "libs.magix.Vom.html#method_pop", "access": "", "host": "libs.magix.Vom", "type": "method", "name": "pop"}, {"url": "libs.magix.Vom.html#method_push", "access": "", "host": "libs.magix.Vom", "type": "method", "name": "push"}, {"url": "libs.magix.Vom.html#property_root", "access": "", "host": "libs.magix.Vom", "type": "property", "name": "root"}];
 </script>
 </body>
 </html>
