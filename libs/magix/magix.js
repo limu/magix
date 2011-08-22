@@ -60,7 +60,7 @@
             this.oldHash = this.hash;
             this.isIE = navigator.userAgent.toLowerCase().indexOf("msie") > -1;
             var docMode = document.documentMode;
-            this.showIframe = this.isIE && (!docMode || docMode < 7);
+            this.showIframe = this.isIE && (!docMode || docMode < 8);
             this.wirteFrame(iframeSrc);
             this.regHashChange();
             this.router = router || function(query){

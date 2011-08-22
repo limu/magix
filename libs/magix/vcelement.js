@@ -112,14 +112,14 @@ define(function(require, exports, module){
                     self.view.bind("message", options.message);
                 }
                 if (self.view.rendered) {
-                    this.mounting = false;
-                    this.mounted = true;
+                    self.mounting = false;
+                    self.mounted = true;
                     self.trigger("mounted", self.view);
                 }
                 else {
                     self.view.bind("rendered", function(){
-                        this.mounting = false;
-                        this.mounted = true;
+                        self.mounting = false;
+                        self.mounted = true;
                         self.trigger("mounted", self.view);
                     });
                 }
@@ -206,7 +206,7 @@ define(function(require, exports, module){
             for (i = 0; i < this.childNodes.length; i++) {
                 n = this.childNodes[i];
                 if (n == child) {
-                    module.load("./vom", function(vom){
+                    require.async("./vom", function(vom){
                         vom.pop(n);
                     });
                 }
@@ -235,6 +235,8 @@ define(function(require, exports, module){
             }
             console.log("VCELE UNMOUNT:4 chge vcelement.mounted to false @" + this.id);
             this.mounted = false;
+            this.view = null;//引用移除
+            
         }
     });
     _.extend(VCElement, {

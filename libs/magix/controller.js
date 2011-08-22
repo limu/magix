@@ -33,7 +33,7 @@ define(function(require, exports, module){
 			 * @type Object
 			 */
             this.env = {
-                appHome: config.uri.split("app/config/ini")[0],
+                appHome: config.uri.split("app/config/")[0],
                 templates: {}
             };
             return this;

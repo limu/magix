@@ -33,6 +33,15 @@ define(function(require, exports, module){
             this.vcid = o.vcid;
             this.queryModel = o.queryModel;
             this.viewName = o.viewName;
+            /***********左莫增加标识符，用来判断当前view是否在vom节点中begin*************/
+            this.exist = true;
+            //监听unload事件
+            this.bind("unload", function(){
+            	this.exist = false;
+            });
+            /***********左莫增加标识符，用来判断当前view是否在vom节点中end*************/
+           
+           
             this.bind("rendered", function(){
                 this.trigger("beforeSubviewsRender");
                 var vc = vom.getElementById(this.vcid);
@@ -215,6 +224,20 @@ define(function(require, exports, module){
                             for (var i = 0; i < events.length; i++) {
                                 eventArr = events[i].split(":");
                                 eventKey = eventArr.shift();
+								
+								// 事件代理,通过最后一个参数,决定是否阻止事件冒泡和取消默认动作
+                                var evtBehavior = eventArr[eventArr.length -1],
+                                    evtArg = false;
+                                 if(evtBehavior == '_halt_' || evtBehavior == '_preventDefault_') {
+                                     event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+                                     evtArg = true;
+                                 }
+                                 if(evtBehavior == '_halt_' || evtBehavior == '_stop_') {
+                                     event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
+                                     evtArg = true;
+                                 }
+                                if(evtArg) eventArr.pop();
+								
                                 if (view.events && view.events[type] && view.events[type][eventKey]) {
                                     view.events[type][eventKey](view, view.idIt(target), eventArr);
                                 }
