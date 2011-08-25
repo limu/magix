@@ -58,72 +58,72 @@
 <span class="cm"> * @namespace libs.magix</span>
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
-<span class="nx">define</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">require</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">module</span><span class="p">){</span>
-    <span class="kd">var</span> <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;backbone&quot;</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;underscore&quot;</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;app/config/ini&quot;</span><span class="p">);</span>
-    
-    <span class="kd">var</span> <span class="nx">MxController</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
-        <span class="k">this</span><span class="p">.</span><span class="nx">initialize</span><span class="p">();</span>
-    <span class="p">};</span>
-    
-    <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">MxController</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span> <span class="p">{</span>
-        <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">){</span>        
-            <span class="kd">var</span> <span class="nx">p2v</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">pathViewMap</span><span class="p">,</span> <span class="nx">viewName</span><span class="p">;</span>
-            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">p2v</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">p2v</span><span class="p">[</span><span class="nx">k</span><span class="p">])</span> <span class="p">{</span>
-                    <span class="nx">p2v</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">defaultViewName</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
+<span class="nx">define</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">require</span><span class="p">,</span> <span class="nx">exports</span><span class="p">,</span> <span class="nx">module</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;libs/backbone&quot;</span><span class="p">);</span>
+	<span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;libs/underscore&quot;</span><span class="p">);</span>
+	<span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;app/config/ini&quot;</span><span class="p">);</span>
+
+	<span class="kd">var</span> <span class="nx">MxController</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">this</span><span class="p">.</span><span class="nx">initialize</span><span class="p">();</span>
+	<span class="p">};</span>
+
+	<span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">MxController</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Event</span><span class="p">,</span> <span class="p">{</span>
+		<span class="nx">initialize</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">p2v</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">pathViewMap</span><span class="p">,</span> <span class="nx">viewName</span><span class="p">;</span>
+			<span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">p2v</span><span class="p">)</span> <span class="p">{</span>
+				<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">p2v</span><span class="p">[</span><span class="nx">k</span><span class="p">])</span> <span class="p">{</span>
+					<span class="nx">p2v</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">defaultViewName</span><span class="p">;</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
 			<span class="cm">/**</span>
 <span class="cm">			 * 存储全局共享信息,&lt;br/&gt;</span>
 <span class="cm">			 * 如require(&quot;libs/magix/controller&quot;).env.templates存储模板</span>
 <span class="cm">			 * @property env</span>
 <span class="cm">			 * @type Object</span>
 <span class="cm">			 */</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="nx">appHome</span><span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">uri</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;app/config/&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
-                <span class="nx">templates</span><span class="o">:</span> <span class="p">{}</span>
-            <span class="p">};</span>
-            <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
-        <span class="p">},</span>
-        <span class="nx">_route</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">query</span><span class="p">){</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">referrer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">query</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">query</span> <span class="o">=</span> <span class="nx">query</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">pathName</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">indexPath</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span> <span class="o">=</span> <span class="p">{};</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_fixPathPara</span><span class="p">(</span><span class="nx">query</span><span class="p">);</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">oldViewName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">viewName</span><span class="p">;</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">viewName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getViewName</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_mountView</span><span class="p">();</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">postData</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
-        <span class="p">},</span>
-        <span class="nx">setPostData</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">){</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">postData</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
-        <span class="p">},</span>
-        <span class="cm">/**</span>
-<span class="cm">         * 将传入的queryString Merge到当前的hashQuery中,生成新的query.&lt;br/&gt;</span>
-<span class="cm">         * 原hash: #!/a/b/x=1&amp;y=2&amp;offset=20&lt;br/&gt;</span>
-<span class="cm">         * reqiure(&quot;libs/magix/controller&quot;).navigateTo(&quot;z=1&amp;offset=0&quot;);&lt;br/&gt;</span>
-<span class="cm">         * 新hash: #!/a/b/x=1&amp;y=2&amp;z=3&amp;offset=0&lt;br/&gt;</span>
-<span class="cm">         * @method navigateTo</span>
-<span class="cm">         * @param {Object} queryString</span>
-<span class="cm">         */</span>
-        <span class="nx">navigateTo</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">q</span><span class="p">){</span>
-            <span class="kd">var</span> <span class="nx">np</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unParam</span><span class="p">(</span><span class="nx">q</span><span class="p">);</span>
-            <span class="kd">var</span> <span class="nx">v1</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span><span class="p">);</span>
-            <span class="k">delete</span> <span class="nx">v1</span><span class="p">.</span><span class="nx">referrer</span><span class="p">;</span>
-            <span class="k">delete</span> <span class="nx">v1</span><span class="p">.</span><span class="nx">pathname</span><span class="p">;</span>
-            <span class="k">delete</span> <span class="nx">v1</span><span class="p">.</span><span class="nx">query</span><span class="p">;</span>
-            <span class="k">delete</span> <span class="nx">v1</span><span class="p">.</span><span class="nx">postdata</span><span class="p">;</span>
-            <span class="kd">var</span> <span class="nx">v2</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">v1</span><span class="p">,</span> <span class="nx">np</span><span class="p">);</span>
-            <span class="kd">var</span> <span class="nx">nps</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">param</span><span class="p">(</span><span class="nx">v2</span><span class="p">);</span>
-            <span class="c1">//var nps = this.param(_.extend(_.clone(this.paraObj),np));</span>
-            <span class="k">this</span><span class="p">.</span><span class="nx">_goto</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">pathName</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nx">nps</span><span class="p">);</span>
-        <span class="p">},</span>
-        <span class="nx">_goto</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">){</span>
-            <span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="s2">&quot;!&quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">;</span>
-        <span class="p">},</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">env</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="nx">appHome</span> <span class="o">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">uri</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;app/config/&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+				<span class="nx">templates</span> <span class="o">:</span> <span class="p">{}</span>
+			<span class="p">};</span>
+			<span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+		<span class="p">},</span>
+		<span class="nx">_route</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">referrer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">query</span> <span class="o">||</span> <span class="kc">null</span><span class="p">;</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">query</span> <span class="o">=</span> <span class="nx">query</span><span class="p">;</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">pathName</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">indexPath</span><span class="p">;</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span> <span class="o">=</span> <span class="p">{};</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">_fixPathPara</span><span class="p">(</span><span class="nx">query</span><span class="p">);</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">oldViewName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">viewName</span><span class="p">;</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">viewName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getViewName</span><span class="p">();</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">_mountView</span><span class="p">();</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">postData</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+		<span class="p">},</span>
+		<span class="nx">setPostData</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">postData</span> <span class="o">=</span> <span class="nx">o</span><span class="p">;</span>
+		<span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * 将传入的queryString Merge到当前的hashQuery中,生成新的query.&lt;br/&gt;</span>
+<span class="cm">		 * 原hash: #!/a/b/x=1&amp;y=2&amp;offset=20&lt;br/&gt;</span>
+<span class="cm">		 * reqiure(&quot;libs/magix/controller&quot;).navigateTo(&quot;z=1&amp;offset=0&quot;);&lt;br/&gt;</span>
+<span class="cm">		 * 新hash: #!/a/b/x=1&amp;y=2&amp;z=3&amp;offset=0&lt;br/&gt;</span>
+<span class="cm">		 * @method navigateTo</span>
+<span class="cm">		 * @param {Object} queryString</span>
+<span class="cm">		 */</span>
+		<span class="nx">navigateTo</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">q</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">np</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unParam</span><span class="p">(</span><span class="nx">q</span><span class="p">);</span>
+			<span class="kd">var</span> <span class="nx">v1</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span><span class="p">);</span>
+			<span class="k">delete</span> <span class="nx">v1</span><span class="p">.</span><span class="nx">referrer</span><span class="p">;</span>
+			<span class="k">delete</span> <span class="nx">v1</span><span class="p">.</span><span class="nx">pathname</span><span class="p">;</span>
+			<span class="k">delete</span> <span class="nx">v1</span><span class="p">.</span><span class="nx">query</span><span class="p">;</span>
+			<span class="k">delete</span> <span class="nx">v1</span><span class="p">.</span><span class="nx">postdata</span><span class="p">;</span>
+			<span class="kd">var</span> <span class="nx">v2</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">v1</span><span class="p">,</span> <span class="nx">np</span><span class="p">);</span>
+			<span class="kd">var</span> <span class="nx">nps</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">param</span><span class="p">(</span><span class="nx">v2</span><span class="p">);</span>
+			<span class="c1">//var nps = this.param(_.extend(_.clone(this.paraObj),np));</span>
+			<span class="k">this</span><span class="p">.</span><span class="nx">_goto</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">pathName</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="nx">nps</span><span class="p">);</span>
+		<span class="p">},</span>
+		<span class="nx">_goto</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="s2">&quot;!&quot;</span> <span class="o">+</span> <span class="nx">url</span><span class="p">;</span>
+		<span class="p">},</span>
 		<span class="cm">/**</span>
 <span class="cm">		 * 查询对象,包含query,pathname,referrer,postData和hash包含的众多参数&lt;br/&gt;</span>
 <span class="cm">		 * 这是一个Backbone.Model对象实例,可以通过监听该对象的change事件,监视url的变化.&lt;br/&gt;</span>
@@ -140,99 +140,101 @@
 <span class="cm">		 * @property queryModel</span>
 <span class="cm">		 * @type Backbone.Model</span>
 <span class="cm">		 */</span>
-        <span class="nx">_mountView</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
-            <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
-            <span class="kd">var</span> <span class="nx">queryObject</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getQueryObject</span><span class="p">();</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">viewName</span> <span class="o">==</span> <span class="k">this</span><span class="p">.</span><span class="nx">oldViewName</span><span class="p">)</span> <span class="p">{</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">_fixQueryObject</span><span class="p">(</span><span class="nx">queryObject</span><span class="p">);</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">queryObject</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">require</span><span class="p">.</span><span class="nx">async</span><span class="p">(</span><span class="s2">&quot;./vom&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">vom</span><span class="p">){</span>
-                    <span class="nx">self</span><span class="p">.</span><span class="nx">queryModel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">(</span><span class="nx">queryObject</span><span class="p">);</span>
-                    <span class="nx">vom</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nx">mountView</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">viewName</span><span class="p">,</span> <span class="p">{</span>
-                        <span class="nx">queryModel</span><span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">queryModel</span>
-                    <span class="p">});</span>
-                <span class="p">});</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nx">_fixQueryObject</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">queryObject</span><span class="p">){</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">)</span> <span class="p">{</span>
-                <span class="kd">var</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">old</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
-                <span class="k">for</span> <span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">old</span><span class="p">)</span> <span class="p">{</span>
-                    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">queryObject</span><span class="p">))</span> <span class="p">{</span>
-                        <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">unset</span><span class="p">(</span><span class="nx">k</span><span class="p">,{</span><span class="nx">silent</span><span class="o">:</span><span class="kc">true</span><span class="p">});</span>
-                    <span class="p">}</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="nx">_getQueryObject</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
-            <span class="kd">var</span> <span class="nx">queryObject</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span><span class="p">,</span> <span class="p">{</span>
-                <span class="nx">referrer</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">referrer</span><span class="p">,</span>
-                <span class="nx">query</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">,</span>
-                <span class="nx">pathname</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">pathName</span><span class="p">,</span>
-                <span class="nx">postdata</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">postData</span> <span class="o">||</span> <span class="kc">null</span>
-            <span class="p">});</span>
-            <span class="k">return</span> <span class="nx">queryObject</span><span class="p">;</span>
-        <span class="p">},</span>
-        <span class="nx">_getViewName</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
-            <span class="kd">var</span> <span class="nx">p2v</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">pathViewMap</span><span class="p">,</span> <span class="nx">viewName</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">p2v</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">pathName</span><span class="p">])</span> <span class="p">{</span>
-                <span class="nx">viewName</span> <span class="o">=</span> <span class="nx">p2v</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">pathName</span><span class="p">];</span>
-            <span class="p">}</span>
-            <span class="k">else</span> <span class="p">{</span>
-                <span class="nx">viewName</span> <span class="o">=</span> <span class="nx">p2v</span><span class="p">[</span><span class="nx">config</span><span class="p">.</span><span class="nx">notFoundPath</span><span class="p">];</span>
-            <span class="p">}</span>
-            <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span><span class="p">.</span><span class="nx">__view__</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">viewName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span><span class="p">.</span><span class="nx">__view__</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">);</span>
-            <span class="p">}</span>
-            <span class="k">return</span> <span class="nx">viewName</span><span class="p">;</span>
-        <span class="p">},</span>
-        <span class="nx">_fixPathPara</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">query</span><span class="p">){</span>
-            <span class="kd">var</span> <span class="nx">tmpArr</span><span class="p">,</span> <span class="nx">paraStr</span><span class="p">,</span> <span class="nx">kv</span><span class="p">;</span>
-            <span class="k">if</span> <span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">tmpArr</span> <span class="o">=</span> <span class="nx">query</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">);</span>
-                <span class="nx">paraStr</span> <span class="o">=</span> <span class="nx">tmpArr</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">pathName</span> <span class="o">=</span> <span class="nx">tmpArr</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">);</span>
-                <span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unParam</span><span class="p">(</span><span class="nx">paraStr</span><span class="p">);</span>
-            <span class="p">}</span>
-        <span class="p">},</span>
-        <span class="cm">/**</span>
-<span class="cm">         * 将传入的queryObject转化为key1=value1&amp;key2=value2的queryString</span>
-<span class="cm">         * @method param</span>
-<span class="cm">         * @param {Object} queryObject</span>
-<span class="cm">         * @return {String}</span>
-<span class="cm">         */</span>
-        <span class="nx">param</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">){</span>
-            <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="p">[];</span>
-            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">k</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">[</span><span class="nx">k</span><span class="p">]);</span>
-            <span class="p">}</span>
-            <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">);</span>
-        <span class="p">},</span>
-        <span class="cm">/**</span>
-<span class="cm">         * 与param方法的相反,将传入的queryString转化为Object</span>
-<span class="cm">         * @method unParam</span>
-<span class="cm">         * @param {String} queryString</span>
-<span class="cm">         * @return {Object}</span>
-<span class="cm">         */</span>
-        <span class="nx">unParam</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">){</span>
-            <span class="kd">var</span> <span class="nx">paraArr</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">);</span>
-            <span class="kd">var</span> <span class="nx">kv</span><span class="p">,</span> <span class="nx">res</span> <span class="o">=</span> <span class="p">{};</span>
-            <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">paraArr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-                <span class="nx">kv</span> <span class="o">=</span> <span class="nx">paraArr</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">);</span>
-                <span class="k">if</span> <span class="p">(</span><span class="nx">kv</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
-                    <span class="nx">res</span><span class="p">[</span><span class="nx">kv</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">kv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
-                <span class="p">}</span>
-            <span class="p">}</span>
-            <span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">});</span>
-    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">MxController</span><span class="p">.</span><span class="nx">inst</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">MxController</span><span class="p">.</span><span class="nx">inst</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MxController</span><span class="p">();</span>
-    <span class="p">}</span>
-    <span class="nb">window</span><span class="p">.</span><span class="nx">MXController</span> <span class="o">=</span> <span class="nx">MxController</span><span class="p">.</span><span class="nx">inst</span><span class="p">;</span>
-    <span class="k">return</span> <span class="nx">MxController</span><span class="p">.</span><span class="nx">inst</span><span class="p">;</span>
+		<span class="nx">_mountView</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+			<span class="kd">var</span> <span class="nx">queryObject</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_getQueryObject</span><span class="p">();</span>
+			<span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">viewName</span> <span class="o">==</span> <span class="k">this</span><span class="p">.</span><span class="nx">oldViewName</span><span class="p">)</span> <span class="p">{</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">_fixQueryObject</span><span class="p">(</span><span class="nx">queryObject</span><span class="p">);</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">queryObject</span><span class="p">);</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="nx">require</span><span class="p">.</span><span class="nx">async</span><span class="p">(</span><span class="s2">&quot;./vom&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">vom</span><span class="p">)</span> <span class="p">{</span>
+					<span class="nx">self</span><span class="p">.</span><span class="nx">queryModel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">(</span><span class="nx">queryObject</span><span class="p">);</span>
+					<span class="nx">vom</span><span class="p">.</span><span class="nx">root</span><span class="p">.</span><span class="nx">mountView</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">viewName</span><span class="p">,</span> <span class="p">{</span>
+						<span class="nx">queryModel</span> <span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">queryModel</span>
+					<span class="p">});</span>
+				<span class="p">});</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
+		<span class="nx">_fixQueryObject</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">queryObject</span><span class="p">)</span> <span class="p">{</span>
+			<span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">)</span> <span class="p">{</span>
+				<span class="kd">var</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">old</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
+				<span class="k">for</span><span class="p">(</span><span class="nx">k</span> <span class="k">in</span> <span class="nx">old</span><span class="p">)</span> <span class="p">{</span>
+					<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="p">(</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">queryObject</span><span class="p">))</span> <span class="p">{</span>
+						<span class="k">this</span><span class="p">.</span><span class="nx">queryModel</span><span class="p">.</span><span class="nx">unset</span><span class="p">(</span><span class="nx">k</span><span class="p">,</span> <span class="p">{</span>
+							<span class="nx">silent</span> <span class="o">:</span> <span class="kc">true</span>
+						<span class="p">});</span>
+					<span class="p">}</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
+		<span class="nx">_getQueryObject</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">queryObject</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span><span class="p">,</span> <span class="p">{</span>
+				<span class="nx">referrer</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">referrer</span><span class="p">,</span>
+				<span class="nx">query</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">query</span><span class="p">,</span>
+				<span class="nx">pathname</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">pathName</span><span class="p">,</span>
+				<span class="nx">postdata</span> <span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">postData</span> <span class="o">||</span> <span class="kc">null</span>
+			<span class="p">});</span>
+			<span class="k">return</span> <span class="nx">queryObject</span><span class="p">;</span>
+		<span class="p">},</span>
+		<span class="nx">_getViewName</span> <span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">p2v</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">pathViewMap</span><span class="p">,</span> <span class="nx">viewName</span><span class="p">;</span>
+			<span class="k">if</span><span class="p">(</span><span class="nx">p2v</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">pathName</span><span class="p">])</span> <span class="p">{</span>
+				<span class="nx">viewName</span> <span class="o">=</span> <span class="nx">p2v</span><span class="p">[</span><span class="k">this</span><span class="p">.</span><span class="nx">pathName</span><span class="p">];</span>
+			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+				<span class="nx">viewName</span> <span class="o">=</span> <span class="nx">p2v</span><span class="p">[</span><span class="nx">config</span><span class="p">.</span><span class="nx">notFoundPath</span><span class="p">];</span>
+			<span class="p">}</span>
+			<span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span><span class="p">.</span><span class="nx">__view__</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">viewName</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span><span class="p">.</span><span class="nx">__view__</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">).</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">);</span>
+			<span class="p">}</span>
+			<span class="k">return</span> <span class="nx">viewName</span><span class="p">;</span>
+		<span class="p">},</span>
+		<span class="nx">_fixPathPara</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">tmpArr</span><span class="p">,</span> <span class="nx">paraStr</span><span class="p">,</span> <span class="nx">kv</span><span class="p">;</span>
+			<span class="k">if</span><span class="p">(</span><span class="nx">query</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">tmpArr</span> <span class="o">=</span> <span class="nx">query</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">);</span>
+				<span class="nx">paraStr</span> <span class="o">=</span> <span class="nx">tmpArr</span><span class="p">.</span><span class="nx">pop</span><span class="p">();</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">pathName</span> <span class="o">=</span> <span class="nx">tmpArr</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">);</span>
+				<span class="k">this</span><span class="p">.</span><span class="nx">paraObj</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">unParam</span><span class="p">(</span><span class="nx">paraStr</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * 将传入的queryObject转化为key1=value1&amp;key2=value2的queryString</span>
+<span class="cm">		 * @method param</span>
+<span class="cm">		 * @param {Object} queryObject</span>
+<span class="cm">		 * @return {String}</span>
+<span class="cm">		 */</span>
+		<span class="nx">param</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="p">[];</span>
+			<span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">k</span> <span class="k">in</span> <span class="nx">o</span><span class="p">)</span> <span class="p">{</span>
+				<span class="k">if</span><span class="p">(</span><span class="nx">o</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">k</span><span class="p">))</span> <span class="p">{</span>
+					<span class="nx">res</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">k</span> <span class="o">+</span> <span class="s2">&quot;=&quot;</span> <span class="o">+</span> <span class="nx">o</span><span class="p">[</span><span class="nx">k</span><span class="p">]);</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+			<span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">);</span>
+		<span class="p">},</span>
+		<span class="cm">/**</span>
+<span class="cm">		 * 与param方法的相反,将传入的queryString转化为Object</span>
+<span class="cm">		 * @method unParam</span>
+<span class="cm">		 * @param {String} queryString</span>
+<span class="cm">		 * @return {Object}</span>
+<span class="cm">		 */</span>
+		<span class="nx">unParam</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+			<span class="kd">var</span> <span class="nx">paraArr</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;&amp;&quot;</span><span class="p">);</span>
+			<span class="kd">var</span> <span class="nx">kv</span><span class="p">,</span> <span class="nx">res</span> <span class="o">=</span> <span class="p">{};</span>
+			<span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">paraArr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+				<span class="nx">kv</span> <span class="o">=</span> <span class="nx">paraArr</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">);</span>
+				<span class="k">if</span><span class="p">(</span><span class="nx">kv</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+					<span class="nx">res</span><span class="p">[</span><span class="nx">kv</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">kv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">||</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+			<span class="k">return</span> <span class="nx">res</span><span class="p">;</span>
+		<span class="p">}</span>
+	<span class="p">});</span>
+	<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">MxController</span><span class="p">.</span><span class="nx">inst</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">MxController</span><span class="p">.</span><span class="nx">inst</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MxController</span><span class="p">();</span>
+	<span class="p">}</span>
+	<span class="nb">window</span><span class="p">.</span><span class="nx">MXController</span> <span class="o">=</span> <span class="nx">MxController</span><span class="p">.</span><span class="nx">inst</span><span class="p">;</span>
+	<span class="k">return</span> <span class="nx">MxController</span><span class="p">.</span><span class="nx">inst</span><span class="p">;</span>
 <span class="p">});</span>
 </pre></div>
 

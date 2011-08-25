@@ -58,9 +58,9 @@
 <span class="cm"> * @static</span>
 <span class="cm"> */</span>
 <span class="nx">define</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">require</span><span class="p">){</span>
-    <span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;underscore&quot;</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">MxVCElement</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;./vcelement&quot;</span><span class="p">);</span>
-    <span class="kd">var</span> <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;backbone&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;libs/underscore&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">MxVCElement</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;libs/magix/vcelement&quot;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;libs/backbone&quot;</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">vom</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Backbone</span><span class="p">.</span><span class="nx">Events</span><span class="p">,</span> <span class="p">{</span>
         <span class="cm">/**</span>
 <span class="cm">         * _idMap 所有vcelment的索引&lt;br/&gt;</span>

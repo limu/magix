@@ -1,3 +1,59 @@
+<h2> 快速构建一个Magix应用</h2>
+<p class="description">
+	Step1：建立libs目录,放置libs/seajs,libs/magix相关文件.</br>
+	Step2：建立index.html.</br>
+	Step3：在index.html中先后引入seajs.js和magix.js</br>
+	Step4：通过seajs.config(alieas{libs:"path/to/libs",app:"path/to/app"});指定libs和app的实际地址.</br>
+	Step5：添加启动Maigx历史服务:Magix.History.init();</br>
+	index.html的代码部署如下：</br>
+</p>
+<pre class="sh_javascript sh_sourceCode green">
+(function(){
+    //获取当前页面路径
+    var currentPagePath = location.href.split("#")[0].split("index.html")[0];
+    //seajs配置
+    //通过alies配置top-level模块采用debug版本,配置app,config,libs的实际地址
+    seajs.config({
+        alias: {
+                'app': currentPagePath + 'app',
+               'libs': currentPagePath + '../libs'
+        }
+    });
+    //启动Magix
+    Magix.History.init();
+})();
+</pre>
+<p class="description">
+	Step6：建立名为mxhistory.html的空白html文件,与index.html放置在同一目录下，用于IE历史记录.</br>
+	Step7：建立app文件夹,app/views,app/config目录.</br>
+	Step8：在app/views目录中，建立home和404页面的View：包括home.html、home.js和404.html、404.js,其中js文件的代码如下：</br>
+</p>
+<pre class="sh_javascript sh_sourceCode green">
+//  404.js、home.js
+define(function(require){ 
+	return require("libs/magix/view").extend({});
+});
+</pre>
+<p class="description">
+	Step9：在app/config目录建立app/config/ini.js文件,主要填写首页和404页面地址,以及配置pathname对应的viewName.代码如下所示：
+</p>
+<pre class="sh_javascript sh_sourceCode green">
+define(function(require, exports, module){
+    var config = {
+        uri: module.id || module.uri
+    };
+    config.indexPath = "/home";      //首页地址
+    config.notFoundPath = "/404";    //404页面地址
+    config.pathViewMap = {           //各页面对应View路径
+        "/home": "app/views/home",
+        "/404": "app/views/404"
+    };
+    return config;
+});
+</pre>
+<p class="show-demo">
+	<a href="../examples/hellomagix/index.html" target="_blank">Demo</a>
+</p>
 <p class="next-page">
-    下一节：<a href="#!/router/">Url Route规则</a>
+	下一节：<a href="#!/router/">Url Route规则</a>
 </p>

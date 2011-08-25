@@ -11,6 +11,7 @@ define(function(require, exports, module){
             if (model.hasChanged("pathname")) {
                 this.mountSubView();
             }
+			return false;
         },
         mountSubView: function(){
             vom.getElementById('vc-body').mountView("app/views" + this.queryModel.get('pathname'));
