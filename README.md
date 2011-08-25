@@ -14,8 +14,11 @@ MagixJS对Controller和Router进行了重新定义,Router将浏览器hash值根�
 MagixJS进行了View进行了父子结构抽象,通过VOM(View Object Model)对象,管理带有父子关系的Backbone View的展示生命周期.
 
 MagixJS特别注意避免单页应用的浏览器内存大量积累和内存泄露.包括:
+
 1.采取Dom节点即用即释放的方法,保障永不持有Dom节点
+
 2.采用全新的事件代理方案,高效解耦Dom节点与事件响应体
+
 3.限制JQuery的使用(Backbone小量依赖JQuery),从而让应用开发者在自己的代码里更好的控制内存使用
 
 MagixJS使用Mustache.js(<http://mustache.github.com/>)作为模板引擎,并对Mustache做了一些扩展,支持简单的if判断等功能.
