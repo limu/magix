@@ -1,8 +1,8 @@
 define(function(require, exports, module){
-    var Mustache = require("mustache");
+    var Mustache = require("libs/mustache");
     var MxView = require("libs/magix/view");
     var vom = require("libs/magix/vom");
-    var _ = require("underscore");
+    var _ = require("libs/underscore");
     var View = MxView.extend({
         init: function(o){
             this.bind("rendered", this.mountSubView);

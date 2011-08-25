@@ -17,8 +17,8 @@ define(function(require, exports, module){
     //hack for custom tag for ie
     var mxview = document.createElement(VCTAG);
     mxview = null;
-    var _ = require("underscore");
-    var Backbone = require("backbone");
+    var _ = require("libs/underscore");
+    var Backbone = require("libs/backbone");
     var VCElement = function(node, id){
         this._node = node || document.createElement(VCTAG);
         this.id = this.idIt(this._node, id);
@@ -91,7 +91,7 @@ define(function(require, exports, module){
         mountView: function(viewName, options){
             options = options ||
             {
-                queryModel: require("./controller").queryModel
+                queryModel: require("libs/magix/controller").queryModel
             };
             if (!viewName) {
                 return;

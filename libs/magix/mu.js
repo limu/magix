@@ -19,7 +19,7 @@
  * @static
  */
 define(function(require){
-    var Mustache = require("mustache");
+    var Mustache = require("libs/mustache");
     function addFns(template, data){
         var ifs = getConditions(template);
         var key = "";

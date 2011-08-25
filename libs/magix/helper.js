@@ -10,8 +10,8 @@
  * @static
  */
 define(function(require){
-    var $ = require("jquery");
-    var templates = require("./controller").env.templates;
+    var $ = require("libs/jquery");
+    var templates = require("libs/magix/controller").env.templates;
     var helper = {};
     helper.ajax = $.ajax;
     /**

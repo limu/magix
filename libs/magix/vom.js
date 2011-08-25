@@ -9,9 +9,9 @@
  * @static
  */
 define(function(require){
-    var _ = require("underscore");
-    var MxVCElement = require("./vcelement");
-    var Backbone = require("backbone");
+    var _ = require("libs/underscore");
+    var MxVCElement = require("libs/magix/vcelement");
+    var Backbone = require("libs/backbone");
     var vom = _.extend(Backbone.Events, {
         /**
          * _idMap 所有vcelment的索引<br/>

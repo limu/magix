@@ -1,4 +1,4 @@
-define('backbone', ['underscore-debug', 'jquery-debug'], function(require, exports) {
+define(function(require, exports) {
 //     Backbone.js 0.5.3
 //     (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
@@ -30,10 +30,10 @@ define('backbone', ['underscore-debug', 'jquery-debug'], function(require, expor
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
-  if (!_ && (typeof require !== 'undefined')) _ = require('underscore-debug')._;
+  if (!_ && (typeof require !== 'undefined')) _ = require('libs/underscore')._;
 
   // For Backbone's purposes, jQuery or Zepto owns the `$` variable.
-  var $ = require('jquery-debug') || root.Zepto;
+  var $ = require('libs/jquery') || root.Zepto;
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
