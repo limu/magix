@@ -1,13 +1,13 @@
 /**
  * Magix View 模块
  * @module view
- * @requires backbone,underscore,libs/magix/vom,libs.magix/controller,libs/magix/helper,libs/magix/mu
+ * @requires backbone,underscore,magix/vom,libs.magix/controller,magix/helper,magix/mu
  */
 /**
  * Magix View基类.继承自Backbone.View.用于管理View声明周期,事件代理,渲染数据,以及响应Hash变化.<br/>
  * MagixView子类位于app/views目录之下,通过重写init,render,queryModelChange,renderer,events来扩展出具体子类,如:<br/>
  * define(function(){<br/>
- * &nbsp;&nbsp;&nbsp;&nbsp;require("libs/magix/view").extend({init:...,render:...});<br/>
+ * &nbsp;&nbsp;&nbsp;&nbsp;require("magix/view").extend({init:...,render:...});<br/>
  * }<br/>
  * 通常不会直接通过new View(config)来创建类的实例,而是通过vcElement.mountView("viewName")的方式将view装载入一个容器(<a href="module_vcelement.html">vcelement</a>)时进行实例化.
  * @class View
@@ -15,12 +15,12 @@
  * @constructor
  */
 define(function(require, exports, module) {
-	var Backbone = require("libs/backbone");
-	var vom = require("libs/magix/vom");
-	var _ = require("libs/underscore");
-	var ctrl = require("libs/magix/controller");
-	var helper = require("libs/magix/helper");
-	var Mustache = require("libs/magix/mu");
+	var Backbone = require("backbone");
+	var vom = require("magix/vom");
+	var _ = require("underscore");
+	var ctrl = require("magix/controller");
+	var helper = require("magix/helper");
+	var Mustache = require("magix/mu");
 	var MxView = Backbone.View.extend({
 		/**
 		 * 实例化过程会调用init方法,在这个方法中可以完成一些初始化任务,比如载入将要使用的Model/Collection对象

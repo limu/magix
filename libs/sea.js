@@ -1158,8 +1158,8 @@ seajs._fn = {};
   var loaderSrc = util.getScriptAbsoluteSrc(loaderScript), loaderDir;
   if (loaderSrc) {
     var base = loaderDir = util.dirname(loaderSrc);
-    // When src is "http://test.com/libs/seajs/1.0.0/sea.js", redirect base
-    // to "http://test.com/libs/"
+    // When src is "http://test.com/seajs/1.0.0/sea.js", redirect base
+    // to "http://test.com/"
     var match = base.match(/^(.+\/)seajs\/[\d\.]+\/$/);
     if (match) {
       base = match[1];

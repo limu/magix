@@ -1,7 +1,7 @@
 /**
  * 通用方法
  * @module helper
- * @requires jquery,libs/magix/controller
+ * @requires jquery,magix/controller
  */
 /**
  * 通用方法静态类
@@ -10,8 +10,8 @@
  * @static
  */
 define(function(require){
-    var $ = require("libs/jquery");
-    var templates = require("libs/magix/controller").env.templates;
+    var $ = require("jquery");
+    var templates = require("magix/controller").env.templates;
     var helper = {};
     helper.ajax = $.ajax;
     /**

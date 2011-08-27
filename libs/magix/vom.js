@@ -1,7 +1,7 @@
 /**
  * VOM(View Object Model)  管理vcelement
  * @module vom
- * @requires underscore,backbone,libs/magix/vcelement
+ * @requires underscore,backbone,magix/vcelement
  */
 /**
  * @class Vom
@@ -9,9 +9,9 @@
  * @static
  */
 define(function(require){
-    var _ = require("libs/underscore");
-    var MxVCElement = require("libs/magix/vcelement");
-    var Backbone = require("libs/backbone");
+    var _ = require("underscore");
+    var MxVCElement = require("magix/vcelement");
+    var Backbone = require("backbone");
     var vom = _.extend(Backbone.Events, {
         /**
          * _idMap 所有vcelment的索引<br/>

@@ -30,10 +30,10 @@ define(function(require, exports) {
 
   // Require Underscore, if we're on the server, and it's not already present.
   var _ = root._;
-  if (!_ && (typeof require !== 'undefined')) _ = require('libs/underscore')._;
+  if (!_ && (typeof require !== 'undefined')) _ = require('underscore')._;
 
   // For Backbone's purposes, jQuery or Zepto owns the `$` variable.
-  var $ = require('libs/jquery') || root.Zepto;
+  var $ = require('jquery') || root.Zepto;
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.

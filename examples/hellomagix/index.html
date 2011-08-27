@@ -7,14 +7,8 @@
 	<body>
 		<br/>
 		<a href="#!/home/">home</a>&nbsp;&nbsp;<a href="#!/test/">test</a>
-		<script type="text/javascript" src="../../build/debug/sea.js"></script>
-		<script>
-			define('~/myinit', null, function() {
-			}); 
-		</script>
-		<script type="text/javascript" src="../../build/debug/backbone.js"></script>
-		<script type="text/javascript" src="../../build/debug/magixpkg.js"></script>
-		<script type="text/javascript" src="../../build/debug/magix/magix.js"></script>
+		<script type="text/javascript" src="../../libs/sea.js"></script>
+		<script type="text/javascript" src="../../libs/magix/magix.js"></script>
 		<script type="text/javascript">
 			(function() {
 				//当前页面路径
@@ -23,15 +17,13 @@
 				//通过alies配置top-level模块采用debug版本,配置appp,config,libs的实际地址
 				seajs.config({
 					alias : {
-						'app' : currentPagePath + 'app',
-						'libs' : currentPagePath + '../../build/debug'
+						'app' : currentPagePath + 'app'
 					}
 				});
 				//启动Magix
 				Magix.History.init();
 				console.log(seajs._data.memoizedMods);
 			})();
-
 		</script>
 	</body>
 </html>

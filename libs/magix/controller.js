@@ -10,8 +10,8 @@
  * @static
  */
 define(function(require, exports, module) {
-	var Backbone = require("libs/backbone");
-	var _ = require("libs/underscore");
+	var Backbone = require("backbone");
+	var _ = require("underscore");
 	var config = require("app/config/ini");
 
 	var MxController = function() {
@@ -28,7 +28,7 @@ define(function(require, exports, module) {
 			}
 			/**
 			 * 存储全局共享信息,<br/>
-			 * 如require("libs/magix/controller").env.templates存储模板
+			 * 如require("magix/controller").env.templates存储模板
 			 * @property env
 			 * @type Object
 			 */
@@ -55,7 +55,7 @@ define(function(require, exports, module) {
 		/**
 		 * 将传入的queryString Merge到当前的hashQuery中,生成新的query.<br/>
 		 * 原hash: #!/a/b/x=1&y=2&offset=20<br/>
-		 * reqiure("libs/magix/controller").navigateTo("z=1&offset=0");<br/>
+		 * reqiure("magix/controller").navigateTo("z=1&offset=0");<br/>
 		 * 新hash: #!/a/b/x=1&y=2&z=3&offset=0<br/>
 		 * @method navigateTo
 		 * @param {Object} queryString

@@ -1,6 +1,6 @@
 /**
  * 开始建立一个Magix应用:<br/>
- * 1.简历libs目录,放置libs/seajs,libs/magix相关文件<br/>
+ * 1.简历libs目录,放置seajs,magix相关文件<br/>
  * 2.建立index.html.<br/>
  * 3.建立名为mxhistory.html的空白html文件,与index.html放置在同一目录下.<br/>
  * 4.建立app,app/views,app/config目录,和app/config/ini.js文件.<br/>
@@ -64,7 +64,7 @@
             this.wirteFrame(iframeSrc);
             this.regHashChange();
             this.router = router || function(query){
-                seajs.use(['libs/magix/controller'], function(ctrl){
+                seajs.use(['magix/controller'], function(ctrl){
                     ctrl._route(query);
                 });
             };

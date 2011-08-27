@@ -1,3 +1,3 @@
 define(function(require){
-	return require("libs/magix/view").extend({});
+	return require("magix/view").extend({});
 });

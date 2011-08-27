@@ -1,7 +1,7 @@
 define(function(require){
-    var Mustache = require("libs/mustache");
-    var MxView = require("libs/magix/view");
-    var _ = require("libs/underscore");
+    var Mustache = require("mustache");
+    var MxView = require("magix/view");
+    var _ = require("underscore");
     var Highlight = require("assets/highlight");
     var View = MxView.extend({
         render: function(){
