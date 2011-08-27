@@ -12,10 +12,6 @@
 define("magix/controller",["libs/backbone","libs/underscore","app/config/ini"],function(require, exports, module) {
 	var Backbone = require("libs/backbone");
 	var _ = require("libs/underscore");
-	// var _;
-	// require.async("libs/underscore",function(us){
-		// _ = us;
-	// });
 	var config = require("app/config/ini");
 
 	var MxController = function() {
