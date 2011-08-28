@@ -9,7 +9,7 @@
  * @namespace libs.magix
  * @static
  */
-define("magix/controller",["underscore","backbone","app/config/ini"],function(require, exports, module) {
+define("magix/controller", ["underscore", "backbone", "app/config/ini"], function(require, exports, module) {
 	var _ = require("underscore");
 	var Backbone = require("backbone");
 	var config = require("app/config/ini");
@@ -38,7 +38,7 @@ define("magix/controller",["underscore","backbone","app/config/ini"],function(re
 			};
 			return this;
 		},
-		_route : function(query) {
+		route : function(query) {
 			this.referrer = this.query || null;
 			this.query = query;
 			this.pathName = config.indexPath;
