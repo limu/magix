@@ -16,9 +16,8 @@
  * 对于数组对象可以通过{{__index__}}访问数组下标
  * @class Mu
  * @namespace libs.magix
- * @static
- */
-define(function(require){
+ * @static*/
+define("magix/mu",["mustache"],function(require){
     var Mustache = require("mustache");
     function addFns(template, data){
         var ifs = getConditions(template);

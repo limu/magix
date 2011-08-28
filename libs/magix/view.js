@@ -14,10 +14,10 @@
  * @param {Object} config config其中必须包含viewName,vcid和queryModel三项,指明view的名字,展示view的容器id和当前的query
  * @constructor
  */
-define(function(require, exports, module) {
+define("magix/view", ["underscore", "backbone", "magix/vom", "magix/controller", "magix/helper", "magix/mu"], function(require, exports, module) {
+	var _ = require("underscore");
 	var Backbone = require("backbone");
 	var vom = require("magix/vom");
-	var _ = require("underscore");
 	var ctrl = require("magix/controller");
 	var helper = require("magix/helper");
 	var Mustache = require("magix/mu");

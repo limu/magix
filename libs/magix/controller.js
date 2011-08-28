@@ -9,9 +9,9 @@
  * @namespace libs.magix
  * @static
  */
-define(function(require, exports, module) {
-	var Backbone = require("backbone");
+define("magix/controller",["underscore","backbone","app/config/ini"],function(require, exports, module) {
 	var _ = require("underscore");
+	var Backbone = require("backbone");
 	var config = require("app/config/ini");
 
 	var MxController = function() {
@@ -98,7 +98,7 @@ define(function(require, exports, module) {
 				this._fixQueryObject(queryObject);
 				this.queryModel.set(queryObject);
 			} else {
-				require.async("./vom", function(vom) {
+				require.async("magix/vom", function(vom) {
 					self.queryModel = new Backbone.Model(queryObject);
 					vom.root.mountView(self.viewName, {
 						queryModel : self.queryModel

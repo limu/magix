@@ -12,13 +12,14 @@
  * @param {HTMLElement} node (可选)View根节点
  * @param {String} id (可选)View根节点id
  */
-define(function(require, exports, module) {
+define("magix/vcelement", ["underscore", "backbone", "magix/controller"], function(require, exports, module) {
+	var _ = require("underscore");
+	var Backbone = require("backbone");
+	var MxController = require("magix/controller");
 	var VCTAG = "mxvc";
 	//hack for custom tag for ie
 	var mxview = document.createElement(VCTAG);
 	mxview = null;
-	var _ = require("underscore");
-	var Backbone = require("backbone");
 	var VCElement = function(node, id) {
 		this._node = node || document.createElement(VCTAG);
 		this.id = this.idIt(this._node, id);
@@ -90,7 +91,7 @@ define(function(require, exports, module) {
 		 */
 		mountView : function(viewName, options) {
 			options = options || {
-				queryModel : require("magix/controller").queryModel
+				queryModel : MxController.queryModel
 			};
 			if(!viewName) {
 				return;
@@ -204,7 +205,7 @@ define(function(require, exports, module) {
 			for( i = 0; i < this.childNodes.length; i++) {
 				n = this.childNodes[i];
 				if(n == child) {
-					require.async("./vom", function(vom) {
+					require.async("magix/vom", function(vom) {
 						vom.pop(n);
 					});
 				} else {
