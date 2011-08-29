@@ -18,12 +18,7 @@ define("magix/controller", ["underscore", "backbone", "app/config/ini"], functio
 	};
 	_.extend(MxController.prototype, Backbone.Events, {
 		initialize : function(magixConfig) {
-			var p2v = appConfig.pathViewMap;
-			for(var k in p2v) {
-				if(!p2v[k]) {
-					p2v[k] = appConfig.defaultViewName;
-				}
-			}
+			this._fixAppConfig();
 			this._magixConfig = magixConfig;
 			this._appConfig = appConfig;
 			/**
@@ -36,6 +31,14 @@ define("magix/controller", ["underscore", "backbone", "app/config/ini"], functio
 				templates : {},
 				appHome : magixConfig.appHome
 			};
+		},
+		_fixAppConfig : function() {
+			var p2v = appConfig.pathViewMap;
+			for(var k in p2v) {
+				if(!p2v[k]) {
+					p2v[k] = appConfig.defaultViewName;
+				}
+			}
 		},
 		route : function(hashQuery) {
 			//生成this.location对象.内部分别解析hash和search
