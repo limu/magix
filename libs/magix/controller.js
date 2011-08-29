@@ -74,7 +74,13 @@ define("magix/controller", ["underscore", "backbone", "app/config/ini"], functio
 			}
 			//multipage
 			if(this._magixConfig.multipage) {
-				viewName = (p2v[this.query["sch:pathname"]] && p2v[this.query["sch:pathname"]][this.query.pathname]) || "body";
+				var schPath = p2v[this.query["sch:pathname"]];
+				if( typeof schPath == "object") {
+					viewName = schPath[this.query.pathname] || schPath[this._appConfig.notFoundPath];
+				} else {
+					document.body.id = "vc-root";
+					viewName = schPath || this._appConfig.defaultRootViewName;
+				}
 			}
 			return viewName;
 		},

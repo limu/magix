@@ -31,8 +31,14 @@ define("magix/vom", ["underscore", "backbone", "magix/vcelement"], function(requ
 		 * @param {Object} queryString
 		 */
 		init : function() {
-			var vc = vom.createElement(null, "vc-root");
-			document.body.insertBefore(vc.getOnce(), document.body.firstChild);
+			var node = null;
+			if(document.body.id == "vc-root"){
+				node = document.body;
+			}
+			var vc = vom.createElement(node, "vc-root");
+			if(!node){
+				document.body.insertBefore(vc.getOnce(), document.body.firstChild);
+			}			
 			vom.root = vc;
 			return vom;
 		},

@@ -96,6 +96,9 @@ define("magix/vcelement", ["underscore", "backbone", "magix/controller"], functi
 			if(!viewName) {
 				return;
 			}
+			if(viewName.indexOf("link_to") === 0) {
+				viewName = "magix/view";
+			}
 			var self = this;
 			this.mounting = true;
 			if(this.view) {
