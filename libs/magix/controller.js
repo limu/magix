@@ -123,7 +123,7 @@ define("magix/controller", ["underscore", "backbone", "app/config/ini"], functio
 			return location;
 		},
 		_parseSearch : function() {
-			var search = {}, prefix = this._magixConfig.urlPrefix || null;
+			var search = {}, prefix = this._magixConfig.pathPrefix || null;
 			search.pathName = location.pathname;
 			search.paraObj = {};
 			if(prefix) {
