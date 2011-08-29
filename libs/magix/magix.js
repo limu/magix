@@ -34,6 +34,7 @@
 	}
 	Magix = window.Magix || {};
 	Magix.History = Magix.History || {
+		config : {},
 		hash : "",
 		oldHash : null,
 		showIframe : false,
@@ -49,18 +50,38 @@
 		 * @param {String} iframeSrc (可选,默认为"mxhistory.html") 用于IE6/7记录历史的iframe地址,注意需要填写相对于主页的相对路径.
 		 * @namespace Magix
 		 */
-		init : function(iframeSrc) {
-			this.iframeSrc = iframeSrc || "mxhistory.html";
+		init : function(config) {
+			config = config || {};
+			this.iframeSrc = config.iframeSrc || "mxhistory.html";
+			config.appHome = config.appHome || this._getDefaultAppHome();
+			seajs.config({
+				alias : {
+					app : config.appHome
+				}
+			});
+			Magix.config = config;
+			this.config = config;
 			this.hash = location.hash;
 			this.oldHash = this.hash;
 			this.isIE = navigator.userAgent.toLowerCase().indexOf("msie") > -1;
 			var docMode = document.documentMode;
 			this.showIframe = this.isIE && (!docMode || docMode < 8);
-			this.wirteFrame(iframeSrc);
+			this.wirteFrame(this.iframeSrc);
 			this.regHashChange();
 			if(!this.showIframe) {
 				this.route(this.hash);
 			}
+		},
+		_getDefaultAppHome : function() {
+			var s = location.href.split(/#|\?/)[0];
+			var a = s.split("/");
+			if(a.length > 3) {
+				a[a.length - 1] = "";
+			} else {
+				a.push("");
+			}
+			s = a.join("/") + "app";
+			return s;
 		},
 		regHashChange : function() {
 			var self = this;

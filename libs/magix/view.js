@@ -119,7 +119,7 @@ define("magix/view", ["underscore", "backbone", "magix/vom", "magix/controller",
 
 		},
 		getTemplate : function(cb, name) {
-			var url = ctrl.env.appHome + this.viewName;
+			var url = ctrl.env.appHome + this.viewName.split("app")[1];
 			if(name) {
 				url = url + "." + "name" + ".html";
 			} else {

@@ -11,18 +11,15 @@
 		<script type="text/javascript" src="../../libs/magix/magix.js"></script>
 		<script type="text/javascript">
 			(function() {
-				//当前页面路径
-				var currentPagePath = location.href.split(/#|\?/)[0].split("index.html")[0];
 				//seajs配置
 				//通过alies配置top-level模块采用debug版本,配置appp,config,libs的实际地址
 				seajs.config({
-					alias : {
-						'app' : currentPagePath + 'app'
-					}
+					debug:2
 				});
 				//启动Magix
-				Magix.History.init();
-				//console.log(seajs._data.memoizedMods);
+				Magix.History.init({
+					multipage:false
+				});
 			})();
 		</script>
 	</body>
