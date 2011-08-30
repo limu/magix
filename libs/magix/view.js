@@ -200,7 +200,7 @@ define("magix/view", ["underscore", "backbone", "magix/vom", "magix/controller",
 		 */
 		delegateEvents : function() {
 			var events = this.events;
-			var node = document.getElementById(this.el);
+			var node = document.getElementById(this.options.el);
 			for(var _type in events) {(function() {
 					var type = _type;
 					node["on" + type] = function() {
