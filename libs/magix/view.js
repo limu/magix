@@ -111,6 +111,10 @@ define("magix/view", ["underscore", "backbone", "magix/vom", "magix/controller",
 		 * @method render
 		 */
 		render : function() {
+			if(this.preventRender){
+				this.rendered = true;
+				return true;
+			}
 			var node = document.getElementById(this.vcid);
 			node.innerHTML = Mustache.to_html(this.template, this.queryModel.toJSON());
 			this.rendered = true;
@@ -119,6 +123,11 @@ define("magix/view", ["underscore", "backbone", "magix/vom", "magix/controller",
 
 		},
 		getTemplate : function(cb, name) {
+			if(this.preventRender){
+				cb();
+				return;
+			}
+			
 			var url = ctrl.env.appHome + this.viewName.split("app")[1];
 			if(name) {
 				url = url + "." + "name" + ".html";
