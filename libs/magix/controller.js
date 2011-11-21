@@ -84,6 +84,7 @@ define("magix/controller", ["underscore", "backbone", "app/config/ini"], functio
                     document.body.id = "vc-root";
                     viewName = schPath || this._appConfig.defaultRootViewName;
                 }
+                console.log("multipage viewname: " + viewName);
             }
             return viewName;
         },
@@ -219,15 +220,18 @@ define("magix/controller", ["underscore", "backbone", "app/config/ini"], functio
          */
         navigateTo : function(q) {
             var np = this.unParam(q);
-            var v1 = _.clone(this.paraObj);
+            var v1 = _.clone(this.query);
             delete v1.referrer;
             delete v1.pathname;
             delete v1.query;
             delete v1.postdata;
+            if (this._magixConfig.multipage) {
+                delete v1["sch:pathname"];
+            }
             var v2 = _.extend(v1, np);
             var nps = this.param(v2);
             //var nps = this.param(_.extend(_.clone(this.paraObj),np));
-            this._goto(this.pathName + "/" + nps);
+            this._goto(this.query.pathname + "/" + nps);
         },
         _goto : function(url) {
             location.hash = "!" + url;
