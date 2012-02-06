@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello Magix!</title>
+	</head>
+	<body>
+		<br/>
+		<a href="#!/home/">home</a>&nbsp;&nbsp;<a href="#!/test/">test</a>
+		<script type="text/javascript" src="../../../libs/debug/seajs_backbone/sea-debug.js"></script>
+		<script type="text/javascript">
+			(function() {
+				seajs.config({
+					debug : 2,
+					alias : {
+						magix : "http://localhost/magixjs0.3/src/implements/seajs_backbone/",
+						app : "http://localhost/magixjs0.3/examples/01hellomagix/seajs_backbone/app/"
+					}
+				});
+			})();
+		</script>
+		<script type="text/javascript" src="../../../src/implements/seajs_backbone/mxhistory.js"></script>
+		<script type="text/javascript" src="../../../src/implements/seajs_backbone/magix_old.js"></script>
+		<script type="text/javascript">
+			var Magix = window.Magix || {
+				config : {
+					appHome:"http://localhost/magixjs0.3/examples/01hellomagix/seajs_backbone/app/"
+				}
+			};
+			seajs.use(["magix/magix_old"], function(m) {
+				m.init(Magix.config);
+			});
+
+		</script>
+	</body>
+</html>

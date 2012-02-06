@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello Magix!</title>
+	</head>
+	<body>
+		<br/>
+		<a href="#!/home/a=b&c=d">home</a>&nbsp;&nbsp;<a href="#!/test/">test</a>
+		<script type="text/javascript" src="../../../libs/debug/seajs_kissy/sea-debug.js"></script>
+		<script type="text/javascript" src="../../../libs/debug/seajs_kissy/kissy/kissy.js"></script>
+		<!--<script type="text/javascript" src="../../../src/seajs_kissy/magix.js"></script>-->
+		<script type="text/javascript" src="../../../build/debug/seajs-kissy-pkg.js"></script>
+		<script type="text/javascript">
+			Magix.init({
+				magixHome:"http://localhost/magix/src/seajs_kissy/",
+				appHome:"http://localhost/magix/examples/01hellomagix/seajs_kissy/app/"
+			});
+			/*define("magix/test",function(require,exports,module){
+			    exports.ok=function(){
+		         alert('ok');
+		        }
+			});
+			define("magix/test1",function(require){
+			    console.log(require);
+			    var o=require("magix/test");
+			    console.log(o);
+			    return {
+			        ok2:function(){
+			            return o.ok();
+			        }
+			    }
+			    //.ok();
+			});
+			seajs.use("magix/test1",function(o){
+			    console.log(o);
+			    o.ok2();
+			})*/
+			/*seajs.use("test",function(t){
+			    t.test2();
+			})*/
+		</script>
+	</body>
+</html>
