@@ -1,5 +1,5 @@
 /*
- * 
+ * model
  */
 Model=function(){
 	
