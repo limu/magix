@@ -1,6 +1,7 @@
-define("magix/impls/vframe", ["magix/base"], function(require) {
+define("magix/impls/vframe", ["magix/base","magix/router"], function(require) {
 	var vframeTagName = "vframe";
 	var Base=require("magix/base");
+	var router=require("magix/router");
 	var iVframe=function(){
 		
 	};
@@ -16,6 +17,9 @@ define("magix/impls/vframe", ["magix/base"], function(require) {
 				res.push(this._idIt(nodes[i]));
 			}
 			return res;
+		},
+		getRouterObject:function(){
+			return router;
 		},
 		createFrame:function(){
 			return document.createElement(iVframe.tagName);

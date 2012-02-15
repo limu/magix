@@ -41,6 +41,7 @@ KISSY.add("magix/base", function(S,impl) {
 		return r.responseText;
 	};
 	var unimpl = function UNIMPLEMENTED() {
+		console.log(arguments.callee.caller);
 		throw new Error("unimplement method");
 	};
 	var Base = {};

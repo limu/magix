@@ -473,7 +473,7 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
     requires:["template"]
 });
 //implement vframe
-KISSY.add("magix/impls/vframe",function(S,Base){
+KISSY.add("magix/impls/vframe",function(S,Base,Router){
 	var vframeTagName = "vframe";
 	var iVframe=function(){
 		
@@ -491,13 +491,16 @@ KISSY.add("magix/impls/vframe",function(S,Base){
 			}
 			return res;
 		},
+		getRouterObject:function(){
+			return Router;
+		},
 		createFrame:function(){
 			return document.createElement(iVframe.tagName);
 		}
 	});
 	return iVframe;
 },{
-	requires:["magix/base"]
+	requires:["magix/base","magix/router"]
 });
 //view
 KISSY.add("magix/impls/view",function(S,MVC,T,ajax,VOM,Base){
@@ -577,23 +580,22 @@ Magix = {
 			magixHome = me.config.magixHome||'',
 			appHome = me.config.appHome||'',
 			S=KISSY;
-		if(me.dev){
-			S.config({
-				packages:[{
-					name:'magix',
-					path:magixHome+"../",
-					tag:new Date().getTime()
-				},{
-					name:'app',
-					path:appHome+"../",
-					tag:new Date().getTime()
-				}]
-			});
-		}
+		S.config({
+			packages:[{
+				name:'magix',
+				path:magixHome+"../",
+				tag:new Date().getTime()
+			},{
+				name:'app',
+				path:appHome+"../",
+				tag:new Date().getTime()
+			}]
+		});
 	},
 	bootstrap : function() {
 		var self = this;
 		KISSY.use("magix/router",function(S,Router){
+			S.log(Router);
 			Router.init(self.config);
 		});
 	},
@@ -605,7 +607,7 @@ Magix = {
 KISSY.add("magix/model",function(S,impl,Base){
 	var Model;
 	/*
- * 
+ * model
  */
 Model=function(){
 	
@@ -843,6 +845,7 @@ Base.mix(Vframe, {
 Base.mix(Vframe.prototype, Base.Events);
 Base.mix(Vframe.prototype, {
 	getChildVframeNodes : Base.unimpl,
+	getRouterObject:Base.unimpl,
 	/*
 	 * 无法放到Vframe中，因为Vframe的tagName未实现，也不会实现，
 	 * 原来的实现方案是把tagName覆盖掉，这是不正确的
@@ -914,8 +917,11 @@ Base.mix(Vframe.prototype, {
 			this.view.destroy();
 		}
 		//
-		var self = this;
+		var self = this,router=this.getRouterObject();
 		options = options || {};
+		if(!options.queryModel){//确保每个view都有queryModel，请参考View的initial方法
+			options.queryModel=router.queryModel;
+		}
 		//
 		Base.requireAsync(viewName, function(View) {
 			

@@ -15,6 +15,7 @@ Base.mix(Vframe, {
 Base.mix(Vframe.prototype, Base.Events);
 Base.mix(Vframe.prototype, {
 	getChildVframeNodes : Base.unimpl,
+	getRouterObject:Base.unimpl,
 	/*
 	 * 无法放到Vframe中，因为Vframe的tagName未实现，也不会实现，
 	 * 原来的实现方案是把tagName覆盖掉，这是不正确的
@@ -22,6 +23,7 @@ Base.mix(Vframe.prototype, {
 	 * 谁也不应该被改写
 	 */
 	createFrame:Base.unimpl,
+	getVOMObject:Base.unimpl,
 	initial : function(node, id) {
 		//
 		this.id = "";
@@ -67,13 +69,30 @@ Base.mix(Vframe.prototype, {
 		return this.getChildVframeNodes();
 	},
 	handelMounted : function() {
-		if(this.view.rendered) {
-			this.mounted = true;
-			this.trigger("mounted", this.view);
+		var me=this;
+		if(me.view.rendered) {
+			me.mounted = true;
+			me.trigger("mounted", me.view);
+			me.mountSubFrames();
 		} else {
-			this.view.bind("rendered", function() {
-				this.mounted = true;
-				this.trigger("mounted", this.view);
+			me.view.bind("rendered", function() {
+				me.mounted = true;
+				me.trigger("mounted", me.view);
+				me.mountSubFrames();
+			});
+		}
+	},
+	mountSubFrames:function(){
+		//this.trigger("beforeSubviewsRender");
+		var vom=this.getVOMObject();
+		var vc = vom.getElementById(this.view.vcid);
+		var childVcs = vc.getElements();
+		var i, child;
+		for( i = 0; i < childVcs.length; i++) {
+			child = vom.createElement(childVcs[i]);
+			vc.appendChild(child);
+			child.mountView(child.getAttribute("view_name"), {
+				queryModel : this.view.queryModel
 			});
 		}
 	},
@@ -82,12 +101,17 @@ Base.mix(Vframe.prototype, {
 			return;
 		}
 		console.log(this.view);
-		if(this.view) {
+		
+		this.unmountView();//先清view
+		/*if(this.view) {
 			this.view.destroy();
-		}
+		}*/
 		//
-		var self = this;
+		var self = this,router=this.getRouterObject();
 		options = options || {};
+		if(!options.queryModel){//确保每个view都有queryModel，请参考View的initial方法
+			options.queryModel=router.queryModel;
+		}
 		//
 		Base.requireAsync(viewName, function(View) {
 			console.log(View,View.toString());
@@ -101,23 +125,39 @@ Base.mix(Vframe.prototype, {
 		});
 	},
 	unmountView : function() {
-		console.log("VCELE UNMOUNT:1 fire view's unload @" + this.view.modUri);
-		console.log(this.view);
-		this.view.trigger("unload");
-		console.log("VCELE UNMOUNT:2 inner dom unload @" + this.view.modUri);
-		document.getElementById(this.view.vcid).innerHTML = "";
-		console.log("VCELE UNMOUNT:3 unbind event delegation on vcelement @" + this.id);
-		if(this.view.events) {
-			var node = document.getElementById(this.id);
-			for(var eventType in this.view.events) {
-				node["on" + eventType] = null;
-			}
-			node = null;
+		if(this.view&&this.mounted){
+			console.log("VCELE UNMOUNT:1 fire view's unload @" + this.view.modUri);
+			console.log(this.view);
+			
+			console.log("VCELE UNMOUNT:2 inner dom unload @" + this.view.modUri);			
+			console.log("VCELE UNMOUNT:3 unbind event delegation on vcelement @" + this.id);
+			this.destroySubFrames();
+			this.view.trigger("unload");
+			this.view.destroy();
+			console.log("VCELE UNMOUNT:4 chge vcelement.mounted to false @" + this.id);
+			document.getElementById(this.view.vcid).innerHTML = "";
+			this.mounted = false;
+			this.view = null;
 		}
-		console.log("VCELE UNMOUNT:4 chge vcelement.mounted to false @" + this.id);
-		this.mounted = false;
-		this.view = null;
 		//引用移除
+	},
+	destroySubFrames:function(){
+		var queue = [], vom = this.getVOMObject();
+        var root = vom.getElementById(this.view.vcid);
+
+        function rc(e) {
+            queue.push(e);
+            for(var i = 0; i < e.childNodes.length; i++) {
+                rc(e.childNodes[i]);
+            }
+        }
+
+        rc(root);
+        console.log("VIEW DESTORY:2.depth traversal all vcelements @" + this.view.modUri);
+		
+		for(var i = queue.length - 1; i > 0; i--) {
+            queue[i].removeNode();
+        }
 	},
 	removeNode : function() {
 		console.log("VCELE DESTORY:1 unmount current view @" + this.id);

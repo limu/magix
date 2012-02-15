@@ -2,15 +2,19 @@ define("magix/impls/ajax",["jquery"],function(require){
     var Ajax={},
         jQuery=require("jquery");
     Ajax.send=function(ops){
-        ops=this.processOptions(ops);
+		var me=this;
+        ops=me.processOptions(ops);
         jQuery.ajax({
             url:ops.url,
             dataType:ops.dataType,
-            success:function(data){
+			type:ops.method,
+            success:function(data,textStatus,jqXHR){
+				me.fireGlobalSetting(jqXHR);
                 ops.success(data);
             },
             error:function(jqXHR, textStatus, errorThrown){
-                ops.failure(textStatus);
+				me.fireGlobalSetting(jqXHR);
+                ops.error(textStatus);
             }
         });
     }

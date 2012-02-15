@@ -1,8 +1,9 @@
-define("magix/impls/router", ["magix/base", "magix/model", "magix/vom", "app/config/ini"], function(require) {
+define("magix/impls/router", ["magix/base", "magix/model", "magix/vom", "app/config/ini","underscore"], function(require) {
 	var Base = require("magix/base");
 	var Model = require("magix/model");
 	var VOM = require("magix/vom");
 	var appConfig = require("app/config/ini");
+	var _=require("underscore");
 	var iRouter = {
 		getAppConfig : function() {
 			var p2v = appConfig.pathViewMap;
@@ -14,6 +15,9 @@ define("magix/impls/router", ["magix/base", "magix/model", "magix/vom", "app/con
 				}
 			}
 			return appConfig;
+		},
+		getVOMObject:function(){
+			return VOM;
 		},
 		setStateListener : function() {
 			var self = this;
@@ -99,12 +103,18 @@ define("magix/impls/router", ["magix/base", "magix/model", "magix/vom", "app/con
 				}
 			}
 		},
-		mountRootView : function() {
-			var self = this;
-			VOM.root.mountView(this.rootViewName, {
-				queryModel : self.queryModel
-			});
-		}
+		navigateTo: function(q){
+            var np = Base.unParam(q);
+            var v1 = _.clone(this.state.paraObj);
+            delete v1.referrer;
+            delete v1.pathname;
+            delete v1.query;
+            delete v1.postdata;
+            var v2 = _.extend(v1, np);
+            var nps = Base.param(v2);
+            //var nps = this.param(_.extend(_.clone(this.paraObj),np));
+            this.goTo(this.state.pathName + "/" + nps);
+        }
 	};
 	return iRouter;
 });

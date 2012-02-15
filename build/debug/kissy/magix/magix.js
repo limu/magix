@@ -20,19 +20,17 @@ Magix = {
 			magixHome = me.config.magixHome||'',
 			appHome = me.config.appHome||'',
 			S=KISSY;
-		if(me.dev){
-			S.config({
-				packages:[{
-					name:'magix',
-					path:magixHome+"../",
-					tag:new Date().getTime()
-				},{
-					name:'app',
-					path:appHome+"../",
-					tag:new Date().getTime()
-				}]
-			});
-		}
+		S.config({
+			packages:[{
+				name:'magix',
+				path:magixHome+"../",
+				tag:new Date().getTime()
+			},{
+				name:'app',
+				path:appHome+"../",
+				tag:new Date().getTime()
+			}]
+		});
 	},
 	bootstrap : function() {
 		var self = this;

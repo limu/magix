@@ -17,6 +17,20 @@ define("magix/impls/vframe", ["magix/base"], function(require) {
 			}
 			return res;
 		},
+		getRouterObject:function(){
+			var router;
+			require.async("magix/router",function(r){
+				router=r;
+			});
+			return router;
+		},
+		getVOMObject:function(){
+			var vom;
+			require.async("magix/vom",function(V){
+				vom=V;
+			});
+			return vom;
+		},
 		createFrame:function(){
 			return document.createElement(iVframe.tagName);
 		}

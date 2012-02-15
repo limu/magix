@@ -4,15 +4,19 @@ define("magix/impls/ajax",function(require){
         io;
     S.use('ajax',function(S,IO){io=IO});
     Ajax.send=function(ops){
-        ops=this.processOptions(ops);
+		var me=this;
+        ops=me.processOptions(ops);
         io({
             url:ops.url,
             dataType:ops.dataType,
-            success:function(data){
+			type:ops.method,
+            success:function(data,textStatus,xhr){
+				me.fireGlobalSetting(xhr);
                 ops.success(data);
             },
-            error:function(msg){
-                ops.failure(msg);
+            error:function(data,textStatus,xhr){
+				me.fireGlobalSetting(xhr);
+                ops.error(textStatus);
             }
         });
     }

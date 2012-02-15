@@ -2,7 +2,7 @@
 KISSY.add("magix/model",function(S,impl,Base){
 	var Model;
 	/*
- * 
+ * model
  */
 Model=function(){
 	

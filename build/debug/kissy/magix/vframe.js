@@ -18,6 +18,7 @@ Base.mix(Vframe, {
 Base.mix(Vframe.prototype, Base.Events);
 Base.mix(Vframe.prototype, {
 	getChildVframeNodes : Base.unimpl,
+	getRouterObject:Base.unimpl,
 	/*
 	 * 无法放到Vframe中，因为Vframe的tagName未实现，也不会实现，
 	 * 原来的实现方案是把tagName覆盖掉，这是不正确的
@@ -89,8 +90,11 @@ Base.mix(Vframe.prototype, {
 			this.view.destroy();
 		}
 		//
-		var self = this;
+		var self = this,router=this.getRouterObject();
 		options = options || {};
+		if(!options.queryModel){//确保每个view都有queryModel，请参考View的initial方法
+			options.queryModel=router.queryModel;
+		}
 		//
 		Base.requireAsync(viewName, function(View) {
 			

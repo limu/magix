@@ -395,9 +395,10 @@ define("magix/impls/template",["magix/mu"],function(require){
         return Mustache.to_html(ops.template,ops.data);
     };
     return Template;
-});define("magix/impls/vframe", ["magix/base"], function(require) {
+});define("magix/impls/vframe", ["magix/base","magix/router"], function(require) {
 	var vframeTagName = "vframe";
 	var Base=require("magix/base");
+	var router=require("magix/router");
 	var iVframe=function(){
 		
 	};
@@ -413,6 +414,9 @@ define("magix/impls/template",["magix/mu"],function(require){
 				res.push(this._idIt(nodes[i]));
 			}
 			return res;
+		},
+		getRouterObject:function(){
+			return router;
 		},
 		createFrame:function(){
 			return document.createElement(iVframe.tagName);
@@ -507,7 +511,7 @@ define("magix/model", ["magix/impls/model", "magix/base"], function(require) {
 	var Base = require("magix/base");
 	var Model;
 	/*
- * 
+ * model
  */
 Model=function(){
 	
@@ -866,6 +870,7 @@ Base.mix(Vframe, {
 Base.mix(Vframe.prototype, Base.Events);
 Base.mix(Vframe.prototype, {
 	getChildVframeNodes : Base.unimpl,
+	getRouterObject:Base.unimpl,
 	/*
 	 * 无法放到Vframe中，因为Vframe的tagName未实现，也不会实现，
 	 * 原来的实现方案是把tagName覆盖掉，这是不正确的
@@ -937,8 +942,11 @@ Base.mix(Vframe.prototype, {
 			this.view.destroy();
 		}
 		//
-		var self = this;
+		var self = this,router=this.getRouterObject();
 		options = options || {};
+		if(!options.queryModel){//确保每个view都有queryModel，请参考View的initial方法
+			options.queryModel=router.queryModel;
+		}
 		//
 		Base.requireAsync(viewName, function(View) {
 			

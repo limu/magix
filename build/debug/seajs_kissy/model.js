@@ -3,7 +3,7 @@ define("magix/model", ["magix/impls/model", "magix/base"], function(require) {
 	var Base = require("magix/base");
 	var Model;
 	/*
- * 
+ * model
  */
 Model=function(){
 	
