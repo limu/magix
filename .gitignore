@@ -2,6 +2,6 @@
 .tmp_*
 .project
 *.bat
-.idea*
+*.idea
 .DS_Store
 magix.iml
