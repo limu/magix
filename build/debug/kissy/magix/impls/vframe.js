@@ -1,5 +1,5 @@
 //implement vframe
-KISSY.add("magix/impls/vframe",function(S,Base,Router){
+KISSY.add("magix/impls/vframe",function(S,Base){
 	var vframeTagName = "vframe";
 	var iVframe=function(){
 		
@@ -18,7 +18,18 @@ KISSY.add("magix/impls/vframe",function(S,Base,Router){
 			return res;
 		},
 		getRouterObject:function(){
-			return Router;
+			var router;
+			KISSY.use("magix/router",function(S,R){
+				router=R;
+			});
+			return router;
+		},
+		getVOMObject:function(){
+			var vom;
+			S.use("magix/vom",function(S,VOM){
+				vom=VOM;
+			});
+			return vom;
 		},
 		createFrame:function(){
 			return document.createElement(iVframe.tagName);
@@ -26,5 +37,5 @@ KISSY.add("magix/impls/vframe",function(S,Base,Router){
 	});
 	return iVframe;
 },{
-	requires:["magix/base","magix/router"]
+	requires:["magix/base"]
 });

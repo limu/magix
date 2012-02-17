@@ -11,8 +11,6 @@ View = function() {
     
 };
 Base.mix(View.prototype, {
-    render : Base.unimpl,
-    getTemplate : Base.unimpl,
     getVOMObject : Base.unimpl,
     getTemplateObject : Base.unimpl,
     getAjaxObject : Base.unimpl,
@@ -31,7 +29,7 @@ Base.mix(View.prototype, {
         
         var self = this, vom = this.getVOMObject();
         
-        this.subViewsChange = [];
+        //this.subViewsChange = []; 不理解的先去掉
         this.options = o;
         this.vcid = o.vcid;
         this.queryModel = o.queryModel;
@@ -50,7 +48,7 @@ Base.mix(View.prototype, {
             this.exist = false;
         });
         /***********左莫增加标识符，用来判断当前view是否在vom节点中end*************/
-        this.bind("rendered", function() {
+        /*this.bind("rendered", function() {
             this.trigger("beforeSubviewsRender");
             var vc = vom.getElementById(this.vcid);
             var childVcs = vc.getElements();
@@ -62,26 +60,32 @@ Base.mix(View.prototype, {
                     queryModel : this.queryModel
                 });
             }
-        });
-        var vc = vom.getElementById(this.vcid);
-        if(vc == vom.root) {
+        });*/
+        /*var vf = vom.getElementById(this.vcid);
+        if(vf == vom.root) {
             this.queryModel.bind("change", function() {
                 
                 var res = self.queryModelChange(this);
                 self._changeChain(res, this);
             });
+        }*/
+		if(this.init) {
+			setTimeout(function(){//确保内部的magix绑定的事件先执行，再调用init
+				self.init();      //如果在init中绑定了事件，无setTimeout时，init中的绑定的事件早于magix中的，有可能出问题
+			},0);
         }
-        if(this.init) {
-            this.init();
+		if(!this.preventRender) {
+			this.getTemplate(function(data) {
+				self.template = data;
+				
+				setTimeout(function(){//等待init的完成
+					var autoRendered = self.render();
+					if(autoRendered !== false) {
+						self.trigger("rendered");
+					}
+				},0);
+			});
         }
-        this.getTemplate(function(data) {
-            self.template = data;
-            
-            var autoRendered = self.render();
-            if(autoRendered !== false) {
-                self.trigger("rendered");
-            }
-        });
     },
     _queryModelChange : function(model) {
         
@@ -110,20 +114,27 @@ Base.mix(View.prototype, {
         this.destroy();
     },
     destroy : function() {
-        var vcQueue, i, vom = this.getVOMObject();
+       // var vcQueue, i;//, vom = this.getVOMObject();
         
-        vcQueue = this.getDestoryQueue();
-        
-        for( i = vcQueue.length - 1; i > 0; i--) {
+        //vcQueue = this.getDestoryQueue();
+        //
+        /*for( i = vcQueue.length - 1; i > 0; i--) {
             vcQueue[i].removeNode();
-        }
+        }*/
         
-        var root = vom.getElementById(this.vcid);
-        root.unmountView();
+        //var root = vom.getElementById(this.vcid);
+        //root.unmountView();
+		if(this.events) {
+			var node = document.getElementById(this.vcid);
+			for(var eventType in this.events) {
+				node["on" + eventType] = null;
+			}
+			node = null;
+		}
         
         this.dispose();
     },
-    getDestoryQueue : function() {
+    /*getDestoryQueue : function() {
         var queue = [], vom = this.getVOMObject();
         var root = vom.getElementById(this.vcid);
 
@@ -138,7 +149,7 @@ Base.mix(View.prototype, {
         rc(root);
         
         return queue;
-    },
+    },*/
     setData : function(data) {
         this.data = data;
         for(var k in data) {
@@ -150,6 +161,7 @@ Base.mix(View.prototype, {
         this.setRenderer();
     },
     setRenderer : function() {
+		
         var self = this, rr = this.renderer, mcName, wrapperName;
         if(rr) {
             for(mcName in rr) {
@@ -248,7 +260,7 @@ Base.mix(View.prototype, {
                                 eventArr.pop();
                             }
                             if(view.events && view.events[type] && view.events[type][eventKey]) {
-                                view.events[type][eventKey](view, view.idIt(target), eventArr);
+                                view.events[type][eventKey](view, view.idIt(target), eventArr,event);
                             }
                         }
                     }
@@ -266,34 +278,39 @@ Base.mix(View.prototype, {
         
         var node = document.getElementById(this.vcid), templet = this.getTemplateObject();
         
+		this.setData({});//确保renderer正确工作，否则在未重写render方法，而又未调用setData时renderer无法正确工作
         node.innerHTML = templet.toHTML({
             template : this.template,
-            data : {
-                data : this.data,
-                queryModel : this.queryModel.toJSON()
-            }
+            data : this.data
         });
         this.rendered = true;
     },
     getTemplate : function(cb, name) {
-        if(this.preventRender) {
-            cb();
-            return;
-        }
+		if(this.template){
+			cb(this.template);
+			return;
+		}
         //var router=this.getRouterObject();
-        var url = Magix.config.appHome + this.viewName.split("app")[1];
+		
+        var url = Magix.config.appHome;
+		if(/app/$/.test(url))url+=this.viewName.split("app")[1];
+		else url+=this.viewName;
         if(name) {
             url = url + "." + "name" + ".html";
         } else {
             url = url + ".html";
         }
+		url=url.replace(/([^:/])/+/g,'$1/');//修正多个/紧挨的问题
         var ajax = this.getAjaxObject();
+		
+		if(Magix.dev||Magix.config.debug)url+='?='+new Date().getTime();
         ajax.getTemplate(url, function(data) {
             
             cb(data);
         }, function(msg) {
+			
             cb(msg);
-        });
+        },this.viewName);
     },
     idIt : function(node) {
         var id = "";

@@ -47,13 +47,14 @@ Base.mix(Router, {
 		}else{
 			var vom=this.getVOMObject();
 			this.queryModel = this.createQueryModel();
-			this.mountRootView();
 			this.queryModel.bind("change", function() {
 				if(vom.root.view){
 					var res = vom.root.view.queryModelChange(this);
 					vom.root.view._changeChain(res, this);
 				}
             });
+			
+			this.mountRootView();
 		}
 		this.postData = null; //todo re-think postData
 	},

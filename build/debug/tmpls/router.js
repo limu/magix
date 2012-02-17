@@ -1,8 +1,4 @@
-define("magix/router",["magix/impls/router","magix/base"],function(require){
-	var impl = require("magix/impls/router");
-	var Base = require("magix/base");
-	var Router = {};
-	Base.mix(Router, {
+Base.mix(Router, {
 	//props
 	config : null,
 	appConfig : null,
@@ -90,7 +86,4 @@ define("magix/router",["magix/impls/router","magix/base"],function(require){
 			queryModel : self.queryModel
 		});
 	}
-});
-
-	return Base.implement(Router, impl);
 });

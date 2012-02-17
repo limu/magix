@@ -22,13 +22,13 @@ Magix = {
 		};
 		if(alias.magix&&!/\//.test(alias.magix))alias.magix+='/';
 		if(alias.app&&!/\//.test(alias.app))alias.app+='/';
+		if(this.config.debug)this.dev=true;
 		if(!this.dev){
 			delete alias.magix;
+		}else{
+			seajs.config({debug:2});
 		}
-		seajs.config({
-			debug : 2,
-			alias : alias
-		});
+		seajs.config({alias : alias});
 		if(MxHistory && MxHistory.init) {
 			MxHistory.init(this.config);
 		}

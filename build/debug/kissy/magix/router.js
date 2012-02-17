@@ -21,16 +21,18 @@ KISSY.add("magix/router",function(S,impl,Base){
 	getRootViewName : Base.unimpl,
 	createQueryModel : Base.unimpl,
 	changeQueryModel : Base.unimpl,
-	mountRootView:Base.unimpl,
 	////todo goTo navigateTo setPostData
 	navigateTo:Base.unimpl,
-	goTo:Base.unimpl,
 	setPostData:Base.unimpl,
+	getVOMObject:Base.unimpl,
 	//concrete members
 	init : function(config) {
 		this.config = config;
 		this.appConfig = this.getAppConfig();
 		this.setStateListener();
+	},
+	goTo:function(url){
+		location.hash='!'+url;
 	},
 	route : function(stateString) {
 		
@@ -46,7 +48,15 @@ KISSY.add("magix/router",function(S,impl,Base){
 		if(this.rootViewName == this.oldRootViewName) {
 			this.changeQueryModel();
 		}else{
+			var vom=this.getVOMObject();
 			this.queryModel = this.createQueryModel();
+			this.queryModel.bind("change", function() {
+				if(vom.root.view){
+					var res = vom.root.view.queryModelChange(this);
+					vom.root.view._changeChain(res, this);
+				}
+            });
+			
 			this.mountRootView();
 		}
 		this.postData = null; //todo re-think postData
@@ -71,6 +81,13 @@ KISSY.add("magix/router",function(S,impl,Base){
 			Base.mix(query, multipageQuery);
 		}
 		return query;
+	},
+	mountRootView : function() {
+		var self = this,
+			vom=this.getVOMObject();
+		vom.root.mountView(this.rootViewName, {
+			queryModel : self.queryModel
+		});
 	}
 });
 

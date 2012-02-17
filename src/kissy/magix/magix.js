@@ -15,6 +15,7 @@ Magix = {
 		this.setEnv();
 		this.bootstrap();
 	},
+	templates:{},//模板缓存，方便打包
 	setEnv : function() {
 		var me = this,
 			magixHome = me.config.magixHome||'',
@@ -45,7 +46,7 @@ Magix = {
 				path:/magix\/$/.test(magixHome)?magixHome+"../":magixHome,
 				tag:me.dev?now:'20120214'
 			},{
-				name:'app',
+				name:'app',//http://ad.com/ab/c/d/../  
 				path:/app\/$/.test(appHome)?appHome+"../":appHome,
 				tag:me.dev?now:'20120214'
 			}]

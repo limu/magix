@@ -1,60 +1,94 @@
 KISSY.add("magix/ajax",function(S,impl,Base){
     var Ajax;
-    Ajax={
-    defaultOptions:{//默认ajax请求参数
-        dataType:'html',
-        success:function(){},
-        failure:function(){}
-    },
-    /*
-     * 发送异步请求
-     * 默认支持dataType url success failure 四个参数
-     */
-    send:Base.unimpl,
-    /*
-     * 处理请求的参数，方便在send方法中直接使用相应的属性，避免判断
-     */
-    processOptions:function(ops){
-        var me=this;
-        if(!ops)ops={};
-        for(var p in me.defaultOptions){
-            if(!ops[p])ops[p]=me.defaultOptions[p];
-        }
-        return ops;
-    },
-    /*
-     * 获取模板内容
-     */
-    getTemplate:function(url,succ,fail){
-        var me=this,data;
-        if(!me.$cache)me.$cache={};
-        data=me.$cache[url];
-        if(data){
-            if(data.succ&&Base.isFunction(succ)){
-                succ(data.content);
-            }else if(!data.succ&&Base.isFunction(fail)){
-                fail(data.content);
-            }
-            return;
-        }
-        me.send({
-            url:url,
-            dataType:'html',
-            success:function(data){
-                me.$cache[url]={succ:true,content:data};
-                if(Base.isFunction(succ)){
-                    succ(data);
-                }
-            },
-            failure:function(msg){
-                me.$cache[url]={content:msg};
-                if(Base.isFunction(fail)){
-                    fail(msg);
-                }
-            }
-        });
-    }
+    Ajax = {
+	defaultOptions : { //默认ajax请求参数
+		dataType : 'html',
+		method : 'POST',
+		success : function () {},
+		error : function () {}
+	},
+	/*
+		ajax请求全局设置
+		先支持statusCode={404:function(){},403:...};
+	 */
+	globalSetting : function (settings) {
+		var me = this;
+		if (!me.$globalSetting)
+			me.$globalSetting = {};
+		for (var p in settings) {
+			me.$globalSetting[p] = settings[p];
+		}
+		return me.$globalSetting;
+	},
+	/*
+	触发全局设置
+	 */
+	fireGlobalSetting : function (xhr) {
+		var me = this,
+			gSetting = me.$globalSetting,
+			codes;
+		if (gSetting && gSetting.statusCode) {
+			codes = gSetting.statusCode;
+			if (codes[xhr.status]) {
+				try{
+					codes[xhr.status](xhr);
+				}catch(e){
+					
+				}
+			}
+		}
+	},
+	/*
+	 * 发送异步请求
+	 * 默认支持dataType url success error 四个参数
+	 */
+	send : Base.unimpl,
+	/*
+	 * 处理请求的参数，方便在send方法中直接使用相应的属性，避免判断
+	 */
+	processOptions : function (ops) {
+		var me = this;
+		if (!ops)
+			ops = {};
+		for (var p in me.defaultOptions) {
+			if (!ops[p]){
+				ops[p] = me.defaultOptions[p];
+			}
+		}
+		return ops;
+	},
+	/*
+	 * 获取模板内容
+	 */
+	getTemplate : function (url, succ, fail,viewName) {
+		var me = this,
+			tmplCaches=Magix.templates,
+			data = tmplCaches[viewName];
+		if (data) {
+			if (Base.isFunction(succ)) {
+				succ(data);
+			}
+			return;
+		}
+		me.send({
+			url : url,
+			dataType : 'html',
+			method:'GET',
+			success : function (data) {
+				tmplCaches[viewName] = data;
+				if (Base.isFunction(succ)) {
+					succ(data);
+				}
+			},
+			error : function (msg) {
+				if (Base.isFunction(fail)) {
+					fail(msg);
+				}
+			}
+		});
+	}
 };
+
     return Base.implement(Ajax,impl);
 },{
     requires:["magix/impls/ajax","magix/base"]
@@ -101,6 +135,7 @@ KISSY.add("magix/base", function(S,impl) {
 		return r.responseText;
 	};
 	var unimpl = function UNIMPLEMENTED() {
+		
 		throw new Error("unimplement method");
 	};
 	var Base = {};
@@ -122,105 +157,106 @@ Base.mix(Base, {
 	isArray : Base.unimpl,
 	isString : Base.unimpl,
 	isPlainObject : Base.unimpl,
-	requireAsync:Base.unimpl,
+	requireAsync : Base.unimpl,
 	Events : Base.unimpl,
 	_idCounter : 0,
-	uniqueId : function(prefix) {
+	uniqueId : function (prefix) {
 		var id = this._idCounter++;
 		return prefix ? prefix + id : id;
 	},
-	extend : function(r, s, px, sx) {
-		if(!s || !r) {
+	extend : function (r, s, px, sx) {
+		if (!s || !r) {
 			return r;
 		}
-		var OP = Object.prototype, O = function(o) {
-			function F() {
-			}
-
-
+		var OP = Object.prototype,
+		O = function (o) {
+			function F() {}			
 			F.prototype = o;
 			return new F();
-		}, sp = s.prototype, rp = O(sp);
+		},
+		sp = s.prototype,
+		rp = O(sp);
 		r.prototype = rp;
 		rp.constructor = r;
 		r.superclass = sp;
-		if(s !== Object && sp.constructor === OP.constructor) {
+		if (s !== Object && sp.constructor === OP.constructor) {
 			sp.constructor = s;
 		}
-		if(px) {
+		if (px) {
 			this.mix(rp, px);
 		}
-		if(sx) {
-			this.mix(r, sx);//,false);
+		if (sx) {
+			this.mix(r, sx); //,false);
 		}
 		/*for(var p in rp){
-			r.prototype[p]=rp[p];
+		r.prototype[p]=rp[p];
 		}*/
 		return r;
 		
 	},
-	param : function(o) {
+	param : function (o) {
 		var res = [];
-		for(var k in o) {
-			if(o.hasOwnProperty(k)) {
+		for (var k in o) {
+			if (o.hasOwnProperty(k)) {
 				res.push(k + "=" + o[k]);
 			}
 		}
 		return res.join("&");
 	},
-	unParam : function(s) {
+	unParam : function (s) {
 		var paraArr = s.split("&");
-		var kv, res = {};
-		for(var i = 0; i < paraArr.length; i++) {
+		var kv,
+		res = {};
+		for (var i = 0; i < paraArr.length; i++) {
 			kv = paraArr[i].split("=");
-			if(kv[0]) {
+			if (kv[0]) {
 				res[kv[0]] = kv[1] || "";
 			}
 		}
 		return res;
 	},
-	mixClassStaticProps:function(aim,src){
-		for(var p in src){
-			if(src.hasOwnProperty(p) && p!='prototype'){
-				aim[p]=src[p];
+	mixClassStaticProps : function (aim, src) {
+		for (var p in src) {
+			if (src.hasOwnProperty(p) && p != 'prototype') {
+				aim[p] = src[p];
 			}
 		}
 		return aim;
 	},
-	mixClassProtoProps:function(aim,src){
-	    for(var p in src){
-	        if(!aim[p] || aim[p]==Base.unimpl){
-	            aim[p]=src[p];
-	        }
-	    }
-	    return aim;
+	mixClassProtoProps : function (aim, src) {
+		for (var p in src) {
+			if (!aim[p] || aim[p] == Base.unimpl) {
+				aim[p] = src[p];
+			}
+		}
+		return aim;
 	},
-	implement:function(tmpl,impl){
-		if(Base.isFunction(tmpl)&&Base.isFunction(impl)){
+	implement : function (tmpl, impl) {
+		if (Base.isFunction(tmpl) && Base.isFunction(impl)) {
 			impl.prototype.constructor = impl;
-			var finalClass = function(){
-				impl.apply(this,arguments);
-				tmpl.apply(this,arguments);
-				if(tmpl.prototype.initial){
-					tmpl.prototype.initial.apply(this,arguments);
+			var finalClass = function () {
+				impl.apply(this, arguments);
+				tmpl.apply(this, arguments);
+				if (tmpl.prototype.initial) {
+					tmpl.prototype.initial.apply(this, arguments);
 				}
-				if(impl.prototype.initial){
-					impl.prototype.initial.apply(this,arguments);
+				if (impl.prototype.initial) {
+					impl.prototype.initial.apply(this, arguments);
 				}
 			};
 			//
-			this.mixClassStaticProps(finalClass,tmpl);
-			this.mixClassStaticProps(finalClass,impl);
+			this.mixClassStaticProps(finalClass, tmpl);
+			this.mixClassStaticProps(finalClass, impl);
 			//
-			this.mixClassProtoProps(finalClass.prototype,tmpl.prototype);
-			this.mixClassProtoProps(finalClass.prototype,impl.prototype);
+			this.mixClassProtoProps(finalClass.prototype, tmpl.prototype);
+			this.mixClassProtoProps(finalClass.prototype, impl.prototype);
 			//
 			finalClass.prototype.constructor = finalClass;
 			return finalClass;
-		}else{
-			var finalObject={};
-			Base.mix(finalObject,tmpl);
-			Base.mix(finalObject,impl);
+		} else {
+			var finalObject = {};
+			Base.mix(finalObject, tmpl);
+			Base.mix(finalObject, impl);
 			return finalObject;
 		}
 	}
@@ -234,17 +270,23 @@ Base.mix(Base, {
 KISSY.add("magix/impls/ajax",function(S,io){
     var Ajax={};
     Ajax.send=function(ops){
+		var me=this;
         ops=this.processOptions(ops);
-        io({
+		var oldSucc=ops.success,
+			oldErr=ops.error;
+        io(S.mix(ops,{
             url:ops.url,
             dataType:ops.dataType,
-            success:function(data){
-                ops.success(data);
+			type:ops.method,
+            success:function(data,textStatus,xhr){
+				me.fireGlobalSetting(xhr);
+                oldSucc.call(ops,data);
             },
-            error:function(msg){
-                ops.failure(msg);
+            error:function(data,textStatus,xhr){
+				me.fireGlobalSetting(xhr);
+                oldErr.call(ops,textStatus);
             }
-        });
+        }));
     };
     return Ajax;
 },{
@@ -336,11 +378,40 @@ KISSY.add("magix/impls/model",function(S,MVC,Base){
 	S.mix(iModel.prototype,Base.Events);
 	//
 	//让kissy中的事件传递给magix
-	var oldFire=iModel.prototype.fire;
+	var oldFire=iModel.prototype.fire,
+		change=/^after(.+?)Change$/;
 	iModel.prototype.fire=function(type,eventData){
 	    oldFire(type,eventData);
-	    this.trigger(type,eventData);
-	}
+		if(type.charAt(0)=='*'){//这。。我想跳河了。。。
+			type=type.substring(1).replace(/[A-Z]/,function(m){//第一个大写字母转小写
+				return m.toLowerCase();
+			});
+			
+			this.trigger(type,eventData);
+		}else{
+			this.trigger(type,eventData);
+		}
+		if(change.test(type)){
+			var name=type.replace(change,function(m,g1){
+				return g1.toLowerCase();
+			});
+			if(!this.__propsValueChanged)this.__propsValueChanged={};
+			this.__propsValueChanged[name]=true;
+		}
+	};
+	iModel.prototype.hasChanged=function(prop){
+		var _vs=this.__propsValueChanged;
+		if(_vs){
+			return _vs[prop];
+		}
+		return false;
+	};
+	iModel.prototype.clear=function(){
+		var json=this.toJSON();
+		for(var prop in json){
+			this.removeAttr(prop);
+		}
+	};
 	return iModel;
 },{
 	requires:["mvc","magix/base"]
@@ -358,6 +429,9 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 				}
 			}
 			return appConfig;
+		},
+		getVOMObject:function(){
+			return VOM;
 		},
 		setStateListener : function() {
 			var self = this;
@@ -444,36 +518,42 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 				var k, old = this.queryModel.toJSON();
 				for(k in old) {
 					if(!( k in query)) {
-						this.queryModel.unset(k, {
+						this.queryModel.removeAttr(k, {
 							silent : true
 						});
 					}
 				}
 			}
 		},
-		mountRootView : function() {
-			var self = this;
-			VOM.root.mountView(this.rootViewName, {
-				queryModel : self.queryModel
-			});
+		navigateTo:function(url){
+			var np = Base.unParam(url);
+			
+            var v1 = S.clone(this.state.paraObj);
+            delete v1.referrer;
+            delete v1.pathname;
+            delete v1.query;
+            delete v1.postdata;
+            var v2 = Base.mix(v1, np);
+            var nps = Base.param(v2);
+            //var nps = this.param(_.extend(_.clone(this.paraObj),np));
+            this.goTo(this.state.pathName + "/" + nps);
 		}
 	};
 	return iRouter;
 },{
 	requires:["magix/base","magix/model","magix/vom","mvc","app/config/ini"]
-});KISSY.add("magix/impls/template",function(S,T){
+});KISSY.add("magix/impls/template",function(S,Tmpl){
     var iTemplate={
         toHTML:function(ops){
             ops=this.processOptions(ops);
-            return T(ops.template).render(ops.data);
+            return Tmpl.toHTML(ops.template,ops.data);
         }
     };
     return iTemplate;
 },{
-    requires:["template"]
-});
-//implement vframe
-KISSY.add("magix/impls/vframe",function(S,Base,Router){
+    requires:["magix/tmpl"]
+});//implement vframe
+KISSY.add("magix/impls/vframe",function(S,Base){
 	var vframeTagName = "vframe";
 	var iVframe=function(){
 		
@@ -492,7 +572,18 @@ KISSY.add("magix/impls/vframe",function(S,Base,Router){
 			return res;
 		},
 		getRouterObject:function(){
-			return Router;
+			var router;
+			KISSY.use("magix/router",function(S,R){
+				router=R;
+			});
+			return router;
+		},
+		getVOMObject:function(){
+			var vom;
+			S.use("magix/vom",function(S,VOM){
+				vom=VOM;
+			});
+			return vom;
 		},
 		createFrame:function(){
 			return document.createElement(iVframe.tagName);
@@ -500,7 +591,7 @@ KISSY.add("magix/impls/vframe",function(S,Base,Router){
 	});
 	return iVframe;
 },{
-	requires:["magix/base","magix/router"]
+	requires:["magix/base"]
 });
 //view
 KISSY.add("magix/impls/view",function(S,MVC,T,ajax,VOM,Base){
@@ -575,20 +666,40 @@ Magix = {
 		this.setEnv();
 		this.bootstrap();
 	},
+	templates:{},//模板缓存，方便打包
 	setEnv : function() {
 		var me = this,
 			magixHome = me.config.magixHome||'',
 			appHome = me.config.appHome||'',
-			S=KISSY;
+			S=KISSY,
+			now=new Date().getTime();
+		if(me.config.debug){
+			me.dev=true;
+			S.config({debug:true});
+			if(!window.console){
+				window.console = {
+					log : function(s) {
+					},
+					dir : function(s) {
+					},
+					warn : function(s) {
+					},
+					error : function(s) {
+					}
+				};
+			}
+		}
+		if(magixHome&&!/\//.test(magixHome))magixHome+='/';
+		if(appHome&&!/\//.test(appHome))appHome+='/';
 		S.config({
 			packages:[{
 				name:'magix',
-				path:magixHome+"../",
-				tag:new Date().getTime()
+				path:/magix\/$/.test(magixHome)?magixHome+"../":magixHome,
+				tag:me.dev?now:'20120214'
 			},{
-				name:'app',
-				path:appHome+"../",
-				tag:new Date().getTime()
+				name:'app',//http://ad.com/ab/c/d/../  
+				path:/app\/$/.test(appHome)?appHome+"../":appHome,
+				tag:me.dev?now:'20120214'
 			}]
 		});
 	},
@@ -612,116 +723,461 @@ KISSY.add("magix/model",function(S,impl,Base){
 Model=function(){
 	
 };
+
+Base.mix(Model.prototype,{
+	hasChanged:Base.unimpl,//某个属性是否发生了改变
+	removeAttr:Base.unimpl,//删除属性
+	clear:Base.unimpl,//清除所有的属性
+	load:Base.unimpl//获取数据
+});
 	return Base.implement(Model,impl);
 },{
 	requires:["magix/impls/model","magix/base"]
-});if(!window.console) {
-	window.console = {
-		log : function(s) {
-		},
-		dir : function(s) {
-		},
-		warn : function(s) {
-		},
-		error : function(s) {
-		}
-	};
-}
-MxHistory = {
-	config : {},
-	hash : "",
-	oldHash : null,
-	showIframe : false,
-	isIE : false,
-	iframe : null,
-	slient : false,
-	interval : 50,
-	intervalId : 0,
-	iframeSrc : "",
-	ready : false,
-	hashListener : null,
-	currentHash : "",
-	init : function(config) {
-		config = config || {};
-		this.iframeSrc = config.iframeSrc || "mxhistory.html";
-		this.config = config;
-		this.hash = location.hash;
-		this.oldHash = this.hash;
-		this.isIE = navigator.userAgent.toLowerCase().indexOf("msie") > -1;
-		var docMode = document.documentMode;
-		this.showIframe = this.isIE && (!docMode || docMode < 8);
-		this.wirteFrame(this.iframeSrc);
-		this.regHashChange();
-		if(!this.showIframe) {
-			this.route(this.hash);
-		}
-	},
-	regHashChange : function() {
-		var self = this;
-		if('onhashchange' in window && !this.showIframe) {
-			window.onhashchange = function() {
-				self.hashChange.call(self);
-			};
-		} else {
-			this.intervalId = window.setInterval((function() {
-				var hash = location.hash;
-				if(hash != self.oldHash) {
-					self.hashChange.call(self);
+});/**
+ * Magix扩展的Mustache
+ * @module mu
+ * @require mustache
+ */
+/**
+ * 扩展的Mustache类<br/>
+ * 支持简单的条件判断 如:
+<pre>
+{{#list}}
+&nbsp;&nbsp;&nbsp;&nbsp;{{#if(status==P)}}ID:{{id}},status:&lt;b style='color:green'>通过&lt;/b>{{/if(status==P)}}
+&nbsp;&nbsp;&nbsp;&nbsp;{{#if(status==W)}}ID:{{id}},status:等待{{/if(status==W)}}
+&nbsp;&nbsp;&nbsp;&nbsp;{{#if(status==R)}}ID:{{id}},status&lt;b style='color:red'>拒绝&lt;/b>{{/if(status==R)}}
+{{/list}}
+</pre>
+ * 对于数组对象可以通过{{__index__}}访问数组下标
+ * @class Mu
+ * @namespace libs.magix
+ * @static*/
+KISSY.add("magix/mu",function(S,Mustache){
+    function addFns(template, data){
+        var ifs = getConditions(template);
+        var key = "";
+        for (var i = 0; i < ifs.length; i++) {
+            key = "if(" + ifs[i] + ")";
+            if (data[key]) {
+                continue;
+            }
+            else {
+                data[key] = buildFn(ifs[i]);
+            }
+        }
+    }
+    function getConditions(template){
+        var ifregexp_ig = /\{{2,3}[\^#]?if\((.*?)\)\}{2,3}?/ig;
+        var ifregexp_i = /\{{2,3}[\^#]?if\((.*?)\)\}{2,3}?/i;
+        var gx = template.match(ifregexp_ig);
+        var ret = [];
+        if (gx) {
+            for (var i = 0; i < gx.length; i++) {
+                ret.push(gx[i].match(ifregexp_i)[1]);
+            }
+        }
+        return ret;
+    }
+    function buildFn(key){
+        key = key.split("==");
+        var res = function(){
+            var ns = key[0].split("."), value = key[1];
+            var curData = this;
+            for (var i = ns.length - 1; i > -1; i--) {
+                var cns = ns.slice(i);
+                var d = curData;
+                try {
+                    for (var j = 0; j < cns.length - 1; j++) {
+                        d = d[cns[j]];
+                    }
+                    if (cns[cns.length - 1] in d) {
+                        if (d[cns[cns.length - 1]].toString() === value) {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                } 
+                catch (err) {
+                }
+            }
+            return false;
+        };
+        return res;
+    }
+    function findArray(o, depth){
+        var k, v;
+        for (k in o) {
+            v = o[k];
+            if (v instanceof Array) {
+                addArrayIndex(v);
+            }
+            else 
+                if (typeof(v) == "object" && depth < 5) {
+                    findArray(v, depth + 1);
+                }
+        }
+    }
+    function addArrayIndex(v){
+        for (var i = 0; i < v.length; i++) {
+            o = v[i];
+            if (typeof(o) == "object") {
+                if (i === 0) {
+                    o.__first__ = true;
+                }
+                else 
+                    if (i == (v.length - 1)) {
+                        o.__last__ = true;
+                    }
+                    else {
+                        o.__mid__ = true;
+                    }
+                o.__index__ = i;
+            }
+        }
+    }
+    return {
+        /**
+         * 输出模板和数据,返回渲染后结果字符串,接口与Mustache完全一致
+         * @method to_html
+         * @param {String} template 模板字符串
+         * @param {Object} data 数据Object
+         * @return {String}
+         */
+        to_html: function(template, data){
+            if (typeof(data) == "object") {
+                findArray(data, 0);
+            }
+            addFns(template, data);
+			
+            return Mustache.to_html.apply(this, arguments);
+        }
+    };
+},{
+	requires:["magix/mustache"]
+});
+
+
+KISSY.add("magix/mustache", function(S) {
+
+	/*
+	 mustache.js — Logic-less templates in JavaScript
+
+	 See http://mustache.github.com/ for more info.
+	 */
+
+	var Mustache = function() {
+		var Renderer = function() {
+		};
+
+		Renderer.prototype = {
+			otag : "{{",
+			ctag : "}}",
+			pragmas : {},
+			buffer : [],
+			pragmas_implemented : {
+				"IMPLICIT-ITERATOR" : true
+			},
+			context : {},
+
+			render : function(template, context, partials, in_recursion) {
+				// reset buffer & set context
+				if(!in_recursion) {
+					this.context = context;
+					this.buffer = [];
+					// TODO: make this non-lazy
 				}
-			}), this.interval);
-		}
-	},
-	hashChange : function() {
-		this.hash = location.hash;
-		this.oldHash = this.hash;
-		if(!this.showIframe) {
-			this.route(this.hash);
-		} else {
-			this.iframe.src = this.iframeSrc + "?" + (this.hash ? this.hash.substr(1) : "");
-		}
-	},
-	frameLoad : function() {
-		var h = Magix.History;
-		if(h.iframe) {
-			var ns = h.iframe.contentWindow.location.search.substr(1);
-			h.hash = h.oldHash = "#" + ns;
-			location.hash = ns;
-		}
-		this.route(this.hash);
-	},
-	route : function(hash) {
-		if(hash.indexOf("?") === 0) {
-			hash = hash.substr(1);
-		}
-		if(hash.indexOf("#") === 0) {
-			hash = hash.substr(1);
-		}
-		if(hash.indexOf("!") === 0) {
-			hash = hash.substr(1);
-		}
-		if(this.hashListener) {
-			this.hashListener(hash);
-		}
-		this.ready = true;
-		this.currentHash = hash;
-	},
-	wirteFrame : function() {
-		var self = this;
-		if(this.showIframe) {
-			//document.write("<iframe onload='Magix.History.frameLoad();' id='MxHistory' src='" + this.iframeSrc + "?" + (this.hash ? this.hash.substr(1) : "") + "' width='90%'></iframe>");
-			document.write("<iframe onload='Magix.History.frameLoad();' id='MxHistory' src='" + this.iframeSrc + "?" + (this.hash ? this.hash.substr(1) : "") + "' style='z-index:99998;visibility:hidden;position:absolute;' border='0' frameborder='0' marginwidth='0' marginheight='0' scrolling='no' ></iframe>");
-		}
-		window.setTimeout((function() {
-			self.iframe = document.getElementById("MxHistory");
-		}), 0);
-	},
-	setHashListener : function(fn) {
-		this.hashListener = fn;
-		if(this.ready) {
-			fn(this.currentHash);
-		}
-	}
-};// magix router
+
+				// fail fast
+				if(!this.includes("", template)) {
+					if(in_recursion) {
+						return template;
+					} else {
+						this.send(template);
+						return;
+					}
+				}
+				template = this.render_pragmas(template);
+				var html = this.render_section(template, context, partials);
+				if(in_recursion) {
+					return this.render_tags(html, context, partials, in_recursion);
+				}
+
+				this.render_tags(html, context, partials, in_recursion);
+			},
+			/*
+			 Sends parsed lines
+			 */
+			send : function(line) {
+				if(line != "") {
+					this.buffer.push(line);
+				}
+			},
+			/*
+			 Looks for %PRAGMAS
+			 */
+			render_pragmas : function(template) {
+				// no pragmas
+				if(!this.includes("%", template)) {
+					return template;
+				}
+
+				var that = this;
+				var regex = new RegExp(this.otag + "%([\\w-]+) ?([\\w]+=[\\w]+)?" + this.ctag);
+				return template.replace(regex, function(match, pragma, options) {
+					if(!that.pragmas_implemented[pragma]) {
+						throw ( {
+							message : "This implementation of mustache doesn't understand the '" + pragma + "' pragma"
+						});
+					}
+					that.pragmas[pragma] = {};
+					if(options) {
+						var opts = options.split("=");
+						that.pragmas[pragma][opts[0]] = opts[1];
+					}
+					return "";
+					// ignore unknown pragmas silently
+				});
+			},
+			/*
+			 Tries to find a partial in the curent scope and render it
+			 */
+			render_partial : function(name, context, partials) {
+				name = this.trim(name);
+				if(!partials || partials[name] === undefined) {
+					throw ( {
+						message : "unknown_partial '" + name + "'"
+					});
+				}
+				if( typeof (context[name]) != "object") {
+					return this.render(partials[name], context, partials, true);
+				}
+				return this.render(partials[name], context[name], partials, true);
+			},
+			/*
+			 Renders inverted (^) and normal (#) sections
+			 */
+			render_section : function(template, context, partials) {
+				if(!this.includes("#", template) && !this.includes("^", template)) {
+					return template;
+				}
+
+				var that = this;
+				// CSW - Added "+?" so it finds the tighest bound, not the widest
+				var regex = new RegExp(this.otag + "(\\^|\\#)\\s*(.+)\\s*" + this.ctag + "\n*([\\s\\S]+?)" + this.otag + "\\/\\s*\\2\\s*" + this.ctag + "\\s*", "mg");
+
+				// for each {{#foo}}{{/foo}} section do...
+				return template.replace(regex, function(match, type, name, content) {
+					var value = that.find(name, context);
+					if(type == "^") {// inverted section
+						if(!value || that.is_array(value) && value.length === 0) {
+							// false or empty list, render it
+							return that.render(content, context, partials, true);
+						} else {
+							return "";
+						}
+					} else if(type == "#") {// normal section
+						if(that.is_array(value)) {// Enumerable, Let's loop!
+							return that.map(value, function(row) {
+								return that.render(content, that.create_context(row), partials, true);
+							}).join("");
+						} else if(that.is_object(value)) {// Object, Use it as subcontext!
+							return that.render(content, that.create_context(value), partials, true);
+						} else if( typeof value === "function") {
+							// higher order section
+							return value.call(context, content, function(text) {
+								return that.render(text, context, partials, true);
+							});
+						} else if(value) {// boolean section
+							return that.render(content, context, partials, true);
+						} else {
+							return "";
+						}
+					}
+				});
+			},
+			/*
+			 Replace {{foo}} and friends with values from our view
+			 */
+			render_tags : function(template, context, partials, in_recursion) {
+				// tit for tat
+				var that = this;
+
+				var new_regex = function() {
+					return new RegExp(that.otag + "(=|!|>|\\{|%)?([^\\/#\\^]+?)\\1?" + that.ctag + "+", "g");
+				};
+				var regex = new_regex();
+				var tag_replace_callback = function(match, operator, name) {
+					switch(operator) {
+						case "!":
+							// ignore comments
+							return "";
+						case "=":
+							// set new delimiters, rebuild the replace regexp
+							that.set_delimiters(name);
+							regex = new_regex();
+							return "";
+						case ">":
+							// render partial
+							return that.render_partial(name, context, partials);
+						case "{":
+							// the triple mustache is unescaped
+							return that.find(name, context);
+						default:
+							// escape the value
+							return that.escape(that.find(name, context));
+					}
+				};
+				var lines = template.split("\n");
+				for(var i = 0; i < lines.length; i++) {
+					lines[i] = lines[i].replace(regex, tag_replace_callback, this);
+					if(!in_recursion) {
+						this.send(lines[i]);
+					}
+				}
+
+				if(in_recursion) {
+					return lines.join("\n");
+				}
+			},
+			set_delimiters : function(delimiters) {
+				var dels = delimiters.split(" ");
+				this.otag = this.escape_regex(dels[0]);
+				this.ctag = this.escape_regex(dels[1]);
+			},
+			escape_regex : function(text) {
+				// thank you Simon Willison
+				if(!arguments.callee.sRE) {
+					var specials = ['/', '.', '*', '+', '?', '|', '(', ')', '[', ']', '{', '}', '\\'];
+					arguments.callee.sRE = new RegExp('(\\' + specials.join('|\\') + ')', 'g');
+				}
+				return text.replace(arguments.callee.sRE, '\\$1');
+			},
+			/*
+			 find `name` in current `context`. That is find me a value
+			 from the view object
+			 */
+			find : function(name, context) {
+				name = this.trim(name);
+
+				// Checks whether a value is thruthy or false or 0
+				function is_kinda_truthy(bool) {
+					return bool === false || bool === 0 || bool;
+				}
+
+				var value;
+				if(is_kinda_truthy(context[name])) {
+					value = context[name];
+				} else if(is_kinda_truthy(this.context[name])) {
+					value = this.context[name];
+				}
+
+				if( typeof value === "function") {
+					return value.apply(context);
+				}
+				if(value !== undefined) {
+					return value;
+				}
+				// silently ignore unkown variables
+				return "";
+			},
+			// Utility methods
+
+			/* includes tag */
+			includes : function(needle, haystack) {
+				return haystack.indexOf(this.otag + needle) != -1;
+			},
+			/*
+			 Does away with nasty characters
+			 */
+			escape : function(s) {
+				s = String(s === null ? "" : s);
+				return s.replace(/&(?!\w+;)|["'<>\\]/g, function(s) {
+					switch(s) {
+						case "&":
+							return "&amp;";
+						case "\\":
+							return "\\\\";
+						case '"':
+							return '&quot;';
+						case "'":
+							return '&#39;';
+						case "<":
+							return "&lt;";
+						case ">":
+							return "&gt;";
+						default:
+							return s;
+					}
+				});
+			},
+			// by @langalex, support for arrays of strings
+			create_context : function(_context) {
+				if(this.is_object(_context)) {
+					return _context;
+				} else {
+					var iterator = ".";
+					if(this.pragmas["IMPLICIT-ITERATOR"]) {
+						iterator = this.pragmas["IMPLICIT-ITERATOR"].iterator;
+					}
+					var ctx = {};
+					ctx[iterator] = _context;
+					return ctx;
+				}
+			},
+			is_object : function(a) {
+				return a && typeof a == "object";
+			},
+			is_array : function(a) {
+				return Object.prototype.toString.call(a) === '[object Array]';
+			},
+			/*
+			 Gets rid of leading and trailing whitespace
+			 */
+			trim : function(s) {
+				return s.replace(/^\s*|\s*$/g, "");
+			},
+			/*
+			 Why, why, why? Because IE. Cry, cry cry.
+			 */
+			map : function(array, fn) {
+				if( typeof array.map == "function") {
+					return array.map(fn);
+				} else {
+					var r = [];
+					var l = array.length;
+					for(var i = 0; i < l; i++) {
+						r.push(fn(array[i]));
+					}
+					return r;
+				}
+			}
+		};
+
+		return ( {
+			name : "mustache.js",
+			version : "0.3.1-dev",
+
+			/*
+			 Turns a template and view into HTML
+			 */
+			to_html : function(template, view, partials, send_fun) {
+				var renderer = new Renderer();
+				if(send_fun) {
+					renderer.send = send_fun;
+				}
+				
+				renderer.render(template, view, partials);
+				if(!send_fun) {
+					return renderer.buffer.join("\n");
+				}
+			}
+		});
+	}();
+	return Mustache;
+});
+// magix router
 KISSY.add("magix/router",function(S,impl,Base){
 	var Router = {};
 	Base.mix(Router, {
@@ -744,16 +1200,18 @@ KISSY.add("magix/router",function(S,impl,Base){
 	getRootViewName : Base.unimpl,
 	createQueryModel : Base.unimpl,
 	changeQueryModel : Base.unimpl,
-	mountRootView:Base.unimpl,
 	////todo goTo navigateTo setPostData
 	navigateTo:Base.unimpl,
-	goTo:Base.unimpl,
 	setPostData:Base.unimpl,
+	getVOMObject:Base.unimpl,
 	//concrete members
 	init : function(config) {
 		this.config = config;
 		this.appConfig = this.getAppConfig();
 		this.setStateListener();
+	},
+	goTo:function(url){
+		location.hash='!'+url;
 	},
 	route : function(stateString) {
 		
@@ -769,7 +1227,15 @@ KISSY.add("magix/router",function(S,impl,Base){
 		if(this.rootViewName == this.oldRootViewName) {
 			this.changeQueryModel();
 		}else{
+			var vom=this.getVOMObject();
 			this.queryModel = this.createQueryModel();
+			this.queryModel.bind("change", function() {
+				if(vom.root.view){
+					var res = vom.root.view.queryModelChange(this);
+					vom.root.view._changeChain(res, this);
+				}
+            });
+			
 			this.mountRootView();
 		}
 		this.postData = null; //todo re-think postData
@@ -794,6 +1260,13 @@ KISSY.add("magix/router",function(S,impl,Base){
 			Base.mix(query, multipageQuery);
 		}
 		return query;
+	},
+	mountRootView : function() {
+		var self = this,
+			vom=this.getVOMObject();
+		vom.root.mountView(this.rootViewName, {
+			queryModel : self.queryModel
+		});
 	}
 });
 
@@ -825,7 +1298,66 @@ Template={
 },{
     requires:["magix/impls/template","magix/base"]
 });
-//vframe
+KISSY.add("magix/tmpl",function(S){
+	var fnCaches={},
+		tmplCaches={},
+		stack='_'+new Date().getTime(),
+		notRender=/\s*<script[^>]+type\s*=\s*(['"])\s*text\/notRenderTemplate\1[^>]*>([\s\S]*?)<\/script>\s*/gi;
+	var tmpl=function(template,data){
+		if(template){
+			var resultTemplate;
+			resultTemplate=tmplCaches[template];
+			if(!resultTemplate){
+				resultTemplate=stack + ".push('" + template
+				.replace(/\s+/g," ")
+				.replace(/<#/g,"\r")
+				.replace(/;*#>/g,"\n")
+				.replace(/\\(?=[^\r\n]*\n)/g,"\t")
+				.replace(/\\/g,"\\\\")
+				.replace(/\t/g,"\\")
+				.replace(/'(?=[^\r\n]*\n)/g,"\t")
+				.replace(/'/g,"\\'")
+				.replace(/\t/g,"'")
+				.replace(/\r=([^\n]+)\n/g,"',$1,'")
+				.replace(/\r/g,"');")
+				.replace(/\n/g,";"+stack+".push('")+ "');return "+stack+".join('')";
+				 tmplCaches[template]=resultTemplate;
+			}
+			var vars=[stack],values=[[]],fnKey;
+			if(data){
+				for(var p in data){
+					vars.push(p);
+					values.push(data[p]);
+				}
+			}
+			fnKey=vars.join('_')+'_'+resultTemplate;
+			if(!fnCaches[fnKey]){
+				fnCaches[fnKey]=new Function(vars,resultTemplate);
+			}
+			resultTemplate=fnCaches[fnKey].apply(data,values);
+			return resultTemplate;
+		}
+		return template;
+	};
+	return {
+		toHTML:function(template,data){
+			var notRenders=template.match(notRender);
+			if(notRenders){
+				template=template.replace(notRender,function(){//防止不必要的解析
+					return '<script type="text/notRenderTemplate"></script>';
+				});
+				template=tmpl(template,data);
+				var idx=0;
+				template=template.replace(notRender,function(){
+					return notRenders[idx++];
+				});
+			}else{
+				template=tmpl(template,data);
+			}
+			return template;
+		}
+	};
+});//vframe
 KISSY.add("magix/vframe",function(S,impl,Base){
 	var Vframe;
 	Vframe = function(node, id) {
@@ -853,6 +1385,7 @@ Base.mix(Vframe.prototype, {
 	 * 谁也不应该被改写
 	 */
 	createFrame:Base.unimpl,
+	getVOMObject:Base.unimpl,
 	initial : function(node, id) {
 		//
 		this.id = "";
@@ -862,7 +1395,7 @@ Base.mix(Vframe.prototype, {
 		//
 		this._domNode = node || this.createFrame();
 		this.id = this._idIt(this._domNode, id);
-		if(node) {
+		if(node) {//why?
 			this._domNode = null;
 			node = null;
 		}
@@ -898,13 +1431,30 @@ Base.mix(Vframe.prototype, {
 		return this.getChildVframeNodes();
 	},
 	handelMounted : function() {
-		if(this.view.rendered) {
-			this.mounted = true;
-			this.trigger("mounted", this.view);
+		var me=this;
+		if(me.view.rendered) {
+			me.mounted = true;
+			me.trigger("mounted", me.view);
+			me.mountSubFrames();
 		} else {
-			this.view.bind("rendered", function() {
-				this.mounted = true;
-				this.trigger("mounted", this.view);
+			me.view.bind("rendered", function() {
+				me.mounted = true;
+				me.trigger("mounted", me.view);
+				me.mountSubFrames();
+			});
+		}
+	},
+	mountSubFrames:function(){
+		//this.trigger("beforeSubviewsRender");
+		var vom=this.getVOMObject();
+		var vc = vom.getElementById(this.view.vcid);
+		var childVcs = vc.getElements();
+		var i, child;
+		for( i = 0; i < childVcs.length; i++) {
+			child = vom.createElement(childVcs[i]);
+			vc.appendChild(child);
+			child.mountView(child.getAttribute("view_name"), {
+				queryModel : this.view.queryModel
 			});
 		}
 	},
@@ -913,9 +1463,11 @@ Base.mix(Vframe.prototype, {
 			return;
 		}
 		
-		if(this.view) {
+		
+		this.unmountView();//先清view
+		/*if(this.view) {
 			this.view.destroy();
-		}
+		}*/
 		//
 		var self = this,router=this.getRouterObject();
 		options = options || {};
@@ -935,23 +1487,39 @@ Base.mix(Vframe.prototype, {
 		});
 	},
 	unmountView : function() {
-		
-		
-		this.view.trigger("unload");
-		
-		document.getElementById(this.view.vcid).innerHTML = "";
-		
-		if(this.view.events) {
-			var node = document.getElementById(this.id);
-			for(var eventType in this.view.events) {
-				node["on" + eventType] = null;
-			}
-			node = null;
+		if(this.view&&this.mounted){
+			
+			
+			
+						
+			
+			this.destroySubFrames();
+			this.view.trigger("unload");
+			this.view.destroy();
+			
+			document.getElementById(this.view.vcid).innerHTML = "";
+			this.mounted = false;
+			this.view = null;
 		}
-		
-		this.mounted = false;
-		this.view = null;
 		//引用移除
+	},
+	destroySubFrames:function(){
+		var queue = [], vom = this.getVOMObject();
+        var root = vom.getElementById(this.view.vcid);
+
+        function rc(e) {
+            queue.push(e);
+            for(var i = 0; i < e.childNodes.length; i++) {
+                rc(e.childNodes[i]);
+            }
+        }
+
+        rc(root);
+        
+		
+		for(var i = queue.length - 1; i > 0; i--) {
+            queue[i].removeNode();
+        }
 	},
 	removeNode : function() {
 		
@@ -1008,8 +1576,6 @@ View = function() {
     
 };
 Base.mix(View.prototype, {
-    render : Base.unimpl,
-    getTemplate : Base.unimpl,
     getVOMObject : Base.unimpl,
     getTemplateObject : Base.unimpl,
     getAjaxObject : Base.unimpl,
@@ -1028,7 +1594,7 @@ Base.mix(View.prototype, {
         
         var self = this, vom = this.getVOMObject();
         
-        this.subViewsChange = [];
+        //this.subViewsChange = []; 不理解的先去掉
         this.options = o;
         this.vcid = o.vcid;
         this.queryModel = o.queryModel;
@@ -1047,7 +1613,7 @@ Base.mix(View.prototype, {
             this.exist = false;
         });
         /***********左莫增加标识符，用来判断当前view是否在vom节点中end*************/
-        this.bind("rendered", function() {
+        /*this.bind("rendered", function() {
             this.trigger("beforeSubviewsRender");
             var vc = vom.getElementById(this.vcid);
             var childVcs = vc.getElements();
@@ -1059,26 +1625,32 @@ Base.mix(View.prototype, {
                     queryModel : this.queryModel
                 });
             }
-        });
-        var vc = vom.getElementById(this.vcid);
-        if(vc == vom.root) {
+        });*/
+        /*var vf = vom.getElementById(this.vcid);
+        if(vf == vom.root) {
             this.queryModel.bind("change", function() {
                 
                 var res = self.queryModelChange(this);
                 self._changeChain(res, this);
             });
+        }*/
+		if(this.init) {
+			setTimeout(function(){//确保内部的magix绑定的事件先执行，再调用init
+				self.init();      //如果在init中绑定了事件，无setTimeout时，init中的绑定的事件早于magix中的，有可能出问题
+			},0);
         }
-        if(this.init) {
-            this.init();
+		if(!this.preventRender) {
+			this.getTemplate(function(data) {
+				self.template = data;
+				
+				setTimeout(function(){//等待init的完成
+					var autoRendered = self.render();
+					if(autoRendered !== false) {
+						self.trigger("rendered");
+					}
+				},0);
+			});
         }
-        this.getTemplate(function(data) {
-            self.template = data;
-            
-            var autoRendered = self.render();
-            if(autoRendered !== false) {
-                self.trigger("rendered");
-            }
-        });
     },
     _queryModelChange : function(model) {
         
@@ -1107,20 +1679,27 @@ Base.mix(View.prototype, {
         this.destroy();
     },
     destroy : function() {
-        var vcQueue, i, vom = this.getVOMObject();
+       // var vcQueue, i;//, vom = this.getVOMObject();
         
-        vcQueue = this.getDestoryQueue();
-        
-        for( i = vcQueue.length - 1; i > 0; i--) {
+        //vcQueue = this.getDestoryQueue();
+        //
+        /*for( i = vcQueue.length - 1; i > 0; i--) {
             vcQueue[i].removeNode();
-        }
+        }*/
         
-        var root = vom.getElementById(this.vcid);
-        root.unmountView();
+        //var root = vom.getElementById(this.vcid);
+        //root.unmountView();
+		if(this.events) {
+			var node = document.getElementById(this.vcid);
+			for(var eventType in this.events) {
+				node["on" + eventType] = null;
+			}
+			node = null;
+		}
         
         this.dispose();
     },
-    getDestoryQueue : function() {
+    /*getDestoryQueue : function() {
         var queue = [], vom = this.getVOMObject();
         var root = vom.getElementById(this.vcid);
 
@@ -1135,7 +1714,7 @@ Base.mix(View.prototype, {
         rc(root);
         
         return queue;
-    },
+    },*/
     setData : function(data) {
         this.data = data;
         for(var k in data) {
@@ -1147,6 +1726,7 @@ Base.mix(View.prototype, {
         this.setRenderer();
     },
     setRenderer : function() {
+		
         var self = this, rr = this.renderer, mcName, wrapperName;
         if(rr) {
             for(mcName in rr) {
@@ -1245,7 +1825,7 @@ Base.mix(View.prototype, {
                                 eventArr.pop();
                             }
                             if(view.events && view.events[type] && view.events[type][eventKey]) {
-                                view.events[type][eventKey](view, view.idIt(target), eventArr);
+                                view.events[type][eventKey](view, view.idIt(target), eventArr,event);
                             }
                         }
                     }
@@ -1263,34 +1843,39 @@ Base.mix(View.prototype, {
         
         var node = document.getElementById(this.vcid), templet = this.getTemplateObject();
         
+		this.setData({});//确保renderer正确工作，否则在未重写render方法，而又未调用setData时renderer无法正确工作
         node.innerHTML = templet.toHTML({
             template : this.template,
-            data : {
-                data : this.data,
-                queryModel : this.queryModel.toJSON()
-            }
+            data : this.data
         });
         this.rendered = true;
     },
     getTemplate : function(cb, name) {
-        if(this.preventRender) {
-            cb();
-            return;
-        }
+		if(this.template){
+			cb(this.template);
+			return;
+		}
         //var router=this.getRouterObject();
-        var url = Magix.config.appHome + this.viewName.split("app")[1];
+		
+        var url = Magix.config.appHome;
+		if(/app/$/.test(url))url+=this.viewName.split("app")[1];
+		else url+=this.viewName;
         if(name) {
             url = url + "." + "name" + ".html";
         } else {
             url = url + ".html";
         }
+		url=url.replace(/([^:/])/+/g,'$1/');//修正多个/紧挨的问题
         var ajax = this.getAjaxObject();
+		
+		if(Magix.dev||Magix.config.debug)url+='?='+new Date().getTime();
         ajax.getTemplate(url, function(data) {
             
             cb(data);
         }, function(msg) {
+			
             cb(msg);
-        });
+        },this.viewName);
     },
     idIt : function(node) {
         var id = "";
@@ -1313,25 +1898,29 @@ KISSY.add("magix/vom",function(S,impl,Base,Vframe){
 	_idMap : {},
 	root : null,
 	setRootVframe : Base.unimpl,
-	init : function() {
-		this.setRootVframe();
-		return this;
+	init : function () {
+		var me = this;
+		if (!me.inited) { //确保只执行一次
+			me.setRootVframe();
+			me.inited = true;
+		}
+		return me;
 	},
-	push : function(vc) {
+	push : function (vc) {
 		this._idMap[vc.id] = vc;
 	},
-	pop : function(vc) {
+	pop : function (vc) {
 		delete this._idMap[vc.id];
 	},
-	createElement : function(ele, id) {
-		if(Base.isString(ele)) {
+	createElement : function (ele, id) {
+		if (Base.isString(ele)) {
 			ele = document.getElementById(ele);
 		}
 		var vc = new Vframe(ele, id);
 		this.push(vc);
 		return vc;
 	},
-	getElementById : function(id) {
+	getElementById : function (id) {
 		return this._idMap[id] || null;
 	}
 });

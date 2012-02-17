@@ -27,6 +27,7 @@ Base.mix(Vframe.prototype, {
 	 * 谁也不应该被改写
 	 */
 	createFrame:Base.unimpl,
+	getVOMObject:Base.unimpl,
 	initial : function(node, id) {
 		//
 		this.id = "";
@@ -36,7 +37,7 @@ Base.mix(Vframe.prototype, {
 		//
 		this._domNode = node || this.createFrame();
 		this.id = this._idIt(this._domNode, id);
-		if(node) {
+		if(node) {//why?
 			this._domNode = null;
 			node = null;
 		}
@@ -72,13 +73,30 @@ Base.mix(Vframe.prototype, {
 		return this.getChildVframeNodes();
 	},
 	handelMounted : function() {
-		if(this.view.rendered) {
-			this.mounted = true;
-			this.trigger("mounted", this.view);
+		var me=this;
+		if(me.view.rendered) {
+			me.mounted = true;
+			me.trigger("mounted", me.view);
+			me.mountSubFrames();
 		} else {
-			this.view.bind("rendered", function() {
-				this.mounted = true;
-				this.trigger("mounted", this.view);
+			me.view.bind("rendered", function() {
+				me.mounted = true;
+				me.trigger("mounted", me.view);
+				me.mountSubFrames();
+			});
+		}
+	},
+	mountSubFrames:function(){
+		//this.trigger("beforeSubviewsRender");
+		var vom=this.getVOMObject();
+		var vc = vom.getElementById(this.view.vcid);
+		var childVcs = vc.getElements();
+		var i, child;
+		for( i = 0; i < childVcs.length; i++) {
+			child = vom.createElement(childVcs[i]);
+			vc.appendChild(child);
+			child.mountView(child.getAttribute("view_name"), {
+				queryModel : this.view.queryModel
 			});
 		}
 	},
@@ -87,9 +105,11 @@ Base.mix(Vframe.prototype, {
 			return;
 		}
 		
-		if(this.view) {
+		
+		this.unmountView();//先清view
+		/*if(this.view) {
 			this.view.destroy();
-		}
+		}*/
 		//
 		var self = this,router=this.getRouterObject();
 		options = options || {};
@@ -109,23 +129,39 @@ Base.mix(Vframe.prototype, {
 		});
 	},
 	unmountView : function() {
-		
-		
-		this.view.trigger("unload");
-		
-		document.getElementById(this.view.vcid).innerHTML = "";
-		
-		if(this.view.events) {
-			var node = document.getElementById(this.id);
-			for(var eventType in this.view.events) {
-				node["on" + eventType] = null;
-			}
-			node = null;
+		if(this.view&&this.mounted){
+			
+			
+			
+						
+			
+			this.destroySubFrames();
+			this.view.trigger("unload");
+			this.view.destroy();
+			
+			document.getElementById(this.view.vcid).innerHTML = "";
+			this.mounted = false;
+			this.view = null;
 		}
-		
-		this.mounted = false;
-		this.view = null;
 		//引用移除
+	},
+	destroySubFrames:function(){
+		var queue = [], vom = this.getVOMObject();
+        var root = vom.getElementById(this.view.vcid);
+
+        function rc(e) {
+            queue.push(e);
+            for(var i = 0; i < e.childNodes.length; i++) {
+                rc(e.childNodes[i]);
+            }
+        }
+
+        rc(root);
+        
+		
+		for(var i = queue.length - 1; i > 0; i--) {
+            queue[i].removeNode();
+        }
 	},
 	removeNode : function() {
 		

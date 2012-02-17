@@ -5,20 +5,22 @@ define("magix/impls/ajax",function(require){
     S.use('ajax',function(S,IO){io=IO});
     Ajax.send=function(ops){
 		var me=this;
-        ops=me.processOptions(ops);
-        io({
+        ops=this.processOptions(ops);
+		var oldSucc=ops.success,
+			oldErr=ops.error;
+        io(S.mix(ops,{
             url:ops.url,
             dataType:ops.dataType,
 			type:ops.method,
             success:function(data,textStatus,xhr){
 				me.fireGlobalSetting(xhr);
-                ops.success(data);
+                oldSucc.call(ops,data);
             },
             error:function(data,textStatus,xhr){
 				me.fireGlobalSetting(xhr);
-                ops.error(textStatus);
+                oldErr.call(ops,textStatus);
             }
-        });
+        }));
     }
     return Ajax;
 });

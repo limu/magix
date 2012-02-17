@@ -25,7 +25,6 @@ Ajax = {
 		var me = this,
 			gSetting = me.$globalSetting,
 			codes;
-		try{
 		if (gSetting && gSetting.statusCode) {
 			codes = gSetting.statusCode;
 			if (codes[xhr.status]) {
@@ -35,7 +34,7 @@ Ajax = {
 					console.log(e);
 				}
 			}
-		}}catch(ex){console.log(ex)}
+		}
 	},
 	/*
 	 * 发送异步请求
@@ -56,13 +55,13 @@ Ajax = {
 		}
 		return ops;
 	},
-	templates:{},
 	/*
 	 * 获取模板内容
 	 */
-	getTemplate : function (url, succ, fail) {
+	getTemplate : function (url, succ, fail,viewName) {
 		var me = this,
-			data = me.templates[url];
+			tmplCaches=Magix.templates,
+			data = tmplCaches[viewName];
 		if (data) {
 			if (Base.isFunction(succ)) {
 				succ(data);
@@ -74,7 +73,7 @@ Ajax = {
 			dataType : 'html',
 			method:'GET',
 			success : function (data) {
-				me.templates[url] = data;
+				tmplCaches[viewName] = data;
 				if (Base.isFunction(succ)) {
 					succ(data);
 				}

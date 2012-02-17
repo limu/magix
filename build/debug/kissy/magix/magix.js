@@ -15,20 +15,40 @@ Magix = {
 		this.setEnv();
 		this.bootstrap();
 	},
+	templates:{},//模板缓存，方便打包
 	setEnv : function() {
 		var me = this,
 			magixHome = me.config.magixHome||'',
 			appHome = me.config.appHome||'',
-			S=KISSY;
+			S=KISSY,
+			now=new Date().getTime();
+		if(me.config.debug){
+			me.dev=true;
+			S.config({debug:true});
+			if(!window.console){
+				window.console = {
+					log : function(s) {
+					},
+					dir : function(s) {
+					},
+					warn : function(s) {
+					},
+					error : function(s) {
+					}
+				};
+			}
+		}
+		if(magixHome&&!/\//.test(magixHome))magixHome+='/';
+		if(appHome&&!/\//.test(appHome))appHome+='/';
 		S.config({
 			packages:[{
 				name:'magix',
-				path:magixHome+"../",
-				tag:new Date().getTime()
+				path:/magix\/$/.test(magixHome)?magixHome+"../":magixHome,
+				tag:me.dev?now:'20120214'
 			},{
-				name:'app',
-				path:appHome+"../",
-				tag:new Date().getTime()
+				name:'app',//http://ad.com/ab/c/d/../  
+				path:/app\/$/.test(appHome)?appHome+"../":appHome,
+				tag:me.dev?now:'20120214'
 			}]
 		});
 	},

@@ -300,13 +300,14 @@ Base.mix(View.prototype, {
 		url=url.replace(/([^:\/])\/+/g,'$1\/');//修正多个/紧挨的问题
         var ajax = this.getAjaxObject();
 		console.log("view->getTemplate ajax:",ajax);
+		if(Magix.dev||Magix.config.debug)url+='?='+new Date().getTime();
         ajax.getTemplate(url, function(data) {
             console.log('cb:', data);
             cb(data);
         }, function(msg) {
 			console.log('fail',msg);
             cb(msg);
-        });
+        },this.viewName);
     },
     idIt : function(node) {
         var id = "";

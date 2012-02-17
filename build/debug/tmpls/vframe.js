@@ -37,7 +37,7 @@ Base.mix(Vframe.prototype, {
 			this._domNode = null;
 			node = null;
 		}
-		console.log('VFrame',this);
+		
 	},
 	_idIt : function(node, id) {
 		node.id = (node && node.id) || id || Vframe.uniqueId();
@@ -48,7 +48,7 @@ Base.mix(Vframe.prototype, {
 	getOnce : function() {
 		var node = this._domNode;
 		if(!node) {
-			console.warn("always get once");
+			
 		}
 		this._domNode = null;
 		return node;
@@ -100,7 +100,7 @@ Base.mix(Vframe.prototype, {
 		if(!viewName) {
 			return;
 		}
-		console.log(this.view);
+		
 		
 		this.unmountView();//先清view
 		/*if(this.view) {
@@ -114,7 +114,7 @@ Base.mix(Vframe.prototype, {
 		}
 		//
 		Base.requireAsync(viewName, function(View) {
-			console.log(View,View.toString());
+			
 			options.vcid = self.id;
 			options.viewName = viewName;
 			//options.el = self.id;
@@ -126,15 +126,15 @@ Base.mix(Vframe.prototype, {
 	},
 	unmountView : function() {
 		if(this.view&&this.mounted){
-			console.log("VCELE UNMOUNT:1 fire view's unload @" + this.view.modUri);
-			console.log(this.view);
 			
-			console.log("VCELE UNMOUNT:2 inner dom unload @" + this.view.modUri);			
-			console.log("VCELE UNMOUNT:3 unbind event delegation on vcelement @" + this.id);
+			
+			
+						
+			
 			this.destroySubFrames();
 			this.view.trigger("unload");
 			this.view.destroy();
-			console.log("VCELE UNMOUNT:4 chge vcelement.mounted to false @" + this.id);
+			
 			document.getElementById(this.view.vcid).innerHTML = "";
 			this.mounted = false;
 			this.view = null;
@@ -153,19 +153,19 @@ Base.mix(Vframe.prototype, {
         }
 
         rc(root);
-        console.log("VIEW DESTORY:2.depth traversal all vcelements @" + this.view.modUri);
+        
 		
 		for(var i = queue.length - 1; i > 0; i--) {
             queue[i].removeNode();
         }
 	},
 	removeNode : function() {
-		console.log("VCELE DESTORY:1 unmount current view @" + this.id);
+		
 		if(this.mounted) {
 			this.unmountView();
 		}
 		this.trigger("unload");
-		console.log("VCELE DESTORY:2 remove mxvc dom element @" + this.id);
+		
 		var node = document.getElementById(this.id);
 		if(node) {
 			node.parentNode.removeChild(node);
@@ -175,7 +175,7 @@ Base.mix(Vframe.prototype, {
 			}
 			node = null;
 		}
-		console.log("VCELE DESTORY:3 remove self(vcelement) from vom @" + this.id);
+		
 		this.parentNode._removeChild(this);
 	},
 	_removeChild : function(child) {

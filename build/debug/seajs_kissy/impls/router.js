@@ -17,6 +17,9 @@ define("magix/impls/router", ["magix/base", "magix/model", "magix/vom", "app/con
 			}
 			return appConfig;
 		},
+		getVOMObject:function(){
+			return VOM;
+		},
 		setStateListener : function() {
 			/*var self = this;
 			MxHistory.setHashListener(function(hash) {
@@ -114,11 +117,18 @@ define("magix/impls/router", ["magix/base", "magix/model", "magix/vom", "app/con
 				}
 			}
 		},
-		mountRootView : function() {
-			var self = this;
-			VOM.root.mountView(this.rootViewName, {
-				queryModel : self.queryModel
-			});
+		navigateTo:function(url){
+			var np = Base.unParam(url);
+			
+            var v1 = S.clone(this.state.paraObj);
+            delete v1.referrer;
+            delete v1.pathname;
+            delete v1.query;
+            delete v1.postdata;
+            var v2 = Base.mix(v1, np);
+            var nps = Base.param(v2);
+            //var nps = this.param(_.extend(_.clone(this.paraObj),np));
+            this.goTo(this.state.pathName + "/" + nps);
 		}
 	};
 	return iRouter;

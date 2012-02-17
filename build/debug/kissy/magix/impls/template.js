@@ -1,11 +1,11 @@
-KISSY.add("magix/impls/template",function(S,T){
+KISSY.add("magix/impls/template",function(S,Tmpl){
     var iTemplate={
         toHTML:function(ops){
             ops=this.processOptions(ops);
-            return T(ops.template).render(ops.data);
+            return Tmpl.toHTML(ops.template,ops.data);
         }
     };
     return iTemplate;
 },{
-    requires:["template"]
+    requires:["magix/tmpl"]
 });
