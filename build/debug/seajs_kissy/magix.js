@@ -44,5 +44,5 @@ Magix = {
 	},
 	implementBy : "seajs-kissy",
 	version : "0.1.0",
-	dev:''
+	dev:'%DEV%'
 };

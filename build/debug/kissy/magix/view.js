@@ -293,14 +293,14 @@ Base.mix(View.prototype, {
         //var router=this.getRouterObject();
 		
         var url = Magix.config.appHome;
-		if(/app/$/.test(url))url+=this.viewName.split("app")[1];
+		if(/app\/$/.test(url))url+=this.viewName.split("app")[1];
 		else url+=this.viewName;
         if(name) {
             url = url + "." + "name" + ".html";
         } else {
             url = url + ".html";
         }
-		url=url.replace(/([^:/])/+/g,'$1/');//修正多个/紧挨的问题
+		url=url.replace(/([^:\/])\/+/g,'$1\/');//修正多个/紧挨的问题
         var ajax = this.getAjaxObject();
 		
 		if(Magix.dev||Magix.config.debug)url+='?='+new Date().getTime();

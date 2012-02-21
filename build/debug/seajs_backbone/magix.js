@@ -42,5 +42,5 @@ Magix = {
 	},
 	implementBy : "seajs-backbone-jquery",
 	version : "0.3.0",
-	dev:''
+	dev:'%DEV%'
 };

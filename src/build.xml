@@ -9,9 +9,20 @@
     <property name="raw.dir" location="${build.dir}/raw"></property>
     <property name="tmpls.dir" location="${debug.dir}/tmpls"></property>
     <property name="gcc.jar" location="${root.dir}/support/compiler.jar" ></property>
+
+   <!--templates token need to be replace-->
+    <property name="tmpl.ajax" value='eval(Base.include("../tmpls/ajax"));'></property>
+    <property name="tmpl.base" value='eval(Base.include("../tmpls/base"));'></property>
+    <property name="tmpl.model" value='eval(Base.include("../tmpls/model"));'></property>
+    <property name="tmpl.router" value='eval(Base.include("../tmpls/router"));'></property>
+    <property name="tmpl.template" value='eval(Base.include("../tmpls/template"));'></property>
+    <property name="tmpl.view" value='eval(Base.include("../tmpls/view"));'></property>
+    <property name="tmpl.vom" value='eval(Base.include("../tmpls/vom"));'></property>
+    <property name="tmpl.vframe" value='eval(Base.include("../tmpls/vframe"));'></property>
+
     <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask" classpath="${gcc.jar}"/>
 
-    <target name="build" depends="prepare,delconsole,release,subtmpls,concatfile,gjslint,gccompressor,finish">
+    <target name="build" depends="prepare,delconsole,subtmpls,concatfile,release,gjslint,gccompressor,finish">
     </target>
 
     <!--copy src/files to build/debug-->
@@ -41,7 +52,7 @@
             <regexp pattern="%DEV%"/>
             <substitution expression=""/>
             <fileset dir="${debug.dir}">
-                <include name="**/*.js"/>
+                <include name="**/*-pkg.js"/>
             </fileset>
         </replaceregexp>
     </target>
@@ -55,71 +66,16 @@
         <loadfile property="tvom" srcfile="${tmpls.dir}/vom.js"></loadfile>
 		<loadfile property="tajax" srcfile="${tmpls.dir}/ajax.js"></loadfile>
         <loadfile property="ttemplate" srcfile="${tmpls.dir}/template.js"></loadfile>
-		
-        <replaceregexp byline="true">
-            <regexp pattern='eval\(Base.include\(\".*?/?tmpls\/router"\)\);'/>
-            <substitution expression="${trouter}"/>
-            <fileset dir="${debug.dir}">
-                <include name="**/*.js"/>
-            </fileset>
-        </replaceregexp>
+		 <!--<echo message="${tbase}"></echo>-->
 
-        <replaceregexp byline="true">
-            <regexp pattern='eval\(Base.include\(\".*?/?tmpls\/base"\)\);'/>
-            <substitution expression="${tbase}"/>
-            <fileset dir="${debug.dir}">
-                <include name="**/*.js"/>
-            </fileset>
-        </replaceregexp>
-
-        <replaceregexp byline="true">
-            <regexp pattern='eval\(Base.include\(\".*?/?tmpls\/vframe"\)\);'/>
-            <substitution expression="${tvframe}"/>
-            <fileset dir="${debug.dir}">
-                <include name="**/*.js"/>
-            </fileset>
-        </replaceregexp>
-
-        <replaceregexp byline="true">
-            <regexp pattern='eval\(Base.include\(\".*?/?tmpls\/view"\)\);'/>
-            <substitution expression="${tview}"/>
-            <fileset dir="${debug.dir}">
-                <include name="**/*.js"/>
-            </fileset>
-        </replaceregexp>
-
-        <replaceregexp byline="true">
-            <regexp pattern='eval\(Base.include\(\".*?/?tmpls\/vom"\)\);'/>
-            <substitution expression="${tvom}"/>
-            <fileset dir="${debug.dir}">
-                <include name="**/*.js"/>
-            </fileset>
-        </replaceregexp>
-
-        <replaceregexp byline="true">
-            <regexp pattern='eval\(Base.include\(\".*?/?tmpls\/model"\)\);'/>
-            <substitution expression="${tmodel}"/>
-            <fileset dir="${debug.dir}">
-                <include name="**/*.js"/>
-            </fileset>
-        </replaceregexp>
-		
-		<replaceregexp byline="true">
-            <regexp pattern='eval\(Base.include\(\".*?/?tmpls\/ajax"\)\);'/>
-            <substitution expression="${tajax}"/>
-            <fileset dir="${debug.dir}">
-                <include name="**/*.js"/>
-            </fileset>
-        </replaceregexp>
-		
-		<replaceregexp byline="true">
-            <regexp pattern='eval\(Base.include\(\".*?/?tmpls\/template"\)\);'/>
-            <substitution expression="${ttemplate}"/>
-            <fileset dir="${debug.dir}">
-                <include name="**/*.js"/>
-            </fileset>
-        </replaceregexp>
-
+          <replace dir="${debug.dir}" token='${tmpl.ajax}' value='${tajax}'/>
+          <replace dir="${debug.dir}" token='${tmpl.base}' value='${tbase}'/>
+          <replace dir="${debug.dir}" token='${tmpl.model}' value='${tmodel}'/>
+          <replace dir="${debug.dir}" token='${tmpl.router}' value='${trouter}'/>
+          <replace dir="${debug.dir}" token='${tmpl.vframe}' value='${tvframe}'/>
+          <replace dir="${debug.dir}" token='${tmpl.template}' value='${ttemplate}'/>
+          <replace dir="${debug.dir}" token='${tmpl.view}' value='${tview}'/>
+          <replace dir="${debug.dir}" token='${tmpl.vom}' value='${tvom}'/>
     </target>
 
      <!--concat all the files to pkg js-->
