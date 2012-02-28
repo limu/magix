@@ -173,98 +173,100 @@ Base.mix(View.prototype, {
             }
         }
     },
+	getEventInfo:function(event){
+		var target = event.target || event.srcElement;
+		var mxType='mx'+event.type,evtLevel=this.eventsLevel;
+		// check if target is a textnode (safari)
+		while(target.nodeType === 3) {
+			target = target.parentNode;
+		}
+		var eventInfo = target.getAttribute(mxType);
+
+		// 根据evtLevel,回溯target
+		if(evtLevel)
+			var typeLv = evtLevel[type];
+		if(!eventInfo && typeLv) {
+			// 如果evtLevel是数字,逐级向上回溯
+			if(!isNaN(typeLv) && typeLv) {
+				while(typeLv && target != node) {
+					target = target.parentNode;
+					eventInfo = target.getAttribute(mxType);
+					if(eventInfo)
+						break;
+					typeLv--;
+				}
+			} else if(typeLv.split('.')[1]) {
+				// 如果是className,直接向上寻找有这个className的父级
+				typeLv = typeLv.split('.')[1];
+				while(target != node) {
+					target = target.parentNode;
+					if(target.className.indexOf(typeLv) >= 0) {
+						eventInfo = target.getAttribute(mxType);
+						break;
+					}
+				}
+			} else if(typeLv.split('#')[1]) {
+				// 如果是id,直接向上寻找有这个id的父级
+				typeLv = typeLv.split('#')[1];
+				while(target != node) {
+					target = target.parentNode;
+					if(target.id == typeLv) {
+						eventInfo = target.getAttribute(mxType);
+						break;
+					}
+				}
+			}
+		} else if(!eventInfo) {
+			// 如果没有设置eventsLevel且没有找到eventinfo, 默认向上寻找一级
+			target = target.parentNode;
+			eventInfo = target.getAttribute(mxType);
+		}
+		return {info:eventInfo,target:target};
+	},
+	processEvent:function(originEvent){
+		var event=originEvent||window.event,
+			eventInfo=this.getEventInfo(event),
+			type=event.type;
+		if(eventInfo.info) {
+			var target=eventInfo.target,
+				info=eventInfo.info;
+			var events = info.split("|"), eventArr, eventKey;
+			for(var i = 0; i < events.length; i++) {
+				eventArr = events[i].split(":");
+				eventKey = eventArr.shift();
+
+				// 事件代理,通过最后一个参数,决定是否阻止事件冒泡和取消默认动作
+				var evtBehavior = eventArr[eventArr.length - 1], evtArg = false;
+				if(evtBehavior == '_halt_' || evtBehavior == '_preventDefault_') {
+					event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+					evtArg = true;
+				}
+				if(evtBehavior == '_halt_' || evtBehavior == '_stop_') {
+					event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
+					evtArg = true;
+				}
+				if(evtArg) {
+					eventArr.pop();
+				}
+				if(this.events && this.events[type] && this.events[type][eventKey]) {
+					this.events[type][eventKey](this, this.idIt(target), eventArr,event);
+				}
+			}
+		}
+	},
     /**
      * 所有事件处理函数
      * TODO:细化方法使用
      * @property events
      */
     delegateEvents : function() {
-        var events = this.events, evtLevel = this.eventsLevel;
-		var vom=this.getVOMObject();
-        var node = document.getElementById(this.options.vcid);
-        for(var _type in events) {(function() {
-                var type = _type, mxType = 'mx' + type;
-
-                node["on" + type] = function() {
-                    var event = arguments[0] || window.event;
-                    var target = event.target || event.srcElement;
-                    var root = this;
-                    // check if target is a textnode (safari)
-                    if(target.nodeType === 3) {
-                        target = target.parentNode;
-                    }
-                    var eventinfo = target.getAttribute(mxType);
-
-                    // 根据evtLevel,回溯target
-                    if(evtLevel)
-                        var typeLv = evtLevel[type];
-                    if(!eventinfo && typeLv) {
-                        // 如果evtLevel是数字,逐级向上回溯
-                        if(!isNaN(typeLv) && typeLv) {
-                            while(typeLv && target != node) {
-                                target = target.parentNode;
-                                eventinfo = target.getAttribute(mxType);
-                                if(eventinfo)
-                                    break;
-                                typeLv--;
-                            }
-                        } else if(typeLv.split('.')[1]) {
-                            // 如果是className,直接向上寻找有这个className的父级
-                            typeLv = typeLv.split('.')[1];
-                            while(target != node) {
-                                target = target.parentNode;
-                                if(target.className.indexOf(typeLv) >= 0) {
-                                    eventinfo = target.getAttribute(mxType);
-                                    break;
-                                }
-                            }
-                        } else if(typeLv.split('#')[1]) {
-                            // 如果是id,直接向上寻找有这个id的父级
-                            typeLv = typeLv.split('#')[1];
-                            while(target != node) {
-                                target = target.parentNode;
-                                if(target.id == typeLv) {
-                                    eventinfo = target.getAttribute(mxType);
-                                    break;
-                                }
-                            }
-                        }
-                    } else if(!eventinfo) {
-                        // 如果没有设置eventsLevel且没有找到eventinfo, 默认向上寻找一级
-                        target = target.parentNode;
-                        eventinfo = target.getAttribute(mxType);
-                    }
-
-                    if(eventinfo) {
-                        var events = eventinfo.split("|"), eventArr, eventKey;
-                        var vc = vom.getElementById(root.id);
-                        var view = vc.view;
-                        for(var i = 0; i < events.length; i++) {
-                            eventArr = events[i].split(":");
-                            eventKey = eventArr.shift();
-
-                            // 事件代理,通过最后一个参数,决定是否阻止事件冒泡和取消默认动作
-                            var evtBehavior = eventArr[eventArr.length - 1], evtArg = false;
-                            if(evtBehavior == '_halt_' || evtBehavior == '_preventDefault_') {
-                                event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-                                evtArg = true;
-                            }
-                            if(evtBehavior == '_halt_' || evtBehavior == '_stop_') {
-                                event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
-                                evtArg = true;
-                            }
-                            if(evtArg) {
-                                eventArr.pop();
-                            }
-                            if(view.events && view.events[type] && view.events[type][eventKey]) {
-                                view.events[type][eventKey](view, view.idIt(target), eventArr,event);
-                            }
-                        }
-                    }
-                    target = null;
-                    root = null;
-                };
-            })();
+        var me=this,
+			node = document.getElementById(me.vcid),
+			events=this.events;
+        for(var type in events) {
+			node["on" + type] = function(e) {
+				me.processEvent(e);
+			};
         }
     },
     render : function() {
@@ -290,7 +292,7 @@ Base.mix(View.prototype, {
         //var router=this.getRouterObject();
 		console.log("view->getTemplate viewName:",this.viewName);
         var url = Magix.config.appHome;
-		if(/app\/$/.test(url))url+=this.viewName.split("app")[1];
+		if(/\/app\/$/.test(url))url+=this.viewName.split("app")[1];
 		else url+=this.viewName;
         if(name) {
             url = url + "." + "name" + ".html";

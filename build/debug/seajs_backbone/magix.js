@@ -20,8 +20,14 @@ Magix = {
 			magix:this.config.magixHome,
 			app:this.config.appHome
 		};
-		if(alias.magix&&!/\//.test(alias.magix))alias.magix+='/';
-		if(alias.app&&!/\//.test(alias.app))alias.app+='/';
+		if(alias.magix&&!/\/$/.test(alias.magix)){
+			alias.magix+='/';
+			this.config.magixHome=alias.magix;
+		}
+		if(alias.app&&!/\/$/.test(alias.app)){
+			alias.app+='/';
+			this.config.appHome=alias.app;
+		}
 		if(this.config.debug)this.dev=true;
 		if(!this.dev){
 			delete alias.magix;

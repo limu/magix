@@ -230,6 +230,9 @@ define("magix/impls/model", ["backbone"], function(require) {
             delete v1.query;
             delete v1.postdata;
             var v2 = _.extend(v1, np);
+			for(var p in v2){
+				if(!v2[p])delete v2[p];
+			}
             var nps = Base.param(v2);
             //var nps = this.param(_.extend(_.clone(this.paraObj),np));
             this.goTo(this.state.pathName + "/" + nps);
@@ -344,8 +347,14 @@ Magix = {
 			magix:this.config.magixHome,
 			app:this.config.appHome
 		};
-		if(alias.magix&&!/\//.test(alias.magix))alias.magix+='/';
-		if(alias.app&&!/\//.test(alias.app))alias.app+='/';
+		if(alias.magix&&!/\/$/.test(alias.magix)){
+			alias.magix+='/';
+			this.config.magixHome=alias.magix;
+		}
+		if(alias.app&&!/\/$/.test(alias.app)){
+			alias.app+='/';
+			this.config.appHome=alias.app;
+		}
 		if(this.config.debug)this.dev=true;
 		if(!this.dev){
 			delete alias.magix;

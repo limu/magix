@@ -373,7 +373,7 @@ define("backbone", ["jquery", "underscore"], function(require, exports) {
 				if(attr)
 					return this._previousAttributes[attr] != this.attributes[attr];
 				return this._changed;
-			},
+			}, 
 			// Return an object containing all the attributes that have changed, or false
 			// if there are no changed attributes. Useful for determining what parts of a
 			// view need to be updated and/or what attributes need to be persisted to

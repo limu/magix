@@ -26,7 +26,7 @@ KISSY.add("magix/tmpl",function(S){
 			var vars=[stack],values=[[]],fnKey;
 			if(data){
 				for(var p in data){
-					vars.push(p);
+					vars.push(p.replace(/[:+\-*\/&^%#@!~]/g,'$'));
 					values.push(data[p]);
 				}
 			}

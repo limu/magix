@@ -117,6 +117,9 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
             delete v1.query;
             delete v1.postdata;
             var v2 = Base.mix(v1, np);
+			for(var p in v2){
+				if(!v2[p])delete v2[p];
+			}
             var nps = Base.param(v2);
             //var nps = this.param(_.extend(_.clone(this.paraObj),np));
             this.goTo(this.state.pathName + "/" + nps);

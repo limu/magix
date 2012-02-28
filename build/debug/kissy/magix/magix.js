@@ -38,16 +38,16 @@ Magix = {
 				};
 			}
 		}
-		if(magixHome&&!/\//.test(magixHome))magixHome+='/';
-		if(appHome&&!/\//.test(appHome))appHome+='/';
+		if(magixHome&&!/\/$/.test(magixHome))magixHome+='/';
+		if(appHome&&!/\/$/.test(appHome))appHome+='/';
 		S.config({
 			packages:[{
 				name:'magix',
-				path:/magix\/$/.test(magixHome)?magixHome+"../":magixHome,
+				path:/\/magix\/$/.test(magixHome)?magixHome+"../":magixHome,
 				tag:me.dev?now:'20120214'
 			},{
 				name:'app',//http://ad.com/ab/c/d/../  
-				path:/app\/$/.test(appHome)?appHome+"../":appHome,
+				path:/\/app\/$/.test(appHome)?appHome+"../":appHome,
 				tag:me.dev?now:'20120214'
 			}]
 		});

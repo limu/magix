@@ -111,6 +111,9 @@ define("magix/impls/router", ["magix/base", "magix/model", "magix/vom", "app/con
             delete v1.query;
             delete v1.postdata;
             var v2 = _.extend(v1, np);
+			for(var p in v2){
+				if(!v2[p])delete v2[p];
+			}
             var nps = Base.param(v2);
             //var nps = this.param(_.extend(_.clone(this.paraObj),np));
             this.goTo(this.state.pathName + "/" + nps);
