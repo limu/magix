@@ -38,8 +38,14 @@ Magix = {
 				};
 			}
 		}
-		if(magixHome&&!/\/$/.test(magixHome))magixHome+='/';
-		if(appHome&&!/\/$/.test(appHome))appHome+='/';
+		if(magixHome&&!/\/$/.test(magixHome)){
+			magixHome+='/';
+			this.config.magixHome=magixHome
+		}
+		if(appHome&&!/\/$/.test(appHome)){
+			appHome+='/';
+			this.config.appHome=appHome;
+		}
 		S.config({
 			packages:[{
 				name:'magix',

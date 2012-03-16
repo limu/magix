@@ -101,7 +101,7 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 				var k, old = this.queryModel.toJSON();
 				for(k in old) {
 					if(!( k in query)) {
-						this.queryModel.removeAttr(k, {
+						this.queryModel.unset(k, {
 							silent : true
 						});
 					}

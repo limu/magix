@@ -378,8 +378,7 @@ KISSY.add("magix/impls/model",function(S,MVC,Base){
 	S.mix(iModel.prototype,Base.Events);
 	//
 	//让kissy中的事件传递给magix
-	var oldFire=iModel.prototype.fire,
-		change=/^after(.+?)Change$/;
+	var oldFire=iModel.prototype.fire;
 	iModel.prototype.fire=function(type,eventData){
 	    oldFire(type,eventData);
 		if(type.charAt(0)=='*'){//这。。我想跳河了。。。
@@ -391,20 +390,16 @@ KISSY.add("magix/impls/model",function(S,MVC,Base){
 		}else{
 			this.trigger(type,eventData);
 		}
-		if(change.test(type)){
-			var name=type.replace(change,function(m,g1){
-				return g1.toLowerCase();
-			});
-			if(!this.__propsValueChanged)this.__propsValueChanged={};
-			this.__propsValueChanged[name]=true;
-		}
 	};
-	iModel.prototype.hasChanged=function(prop){
+	/*iModel.prototype.hasChanged=function(prop){
 		var _vs=this.__propsValueChanged;
 		if(_vs){
 			return _vs[prop];
 		}
 		return false;
+	};*/
+	iModel.prototype.unset=function(prop){
+		this.removeAttr(prop);
 	};
 	iModel.prototype.clear=function(){
 		var json=this.toJSON();
@@ -518,7 +513,7 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 				var k, old = this.queryModel.toJSON();
 				for(k in old) {
 					if(!( k in query)) {
-						this.queryModel.removeAttr(k, {
+						this.queryModel.unset(k, {
 							silent : true
 						});
 					}
@@ -734,8 +729,9 @@ Model=function(){
 };
 
 Base.mix(Model.prototype,{
-	hasChanged:Base.unimpl,//某个属性是否发生了改变
-	removeAttr:Base.unimpl,//删除属性
+	//hasChanged:Base.unimpl,//某个属性是否发生了改变 
+	//removeAttr:Base.unimpl,//删除属性
+	unset:Base.unimpl,//删除属性
 	clear:Base.unimpl,//清除所有的属性
 	load:Base.unimpl//获取数据
 });
@@ -1408,6 +1404,7 @@ Base.mix(Vframe.prototype, {
 			this._domNode = null;
 			node = null;
 		}
+		this.exist=true;
 		
 	},
 	_idIt : function(node, id) {
@@ -1485,14 +1482,16 @@ Base.mix(Vframe.prototype, {
 		}
 		//
 		Base.requireAsync(viewName, function(View) {
-			
-			options.vcid = self.id;
-			options.viewName = viewName;
-			//options.el = self.id;
-			//options.id = self.id;
-			self.view = new View(options);
-			//self.view.vc = self;
-			self.handelMounted();
+			if(self.exist){
+				
+				options.vcid = self.id;
+				options.viewName = viewName;
+				//options.el = self.id;
+				//options.id = self.id;
+				self.view = new View(options);
+				//self.view.vc = self;
+				self.handelMounted();
+			}
 		});
 	},
 	unmountView : function() {
@@ -1528,7 +1527,9 @@ Base.mix(Vframe.prototype, {
 		
 		for(var i = queue.length - 1; i > 0; i--) {
             queue[i].removeNode();
-        }
+        }for (var i = Things.length - 1; i >= 0; i--) {
+        	Things[i]
+        };
 	},
 	removeNode : function() {
 		
@@ -1564,7 +1565,18 @@ Base.mix(Vframe.prototype, {
 	_popFromVOM : function(n) {
 		Base.requireAsync("magix/vom", function(VOM) {
 			VOM.pop(n);
+			n.exist=false;
 		});
+	},
+	postMessage:function(data){
+		if(!data)data={};
+		if(!data.msgFrom)data.msgFrom='view';
+		this.view.receiveMessage(data);
+	},
+	receiveMessage:function(data){
+		if(!data)data={};
+		if(!data.msgFrom)data.msgFrom='broadcast';
+		this.view.receiveMessage(data)
 	}
 });
 
@@ -1585,23 +1597,24 @@ View = function() {
     
 };
 Base.mix(View.prototype, {
-    getVOMObject : Base.unimpl,
-    getTemplateObject : Base.unimpl,
-    getAjaxObject : Base.unimpl,
+    getVOMObject: Base.unimpl,
+    getTemplateObject: Base.unimpl,
+    getAjaxObject: Base.unimpl,
     //getRouterObject:Base.unimpl,
     /*
      * 当view被destroy时，调用该方法，您可以在该方法内处理实现类中的相关销毁操作
      */
-    dispose : Base.unimpl,
-    queryModelChange : function() {
+    dispose: Base.unimpl,
+    queryModelChange: function() {
 
     },
-    refresh : function() {
+    refresh: function() {
 
     },
-    initial : function(o) {
+    initial: function(o) {
         
-        var self = this, vom = this.getVOMObject();
+        var self = this,
+            vom = this.getVOMObject();
         
         //this.subViewsChange = []; 不理解的先去掉
         this.options = o;
@@ -1609,20 +1622,18 @@ Base.mix(View.prototype, {
         this.queryModel = o.queryModel;
         this.viewName = o.viewName;
         this.data = o.data || {};
-        if(o.data && !Magix.config.multipage) {
+        if (o.data && !Magix.config.multipage) {
             
         }
-        if(o.message && typeof o.message == 'function') {
+        if (o.message && typeof o.message == 'function') {
             this.bind("message", o.message);
-        }
-        /***********左莫增加标识符，用来判断当前view是否在vom节点中begin*************/
+        } /***********左莫增加标识符，用来判断当前view是否在vom节点中begin*************/
         this.exist = true;
         //监听unload事件
         this.bind("unload", function() {
             this.exist = false;
-        });
-        /***********左莫增加标识符，用来判断当前view是否在vom节点中end*************/
-        /*this.bind("rendered", function() {
+        }); /***********左莫增加标识符，用来判断当前view是否在vom节点中end*************/
+/*this.bind("rendered", function() {
             this.trigger("beforeSubviewsRender");
             var vc = vom.getElementById(this.vcid);
             var childVcs = vc.getElements();
@@ -1635,7 +1646,7 @@ Base.mix(View.prototype, {
                 });
             }
         });*/
-        /*var vf = vom.getElementById(this.vcid);
+/*var vf = vom.getElementById(this.vcid);
         if(vf == vom.root) {
             this.queryModel.bind("change", function() {
                 
@@ -1643,72 +1654,75 @@ Base.mix(View.prototype, {
                 self._changeChain(res, this);
             });
         }*/
-		if(this.init) {
-			setTimeout(function(){//确保内部的magix绑定的事件先执行，再调用init
-				self.init();      //如果在init中绑定了事件，无setTimeout时，init中的绑定的事件早于magix中的，有可能出问题
-			},0);
+        if (this.init) {
+            setTimeout(function() { //确保内部的magix绑定的事件先执行，再调用init
+                self.init(); //如果在init中绑定了事件，无setTimeout时，init中的绑定的事件早于magix中的，有可能出问题
+            }, 0);
         }
-		if(!this.preventRender) {
-			this.getTemplate(function(data) {
-				self.template = data;
-				
-				setTimeout(function(){//等待init的完成
-					var autoRendered = self.render();
-					if(autoRendered !== false) {
-						self.trigger("rendered");
-					}
-				},0);
-			});
+        if (!this.preventRender) {
+            this.getTemplate(function(data) {
+                self.template = data;
+                
+                setTimeout(function() { //等待init的完成
+                    if (self.exist) {
+                        var autoRendered = self.render();
+                        if (autoRendered !== false) {
+                            self.trigger("rendered");
+                        }
+                    }
+                }, 0);
+            });
         }
     },
-    _queryModelChange : function(model) {
+    _queryModelChange: function(model) {
         
         var res = this.queryModelChange(model);
         this._changeChain(res, model);
     },
-    _changeChain : function(res, model) {
-        var vcs = [], i, vom = this.getVOMObject();
+    _changeChain: function(res, model) {
+        var vcs = [],
+            i, vom = this.getVOMObject();
         var vc = vom.getElementById(this.vcid);
-        if(res === false) {
+        if (res === false) {
             return;
         }
-        if(res === true || res === undefined) {
+        if (res === true || res === undefined) {
             vcs = vc.childNodes;
-        } else if(Base.isArray(res)) {
+        } else if (Base.isArray(res)) {
             vcs = res;
         }
-        for( i = 0; i < vcs.length; i++) {
-            if(vcs[i].view) {
+        for (i = 0; i < vcs.length; i++) {
+            if (vcs[i].view) {
                 vcs[i].view._queryModelChange(model);
             }
         }
     },
-    destory : function() {
+    destory: function() {
         
         this.destroy();
     },
-    destroy : function() {
-       // var vcQueue, i;//, vom = this.getVOMObject();
+    destroy: function() {
+        // var vcQueue, i;//, vom = this.getVOMObject();
         
         //vcQueue = this.getDestoryQueue();
         //
-        /*for( i = vcQueue.length - 1; i > 0; i--) {
+/*for( i = vcQueue.length - 1; i > 0; i--) {
             vcQueue[i].removeNode();
         }*/
         
         //var root = vom.getElementById(this.vcid);
         //root.unmountView();
-		if(this.events) {
-			var node = document.getElementById(this.vcid);
-			for(var eventType in this.events) {
-				node["on" + eventType] = null;
-			}
-			node = null;
-		}
+        if (this.events) {
+            var node = document.getElementById(this.vcid);
+            for (var eventType in this.events) {
+                node["on" + eventType] = null;
+            }
+            node = null;
+        }
         
         this.dispose();
     },
-    /*getDestoryQueue : function() {
+/*getDestoryQueue : function() {
         var queue = [], vom = this.getVOMObject();
         var root = vom.getElementById(this.vcid);
 
@@ -1724,23 +1738,27 @@ Base.mix(View.prototype, {
         
         return queue;
     },*/
-    setData : function(data) {
+    setData: function(data) {
         this.data = data;
-        for(var k in data) {
-            if(data[k].toJSON) {
+        for (var k in data) {
+            if (data[k]&&data[k].toJSON) {
                 data[k] = data[k].toJSON();
             }
         }
         data.query = this.queryModel.toJSON();
         this.setRenderer();
     },
-    setRenderer : function() {
-		
-        var self = this, rr = this.renderer, mcName, wrapperName;
-        if(rr) {
-            for(mcName in rr) {
-                for(wrapperName in rr[mcName]) {(function() {
-                        var mn = mcName, wn = wrapperName;
+    setRenderer: function() {
+        
+        var self = this,
+            rr = this.renderer,
+            mcName, wrapperName;
+        if (rr) {
+            for (mcName in rr) {
+                for (wrapperName in rr[mcName]) {
+                    (function() {
+                        var mn = mcName,
+                            wn = wrapperName;
                         var fn = rr[mn][wn];
                         self.data[mn + "_" + wn] = function() {
                             return fn.call(this, self, mn);
@@ -1750,152 +1768,175 @@ Base.mix(View.prototype, {
             }
         }
     },
-	getEventInfo:function(event){
-		var target = event.target || event.srcElement;
-		var mxType='mx'+event.type,evtLevel=this.eventsLevel;
-		// check if target is a textnode (safari)
-		while(target.nodeType === 3) {
-			target = target.parentNode;
-		}
-		var eventInfo = target.getAttribute(mxType);
+    getEventInfo: function(event, node) {
+        var target = event.target || event.srcElement,
+            type = event.type;
+        var mxType = 'mx' + type,
+            evtLevel = this.eventsLevel;
+        // check if target is a textnode (safari)
+        while (target.nodeType === 3) {
+            target = target.parentNode;
+        }
+        var eventInfo = target.getAttribute(mxType);
 
-		// 根据evtLevel,回溯target
-		if(evtLevel)
-			var typeLv = evtLevel[type];
-		if(!eventInfo && typeLv) {
-			// 如果evtLevel是数字,逐级向上回溯
-			if(!isNaN(typeLv) && typeLv) {
-				while(typeLv && target != node) {
-					target = target.parentNode;
-					eventInfo = target.getAttribute(mxType);
-					if(eventInfo)
-						break;
-					typeLv--;
-				}
-			} else if(typeLv.split('.')[1]) {
-				// 如果是className,直接向上寻找有这个className的父级
-				typeLv = typeLv.split('.')[1];
-				while(target != node) {
-					target = target.parentNode;
-					if(target.className.indexOf(typeLv) >= 0) {
-						eventInfo = target.getAttribute(mxType);
-						break;
-					}
-				}
-			} else if(typeLv.split('#')[1]) {
-				// 如果是id,直接向上寻找有这个id的父级
-				typeLv = typeLv.split('#')[1];
-				while(target != node) {
-					target = target.parentNode;
-					if(target.id == typeLv) {
-						eventInfo = target.getAttribute(mxType);
-						break;
-					}
-				}
-			}
-		} else if(!eventInfo) {
-			// 如果没有设置eventsLevel且没有找到eventinfo, 默认向上寻找一级
-			target = target.parentNode;
-			eventInfo = target.getAttribute(mxType);
-		}
-		return {info:eventInfo,target:target};
-	},
-	processEvent:function(originEvent){
-		var event=originEvent||window.event,
-			eventInfo=this.getEventInfo(event),
-			type=event.type;
-		if(eventInfo.info) {
-			var target=eventInfo.target,
-				info=eventInfo.info;
-			var events = info.split("|"), eventArr, eventKey;
-			for(var i = 0; i < events.length; i++) {
-				eventArr = events[i].split(":");
-				eventKey = eventArr.shift();
+        // 根据evtLevel,回溯target
+        if (evtLevel) var typeLv = evtLevel[type];
+        if (!eventInfo && typeLv) {
+            // 如果evtLevel是数字,逐级向上回溯
+            if (!isNaN(typeLv) && typeLv) {
+                while (typeLv && target != node) {
+                    target = target.parentNode;
+                    eventInfo = target.getAttribute(mxType);
+                    if (eventInfo) break;
+                    typeLv--;
+                }
+            } else if (typeLv.split('.')[1]) {
+                // 如果是className,直接向上寻找有这个className的父级
+                typeLv = typeLv.split('.')[1];
+                while (target != node) {
+                    target = target.parentNode;
+                    if (target.className.indexOf(typeLv) >= 0) {
+                        eventInfo = target.getAttribute(mxType);
+                        break;
+                    }
+                }
+            } else if (typeLv.split('#')[1]) {
+                // 如果是id,直接向上寻找有这个id的父级
+                typeLv = typeLv.split('#')[1];
+                while (target != node) {
+                    target = target.parentNode;
+                    if (target.id == typeLv) {
+                        eventInfo = target.getAttribute(mxType);
+                        break;
+                    }
+                }
+            }
+        } else if (!eventInfo) {
+            // 如果没有设置eventsLevel且没有找到eventinfo, 默认向上寻找一级
+            target = target.parentNode;
+            eventInfo = target.getAttribute(mxType);
+        }
+        return {
+            info: eventInfo,
+            target: target
+        };
+    },
+    processEvent: function(originEvent, parentNode) {
+        var event = originEvent || window.event,
+            eventInfo = this.getEventInfo(event, parentNode),
+            type = event.type,
+            eventArgs = {},
+            target = eventInfo.target,
+            info = eventInfo.info,
+            eventArgs = {
+                target: target,
+                originEvent: event
+            };
+        if (info) {
+            var events = info.split("|"),
+                eventArr, eventKey;
+            for (var i = 0; i < events.length; i++) {
+                eventArr = events[i].split(":");
+                eventKey = eventArr.shift();
 
-				// 事件代理,通过最后一个参数,决定是否阻止事件冒泡和取消默认动作
-				var evtBehavior = eventArr[eventArr.length - 1], evtArg = false;
-				if(evtBehavior == '_halt_' || evtBehavior == '_preventDefault_') {
-					event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-					evtArg = true;
-				}
-				if(evtBehavior == '_halt_' || evtBehavior == '_stop_') {
-					event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
-					evtArg = true;
-				}
-				if(evtArg) {
-					eventArr.pop();
-				}
-				if(this.events && this.events[type] && this.events[type][eventKey]) {
-					this.events[type][eventKey](this, this.idIt(target), eventArr,event);
-				}
-			}
-		}
-	},
+                // 事件代理,通过最后一个参数,决定是否阻止事件冒泡和取消默认动作
+                var evtBehavior = eventArr[eventArr.length - 1],
+                    evtArg = false;
+                if (evtBehavior == '_halt_' || evtBehavior == '_preventDefault_') {
+                    event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+                    eventArgs.isPreventDefault = true;
+                    evtArg = true;
+                }
+                if (evtBehavior == '_halt_' || evtBehavior == '_stop_') {
+                    event.stopPropagation ? event.stopPropagation() : (event.cancelBubble = true);
+                    eventArgs.isStopPropagation = true;
+                    evtArg = true;
+                }
+                if (evtArg) {
+                    eventArr.pop();
+                }
+                this.trigger('beforeEventCall', eventArgs);
+                if (this.events && this.events[type] && this.events[type][eventKey]) {
+                    this.events[type][eventKey](this, this.idIt(target), eventArr, event);
+                }
+            }
+        }
+        this.trigger('delegateEventsFire', eventArgs);
+    },
     /**
      * 所有事件处理函数
      * TODO:细化方法使用
      * @property events
      */
-    delegateEvents : function() {
-        var me=this,
-			node = document.getElementById(me.vcid),
-			events=this.events;
-        for(var type in events) {
-			node["on" + type] = function(e) {
-				me.processEvent(e);
-			};
+    delegateEvents: function() {
+        var me = this,
+            node = document.getElementById(me.vcid),
+            events = this.events;
+        for (var type in events) {
+            node["on" + type] = function(e) {
+                me.processEvent(e, node);
+            };
         }
     },
-    render : function() {
-        if(this.preventRender) {
+    render: function() {
+        if (this.preventRender) {
             this.rendered = true;
             return true;
         }
         
-        var node = document.getElementById(this.vcid), templet = this.getTemplateObject();
+        var node = document.getElementById(this.vcid),
+            templet = this.getTemplateObject();
         
-		this.setData({});//确保renderer正确工作，否则在未重写render方法，而又未调用setData时renderer无法正确工作
+        this.setData({}); //确保renderer正确工作，否则在未重写render方法，而又未调用setData时renderer无法正确工作
         node.innerHTML = templet.toHTML({
-            template : this.template,
-            data : this.data
+            template: this.template,
+            data: this.data
         });
         this.rendered = true;
     },
-    getTemplate : function(cb, name) {
-		if(this.template){
-			cb(this.template);
-			return;
-		}
+    getTemplate: function(cb, name) {
+        if (this.template) {
+            cb(this.template);
+            return;
+        }
         //var router=this.getRouterObject();
-		
+        
         var url = Magix.config.appHome;
-		if(/\/app\/$/.test(url))url+=this.viewName.split("app")[1];
-		else url+=this.viewName;
-        if(name) {
+        if (/\/app\/$/.test(url)) url += this.viewName.split("app")[1];
+        else url += this.viewName;
+        if (name) {
             url = url + "." + "name" + ".html";
         } else {
             url = url + ".html";
         }
-		url=url.replace(/([^:\/])\/+/g,'$1\/');//修正多个/紧挨的问题
+        url = url.replace(/([^:\/])\/+/g, '$1\/'); //修正多个/紧挨的问题
         var ajax = this.getAjaxObject();
-		
-		if(Magix.dev||Magix.config.debug)url+='?='+new Date().getTime();
+        
+        if (Magix.dev || Magix.config.debug) url += '?=' + new Date().getTime();
         ajax.getTemplate(url, function(data) {
             
             cb(data);
         }, function(msg) {
-			
+            
             cb(msg);
-        },this.viewName);
+        }, this.viewName);
     },
-    idIt : function(node) {
+    idIt: function(node) {
         var id = "";
-        if(!node.id) {
+        if (!node.id) {
             node.id = Base.uniqueId("mxevt-");
         }
         id = node.id;
         node = null;
         return id;
+    },
+    receiveMessage:function(){
+
+    },
+    postMessageTo:function(key,data){
+        var vom=this.getVOMObject();
+        var vframe=vom.get(key);
+        if(vframe)vframe.postMessage(data);
     }
 });
 
@@ -1933,6 +1974,15 @@ KISSY.add("magix/vom",function(S,impl,Base,Vframe){
 	},
 	getElementById : function (id) {
 		return this._idMap[id] || null;
+	},
+	get:function(id){
+		return this.getElementById(id);
+	},
+	broadcaseMessage:function(data){
+		var me=this,c=me._idMap;
+		for(var p in c){
+			c[p].receiveMessage(data);
+		}
 	}
 });
 

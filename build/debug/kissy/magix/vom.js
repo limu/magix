@@ -29,6 +29,15 @@ KISSY.add("magix/vom",function(S,impl,Base,Vframe){
 	},
 	getElementById : function (id) {
 		return this._idMap[id] || null;
+	},
+	get:function(id){
+		return this.getElementById(id);
+	},
+	broadcaseMessage:function(data){
+		var me=this,c=me._idMap;
+		for(var p in c){
+			c[p].receiveMessage(data);
+		}
 	}
 });
 

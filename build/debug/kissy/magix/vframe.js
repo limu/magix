@@ -40,6 +40,7 @@ Base.mix(Vframe.prototype, {
 			this._domNode = null;
 			node = null;
 		}
+		this.exist=true;
 		
 	},
 	_idIt : function(node, id) {
@@ -117,14 +118,16 @@ Base.mix(Vframe.prototype, {
 		}
 		//
 		Base.requireAsync(viewName, function(View) {
-			
-			options.vcid = self.id;
-			options.viewName = viewName;
-			//options.el = self.id;
-			//options.id = self.id;
-			self.view = new View(options);
-			//self.view.vc = self;
-			self.handelMounted();
+			if(self.exist){
+				
+				options.vcid = self.id;
+				options.viewName = viewName;
+				//options.el = self.id;
+				//options.id = self.id;
+				self.view = new View(options);
+				//self.view.vc = self;
+				self.handelMounted();
+			}
 		});
 	},
 	unmountView : function() {
@@ -160,7 +163,9 @@ Base.mix(Vframe.prototype, {
 		
 		for(var i = queue.length - 1; i > 0; i--) {
             queue[i].removeNode();
-        }
+        }for (var i = Things.length - 1; i >= 0; i--) {
+        	Things[i]
+        };
 	},
 	removeNode : function() {
 		
@@ -196,7 +201,18 @@ Base.mix(Vframe.prototype, {
 	_popFromVOM : function(n) {
 		Base.requireAsync("magix/vom", function(VOM) {
 			VOM.pop(n);
+			n.exist=false;
 		});
+	},
+	postMessage:function(data){
+		if(!data)data={};
+		if(!data.msgFrom)data.msgFrom='view';
+		this.view.receiveMessage(data);
+	},
+	receiveMessage:function(data){
+		if(!data)data={};
+		if(!data.msgFrom)data.msgFrom='broadcast';
+		this.view.receiveMessage(data)
 	}
 });
 
