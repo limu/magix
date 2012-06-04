@@ -51,7 +51,7 @@ KISSY.add("magix/impls/base",function(S,io) {
 			// Trigger an event, firing all bound callbacks. Callbacks are passed the
 			// same arguments as `trigger` is, apart from the event name.
 			// Listening for `"all"` passes the true event name as the first argument.
-			trigger : function(eventName) {
+			trigger : function(eventName,fireOnce) {
 				var list, calls, ev, callback, args;
 				var both = 2;
 				if(!( calls = this._callbacks))
@@ -70,6 +70,9 @@ KISSY.add("magix/impls/base",function(S,io) {
 							}
 						}
 					}
+				}
+				if(fireOnce==true){
+					delete calls[eventName];
 				}
 				return this;
 			}

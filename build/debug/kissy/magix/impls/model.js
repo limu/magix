@@ -8,22 +8,28 @@ KISSY.add("magix/impls/model",function(S,MVC,Base){
 	iModel.prototype.fire=function(type,eventData){
 	    oldFire(type,eventData);
 		if(type.charAt(0)=='*'){//这。。我想跳河了。。。
+			var self=this;
 			type=type.substring(1).replace(/[A-Z]/,function(m){//第一个大写字母转小写
 				return m.toLowerCase();
 			});
-			
-			this.trigger(type,eventData);
+			if(!self.__propCache)self.__propCache={};
+			S.each(eventData.attrName,function(v){
+				self.__propCache[v]=true;
+			});
+			this.trigger(type,eventData);			
+			delete this.__propCache;
 		}else{
 			this.trigger(type,eventData);
 		}
+		
 	};
-	/*iModel.prototype.hasChanged=function(prop){
-		var _vs=this.__propsValueChanged;
+	iModel.prototype.hasChanged=function(prop){
+		var _vs=this.__propCache;
 		if(_vs){
 			return _vs[prop];
 		}
 		return false;
-	};*/
+	};
 	iModel.prototype.unset=function(prop){
 		this.removeAttr(prop);
 	};

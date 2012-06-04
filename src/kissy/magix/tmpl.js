@@ -32,9 +32,19 @@ KISSY.add("magix/tmpl",function(S){
 			}
 			fnKey=vars.join('_')+'_'+resultTemplate;
 			if(!fnCaches[fnKey]){
-				fnCaches[fnKey]=new Function(vars,resultTemplate);
+				try{
+					fnCaches[fnKey]=new Function(vars,resultTemplate);
+				}catch(e){
+					console.log(resultTemplate,vars,e);
+					resultTemplate=e.message;
+				}
 			}
-			resultTemplate=fnCaches[fnKey].apply(data,values);
+			try{
+				resultTemplate=fnCaches[fnKey].apply(data,values);
+			}catch(e){
+				console.log(resultTemplate,vars,e);
+				resultTemplate=e.message;
+			}
 			return resultTemplate;
 		}
 		return template;

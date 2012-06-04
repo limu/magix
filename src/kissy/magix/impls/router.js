@@ -18,6 +18,7 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 		},
 		setStateListener : function() {
 			var self = this;
+			VOM.__Router=self;
 			var router = new MVC.Router();
 			router.addRoutes({
 				'*hash':function(s){
@@ -44,6 +45,10 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 			if(hashQuery) {
 				tmpArr = hashQuery.split("/");
 				paraStr = tmpArr.pop();
+				if(paraStr.indexOf('=')==-1&&paraStr){
+					tmpArr.push(paraStr);
+					paraStr='';
+				}
 				hash.pathName = tmpArr.join("/");
 				hash.paraObj = Base.unParam(paraStr);
 			}

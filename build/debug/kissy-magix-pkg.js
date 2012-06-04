@@ -3,7 +3,7 @@ KISSY.add("magix/ajax",function(S,impl,Base){
     Ajax = {
 	defaultOptions : { //默认ajax请求参数
 		dataType : 'html',
-		method : 'POST',
+		type : 'POST',
 		success : function () {},
 		error : function () {}
 	},
@@ -73,7 +73,7 @@ KISSY.add("magix/ajax",function(S,impl,Base){
 		me.send({
 			url : url,
 			dataType : 'html',
-			method:'GET',
+			type:'GET',
 			success : function (data) {
 				tmplCaches[viewName] = data;
 				if (Base.isFunction(succ)) {
@@ -277,7 +277,7 @@ KISSY.add("magix/impls/ajax",function(S,io){
         io(S.mix(ops,{
             url:ops.url,
             dataType:ops.dataType,
-			type:ops.method,
+			type:ops.type,
             success:function(data,textStatus,xhr){
 				me.fireGlobalSetting(xhr);
                 oldSucc.call(ops,data);
@@ -345,7 +345,7 @@ KISSY.add("magix/impls/base",function(S,io) {
 			// Trigger an event, firing all bound callbacks. Callbacks are passed the
 			// same arguments as `trigger` is, apart from the event name.
 			// Listening for `"all"` passes the true event name as the first argument.
-			trigger : function(eventName) {
+			trigger : function(eventName,fireOnce) {
 				var list, calls, ev, callback, args;
 				var both = 2;
 				if(!( calls = this._callbacks))
@@ -365,6 +365,9 @@ KISSY.add("magix/impls/base",function(S,io) {
 						}
 					}
 				}
+				if(fireOnce==true){
+					delete calls[eventName];
+				}
 				return this;
 			}
 		}
@@ -382,22 +385,28 @@ KISSY.add("magix/impls/model",function(S,MVC,Base){
 	iModel.prototype.fire=function(type,eventData){
 	    oldFire(type,eventData);
 		if(type.charAt(0)=='*'){//这。。我想跳河了。。。
+			var self=this;
 			type=type.substring(1).replace(/[A-Z]/,function(m){//第一个大写字母转小写
 				return m.toLowerCase();
 			});
-			
-			this.trigger(type,eventData);
+			if(!self.__propCache)self.__propCache={};
+			S.each(eventData.attrName,function(v){
+				self.__propCache[v]=true;
+			});
+			this.trigger(type,eventData);			
+			delete this.__propCache;
 		}else{
 			this.trigger(type,eventData);
 		}
+		
 	};
-	/*iModel.prototype.hasChanged=function(prop){
-		var _vs=this.__propsValueChanged;
+	iModel.prototype.hasChanged=function(prop){
+		var _vs=this.__propCache;
 		if(_vs){
 			return _vs[prop];
 		}
 		return false;
-	};*/
+	};
 	iModel.prototype.unset=function(prop){
 		this.removeAttr(prop);
 	};
@@ -430,6 +439,7 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 		},
 		setStateListener : function() {
 			var self = this;
+			VOM.__Router=self;
 			var router = new MVC.Router();
 			router.addRoutes({
 				'*hash':function(s){
@@ -456,6 +466,10 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 			if(hashQuery) {
 				tmpArr = hashQuery.split("/");
 				paraStr = tmpArr.pop();
+				if(paraStr.indexOf('=')==-1&&paraStr){
+					tmpArr.push(paraStr);
+					paraStr='';
+				}
 				hash.pathName = tmpArr.join("/");
 				hash.paraObj = Base.unParam(paraStr);
 			}
@@ -569,20 +583,6 @@ KISSY.add("magix/impls/vframe",function(S,Base){
 			}
 			return res;
 		},
-		getRouterObject:function(){
-			var router;
-			KISSY.use("magix/router",function(S,R){
-				router=R;
-			});
-			return router;
-		},
-		getVOMObject:function(){
-			var vom;
-			S.use("magix/vom",function(S,VOM){
-				vom=VOM;
-			});
-			return vom;
-		},
 		createFrame:function(){
 			return document.createElement(iVframe.tagName);
 		}
@@ -630,23 +630,23 @@ KISSY.add("magix/impls/view",function(S,MVC,T,ajax,VOM,Base){
 	requires:["mvc","magix/template","magix/ajax","magix/vom","magix/base"]
 })
 //implement vom
-KISSY.add("magix/impls/vom",function(S,Base){
+KISSY.add("magix/impls/vom",function(S,Base,Vframe){
 	var iVOM = {
 		setRootVframe : function() {
-			var rootNode = null;
-			if(document.body.id == "vf-root") {
-				rootNode = document.body;
-			}
-			var rootVframe = this.createElement(rootNode, "vf-root");
+			var rootNode = document.getElementById('vf-root'),
+				rootVframe = this.createElement(rootNode, "vf-root");
 			if(!rootNode) {
 				document.body.insertBefore(rootVframe.getOnce(), document.body.firstChild);
 			}
 			this.root = rootVframe;
+		},
+		getVframeClass:function(){
+			return Vframe;
 		}
 	};
 	return iVOM;
 },{
-	requires:["magix/base"]
+	requires:["magix/base","magix/vframe"]
 });/*
  * Magix:全局变量
  * 		init(config):启动Magix，原生代码，与Loader无关，
@@ -671,22 +671,7 @@ Magix = {
 			appHome = me.config.appHome||'',
 			S=KISSY,
 			now=new Date().getTime();
-		if(me.config.debug){
-			me.dev=true;
-			S.config({debug:true});
-			if(!window.console){
-				window.console = {
-					log : function(s) {
-					},
-					dir : function(s) {
-					},
-					warn : function(s) {
-					},
-					error : function(s) {
-					}
-				};
-			}
-		}
+
 		if(magixHome&&!/\/$/.test(magixHome)){
 			magixHome+='/';
 			this.config.magixHome=magixHome
@@ -694,6 +679,31 @@ Magix = {
 		if(appHome&&!/\/$/.test(appHome)){
 			appHome+='/';
 			this.config.appHome=appHome;
+		}
+
+		if(!this.config.release&&/^https?:\/\//.test(appHome)){
+			this.config.release= appHome.indexOf(location.protocol+'//'+location.host)==-1;
+		}
+
+		if(!this.config.release){
+			var reg=new RegExp("("+appHome+".+)-min\\.js(\\?[^?]+)?");
+			S.config({
+				map:[[reg,'$1.js$2']]
+			});
+			me.dev=true;
+			S.config({debug:true});
+		}
+		if(!window.console){
+			window.console = {
+				log : function(s) {
+				},
+				dir : function(s) {
+				},
+				warn : function(s) {
+				},
+				error : function(s) {
+				}
+			};
 		}
 		S.config({
 			packages:[{
@@ -1236,8 +1246,7 @@ KISSY.add("magix/router",function(S,impl,Base){
 			this.queryModel = this.createQueryModel();
 			this.queryModel.bind("change", function() {
 				if(vom.root.view){
-					var res = vom.root.view.queryModelChange(this);
-					vom.root.view._changeChain(res, this);
+					vom.root.view._queryModelChange(this);
 				}
             });
 			
@@ -1337,9 +1346,19 @@ KISSY.add("magix/tmpl",function(S){
 			}
 			fnKey=vars.join('_')+'_'+resultTemplate;
 			if(!fnCaches[fnKey]){
-				fnCaches[fnKey]=new Function(vars,resultTemplate);
+				try{
+					fnCaches[fnKey]=new Function(vars,resultTemplate);
+				}catch(e){
+					
+					resultTemplate=e.message;
+				}
 			}
-			resultTemplate=fnCaches[fnKey].apply(data,values);
+			try{
+				resultTemplate=fnCaches[fnKey].apply(data,values);
+			}catch(e){
+				
+				resultTemplate=e.message;
+			}
 			return resultTemplate;
 		}
 		return template;
@@ -1365,7 +1384,8 @@ KISSY.add("magix/tmpl",function(S){
 });//vframe
 KISSY.add("magix/vframe",function(S,impl,Base){
 	var Vframe;
-	Vframe = function(node, id) {
+	
+Vframe = function(node, id) {
 	
 };
 Base.mix(Vframe, {
@@ -1382,7 +1402,9 @@ Base.mix(Vframe, {
 Base.mix(Vframe.prototype, Base.Events);
 Base.mix(Vframe.prototype, {
 	getChildVframeNodes : Base.unimpl,
-	getRouterObject:Base.unimpl,
+	getRouterObject:function(){
+		return this.__Router;
+	},
 	/*
 	 * 无法放到Vframe中，因为Vframe的tagName未实现，也不会实现，
 	 * 原来的实现方案是把tagName覆盖掉，这是不正确的
@@ -1390,7 +1412,9 @@ Base.mix(Vframe.prototype, {
 	 * 谁也不应该被改写
 	 */
 	createFrame:Base.unimpl,
-	getVOMObject:Base.unimpl,
+	getVOMObject:function(){
+		return this.__VOM;
+	},
 	initial : function(node, id) {
 		//
 		this.id = "";
@@ -1449,6 +1473,9 @@ Base.mix(Vframe.prototype, {
 				me.mountSubFrames();
 			});
 		}
+		me.view.bind("prerender",function(){
+			me.destroySubFrames();
+		});
 	},
 	mountSubFrames:function(){
 		//this.trigger("beforeSubviewsRender");
@@ -1489,6 +1516,8 @@ Base.mix(Vframe.prototype, {
 				//options.el = self.id;
 				//options.id = self.id;
 				self.view = new View(options);
+				self.__viewLoaded=true;
+				self.trigger('viewLoaded',true);
 				//self.view.vc = self;
 				self.handelMounted();
 			}
@@ -1502,8 +1531,11 @@ Base.mix(Vframe.prototype, {
 						
 			
 			this.destroySubFrames();
-			this.view.trigger("unload");
+			this.view.beforeDestroy();
+			this.view.trigger("unload",true);
+			this.view.trigger("beforeRebuild",true);
 			this.view.destroy();
+			this.view.afterDestroy();
 			
 			document.getElementById(this.view.vcid).innerHTML = "";
 			this.mounted = false;
@@ -1513,7 +1545,7 @@ Base.mix(Vframe.prototype, {
 	},
 	destroySubFrames:function(){
 		var queue = [], vom = this.getVOMObject();
-        var root = vom.getElementById(this.view.vcid);
+        var root = vom.getElementById(this.id);
 
         function rc(e) {
             queue.push(e);
@@ -1527,9 +1559,7 @@ Base.mix(Vframe.prototype, {
 		
 		for(var i = queue.length - 1; i > 0; i--) {
             queue[i].removeNode();
-        }for (var i = Things.length - 1; i >= 0; i--) {
-        	Things[i]
-        };
+        }
 	},
 	removeNode : function() {
 		
@@ -1563,20 +1593,24 @@ Base.mix(Vframe.prototype, {
 		this.childNodes = newChildNodes;
 	},
 	_popFromVOM : function(n) {
-		Base.requireAsync("magix/vom", function(VOM) {
-			VOM.pop(n);
-			n.exist=false;
-		});
+		var vom=this.getVOMObject();
+		vom.pop(n);
+		n.exist=false;
 	},
-	postMessage:function(data){
-		if(!data)data={};
-		if(!data.msgFrom)data.msgFrom='view';
-		this.view.receiveMessage(data);
-	},
-	receiveMessage:function(data){
-		if(!data)data={};
-		if(!data.msgFrom)data.msgFrom='broadcast';
-		this.view.receiveMessage(data)
+	postMessage:function(data,from){
+		var me=this;
+		if(me.exist){
+			if(!data)data={};
+			data.from=from;
+			if(me.__viewLoaded){
+				me.view._receiveMessage(data);
+			}else{
+				me.unbind('viewLoaded');
+				me.bind('viewLoaded',function(){
+					me.view._receiveMessage(data);
+				});
+			}
+		}
 	}
 });
 
@@ -1606,9 +1640,6 @@ Base.mix(View.prototype, {
      */
     dispose: Base.unimpl,
     queryModelChange: function() {
-
-    },
-    refresh: function() {
 
     },
     initial: function(o) {
@@ -1656,7 +1687,9 @@ Base.mix(View.prototype, {
         }*/
         if (this.init) {
             setTimeout(function() { //确保内部的magix绑定的事件先执行，再调用init
-                self.init(); //如果在init中绑定了事件，无setTimeout时，init中的绑定的事件早于magix中的，有可能出问题
+                if(self.exist){
+                    self.init(); //如果在init中绑定了事件，无setTimeout时，init中的绑定的事件早于magix中的，有可能出问题
+                }
             }, 0);
         }
         if (!this.preventRender) {
@@ -1665,10 +1698,12 @@ Base.mix(View.prototype, {
                 
                 setTimeout(function() { //等待init的完成
                     if (self.exist) {
-                        var autoRendered = self.render();
-                        if (autoRendered !== false) {
-                            self.trigger("rendered");
+                        var res=self.render();
+                        if(res!==false&&!self.__isStartMountSubs){
+                            self.trigger('rendered');
                         }
+                        self.__rendered=true;
+                        self.trigger("renderComplete",true);
                     }
                 }, 0);
             });
@@ -1676,7 +1711,12 @@ Base.mix(View.prototype, {
     },
     _queryModelChange: function(model) {
         
-        var res = this.queryModelChange(model);
+        try{
+            var res = this.queryModelChange(model);
+        }catch(e){
+            
+        }
+        if(this.__isStartMountSubs)res=false;//如果已经开始渲染子view则不再引发queryModelChange
         this._changeChain(res, model);
     },
     _changeChain: function(res, model) {
@@ -1700,6 +1740,12 @@ Base.mix(View.prototype, {
     destory: function() {
         
         this.destroy();
+    },
+    beforeDestroy:function(){
+
+    },
+    afterDestroy:function(){
+
     },
     destroy: function() {
         // var vcQueue, i;//, vom = this.getVOMObject();
@@ -1823,7 +1869,7 @@ Base.mix(View.prototype, {
     },
     processEvent: function(originEvent, parentNode) {
         var event = originEvent || window.event,
-            eventInfo = this.getEventInfo(event, parentNode),
+            eventInfo = this.getEventInfo(event, parentNode||document.getElementById(this.vcid)),
             type = event.type,
             eventArgs = {},
             target = eventInfo.target,
@@ -1878,8 +1924,21 @@ Base.mix(View.prototype, {
             };
         }
     },
+    setViewHTML:function(html){
+        var me=this;
+        if(me.exist){
+            me.trigger("beforeRebuild",true);
+            me.trigger("prerender");
+            document.getElementById(me.vcid).innerHTML=html;
+            me.trigger("rendered");
+            me.__isStartMountSubs=true;
+            setTimeout(function(){delete me.__isStartMountSubs},0);
+            return true;
+        }
+        return false;
+    },
     render: function() {
-        if (this.preventRender) {
+       /* if (this.preventRender) {
             this.rendered = true;
             return true;
         }
@@ -1892,7 +1951,7 @@ Base.mix(View.prototype, {
             template: this.template,
             data: this.data
         });
-        this.rendered = true;
+        this.rendered = true;*/
     },
     getTemplate: function(cb, name) {
         if (this.template) {
@@ -1910,9 +1969,10 @@ Base.mix(View.prototype, {
             url = url + ".html";
         }
         url = url.replace(/([^:\/])\/+/g, '$1\/'); //修正多个/紧挨的问题
+        //url = url.replace(/\.html([\W])?/,Magix.config.release?'_c.html$1':'.source.html$1');
         var ajax = this.getAjaxObject();
         
-        if (Magix.dev || Magix.config.debug) url += '?=' + new Date().getTime();
+        if (Magix.dev || !Magix.config.release) url += '?=' + new Date().getTime();
         ajax.getTemplate(url, function(data) {
             
             cb(data);
@@ -1930,13 +1990,31 @@ Base.mix(View.prototype, {
         node = null;
         return id;
     },
-    receiveMessage:function(){
+    receiveMessage:function(e){
 
+    },
+    _receiveMessage:function(e){
+        var me=this;
+        try{
+            if(me.exist&&me.__rendered){
+                me.receiveMessage(e);
+            }else{
+                me.unbind("renderComplete");
+                me.bind('renderComplete',function(){
+                    me.receiveMessage(e);
+                });
+            }
+        }catch(e){
+            
+        }
     },
     postMessageTo:function(key,data){
         var vom=this.getVOMObject();
-        var vframe=vom.get(key);
-        if(vframe)vframe.postMessage(data);
+        if(!Base.isArray(key))key=[key];
+        for(var i=0;i<key.length;i++){
+            var vframe=vom.get(key[i]);
+            if(vframe)vframe.postMessage(data,this);
+        }        
     }
 });
 
@@ -1944,12 +2022,13 @@ Base.mix(View.prototype, {
 },{
 	requires:["magix/impls/view","magix/base"]
 });//vom
-KISSY.add("magix/vom",function(S,impl,Base,Vframe){
+KISSY.add("magix/vom",function(S,impl,Base){
 	var VOM = {};
 	Base.mix(VOM, {
 	_idMap : {},
 	root : null,
 	setRootVframe : Base.unimpl,
+	getVframeClass:Base.unimpl,
 	init : function () {
 		var me = this;
 		if (!me.inited) { //确保只执行一次
@@ -1968,7 +2047,10 @@ KISSY.add("magix/vom",function(S,impl,Base,Vframe){
 		if (Base.isString(ele)) {
 			ele = document.getElementById(ele);
 		}
-		var vc = new Vframe(ele, id);
+		var Vframe=this.getVframeClass(),
+			vc=new Vframe(ele,id);
+		vc.__VOM=this;
+		vc.__Router=this.__Router;
 		this.push(vc);
 		return vc;
 	},
@@ -1978,10 +2060,10 @@ KISSY.add("magix/vom",function(S,impl,Base,Vframe){
 	get:function(id){
 		return this.getElementById(id);
 	},
-	broadcaseMessage:function(data){
+	broadcaseMessage:function(data,from){
 		var me=this,c=me._idMap;
 		for(var p in c){
-			c[p].receiveMessage(data);
+			c[p].postMessage(data,from||this);
 		}
 	}
 });
@@ -1989,5 +2071,5 @@ KISSY.add("magix/vom",function(S,impl,Base,Vframe){
 	Base.mix(VOM, impl);
 	return VOM.init();
 },{
-	requires:["magix/impls/vom","magix/base","magix/vframe"]
+	requires:["magix/impls/vom","magix/base"]
 });

@@ -1,3 +1,4 @@
+
 Vframe = function(node, id) {
 	
 };
@@ -15,7 +16,9 @@ Base.mix(Vframe, {
 Base.mix(Vframe.prototype, Base.Events);
 Base.mix(Vframe.prototype, {
 	getChildVframeNodes : Base.unimpl,
-	getRouterObject:Base.unimpl,
+	getRouterObject:function(){
+		return this.__Router;
+	},
 	/*
 	 * 无法放到Vframe中，因为Vframe的tagName未实现，也不会实现，
 	 * 原来的实现方案是把tagName覆盖掉，这是不正确的
@@ -23,7 +26,9 @@ Base.mix(Vframe.prototype, {
 	 * 谁也不应该被改写
 	 */
 	createFrame:Base.unimpl,
-	getVOMObject:Base.unimpl,
+	getVOMObject:function(){
+		return this.__VOM;
+	},
 	initial : function(node, id) {
 		//
 		this.id = "";
@@ -82,6 +87,9 @@ Base.mix(Vframe.prototype, {
 				me.mountSubFrames();
 			});
 		}
+		me.view.bind("prerender",function(){
+			me.destroySubFrames();
+		});
 	},
 	mountSubFrames:function(){
 		//this.trigger("beforeSubviewsRender");
@@ -122,6 +130,8 @@ Base.mix(Vframe.prototype, {
 				//options.el = self.id;
 				//options.id = self.id;
 				self.view = new View(options);
+				self.__viewLoaded=true;
+				self.trigger('viewLoaded',true);
 				//self.view.vc = self;
 				self.handelMounted();
 			}
@@ -135,8 +145,11 @@ Base.mix(Vframe.prototype, {
 			console.log("VCELE UNMOUNT:2 inner dom unload @" + this.view.modUri);			
 			console.log("VCELE UNMOUNT:3 unbind event delegation on vcelement @" + this.id);
 			this.destroySubFrames();
-			this.view.trigger("unload");
+			this.view.beforeDestroy();
+			this.view.trigger("unload",true);
+			this.view.trigger("beforeRebuild",true);
 			this.view.destroy();
+			this.view.afterDestroy();
 			console.log("VCELE UNMOUNT:4 chge vcelement.mounted to false @" + this.id);
 			document.getElementById(this.view.vcid).innerHTML = "";
 			this.mounted = false;
@@ -146,7 +159,7 @@ Base.mix(Vframe.prototype, {
 	},
 	destroySubFrames:function(){
 		var queue = [], vom = this.getVOMObject();
-        var root = vom.getElementById(this.view.vcid);
+        var root = vom.getElementById(this.id);
 
         function rc(e) {
             queue.push(e);
@@ -160,9 +173,7 @@ Base.mix(Vframe.prototype, {
 		
 		for(var i = queue.length - 1; i > 0; i--) {
             queue[i].removeNode();
-        }for (var i = Things.length - 1; i >= 0; i--) {
-        	Things[i]
-        };
+        }
 	},
 	removeNode : function() {
 		console.log("VCELE DESTORY:1 unmount current view @" + this.id);
@@ -196,19 +207,23 @@ Base.mix(Vframe.prototype, {
 		this.childNodes = newChildNodes;
 	},
 	_popFromVOM : function(n) {
-		Base.requireAsync("magix/vom", function(VOM) {
-			VOM.pop(n);
-			n.exist=false;
-		});
+		var vom=this.getVOMObject();
+		vom.pop(n);
+		n.exist=false;
 	},
-	postMessage:function(data){
-		if(!data)data={};
-		if(!data.msgFrom)data.msgFrom='view';
-		this.view.receiveMessage(data);
-	},
-	receiveMessage:function(data){
-		if(!data)data={};
-		if(!data.msgFrom)data.msgFrom='broadcast';
-		this.view.receiveMessage(data)
+	postMessage:function(data,from){
+		var me=this;
+		if(me.exist){
+			if(!data)data={};
+			data.from=from;
+			if(me.__viewLoaded){
+				me.view._receiveMessage(data);
+			}else{
+				me.unbind('viewLoaded');
+				me.bind('viewLoaded',function(){
+					me.view._receiveMessage(data);
+				});
+			}
+		}
 	}
 });

@@ -22,22 +22,7 @@ Magix = {
 			appHome = me.config.appHome||'',
 			S=KISSY,
 			now=new Date().getTime();
-		if(me.config.debug){
-			me.dev=true;
-			S.config({debug:true});
-			if(!window.console){
-				window.console = {
-					log : function(s) {
-					},
-					dir : function(s) {
-					},
-					warn : function(s) {
-					},
-					error : function(s) {
-					}
-				};
-			}
-		}
+
 		if(magixHome&&!/\/$/.test(magixHome)){
 			magixHome+='/';
 			this.config.magixHome=magixHome
@@ -45,6 +30,31 @@ Magix = {
 		if(appHome&&!/\/$/.test(appHome)){
 			appHome+='/';
 			this.config.appHome=appHome;
+		}
+
+		if(!this.config.release&&/^https?:\/\//.test(appHome)){
+			this.config.release= appHome.indexOf(location.protocol+'//'+location.host)==-1;
+		}
+
+		if(!this.config.release){
+			var reg=new RegExp("("+appHome+".+)-min\\.js(\\?[^?]+)?");
+			S.config({
+				map:[[reg,'$1.js$2']]
+			});
+			me.dev=true;
+			S.config({debug:true});
+		}
+		if(!window.console){
+			window.console = {
+				log : function(s) {
+				},
+				dir : function(s) {
+				},
+				warn : function(s) {
+				},
+				error : function(s) {
+				}
+			};
 		}
 		S.config({
 			packages:[{

@@ -22,9 +22,6 @@ Base.mix(View.prototype, {
     queryModelChange: function() {
 
     },
-    refresh: function() {
-
-    },
     initial: function(o) {
         
         var self = this,
@@ -70,7 +67,9 @@ Base.mix(View.prototype, {
         }*/
         if (this.init) {
             setTimeout(function() { //确保内部的magix绑定的事件先执行，再调用init
-                self.init(); //如果在init中绑定了事件，无setTimeout时，init中的绑定的事件早于magix中的，有可能出问题
+                if(self.exist){
+                    self.init(); //如果在init中绑定了事件，无setTimeout时，init中的绑定的事件早于magix中的，有可能出问题
+                }
             }, 0);
         }
         if (!this.preventRender) {
@@ -79,10 +78,12 @@ Base.mix(View.prototype, {
                 
                 setTimeout(function() { //等待init的完成
                     if (self.exist) {
-                        var autoRendered = self.render();
-                        if (autoRendered !== false) {
-                            self.trigger("rendered");
+                        var res=self.render();
+                        if(res!==false&&!self.__isStartMountSubs){
+                            self.trigger('rendered');
                         }
+                        self.__rendered=true;
+                        self.trigger("renderComplete",true);
                     }
                 }, 0);
             });
@@ -90,7 +91,12 @@ Base.mix(View.prototype, {
     },
     _queryModelChange: function(model) {
         
-        var res = this.queryModelChange(model);
+        try{
+            var res = this.queryModelChange(model);
+        }catch(e){
+            
+        }
+        if(this.__isStartMountSubs)res=false;//如果已经开始渲染子view则不再引发queryModelChange
         this._changeChain(res, model);
     },
     _changeChain: function(res, model) {
@@ -114,6 +120,12 @@ Base.mix(View.prototype, {
     destory: function() {
         
         this.destroy();
+    },
+    beforeDestroy:function(){
+
+    },
+    afterDestroy:function(){
+
     },
     destroy: function() {
         // var vcQueue, i;//, vom = this.getVOMObject();
@@ -237,7 +249,7 @@ Base.mix(View.prototype, {
     },
     processEvent: function(originEvent, parentNode) {
         var event = originEvent || window.event,
-            eventInfo = this.getEventInfo(event, parentNode),
+            eventInfo = this.getEventInfo(event, parentNode||document.getElementById(this.vcid)),
             type = event.type,
             eventArgs = {},
             target = eventInfo.target,
@@ -292,8 +304,21 @@ Base.mix(View.prototype, {
             };
         }
     },
+    setViewHTML:function(html){
+        var me=this;
+        if(me.exist){
+            me.trigger("beforeRebuild",true);
+            me.trigger("prerender");
+            document.getElementById(me.vcid).innerHTML=html;
+            me.trigger("rendered");
+            me.__isStartMountSubs=true;
+            setTimeout(function(){delete me.__isStartMountSubs},0);
+            return true;
+        }
+        return false;
+    },
     render: function() {
-        if (this.preventRender) {
+       /* if (this.preventRender) {
             this.rendered = true;
             return true;
         }
@@ -306,7 +331,7 @@ Base.mix(View.prototype, {
             template: this.template,
             data: this.data
         });
-        this.rendered = true;
+        this.rendered = true;*/
     },
     getTemplate: function(cb, name) {
         if (this.template) {
@@ -324,9 +349,10 @@ Base.mix(View.prototype, {
             url = url + ".html";
         }
         url = url.replace(/([^:\/])\/+/g, '$1\/'); //修正多个/紧挨的问题
+        //url = url.replace(/\.html([\W])?/,Magix.config.release?'_c.html$1':'.source.html$1');
         var ajax = this.getAjaxObject();
         
-        if (Magix.dev || Magix.config.debug) url += '?=' + new Date().getTime();
+        if (Magix.dev || !Magix.config.release) url += '?=' + new Date().getTime();
         ajax.getTemplate(url, function(data) {
             
             cb(data);
@@ -344,13 +370,31 @@ Base.mix(View.prototype, {
         node = null;
         return id;
     },
-    receiveMessage:function(){
+    receiveMessage:function(e){
 
+    },
+    _receiveMessage:function(e){
+        var me=this;
+        try{
+            if(me.exist&&me.__rendered){
+                me.receiveMessage(e);
+            }else{
+                me.unbind("renderComplete");
+                me.bind('renderComplete',function(){
+                    me.receiveMessage(e);
+                });
+            }
+        }catch(e){
+            
+        }
     },
     postMessageTo:function(key,data){
         var vom=this.getVOMObject();
-        var vframe=vom.get(key);
-        if(vframe)vframe.postMessage(data);
+        if(!Base.isArray(key))key=[key];
+        for(var i=0;i<key.length;i++){
+            var vframe=vom.get(key[i]);
+            if(vframe)vframe.postMessage(data,this);
+        }        
     }
 });
 

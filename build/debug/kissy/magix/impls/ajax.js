@@ -8,7 +8,7 @@ KISSY.add("magix/impls/ajax",function(S,io){
         io(S.mix(ops,{
             url:ops.url,
             dataType:ops.dataType,
-			type:ops.method,
+			type:ops.type,
             success:function(data,textStatus,xhr){
 				me.fireGlobalSetting(xhr);
                 oldSucc.call(ops,data);

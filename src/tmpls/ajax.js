@@ -1,7 +1,7 @@
 Ajax = {
 	defaultOptions : { //默认ajax请求参数
 		dataType : 'html',
-		method : 'POST',
+		type : 'POST',
 		success : function () {},
 		error : function () {}
 	},
@@ -71,7 +71,7 @@ Ajax = {
 		me.send({
 			url : url,
 			dataType : 'html',
-			method:'GET',
+			type:'GET',
 			success : function (data) {
 				tmplCaches[viewName] = data;
 				if (Base.isFunction(succ)) {

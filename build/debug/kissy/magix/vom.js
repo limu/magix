@@ -1,10 +1,11 @@
 //vom
-KISSY.add("magix/vom",function(S,impl,Base,Vframe){
+KISSY.add("magix/vom",function(S,impl,Base){
 	var VOM = {};
 	Base.mix(VOM, {
 	_idMap : {},
 	root : null,
 	setRootVframe : Base.unimpl,
+	getVframeClass:Base.unimpl,
 	init : function () {
 		var me = this;
 		if (!me.inited) { //确保只执行一次
@@ -23,7 +24,10 @@ KISSY.add("magix/vom",function(S,impl,Base,Vframe){
 		if (Base.isString(ele)) {
 			ele = document.getElementById(ele);
 		}
-		var vc = new Vframe(ele, id);
+		var Vframe=this.getVframeClass(),
+			vc=new Vframe(ele,id);
+		vc.__VOM=this;
+		vc.__Router=this.__Router;
 		this.push(vc);
 		return vc;
 	},
@@ -33,10 +37,10 @@ KISSY.add("magix/vom",function(S,impl,Base,Vframe){
 	get:function(id){
 		return this.getElementById(id);
 	},
-	broadcaseMessage:function(data){
+	broadcaseMessage:function(data,from){
 		var me=this,c=me._idMap;
 		for(var p in c){
-			c[p].receiveMessage(data);
+			c[p].postMessage(data,from||this);
 		}
 	}
 });
@@ -44,5 +48,5 @@ KISSY.add("magix/vom",function(S,impl,Base,Vframe){
 	Base.mix(VOM, impl);
 	return VOM.init();
 },{
-	requires:["magix/impls/vom","magix/base","magix/vframe"]
+	requires:["magix/impls/vom","magix/base"]
 });

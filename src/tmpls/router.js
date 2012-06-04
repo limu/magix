@@ -49,8 +49,7 @@ Base.mix(Router, {
 			this.queryModel = this.createQueryModel();
 			this.queryModel.bind("change", function() {
 				if(vom.root.view){
-					var res = vom.root.view.queryModelChange(this);
-					vom.root.view._changeChain(res, this);
+					vom.root.view._queryModelChange(this);
 				}
             });
 			

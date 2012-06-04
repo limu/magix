@@ -17,20 +17,6 @@ KISSY.add("magix/impls/vframe",function(S,Base){
 			}
 			return res;
 		},
-		getRouterObject:function(){
-			var router;
-			KISSY.use("magix/router",function(S,R){
-				router=R;
-			});
-			return router;
-		},
-		getVOMObject:function(){
-			var vom;
-			S.use("magix/vom",function(S,VOM){
-				vom=VOM;
-			});
-			return vom;
-		},
 		createFrame:function(){
 			return document.createElement(iVframe.tagName);
 		}
