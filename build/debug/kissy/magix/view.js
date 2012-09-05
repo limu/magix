@@ -352,7 +352,7 @@ Base.mix(View.prototype, {
         //url = url.replace(/\.html([\W])?/,Magix.config.release?'_c.html$1':'.source.html$1');
         var ajax = this.getAjaxObject();
         
-        if (Magix.dev || !Magix.config.release) url += '?=' + new Date().getTime();
+        if (Magix.dev || !Magix.config.release) url += '?t=' + new Date().getTime();
         ajax.getTemplate(url, function(data) {
             
             cb(data);

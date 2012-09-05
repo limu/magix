@@ -36,7 +36,7 @@ KISSY.add("magix/tmpl",function(S){
 					fnCaches[fnKey]=new Function(vars,resultTemplate);
 				}catch(e){
 					
-					resultTemplate=e.message;
+					return resultTemplate=e.message;
 				}
 			}
 			try{

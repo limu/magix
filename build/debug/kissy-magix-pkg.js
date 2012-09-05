@@ -1350,7 +1350,7 @@ KISSY.add("magix/tmpl",function(S){
 					fnCaches[fnKey]=new Function(vars,resultTemplate);
 				}catch(e){
 					
-					resultTemplate=e.message;
+					return resultTemplate=e.message;
 				}
 			}
 			try{
@@ -1496,14 +1496,16 @@ Base.mix(Vframe.prototype, {
 			return;
 		}
 		
-		
-		this.unmountView();//先清view
+		options = options || {};
+
+		this.unmountView(options);//先清view
+
 		/*if(this.view) {
 			this.view.destroy();
 		}*/
 		//
 		var self = this,router=this.getRouterObject();
-		options = options || {};
+		
 		if(!options.queryModel){//确保每个view都有queryModel，请参考View的initial方法
 			options.queryModel=router.queryModel;
 		}
@@ -1523,13 +1525,14 @@ Base.mix(Vframe.prototype, {
 			}
 		});
 	},
-	unmountView : function() {
+	unmountView : function(options) {
 		if(this.view&&this.mounted){
 			
 			
 			
 						
 			
+			options=options||{};
 			this.destroySubFrames();
 			this.view.beforeDestroy();
 			this.view.trigger("unload",true);
@@ -1537,7 +1540,8 @@ Base.mix(Vframe.prototype, {
 			this.view.destroy();
 			this.view.afterDestroy();
 			
-			document.getElementById(this.view.vcid).innerHTML = "";
+			document.getElementById(this.view.vcid).innerHTML = options.unmountPlaceholder||"";
+			delete options.unmountPlaceholder;
 			this.mounted = false;
 			this.view = null;
 		}
@@ -1972,7 +1976,7 @@ Base.mix(View.prototype, {
         //url = url.replace(/\.html([\W])?/,Magix.config.release?'_c.html$1':'.source.html$1');
         var ajax = this.getAjaxObject();
         
-        if (Magix.dev || !Magix.config.release) url += '?=' + new Date().getTime();
+        if (Magix.dev || !Magix.config.release) url += '?t=' + new Date().getTime();
         ajax.getTemplate(url, function(data) {
             
             cb(data);

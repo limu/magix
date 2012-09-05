@@ -110,14 +110,16 @@ Base.mix(Vframe.prototype, {
 			return;
 		}
 		console.log(this.view);
-		
-		this.unmountView();//先清view
+		options = options || {};
+
+		this.unmountView(options);//先清view
+
 		/*if(this.view) {
 			this.view.destroy();
 		}*/
 		//
 		var self = this,router=this.getRouterObject();
-		options = options || {};
+		
 		if(!options.queryModel){//确保每个view都有queryModel，请参考View的initial方法
 			options.queryModel=router.queryModel;
 		}
@@ -137,13 +139,14 @@ Base.mix(Vframe.prototype, {
 			}
 		});
 	},
-	unmountView : function() {
+	unmountView : function(options) {
 		if(this.view&&this.mounted){
 			console.log("VCELE UNMOUNT:1 fire view's unload @" + this.view.modUri);
 			console.log(this.view);
 			
 			console.log("VCELE UNMOUNT:2 inner dom unload @" + this.view.modUri);			
 			console.log("VCELE UNMOUNT:3 unbind event delegation on vcelement @" + this.id);
+			options=options||{};
 			this.destroySubFrames();
 			this.view.beforeDestroy();
 			this.view.trigger("unload",true);
@@ -151,7 +154,8 @@ Base.mix(Vframe.prototype, {
 			this.view.destroy();
 			this.view.afterDestroy();
 			console.log("VCELE UNMOUNT:4 chge vcelement.mounted to false @" + this.id);
-			document.getElementById(this.view.vcid).innerHTML = "";
+			document.getElementById(this.view.vcid).innerHTML = options.unmountPlaceholder||"";
+			delete options.unmountPlaceholder;
 			this.mounted = false;
 			this.view = null;
 		}
