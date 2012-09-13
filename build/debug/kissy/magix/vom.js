@@ -42,6 +42,20 @@ KISSY.add("magix/vom",function(S,impl,Base){
 		for(var p in c){
 			c[p].postMessage(data,from||this);
 		}
+	},
+	notifyQueryModelChange:function(qm){
+		var me=this;
+		if(me.root&&me.root.view){
+			me.root.view._queryModelChange(qm);
+		}
+	},
+	mountRootView:function(viewName,queryModel){
+		var me=this;
+		if(me.root){
+			me.root.mountView(viewName,{
+				queryModel:queryModel
+			});
+		}
 	}
 });
 

@@ -92,10 +92,13 @@ Base.mix(View.prototype, {
     _queryModelChange: function(model) {
         
         try{
-            var res = this.queryModelChange(model);
+            if(this.hashHasChanged()){
+                var res = this.queryModelChange(model);
+            }
         }catch(e){
             
         }
+        this.observeHash();
         if(this.__isStartMountSubs)res=false;//如果已经开始渲染子view则不再引发queryModelChange
         this._changeChain(res, model);
     },
@@ -395,6 +398,85 @@ Base.mix(View.prototype, {
             var vframe=vom.get(key[i]);
             if(vframe)vframe.postMessage(data,this);
         }        
+    },
+    observeHash:function(keys,_ignore){
+        var me=this;
+        if(keys){
+            if(!Base.isArray(keys)){
+                keys=[keys];
+            }
+            me.$observeHashKeys=keys;//保存当前监控的hash key
+            me.$observeHashCache={};//缓存当前hash的值
+            for(var i=0;i<keys.length;i++){
+                me.$observeHashCache[keys[i]]=me.queryModel.get(keys[i]);
+            }
+        }else if(!_ignore){//如果未传递key 则使用上次设置的key重新缓存
+            me.observeHash(me.$observeHashKeys,true);
+        }
+    },
+    hashHasChanged:function(keys){
+        var me=this,
+            hashCache=me.$observeHashCache,
+            realCache=me.$realUsingCache;
+        if(!keys)keys=me.$observeHashKeys;//如果未传递keys，则使用当初监控时的keys
+        if(keys){
+            if(hashCache){//表示调用过observeHash 
+                result=false;
+                for(var i=0,k,v;i<keys.length;i++){
+                    k=keys[i];
+                    if(!hashCache.hasOwnProperty(k)){
+                        
+                    }else{
+                        v=me.queryModel.get(k);
+                        result=hashCache[k]!=v;
+                        if(result&&realCache&&realCache.hasOwnProperty(k)){//值有改变，看是否和真实使用中的相同
+                            result=realCache[k]!=v;//
+                        }
+                        if(result){
+                            break;
+                        }
+                    }
+                }
+                return result;
+            }else{//未调用 走queryModel的hasChanged方法
+                for(var i=0;i<keys.length;i++){
+                    if(me.queryModel.hasChanged(keys[i])){
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        return true;
+    },
+    hashHasChangedExcept:function(keys){
+        var tempKeys=[],
+            tempObj={},
+            me=this,
+            obsKeys=me.$observeHashKeys;
+        if(keys&&obsKeys){
+            if(!S.isArray(keys))keys=[keys];
+            for(var i=0;i<keys.length;i++){
+                tempObj[keys[i]]=1;
+            }
+            for(var i=0;i<obsKeys.length;i++){
+                if(!tempObj[obsKeys[i]]){
+                    tempKeys.push(obsKeys[i]);
+                }
+            }
+        }else{
+            tempKeys=obsKeys;
+        }
+        return me.hashHasChanged(tempKeys);
+    },
+    hashRealUsing:function(obj){
+        var me=this;
+        if(obj){//设置hash对应的真实使用的值
+            if(!me.$realUsingCache)me.$realUsingCache={};
+            for(var p in obj){
+                me.$realUsingCache[p]=obj[p];
+            }
+        }
     }
 });
 

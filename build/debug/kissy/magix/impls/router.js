@@ -1,5 +1,9 @@
 //implement router
 KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
+	var QueryModel=function(){
+
+	};
+
 	var iRouter = {
 		getAppConfig : function() {
 			var p2v = appConfig.pathViewMap,
@@ -73,24 +77,26 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 		},
 		getRootViewName : function() {
 			var p2v = this.appConfig.pathViewMap, viewName;
-			if(p2v[this.query.pathname]) {
-				viewName = p2v[this.query.pathname];
-			} else {
-				viewName = p2v[this.appConfig.notFoundPath];
-			}
-			if(this.query.__view__) {
-				viewName = this.query.__view__.split("-").join("/");
-			}
-			//multipage
-			if(this.config.multipage) {
-				var schPath = p2v[this.query["sch:pathname"]];
-				if( typeof schPath == "object") {
-					viewName = schPath[this.query.pathname] || schPath[this.appConfig.notFoundPath];
+			if(p2v){
+				if(p2v[this.query.pathname]) {
+					viewName = p2v[this.query.pathname];
 				} else {
-					document.body.id = "vc-root";
-					viewName = schPath || this.appConfig.defaultRootViewName;
+					viewName = p2v[this.appConfig.notFoundPath];
 				}
-				
+				if(this.query.__view__) {
+					viewName = this.query.__view__.split("-").join("/");
+				}
+				//multipage
+				if(this.config.multipage) {
+					var schPath = p2v[this.query["sch:pathname"]];
+					if( typeof schPath == "object") {
+						viewName = schPath[this.query.pathname] || schPath[this.appConfig.notFoundPath];
+					} else {
+						document.body.id = "vc-root";
+						viewName = schPath || this.appConfig.defaultRootViewName;
+					}
+					
+				}
 			}
 			return viewName;
 		},

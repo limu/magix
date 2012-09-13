@@ -121,6 +121,7 @@ Base.mix(Vframe.prototype, {
 			this.view.destroy();
 		}*/
 		//
+
 		var self = this,router=this.getRouterObject();
 		
 		if(!options.queryModel){//确保每个view都有queryModel，请参考View的initial方法

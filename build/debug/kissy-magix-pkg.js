@@ -421,6 +421,10 @@ KISSY.add("magix/impls/model",function(S,MVC,Base){
 	requires:["mvc","magix/base"]
 });//implement router
 KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
+	var QueryModel=function(){
+
+	};
+
 	var iRouter = {
 		getAppConfig : function() {
 			var p2v = appConfig.pathViewMap,
@@ -494,24 +498,26 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 		},
 		getRootViewName : function() {
 			var p2v = this.appConfig.pathViewMap, viewName;
-			if(p2v[this.query.pathname]) {
-				viewName = p2v[this.query.pathname];
-			} else {
-				viewName = p2v[this.appConfig.notFoundPath];
-			}
-			if(this.query.__view__) {
-				viewName = this.query.__view__.split("-").join("/");
-			}
-			//multipage
-			if(this.config.multipage) {
-				var schPath = p2v[this.query["sch:pathname"]];
-				if( typeof schPath == "object") {
-					viewName = schPath[this.query.pathname] || schPath[this.appConfig.notFoundPath];
+			if(p2v){
+				if(p2v[this.query.pathname]) {
+					viewName = p2v[this.query.pathname];
 				} else {
-					document.body.id = "vc-root";
-					viewName = schPath || this.appConfig.defaultRootViewName;
+					viewName = p2v[this.appConfig.notFoundPath];
 				}
-				
+				if(this.query.__view__) {
+					viewName = this.query.__view__.split("-").join("/");
+				}
+				//multipage
+				if(this.config.multipage) {
+					var schPath = p2v[this.query["sch:pathname"]];
+					if( typeof schPath == "object") {
+						viewName = schPath[this.query.pathname] || schPath[this.appConfig.notFoundPath];
+					} else {
+						document.body.id = "vc-root";
+						viewName = schPath || this.appConfig.defaultRootViewName;
+					}
+					
+				}
 			}
 			return viewName;
 		},
@@ -1239,18 +1245,19 @@ KISSY.add("magix/router",function(S,impl,Base){
 		this.query = this._spreadLocator();
 		this.oldRootViewName = this.rootViewName;
 		this.rootViewName = this.getRootViewName();
-		if(this.rootViewName == this.oldRootViewName) {
-			this.changeQueryModel();
-		}else{
-			var vom=this.getVOMObject();
-			this.queryModel = this.createQueryModel();
-			this.queryModel.bind("change", function() {
-				if(vom.root.view){
-					vom.root.view._queryModelChange(this);
-				}
-            });
-			
-			this.mountRootView();
+		if(this.rootViewName){
+			if(this.rootViewName == this.oldRootViewName) {
+				this.changeQueryModel();
+			}else{
+
+				var vom=this.getVOMObject();
+				this.queryModel = this.createQueryModel();
+				this.queryModel.bind("change", function() {
+					vom.notifyQueryModelChange(this);
+	            });
+				
+				vom.mountRootView(this.rootViewName,this.queryModel);
+			}
 		}
 		this.postData = null; //todo re-think postData
 	},
@@ -1274,13 +1281,6 @@ KISSY.add("magix/router",function(S,impl,Base){
 			Base.mix(query, multipageQuery);
 		}
 		return query;
-	},
-	mountRootView : function() {
-		var self = this,
-			vom=this.getVOMObject();
-		vom.root.mountView(this.rootViewName, {
-			queryModel : self.queryModel
-		});
 	}
 });
 
@@ -1504,6 +1504,7 @@ Base.mix(Vframe.prototype, {
 			this.view.destroy();
 		}*/
 		//
+
 		var self = this,router=this.getRouterObject();
 		
 		if(!options.queryModel){//确保每个view都有queryModel，请参考View的initial方法
@@ -1716,10 +1717,13 @@ Base.mix(View.prototype, {
     _queryModelChange: function(model) {
         
         try{
-            var res = this.queryModelChange(model);
+            if(this.hashHasChanged()){
+                var res = this.queryModelChange(model);
+            }
         }catch(e){
             
         }
+        this.observeHash();
         if(this.__isStartMountSubs)res=false;//如果已经开始渲染子view则不再引发queryModelChange
         this._changeChain(res, model);
     },
@@ -2019,6 +2023,85 @@ Base.mix(View.prototype, {
             var vframe=vom.get(key[i]);
             if(vframe)vframe.postMessage(data,this);
         }        
+    },
+    observeHash:function(keys,_ignore){
+        var me=this;
+        if(keys){
+            if(!Base.isArray(keys)){
+                keys=[keys];
+            }
+            me.$observeHashKeys=keys;//保存当前监控的hash key
+            me.$observeHashCache={};//缓存当前hash的值
+            for(var i=0;i<keys.length;i++){
+                me.$observeHashCache[keys[i]]=me.queryModel.get(keys[i]);
+            }
+        }else if(!_ignore){//如果未传递key 则使用上次设置的key重新缓存
+            me.observeHash(me.$observeHashKeys,true);
+        }
+    },
+    hashHasChanged:function(keys){
+        var me=this,
+            hashCache=me.$observeHashCache,
+            realCache=me.$realUsingCache;
+        if(!keys)keys=me.$observeHashKeys;//如果未传递keys，则使用当初监控时的keys
+        if(keys){
+            if(hashCache){//表示调用过observeHash 
+                result=false;
+                for(var i=0,k,v;i<keys.length;i++){
+                    k=keys[i];
+                    if(!hashCache.hasOwnProperty(k)){
+                        
+                    }else{
+                        v=me.queryModel.get(k);
+                        result=hashCache[k]!=v;
+                        if(result&&realCache&&realCache.hasOwnProperty(k)){//值有改变，看是否和真实使用中的相同
+                            result=realCache[k]!=v;//
+                        }
+                        if(result){
+                            break;
+                        }
+                    }
+                }
+                return result;
+            }else{//未调用 走queryModel的hasChanged方法
+                for(var i=0;i<keys.length;i++){
+                    if(me.queryModel.hasChanged(keys[i])){
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        return true;
+    },
+    hashHasChangedExcept:function(keys){
+        var tempKeys=[],
+            tempObj={},
+            me=this,
+            obsKeys=me.$observeHashKeys;
+        if(keys&&obsKeys){
+            if(!S.isArray(keys))keys=[keys];
+            for(var i=0;i<keys.length;i++){
+                tempObj[keys[i]]=1;
+            }
+            for(var i=0;i<obsKeys.length;i++){
+                if(!tempObj[obsKeys[i]]){
+                    tempKeys.push(obsKeys[i]);
+                }
+            }
+        }else{
+            tempKeys=obsKeys;
+        }
+        return me.hashHasChanged(tempKeys);
+    },
+    hashRealUsing:function(obj){
+        var me=this;
+        if(obj){//设置hash对应的真实使用的值
+            if(!me.$realUsingCache)me.$realUsingCache={};
+            for(var p in obj){
+                me.$realUsingCache[p]=obj[p];
+            }
+        }
     }
 });
 
@@ -2068,6 +2151,20 @@ KISSY.add("magix/vom",function(S,impl,Base){
 		var me=this,c=me._idMap;
 		for(var p in c){
 			c[p].postMessage(data,from||this);
+		}
+	},
+	notifyQueryModelChange:function(qm){
+		var me=this;
+		if(me.root&&me.root.view){
+			me.root.view._queryModelChange(qm);
+		}
+	},
+	mountRootView:function(viewName,queryModel){
+		var me=this;
+		if(me.root){
+			me.root.mountView(viewName,{
+				queryModel:queryModel
+			});
 		}
 	}
 });

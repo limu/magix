@@ -45,18 +45,19 @@ KISSY.add("magix/router",function(S,impl,Base){
 		this.query = this._spreadLocator();
 		this.oldRootViewName = this.rootViewName;
 		this.rootViewName = this.getRootViewName();
-		if(this.rootViewName == this.oldRootViewName) {
-			this.changeQueryModel();
-		}else{
-			var vom=this.getVOMObject();
-			this.queryModel = this.createQueryModel();
-			this.queryModel.bind("change", function() {
-				if(vom.root.view){
-					vom.root.view._queryModelChange(this);
-				}
-            });
-			
-			this.mountRootView();
+		if(this.rootViewName){
+			if(this.rootViewName == this.oldRootViewName) {
+				this.changeQueryModel();
+			}else{
+
+				var vom=this.getVOMObject();
+				this.queryModel = this.createQueryModel();
+				this.queryModel.bind("change", function() {
+					vom.notifyQueryModelChange(this);
+	            });
+				
+				vom.mountRootView(this.rootViewName,this.queryModel);
+			}
 		}
 		this.postData = null; //todo re-think postData
 	},
@@ -80,13 +81,6 @@ KISSY.add("magix/router",function(S,impl,Base){
 			Base.mix(query, multipageQuery);
 		}
 		return query;
-	},
-	mountRootView : function() {
-		var self = this,
-			vom=this.getVOMObject();
-		vom.root.mountView(this.rootViewName, {
-			queryModel : self.queryModel
-		});
 	}
 });
 

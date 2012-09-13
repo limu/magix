@@ -4,14 +4,22 @@
 */
 //
 KISSY.add("app/views/home",function(S,MxView,Tmpl){
-	var HomeView=function(){
-		HomeView.superclass.constructor.apply(this,arguments);
-	};
-	S.extend(HomeView,MxView,{
+	return MxView.extend({
+		init:function(){
+			this.observeHash(["a","b","c"]);
+		},
+		queryModelChange:function(){
+			console.log('changed');
+			console.log(this.hashHasChangedExcept('b'));
+			this.render();
+		},
 		render:function(){
 			var node=document.getElementById(this.vcid);
 			console.log(node);
 			node.innerHTML=Tmpl.toHTML(this.template,this.data);
+			this.hashRealUsing({
+				b:3
+			});
 		},
 		renderer:{
 			tester:{
@@ -21,7 +29,6 @@ KISSY.add("app/views/home",function(S,MxView,Tmpl){
 			}
 		}
 	});
-	return HomeView;
 },{
 	requires:["magix/view","magix/tmpl"]
 });
