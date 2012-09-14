@@ -21,6 +21,19 @@ KISSY.add("app/views/home",function(S,MxView,Tmpl){
 				b:3
 			});
 		},
+		events:{
+			click:{
+				changeHash:function(view){
+					S.use('magix/router',function(S,R){
+						R.navigateTo({
+							a:'1',
+							b:'2',
+							c:'3'
+						})
+					})
+				}
+			}
+		},
 		renderer:{
 			tester:{
 				list:function(){

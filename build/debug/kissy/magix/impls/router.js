@@ -120,7 +120,12 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 			}
 		},
 		navigateTo:function(url){
-			var np = Base.unParam(url);
+			var np;
+			if(Base.isPlainObject(url)){
+				np=url;
+			}else{
+				np = Base.unParam(url);
+			}
 			
             var v1 = S.clone(this.state.paraObj);
             delete v1.referrer;

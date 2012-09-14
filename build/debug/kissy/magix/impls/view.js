@@ -5,7 +5,17 @@ KISSY.add("magix/impls/view",function(S,MVC,T,ajax,VOM,Base){
 		iView.superclass.constructor.apply(this,arguments);
 		
 	};
-	var templates={};
+
+	var ex=function(props,staticProps){
+		var fn=function(){
+			fn.superclass.constructor.apply(this,arguments);
+		}
+		fn.extend=ex;
+		return S.extend(fn,this,props,staticProps);
+	};
+
+	iView.extend=ex;
+
 	S.extend(iView,MVC.View,{
 		initial:function(){
 			this.delegateEvents();

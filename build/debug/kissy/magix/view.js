@@ -417,7 +417,8 @@ Base.mix(View.prototype, {
     hashHasChanged:function(keys){
         var me=this,
             hashCache=me.$observeHashCache,
-            realCache=me.$realUsingCache;
+            realCache=me.$realUsingCache,
+            result;
         if(!keys)keys=me.$observeHashKeys;//如果未传递keys，则使用当初监控时的keys
         if(keys){
             if(hashCache){//表示调用过observeHash 

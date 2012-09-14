@@ -541,7 +541,12 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 			}
 		},
 		navigateTo:function(url){
-			var np = Base.unParam(url);
+			var np;
+			if(Base.isPlainObject(url)){
+				np=url;
+			}else{
+				np = Base.unParam(url);
+			}
 			
             var v1 = S.clone(this.state.paraObj);
             delete v1.referrer;
@@ -604,7 +609,17 @@ KISSY.add("magix/impls/view",function(S,MVC,T,ajax,VOM,Base){
 		iView.superclass.constructor.apply(this,arguments);
 		
 	};
-	var templates={};
+
+	var ex=function(props,staticProps){
+		var fn=function(){
+			fn.superclass.constructor.apply(this,arguments);
+		}
+		fn.extend=ex;
+		return S.extend(fn,this,props,staticProps);
+	};
+
+	iView.extend=ex;
+
 	S.extend(iView,MVC.View,{
 		initial:function(){
 			this.delegateEvents();
@@ -1541,7 +1556,18 @@ Base.mix(Vframe.prototype, {
 			this.view.destroy();
 			this.view.afterDestroy();
 			
-			document.getElementById(this.view.vcid).innerHTML = options.unmountPlaceholder||"";
+			var node=document.getElementById(this.view.vcid),
+				iframes=node.getElementsByTagName('iframe'),
+				iframe, parent;
+            while (iframes.length) {
+                iframe = iframes[0];
+                parent = iframe.parentNode;
+                iframe.src = ''; // 似乎是关键步骤
+                parent.removeChild(iframe);
+                parent.parentNode.removeChild(parent);
+                iframe = parent = null;
+            }
+			node.innerHTML = options.unmountPlaceholder||"";
 			delete options.unmountPlaceholder;
 			this.mounted = false;
 			this.view = null;
@@ -2042,7 +2068,8 @@ Base.mix(View.prototype, {
     hashHasChanged:function(keys){
         var me=this,
             hashCache=me.$observeHashCache,
-            realCache=me.$realUsingCache;
+            realCache=me.$realUsingCache,
+            result;
         if(!keys)keys=me.$observeHashKeys;//如果未传递keys，则使用当初监控时的keys
         if(keys){
             if(hashCache){//表示调用过observeHash 

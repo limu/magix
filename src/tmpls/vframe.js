@@ -155,7 +155,18 @@ Base.mix(Vframe.prototype, {
 			this.view.destroy();
 			this.view.afterDestroy();
 			console.log("VCELE UNMOUNT:4 chge vcelement.mounted to false @" + this.id);
-			document.getElementById(this.view.vcid).innerHTML = options.unmountPlaceholder||"";
+			var node=document.getElementById(this.view.vcid),
+				iframes=node.getElementsByTagName('iframe'),
+				iframe, parent;
+            while (iframes.length) {
+                iframe = iframes[0];
+                parent = iframe.parentNode;
+                iframe.src = ''; // 似乎是关键步骤
+                parent.removeChild(iframe);
+                parent.parentNode.removeChild(parent);
+                iframe = parent = null;
+            }
+			node.innerHTML = options.unmountPlaceholder||"";
 			delete options.unmountPlaceholder;
 			this.mounted = false;
 			this.view = null;
