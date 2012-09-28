@@ -29,6 +29,7 @@ Base.mix(Router, {
 		this.setStateListener();
 	},
 	goTo:function(url){
+		console.log(url);
 		location.hash='!'+url;
 	},
 	route : function(stateString) {
@@ -46,7 +47,6 @@ Base.mix(Router, {
 			if(this.rootViewName == this.oldRootViewName) {
 				this.changeQueryModel();
 			}else{
-
 				var vom=this.getVOMObject();
 				this.queryModel = this.createQueryModel();
 				this.queryModel.bind("change", function() {

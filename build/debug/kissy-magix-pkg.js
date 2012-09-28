@@ -1247,6 +1247,7 @@ KISSY.add("magix/router",function(S,impl,Base){
 		this.setStateListener();
 	},
 	goTo:function(url){
+		
 		location.hash='!'+url;
 	},
 	route : function(stateString) {
@@ -1264,7 +1265,6 @@ KISSY.add("magix/router",function(S,impl,Base){
 			if(this.rootViewName == this.oldRootViewName) {
 				this.changeQueryModel();
 			}else{
-
 				var vom=this.getVOMObject();
 				this.queryModel = this.createQueryModel();
 				this.queryModel.bind("change", function() {
@@ -1749,7 +1749,6 @@ Base.mix(View.prototype, {
         }catch(e){
             
         }
-        this.observeHash();
         if(this.__isStartMountSubs)res=false;//如果已经开始渲染子view则不再引发queryModelChange
         this._changeChain(res, model);
     },
@@ -2027,6 +2026,18 @@ Base.mix(View.prototype, {
     receiveMessage:function(e){
 
     },
+    hashChange:function(e){
+
+    },
+    _hashChange:function(qm){
+        var me=this;
+        if(!me.__isStartMountSubs){
+            if(me.hashHasChanged()){
+                me.hashChange(qm);
+                me.observeHash();
+            }
+        }
+    },
     _receiveMessage:function(e){
         var me=this;
         try{
@@ -2184,6 +2195,16 @@ KISSY.add("magix/vom",function(S,impl,Base){
 		var me=this;
 		if(me.root&&me.root.view){
 			me.root.view._queryModelChange(qm);
+		}
+		for(var p in me._idMap){
+			try{
+				var view=me._idMap[p].view;
+				if(view&&view.exist){
+					view._hashChange(qm);
+				}
+			}catch(e){
+				
+			}
 		}
 	},
 	mountRootView:function(viewName,queryModel){

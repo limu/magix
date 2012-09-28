@@ -98,7 +98,6 @@ Base.mix(View.prototype, {
         }catch(e){
             
         }
-        this.observeHash();
         if(this.__isStartMountSubs)res=false;//如果已经开始渲染子view则不再引发queryModelChange
         this._changeChain(res, model);
     },
@@ -375,6 +374,18 @@ Base.mix(View.prototype, {
     },
     receiveMessage:function(e){
 
+    },
+    hashChange:function(e){
+
+    },
+    _hashChange:function(qm){
+        var me=this;
+        if(!me.__isStartMountSubs){
+            if(me.hashHasChanged()){
+                me.hashChange(qm);
+                me.observeHash();
+            }
+        }
     },
     _receiveMessage:function(e){
         var me=this;

@@ -48,6 +48,16 @@ KISSY.add("magix/vom",function(S,impl,Base){
 		if(me.root&&me.root.view){
 			me.root.view._queryModelChange(qm);
 		}
+		for(var p in me._idMap){
+			try{
+				var view=me._idMap[p].view;
+				if(view&&view.exist){
+					view._hashChange(qm);
+				}
+			}catch(e){
+				
+			}
+		}
 	},
 	mountRootView:function(viewName,queryModel){
 		var me=this;

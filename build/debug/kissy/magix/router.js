@@ -32,6 +32,7 @@ KISSY.add("magix/router",function(S,impl,Base){
 		this.setStateListener();
 	},
 	goTo:function(url){
+		
 		location.hash='!'+url;
 	},
 	route : function(stateString) {
@@ -49,7 +50,6 @@ KISSY.add("magix/router",function(S,impl,Base){
 			if(this.rootViewName == this.oldRootViewName) {
 				this.changeQueryModel();
 			}else{
-
 				var vom=this.getVOMObject();
 				this.queryModel = this.createQueryModel();
 				this.queryModel.bind("change", function() {

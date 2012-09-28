@@ -864,7 +864,11 @@ KISSY.add('mvc/router', function(S, Event, Base) {
                 if (nativeHistory && supportNativeHistory) {
                     Event.on(win, 'popstate', dispatch);
                 } else {
-                    Event.on(win, "hashchange", dispatch);
+                    var idx=0;
+                    Event.on(win, "hashchange", function(){
+                        console.log(idx++,location.hash);
+                        dispatch();
+                    });
                     opts.triggerRoute = 1;
                 }
 

@@ -8,7 +8,7 @@ KISSY.add("app/views/home",function(S,MxView,Tmpl){
 		init:function(){
 			this.observeHash(["a","b","c"]);
 		},
-		queryModelChange:function(){
+		hashChange:function(){
 			console.log('changed');
 			console.log(this.hashHasChangedExcept('b'));
 			this.render();
@@ -29,7 +29,7 @@ KISSY.add("app/views/home",function(S,MxView,Tmpl){
 							a:'1',
 							b:'2',
 							c:'3'
-						})
+						});
 					})
 				}
 			}
