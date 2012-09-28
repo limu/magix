@@ -123,12 +123,6 @@ Base.mix(View.prototype, {
         
         this.destroy();
     },
-    beforeDestroy:function(){
-
-    },
-    afterDestroy:function(){
-
-    },
     destroy: function() {
         // var vcQueue, i;//, vom = this.getVOMObject();
         

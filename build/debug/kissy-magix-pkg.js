@@ -1550,11 +1550,9 @@ Base.mix(Vframe.prototype, {
 			
 			options=options||{};
 			this.destroySubFrames();
-			this.view.beforeDestroy();
 			this.view.trigger("unload",true);
 			this.view.trigger("beforeRebuild",true);
 			this.view.destroy();
-			this.view.afterDestroy();
 			
 			var node=document.getElementById(this.view.vcid),
 				iframes=node.getElementsByTagName('iframe'),
@@ -1773,12 +1771,6 @@ Base.mix(View.prototype, {
     destory: function() {
         
         this.destroy();
-    },
-    beforeDestroy:function(){
-
-    },
-    afterDestroy:function(){
-
     },
     destroy: function() {
         // var vcQueue, i;//, vom = this.getVOMObject();

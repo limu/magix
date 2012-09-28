@@ -152,11 +152,9 @@ Base.mix(Vframe.prototype, {
 			
 			options=options||{};
 			this.destroySubFrames();
-			this.view.beforeDestroy();
 			this.view.trigger("unload",true);
 			this.view.trigger("beforeRebuild",true);
 			this.view.destroy();
-			this.view.afterDestroy();
 			
 			var node=document.getElementById(this.view.vcid),
 				iframes=node.getElementsByTagName('iframe'),

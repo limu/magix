@@ -120,12 +120,6 @@ Base.mix(View.prototype, {
         console.warn("use destroy instead");
         this.destroy();
     },
-    beforeDestroy:function(){
-
-    },
-    afterDestroy:function(){
-
-    },
     destroy: function() {
         // var vcQueue, i;//, vom = this.getVOMObject();
         console.log("VIEW DESTORY:1.begin unmount view @" + this.modUri);

@@ -149,11 +149,9 @@ Base.mix(Vframe.prototype, {
 			console.log("VCELE UNMOUNT:3 unbind event delegation on vcelement @" + this.id);
 			options=options||{};
 			this.destroySubFrames();
-			this.view.beforeDestroy();
 			this.view.trigger("unload",true);
 			this.view.trigger("beforeRebuild",true);
 			this.view.destroy();
-			this.view.afterDestroy();
 			console.log("VCELE UNMOUNT:4 chge vcelement.mounted to false @" + this.id);
 			var node=document.getElementById(this.view.vcid),
 				iframes=node.getElementsByTagName('iframe'),
