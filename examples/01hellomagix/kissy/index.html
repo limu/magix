@@ -15,6 +15,10 @@
 		<script type="text/javascript" src="../../../src/kissy/magix/magix.js"></script>
 		<!--<script type="text/javascript" src="../../../build/debug/kissy-magix-pkg.js"></script>-->
 		<script type="text/javascript">
+			Magix.listenGlobal(function(e){
+				console.log(e);
+			});
+			Magix.setGlobal('abc','def');
 			Magix.init({
 				magixHome:"http://localhost/magix_git/src/kissy/magix/",
 				appHome:"http://localhost/magix_git/examples/01hellomagix/kissy/app/",

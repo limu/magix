@@ -10,6 +10,7 @@ KISSY.add("app/views/home",function(S,MxView,Tmpl){
 		},
 		hashChange:function(){
 			console.log('changed');
+			console.log(this.hashHasChanged('a'));
 			console.log(this.hashHasChangedExcept('b'));
 			this.render();
 		},

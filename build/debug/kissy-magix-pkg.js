@@ -685,6 +685,62 @@ Magix = {
 		this.setEnv();
 		this.bootstrap();
 	},
+	_fireGlobalListen:function(key,from,to){
+		var me=this,
+			list=me.$globalList;
+		if(list&&list.length){
+			for(var i=0;i<list.length;i++){
+				try{
+					list[i]({
+						key:key,
+						from:from,
+						to:to
+					});
+				}catch(e){
+
+				}
+			}
+		}
+	},
+	setGlobal:function(key,value){
+		var me=this;
+		if(!me.$global)me.$global={};
+		var old=me.$global[key];
+		me.$global[key]=value;
+		me._fireGlobalListen(key,old,value);
+	},
+	delGlobal:function(key){
+		var me=this;
+		if(me.$global){
+			var old=me.$global[key];
+			delete me.$global[key];
+			me._fireGlobalListen(key,old);
+		}
+	},
+	getGlobal:function(key){
+		var me=this;
+		if(me.$global){
+			return me.$global[key];
+		}
+		return null;
+	},
+	listenGlobal:function(fn){
+		var me=this;
+		if(!me.$globalList)me.$globalList=[];
+		me.$globalList.push(fn);
+	},
+	unlistenGlobal:function(fn){
+		var me=this,
+			list=me.$globalList;
+		if(list&&list.length){
+			for(var i=0;i<list.length;i++){
+				if(list[i]==fn){
+					list.splice(i,1);
+					break;
+				}
+			}
+		}
+	},
 	templates:{},//模板缓存，方便打包
 	setEnv : function() {
 		var me = this,
@@ -2056,7 +2112,9 @@ Base.mix(View.prototype, {
     observeHash:function(keys,_ignore){
         var me=this;
         if(keys){
-            if(!Base.isArray(keys)){
+            if(Base.isString(keys)){
+                keys=keys.split(',');
+            }else if(!Base.isArray(keys)){
                 keys=[keys];
             }
             me.$observeHashKeys=keys;//保存当前监控的hash key
@@ -2075,8 +2133,14 @@ Base.mix(View.prototype, {
             result;
         if(!keys)keys=me.$observeHashKeys;//如果未传递keys，则使用当初监控时的keys
         if(keys){
+            if(Base.isString(keys)){
+                keys=keys.split(',');
+            }else if(!Base.isArray(keys)){
+                keys=[keys];
+            }
             if(hashCache){//表示调用过observeHash 
                 result=false;
+                
                 for(var i=0,k,v;i<keys.length;i++){
                     k=keys[i];
                     if(!hashCache.hasOwnProperty(k)){
@@ -2110,7 +2174,11 @@ Base.mix(View.prototype, {
             me=this,
             obsKeys=me.$observeHashKeys;
         if(keys&&obsKeys){
-            if(!S.isArray(keys))keys=[keys];
+            if(Base.isString(keys)){
+                keys=keys.split(',');
+            }else if(!Base.isArray(keys)){
+                keys=[keys];
+            }
             for(var i=0;i<keys.length;i++){
                 tempObj[keys[i]]=1;
             }

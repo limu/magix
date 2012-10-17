@@ -407,7 +407,9 @@ Base.mix(View.prototype, {
     observeHash:function(keys,_ignore){
         var me=this;
         if(keys){
-            if(!Base.isArray(keys)){
+            if(Base.isString(keys)){
+                keys=keys.split(',');
+            }else if(!Base.isArray(keys)){
                 keys=[keys];
             }
             me.$observeHashKeys=keys;//保存当前监控的hash key
@@ -426,8 +428,14 @@ Base.mix(View.prototype, {
             result;
         if(!keys)keys=me.$observeHashKeys;//如果未传递keys，则使用当初监控时的keys
         if(keys){
+            if(Base.isString(keys)){
+                keys=keys.split(',');
+            }else if(!Base.isArray(keys)){
+                keys=[keys];
+            }
             if(hashCache){//表示调用过observeHash 
                 result=false;
+                
                 for(var i=0,k,v;i<keys.length;i++){
                     k=keys[i];
                     if(!hashCache.hasOwnProperty(k)){
@@ -461,7 +469,11 @@ Base.mix(View.prototype, {
             me=this,
             obsKeys=me.$observeHashKeys;
         if(keys&&obsKeys){
-            if(!S.isArray(keys))keys=[keys];
+            if(Base.isString(keys)){
+                keys=keys.split(',');
+            }else if(!Base.isArray(keys)){
+                keys=[keys];
+            }
             for(var i=0;i<keys.length;i++){
                 tempObj[keys[i]]=1;
             }
