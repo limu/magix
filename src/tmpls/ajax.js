@@ -1,3 +1,4 @@
+/*git*/
 Ajax = {
 	defaultOptions : { //默认ajax请求参数
 		dataType : 'html',
