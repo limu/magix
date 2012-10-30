@@ -447,7 +447,9 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 			var router = new MVC.Router();
 			router.addRoutes({
 				'*hash':function(s){
+					self.$busy=true;
 					S.log(s.hash);
+					self.$lastHash=s.hash;
 					self.route(s.hash);
 				}
 			});
@@ -541,14 +543,22 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 			}
 		},
 		navigateTo:function(url){
+			var me=this;
+			if(me.$busy){
+				me.idle(function(){
+					me.navigateTo(url);
+				});
+				return;
+			}
+			me.$busy=true;
+
 			var np;
 			if(Base.isPlainObject(url)){
 				np=url;
 			}else{
 				np = Base.unParam(url);
 			}
-			
-            var v1 = S.clone(this.state.paraObj);
+            var v1 = S.clone(me.state.paraObj);
             delete v1.referrer;
             delete v1.pathname;
             delete v1.query;
@@ -558,8 +568,14 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 				if(!v2[p])delete v2[p];
 			}
             var nps = Base.param(v2);
-            //var nps = this.param(_.extend(_.clone(this.paraObj),np));
-            this.goTo(this.state.pathName + "/" + nps);
+            //var nps = me.param(_.extend(_.clone(me.paraObj),np));
+            var newHash=me.state.pathName + "/" + nps;
+            if(me.$lastHash==newHash){
+            	delete me.$busy;
+            	me._runIdleList();
+            }else{
+	            me.goTo(newHash);
+	        }
 		}
 	};
 	return iRouter;
@@ -684,6 +700,91 @@ Magix = {
 		this.config = config||{};
 		this.setEnv();
 		this.bootstrap();
+	},
+	_fireGlobalListen:function(key,from,to){
+		var me=this,
+			list=me.$globalList;
+		if(list&&list.length){
+			for(var i=0;i<list.length;i++){
+				try{
+					list[i]({
+						key:key,
+						from:from,
+						to:to
+					});
+				}catch(e){
+
+				}
+			}
+		}
+	},
+	setGlobal:function(key,value){
+		var me=this;
+		if(!me.$global)me.$global={};
+		var old=me.$global[key];
+		me.$global[key]=value;
+		me._fireGlobalListen(key,old,value);
+	},
+	delGlobal:function(key){
+		var me=this;
+		if(me.$global){
+			var old=me.$global[key];
+			delete me.$global[key];
+			me._fireGlobalListen(key,old);
+		}
+	},
+	getGlobal:function(key){
+		var me=this;
+		if(me.$global){
+			return me.$global[key];
+		}
+		return null;
+	},
+	listenGlobal:function(fn){
+		var me=this;
+		if(!me.$globalList)me.$globalList=[];
+		me.$globalList.push(fn);
+	},
+	unlistenGlobal:function(fn){
+		var me=this,
+			list=me.$globalList;
+		if(list&&list.length){
+			for(var i=0;i<list.length;i++){
+				if(list[i]==fn){
+					list.splice(i,1);
+					break;
+				}
+			}
+		}
+	},
+	_fireHashchangeListen:function(hash){
+		var me=this,
+			list=me.$hashchangeList;
+		
+		if(list&&list.length){
+			for(var i=0;i<list.length;i++){
+				try{
+					list[i]();
+				}catch(e){
+
+				}
+			}
+		}
+	},
+	listenHashchange:function(fn){
+		var me=this;
+		if(!me.$hashchangeList)me.$hashchangeList=[];
+		me.$hashchangeList.push(fn);
+	},
+	unlistenHashchange:function(fn){
+		var me=this,
+			list=me.$hashchangeList;
+		for(var i=0;i<list.length;i++){
+			if(list[i]==fn){
+				list.splice(i,1);
+				break;
+			}
+		}
 	},
 	templates:{},//模板缓存，方便打包
 	setEnv : function() {
@@ -1275,6 +1376,8 @@ KISSY.add("magix/router",function(S,impl,Base){
 			}
 		}
 		this.postData = null; //todo re-think postData
+		delete this.$busy;
+		this._runIdleList();
 	},
 	_spreadLocator : function() {
 		var query = {};
@@ -1296,6 +1399,33 @@ KISSY.add("magix/router",function(S,impl,Base){
 			Base.mix(query, multipageQuery);
 		}
 		return query;
+	},
+	_runIdleList:function(){
+		
+		Magix._fireHashchangeListen();
+		var me=this,
+			list=me.$idleList;
+		if(list){
+			for(var i=0,j=list.length;i<j;i++){
+				me.idle(list[i]);
+				list.splice(i,1);
+				i--;
+				j--;
+			}
+		}
+	},
+	idle:function(fn){
+		var me=this;
+		if(me.$busy){
+			if(!me.$idleList)me.$idleList=[];
+			me.$idleList.push(fn);
+		}else{
+			try{
+				fn();
+			}catch(e){
+
+			}
+		}
 	}
 });
 
@@ -1586,6 +1716,7 @@ Base.mix(Vframe.prototype, {
         rc(root);
         
 		
+		
 		for(var i = queue.length - 1; i > 0; i--) {
             queue[i].removeNode();
         }
@@ -1600,10 +1731,10 @@ Base.mix(Vframe.prototype, {
 		var node = document.getElementById(this.id);
 		if(node) {
 			node.parentNode.removeChild(node);
-			if(this.linkid) {
-				node = document.getElementById(this.linkid);
-				node.parentNode.removeChild(node);
-			}
+			//if(this.linkid) {
+				//node = document.getElementById(this.linkid);
+				//node.parentNode.removeChild(node);
+			//}
 			node = null;
 		}
 		
@@ -1627,19 +1758,22 @@ Base.mix(Vframe.prototype, {
 		n.exist=false;
 	},
 	postMessage:function(data,from){
-		var me=this;
-		if(me.exist){
-			if(!data)data={};
-			data.from=from;
-			if(me.__viewLoaded){
-				me.view._receiveMessage(data);
-			}else{
-				me.unbind('viewLoaded');
-				me.bind('viewLoaded',function(){
+		var me=this,
+			router=me.getRouterObject();
+		router.idle(function(){
+			if(me.exist){
+				if(!data)data={};
+				data.from=from;
+				if(me.__viewLoaded){
 					me.view._receiveMessage(data);
-				});
+				}else{
+					me.unbind('viewLoaded');
+					me.bind('viewLoaded',function(){
+						me.view._receiveMessage(data);
+					});
+				}
 			}
-		}
+		});		
 	}
 });
 
@@ -1721,20 +1855,21 @@ Base.mix(View.prototype, {
                 }
             }, 0);
         }
-        if (!this.preventRender) {
-            this.getTemplate(function(data) {
-                self.template = data;
-                
-                setTimeout(function() { //等待init的完成
-                    if (self.exist) {
-                        var res=self.render();
-                        if(res!==false&&!self.__isStartMountSubs){
-                            self.trigger('rendered');
-                        }
-                        self.__rendered=true;
-                        self.trigger("renderComplete",true);
-                    }
-                }, 0);
+        var ready=function(){
+            setTimeout(function() { //等待init的完成
+                if (self.exist) {
+                    self.render();
+                    self.rendered=true;
+                    self.trigger("renderComplete",true);
+                }
+            }, 0);
+        };
+        if(this.preventLoaderTemplate){
+            ready();
+        }else{
+            this.getTemplate(function(tmpl){
+                self.template=tmpl;
+                ready();
             });
         }
     },
@@ -2033,7 +2168,7 @@ Base.mix(View.prototype, {
     _receiveMessage:function(e){
         var me=this;
         try{
-            if(me.exist&&me.__rendered){
+            if(me.exist&&me.rendered){
                 me.receiveMessage(e);
             }else{
                 me.unbind("renderComplete");
@@ -2051,12 +2186,14 @@ Base.mix(View.prototype, {
         for(var i=0;i<key.length;i++){
             var vframe=vom.get(key[i]);
             if(vframe)vframe.postMessage(data,this);
-        }        
+        }
     },
     observeHash:function(keys,_ignore){
         var me=this;
         if(keys){
-            if(!Base.isArray(keys)){
+            if(Base.isString(keys)){
+                keys=keys.split(',');
+            }else if(!Base.isArray(keys)){
                 keys=[keys];
             }
             me.$observeHashKeys=keys;//保存当前监控的hash key
@@ -2075,8 +2212,14 @@ Base.mix(View.prototype, {
             result;
         if(!keys)keys=me.$observeHashKeys;//如果未传递keys，则使用当初监控时的keys
         if(keys){
+            if(Base.isString(keys)){
+                keys=keys.split(',');
+            }else if(!Base.isArray(keys)){
+                keys=[keys];
+            }
             if(hashCache){//表示调用过observeHash 
                 result=false;
+                
                 for(var i=0,k,v;i<keys.length;i++){
                     k=keys[i];
                     if(!hashCache.hasOwnProperty(k)){
@@ -2110,7 +2253,11 @@ Base.mix(View.prototype, {
             me=this,
             obsKeys=me.$observeHashKeys;
         if(keys&&obsKeys){
-            if(!S.isArray(keys))keys=[keys];
+            if(Base.isString(keys)){
+                keys=keys.split(',');
+            }else if(!Base.isArray(keys)){
+                keys=[keys];
+            }
             for(var i=0;i<keys.length;i++){
                 tempObj[keys[i]]=1;
             }

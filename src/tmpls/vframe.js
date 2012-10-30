@@ -183,8 +183,9 @@ Base.mix(Vframe.prototype, {
         }
 
         rc(root);
-        console.log("VIEW DESTORY:2.depth traversal all vcelements @" + this.view.modUri);
+        console.log("VIEW DESTORY:2.depth traversal all vcelements @" + this.view);
 		
+		console.log(queue);
 		for(var i = queue.length - 1; i > 0; i--) {
             queue[i].removeNode();
         }
@@ -199,10 +200,10 @@ Base.mix(Vframe.prototype, {
 		var node = document.getElementById(this.id);
 		if(node) {
 			node.parentNode.removeChild(node);
-			if(this.linkid) {
-				node = document.getElementById(this.linkid);
-				node.parentNode.removeChild(node);
-			}
+			//if(this.linkid) {
+				//node = document.getElementById(this.linkid);
+				//node.parentNode.removeChild(node);
+			//}
 			node = null;
 		}
 		console.log("VCELE DESTORY:3 remove self(vcelement) from vom @" + this.id);
@@ -226,18 +227,21 @@ Base.mix(Vframe.prototype, {
 		n.exist=false;
 	},
 	postMessage:function(data,from){
-		var me=this;
-		if(me.exist){
-			if(!data)data={};
-			data.from=from;
-			if(me.__viewLoaded){
-				me.view._receiveMessage(data);
-			}else{
-				me.unbind('viewLoaded');
-				me.bind('viewLoaded',function(){
+		var me=this,
+			router=me.getRouterObject();
+		router.idle(function(){
+			if(me.exist){
+				if(!data)data={};
+				data.from=from;
+				if(me.__viewLoaded){
 					me.view._receiveMessage(data);
-				});
+				}else{
+					me.unbind('viewLoaded');
+					me.bind('viewLoaded',function(){
+						me.view._receiveMessage(data);
+					});
+				}
 			}
-		}
+		});		
 	}
 });

@@ -57,6 +57,8 @@ Base.mix(Router, {
 			}
 		}
 		this.postData = null; //todo re-think postData
+		delete this.$busy;
+		this._runIdleList();
 	},
 	_spreadLocator : function() {
 		var query = {};
@@ -78,5 +80,32 @@ Base.mix(Router, {
 			Base.mix(query, multipageQuery);
 		}
 		return query;
+	},
+	_runIdleList:function(){
+		console.log('_runIdleList');
+		Magix._fireHashchangeListen();
+		var me=this,
+			list=me.$idleList;
+		if(list){
+			for(var i=0,j=list.length;i<j;i++){
+				me.idle(list[i]);
+				list.splice(i,1);
+				i--;
+				j--;
+			}
+		}
+	},
+	idle:function(fn){
+		var me=this;
+		if(me.$busy){
+			if(!me.$idleList)me.$idleList=[];
+			me.$idleList.push(fn);
+		}else{
+			try{
+				fn();
+			}catch(e){
+
+			}
+		}
 	}
 });

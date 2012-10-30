@@ -26,7 +26,9 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 			var router = new MVC.Router();
 			router.addRoutes({
 				'*hash':function(s){
+					self.$busy=true;
 					S.log(s.hash);
+					self.$lastHash=s.hash;
 					self.route(s.hash);
 				}
 			});
@@ -120,14 +122,22 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 			}
 		},
 		navigateTo:function(url){
+			var me=this;
+			if(me.$busy){
+				me.idle(function(){
+					me.navigateTo(url);
+				});
+				return;
+			}
+			me.$busy=true;
+
 			var np;
 			if(Base.isPlainObject(url)){
 				np=url;
 			}else{
 				np = Base.unParam(url);
 			}
-			
-            var v1 = S.clone(this.state.paraObj);
+            var v1 = S.clone(me.state.paraObj);
             delete v1.referrer;
             delete v1.pathname;
             delete v1.query;
@@ -137,8 +147,14 @@ KISSY.add("magix/impls/router",function(S,Base,Model,VOM,MVC,appConfig){
 				if(!v2[p])delete v2[p];
 			}
             var nps = Base.param(v2);
-            //var nps = this.param(_.extend(_.clone(this.paraObj),np));
-            this.goTo(this.state.pathName + "/" + nps);
+            //var nps = me.param(_.extend(_.clone(me.paraObj),np));
+            var newHash=me.state.pathName + "/" + nps;
+            if(me.$lastHash==newHash){
+            	delete me.$busy;
+            	me._runIdleList();
+            }else{
+	            me.goTo(newHash);
+	        }
 		}
 	};
 	return iRouter;
