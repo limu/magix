@@ -1,8 +1,7 @@
-#
 .tmp_*
 .project
 *.bat
 *.idea
 .DS_Store
 test/
-magix.iml
+libs/
