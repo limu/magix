@@ -1,4 +1,17 @@
-﻿MagixJS是Backbone.js的扩展.适合用来构建大型的,面向前后端开发者以及IE6友好的,基于MVC结构和Hash驱动的OPOA(One Page One Application)应用.
+﻿## Magix 1.0升级简介
+
+1. 拆分出magix核心与magix扩展两大块
+2. 全新的Router解析引擎，全面支持history state和hash，支持二者之间平滑切换
+3. 增强的view，丰富的自定义事件和资源管理，DOM事件全面支持不冒泡的事件，在magix的扩展view中还加入了queryEvents，轻松应对复杂的业务场景
+4. 支持底层类库切换，解除对底层类库MVC的依赖
+5. 全新的代码组织方式，高内聚，低耦合，Router可单独使用
+6. 改进的渲染流程和事件派发
+
+
+
+
+
+MagixJS是Backbone.js的扩展.适合用来构建大型的,面向前后端开发者以及IE6友好的,基于MVC结构和Hash驱动的OPOA(One Page One Application)应用.
 
 <http://magixjs.github.com/>
 
