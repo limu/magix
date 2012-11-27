@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="generator" content="JsDoc Toolkit" />
+        
+        <title>VOM</title>
+        <style>
+            /*************************************************************************************
+ * Reset
+ *************************************************************************************/
+
+/** 清除内外边距 **/
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, /* structural elements 结构元素 */
+dl, dt, dd, ul, ol, li, /* list elements 列表元素 */
+pre, /* text formatting elements 文本格式元素 */
+form, fieldset, legend, button, input, textarea, /* form elements 表单元素 */
+th, td /* table elements 表格元素 */ {
+    margin: 0;
+    padding: 0;
+}
+
+/** 设置默认字体 **/
+body,
+button, input, select, textarea /* for ie */ {
+    font: 14px/1.5 Microsoft YaHei, tahoma, arial, \5b8b\4f53, sans-serif;
+}
+h1, h2, h3, h4, h5, h6 { font-size: 100%; }
+address, cite, dfn, em, var { font-style: normal; } /* 将斜体扶正 */
+code, kbd, pre, samp { font-family: courier new, courier, monospace; } /* 统一等宽字体 */
+small { font-size: 12px; } /* 小于 12px 的中文很难阅读，让 small 正常化 */
+
+/** 重置列表元素 **/
+ul, ol { list-style: none; }
+
+/** 重置文本格式元素 **/
+
+sup { vertical-align: text-top; } /* 重置，减少对行高的影响 */
+sub { vertical-align: text-bottom; }
+
+/** 重置表单元素 **/
+legend { color: #000; } /* for ie6 */
+fieldset, img { border: 0; } /* img 搭车：让链接里的 img 无边框 */
+button, input, select, textarea { font-size: 100%; } /* 使得表单元素在 ie 下能继承字体大小 */
+/* 注：optgroup 无法扶正 */
+
+/** 重置表格元素 **/
+table { border-collapse: collapse; border-spacing: 0; }
+
+/*************************************************************************************
+ * Layout
+ *************************************************************************************/
+
+/* 居中 */
+#content{
+    margin:0 10px;
+}
+
+/** 布局基础样式 **/
+.col-main {
+    float: left;
+    width: 100%;
+    /* bug fix: 主栏没有内容时，在 Firefox 和 Chrome 等浏览器下，布局不对 */
+    min-height: 1px;
+}
+.col-sub, .col-extra {
+    float: left;
+    /*position: relative;  按需设置，仅在需要时添加 */
+}
+
+/** 清除浮动 **/
+.layout:after, .main-wrap:after, .col-sub:after, .col-extra:after {
+    content: '\20';
+    display: block;
+    height: 0;
+    clear: both;
+}
+.layout, .main-wrap, .col-sub, .col-extra {
+    *zoom: 1;
+}
+
+/** 两栏布局 **/
+.layout .main-wrap { margin-left: 220px; }
+.layout .col-sub { width: 200px; margin-left: -100%; }
+
+/*************************************************************************************
+ * JSDoc
+ * gray:444, blue:06f, green:0c9, red:930
+ *************************************************************************************/
+
+/* reset for jsDoc */
+body{color:#444;}
+a{color: #06f;}
+h1,h2,h3{margin-bottom:10px;padding:8px 0;font:18px tahoma, "Microsoft YaHei", sans-serif;;}
+h1{font-size:28px;}
+dt{margin-bottom:5px;font-weight:bold;}
+dd{margin-bottom:10px;padding-left:30px;font-size:12px;}
+hr{margin:10px 0;height:0;overflow:hidden;border:none;border-top:1px dotted #ccc;}
+
+#header{margin:0 10px;border-bottom: 1px solid #a4d3f2;}
+.col-sub{border: 1px solid #a4d3f2;border-top:none;background:#f2f8fa;}
+#footer{margin-top:10px;padding:10px 10px 30px 10px;text-align:center;color:#666;border-top:1px solid #ddd;}
+
+.box{margin-bottom:10px;}
+.box-hd h3{margin-top:15px;font-size:18px;color:#404040;margin-bottom:0;}
+.box-bd{padding-left:20px;}
+
+.col-sub .box{margin:0 10px 10px 10px;}
+
+.class-title{color:#0c9;}
+.summary-box{color:#666;font-size:12px;}
+.param-list .name{color:#362e2b;}
+.code{margin-top:10px;padding:6px 10px;border-left:3px solid #0c9;background:#edfae5;}
+.attr,
+.desc{color:#666;font-size:14px;}
+.name{color:#930;}
+
+.detail-list li{padding-bottom:5px;margin-bottom:10px;border-bottom:1px dotted #ccc;}
+.detail-list li li{padding-bottom:0;margin-bottom:0;border-bottom:none;}
+.detail-list div.desc{margin-bottom:10px;}
+
+.detail-list li .view-source{display:none;_display:inline;}
+.detail-list li:hover .view-source{display:inline;font-size:14px;}
+
+.go-top{position:fixed;width:24px;height:24px;bottom:0;right:10px;line-height:24px;text-align:center;color:#fff;font-size:14px;font-weight:bold;background:#06f;
+    -moz-border-radius: 2px;
+    -khtml-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+a.go-top:hover,
+a.go-top:active{text-decoration:none;}
+
+
+#header, #content, #footer {
+    margin: 0 10px;
+}
+#footer {
+    border-top: 1px solid #DFDFDF;
+    margin: 20px 0 10px;
+    padding-top: 10px;
+    text-align: center;
+}
+#header {
+    height: 100px;
+}
+#header .logo {
+    border: medium none;
+    float: left;
+    margin: 20px 0 0;
+    padding: 0;
+}
+#header .sub-title {
+    color: #AAAAAA;
+    float: left;
+    font: 25px "Microsoft YaHei";
+    margin: 45px 5px 0;
+}
+#header .desc {
+    color: #80C269;
+    float: left;
+    font-family: "Microsoft YaHei";
+    font-size: 15px;
+    font-weight: bold;
+    margin-left: 5px;
+    margin-top: 55px;
+}
+#header .navigation {
+    float: right;
+    list-style: none outside none;
+    margin: 55px 0 0;
+    overflow: hidden;
+}
+#header .navigation li {
+    border-left: 1px solid #DDDDDD;
+    float: left;
+    line-height: 1em;
+    margin-left: -1px;
+    padding: 0 10px 0 25px;
+}
+a{
+    color:#00A0E9;
+    text-decoration: none;
+}
+a:link, a:visited {
+    color:#00A0E9;
+}
+a:hover {
+    color: #3366CC;
+    text-decoration: underline;
+}
+.class-list li{
+    margin-top:6px;
+}
+dl.data{
+    border-bottom: 1px dotted #CCCCCC;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+}
+dl.data  tt {
+    font-family: arial;
+}
+dl.data tt.descclassname, tt.descname {
+    color: #9F2A2A;
+}
+dl.data .dd{
+    color:#404040;
+}
+.type{
+    color:#888888;
+}
+.detail-list  dt{
+    color: #444444;
+    border-left: 3px solid #A4D3F2;
+    padding-left: 6px;
+}
+.detail-list  dl{
+    margin-left:15px;
+}
+.list{
+    line-height: 28px;
+}
+.member-data {
+    border-left: 3px solid #A4D3F2;
+    padding-left: 10px;
+    color:#404040;
+    margin-left:15px;
+    margin-bottom:10px;
+}
+.member-data span{
+    color: #444444;
+    font-weight: bold;
+}
+.constructor-box p{
+    line-height: 24px;
+}
+.static-list li{
+    border-bottom: 1px dashed #CCCCCC;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+        </style>
+    </head>
+
+    <body>
+        <div id="page">
+        
+            <div id="header">
+    <!--<h1 class="logo"><a alt="KISSY" href="http://kissyui.com/"><img src="http://docs.kissyui.com/docs/html/static/logo.png"/></a></h1>-->
+    <p class="sub-title"><a href="http://magixjs.github.com/docs/">Magix—API文档</a></p>
+    <ul class="navigation">
+        <li><a href="http://ux.etao.net/wiki/doku.php/circle:opoa:start">wiki</a></li>
+        <li><a href="https://github.com/limu/magix">源码</a></li>
+    </ul>
+</div>
+
+            <div id="content">
+                <div class="layout">
+                    <div class="col-main">
+                        <div class="main-wrap">
+                            
+                            <!-- contructor START -->
+                            <div class="box constructor-box">
+                                <div class="box-hd">
+                                    
+                                    <h3><b class="name"><a href="../symbols/VOM.html#constructor">VOM</a></b>
+                                        
+                                        
+                                        
+                                        <span class="desc">VOM对象</span>
+                                    </h3>
+                                    
+                                </div>
+                                <div class="box-bd">
+                                    
+
+                                    
+
+                                    
+
+                                    
+
+                                    
+                                        <p>源码：
+                                            <a href="../symbols/src/D__wamp_www_magix_1.0_build_debug__magix_kissy_magix_vom.js.html">vom.js</a></p>
+
+                                    
+
+                                    
+                                </div>
+                            </div>
+                            <!-- constructor END -->
+                            
+                            <!-- properties START -->
+                            
+                                
+                                
+                                <div class="box properties-box">
+                                    <div class="box-hd">
+                                        <h3>Properties</h3>
+                                    </div>
+                                    <div class="box-bd">
+                                        <ul class="list summary-list">
+                                            
+                                                
+                                            
+                                                
+                                            
+                                                
+                                            
+                                        </ul>
+                                        
+                                    </div>
+                                </div>
+                                                    
+                            
+                            
+                                
+                                
+                                    <div class="box properties-box">
+                                        <div class="box-hd">
+                                            <h3>Static Properties</h3>
+                                        </div>
+                                        <div class="box-bd">
+                                            <ul class="static-list">
+                                            
+                                                
+                                                    <li class="li">
+                                                        VOM.<b class="name"><a href="../symbols/VOM.html#.rootVframe">rootVframe</a></b>
+                                                        
+                                                        <span class="desc">根vframe对象</span>
+                                                    </li>
+
+                                                
+
+                                            
+                                                
+                                                    <li class="li">
+                                                        VOM.<b class="name"><a href="../symbols/VOM.html#.rootVframeId">rootVframeId</a></b>
+                                                        
+                                                        <span class="desc">根vframe的id</span>
+                                                    </li>
+
+                                                
+
+                                            
+                                                
+                                                    <li class="li">
+                                                        VOM.<b class="name"><a href="../symbols/VOM.html#.vframes">vframes</a></b>
+                                                        
+                                                        <span class="desc">注册的vframes集合</span>
+                                                    </li>
+
+                                                
+
+                                            
+                                            </ul>
+                                        </div>
+                                     </div>
+                                
+                            
+                            <!-- properties END -->
+                            
+                            <!-- methods START -->
+                            
+                                
+                                
+                                <div class="box methods-box">
+                                    <div class="box-hd">
+                                        <h3>Methods</h3>
+                                    </div>
+                                    <div class="box-bd">
+                                        <ul class="list summary-list">
+                                            
+                                            <li class="li">                                                
+                                                VOM.
+                                                <b class="name"><a href="../symbols/VOM.html#.buildRootVframe">buildRootVframe</a></b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">构建根vframe对象</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                VOM.
+                                                <b class="name"><a href="../symbols/VOM.html#.getVframe">getVframe</a></b>
+                                                <span class="param">(id)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">根据vframe的id获取vframe对象</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                VOM.
+                                                <b class="name"><a href="../symbols/VOM.html#.idle">idle</a></b>
+                                                <span class="param">(fn, args, context)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">当VOM处于闲置状态时回调传入的fn，当VOM忙碌时则把fn添加到等待队列</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                VOM.
+                                                <b class="name"><a href="../symbols/VOM.html#.notifyLocationChange">notifyLocationChange</a></b>
+                                                <span class="param">(e)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">向vframe通知地址栏发生变化</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                VOM.
+                                                <b class="name"><a href="../symbols/VOM.html#.registerVframe">registerVframe</a></b>
+                                                <span class="param">(vf)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">注册vframe对象</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                VOM.
+                                                <b class="name"><a href="../symbols/VOM.html#.remountRootVframe">remountRootVframe</a></b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">重新渲染根vframe</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                VOM.
+                                                <b class="name"><a href="../symbols/VOM.html#.resume">resume</a></b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">恢复挂起的VOM</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                VOM.
+                                                <b class="name"><a href="../symbols/VOM.html#.suspend">suspend</a></b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">挂起VOM，等待外部的操作完成</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                VOM.
+                                                <b class="name"><a href="../symbols/VOM.html#.unregisterVframe">unregisterVframe</a></b>
+                                                <span class="param">(vf)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">删除已注册的vframe对象</span>                                                
+                                            </li>
+                                            
+                                        </ul>
+                                        
+                                    </div>
+                                </div>
+                                
+                            
+                            <!-- methods END -->
+                            
+                            <!-- events START -->
+                            
+                            <!-- events END -->
+
+                            <!-- constructor details START-->
+                            
+                            <div class="detail-box">
+                                <a name="constructor"></a>
+                                <div class="box-hd">
+                                    <h3>Namespace Detail</h3>
+                                </div>
+                                <div class="box-bd">
+                                    <ul class="list detail-list">
+                                        <li class="li">
+                                            <div class="title">
+                                                <b class="name">VOM</b>
+                                                
+                                            </div>
+                                            
+                                            <div class="desc"></div>
+                                            
+                                            <dl>                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+
+                                                
+                                                
+
+                                                
+                                                
+                                                
+                                                
+                                            </dl>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- constructor details START-->
+
+                            <!-- properties details START -->
+			
+				<h3>
+					Property Detail
+				</h3>
+				
+					<a name=".rootVframe"> </a>
+					<div class="fixedFont">
+
+					
+					<span class="light">VOM.</span><b class="name">rootVframe</b>
+                     &lt;static&gt; 
+					</div>
+					<div class="desc">
+						根vframe对象
+						
+						
+					</div>
+
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".rootVframeId"> </a>
+					<div class="fixedFont">
+
+					
+					<span class="light">VOM.</span><b class="name">rootVframeId</b>
+                     &lt;static&gt; 
+					</div>
+					<div class="desc">
+						根vframe的id
+						
+						
+					</div>
+
+					
+
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Default Value:</dt>
+							<dd>
+								magix_vf_root
+							</dd>
+							</dl>
+						
+
+					<hr />
+				
+					<a name=".vframes"> </a>
+					<div class="fixedFont">
+
+					
+					<span class="light">VOM.</span><b class="name">vframes</b>
+                     &lt;static&gt; 
+					</div>
+					<div class="desc">
+						注册的vframes集合
+						
+						
+					</div>
+
+					
+
+						
+						
+						
+						
+
+					
+				
+			
+                            <!-- properties detail END -->
+
+                            <!-- methods detail START -->
+                            
+                            <div class="box">
+                                <div class="box-hd">
+                                    <h3>Methods Detail</h3>
+                                </div>
+                                <div class="box-bd">
+                                    <ul class="list detail-list">
+                                        
+                                        <li class="li">
+                                            <a name=".buildRootVframe"> </a>
+                                            <div class="title" >
+                                                <span>VOM.</span>
+                                                <b class="name">buildRootVframe</b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                构建根vframe对象
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".getVframe"> </a>
+                                            <div class="title" >
+                                                <span>VOM.</span>
+                                                <b class="name">getVframe</b>
+                                                <span class="param">(id)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                根据vframe的id获取vframe对象
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">id</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">vframe的id</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    
+                                                        <li class="li">
+                                                            <span class="type">{<a href="../symbols/Vframe.html">Vframe</a>}</span> 
+                                                            <span>vframe对象</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".idle"> </a>
+                                            <div class="title" >
+                                                <span>VOM.</span>
+                                                <b class="name">idle</b>
+                                                <span class="param">(fn, args, context)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                当VOM处于闲置状态时回调传入的fn，当VOM忙碌时则把fn添加到等待队列
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">fn</b>
+                                                            
+                                                            
+                                                            <span class="type">{Function}</span> 
+                                                            <span class="desc">闲置时的回调函数</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            [ 
+                                                            <b class="name">args</b>
+                                                            
+                                                             ]
+                                                            <span class="type">{Array}</span> 
+                                                            <span class="desc">参数</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            [ 
+                                                            <b class="name">context</b>
+                                                            
+                                                             ]
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">fn内this指向</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".notifyLocationChange"> </a>
+                                            <div class="title" >
+                                                <span>VOM.</span>
+                                                <b class="name">notifyLocationChange</b>
+                                                <span class="param">(e)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                向vframe通知地址栏发生变化
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">e</b>
+                                                            
+                                                            
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">事件对象</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">e.location</b>
+                                                            
+                                                            
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">window.location.href解析出来的对象</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">e.changed</b>
+                                                            
+                                                            
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">包含有哪些变化的对象</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".registerVframe"> </a>
+                                            <div class="title" >
+                                                <span>VOM.</span>
+                                                <b class="name">registerVframe</b>
+                                                <span class="param">(vf)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                注册vframe对象
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">vf</b>
+                                                            
+                                                            
+                                                            <span class="type">{<a href="../symbols/Vframe.html">Vframe</a>}</span> 
+                                                            <span class="desc">Vframe对象</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".remountRootVframe"> </a>
+                                            <div class="title" >
+                                                <span>VOM.</span>
+                                                <b class="name">remountRootVframe</b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                重新渲染根vframe
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">e.location</b>
+                                                            
+                                                            
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">window.location.href解析出来的对象</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">e.changed</b>
+                                                            
+                                                            
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">包含有哪些变化的对象</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".resume"> </a>
+                                            <div class="title" >
+                                                <span>VOM.</span>
+                                                <b class="name">resume</b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                恢复挂起的VOM
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".suspend"> </a>
+                                            <div class="title" >
+                                                <span>VOM.</span>
+                                                <b class="name">suspend</b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                挂起VOM，等待外部的操作完成
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".unregisterVframe"> </a>
+                                            <div class="title" >
+                                                <span>VOM.</span>
+                                                <b class="name">unregisterVframe</b>
+                                                <span class="param">(vf)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                删除已注册的vframe对象
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">vf</b>
+                                                            
+                                                            
+                                                            <span class="type">{<a href="../symbols/Vframe.html">Vframe</a>|String}</span> 
+                                                            <span class="desc">vframe对象或对象的id</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- methods detail END -->
+
+                            <!-- events detail START -->
+                            
+                            <!-- events detail START -->
+
+                        </div>
+                    </div>
+                    <div class="col-sub">
+                        <div class="box">
+    <div class="box-hd">
+        <h3>Magix(核心)</h3>
+    </div>
+    <div class="box-bd">
+        <ul class="list class-list">
+            <li><a href="../symbols/Magix.html">Magix</a></li>
+            <li><a href="../symbols/Router.html">Router</a></li>
+            <li><a href="../symbols/Event.html">Event</a></li>
+            <li><a href="../symbols/Vframe.html">Vframe</a></li>
+            <li><a href="../symbols/View.html">View</a></li>
+            <li><a href="../symbols/VOM.html">VOM</a></li>
+        </ul>
+    </div>
+    <div class="box-hd">
+        <h3>Mxext(扩展)</h3>
+    </div>
+    <div class="box-bd">
+        <ul class="list class-list">
+            <li><a href="../symbols/Model.html">Model</a></li>
+            <li><a href="../symbols/Tmpl.html">Tmpl</a></li>
+            <li><a href="../symbols/MxView.html">MxView</a></li>
+            <li><a href="../symbols/Mustache.html">Mustache</a></li>
+            <li><a href="../symbols/Mu.html">Mu</a></li>
+            <li><a href="../symbols/ModelFactory.html">ModelFactory</a></li>
+            <li><a href="../symbols/VfAnim.html">VfAnim</a></li>
+        </ul>
+    </div>
+</div>
+                    </div>
+                </div>
+            </div>
+            <div id="footer">
+    <div>
+        Copyright 2012-2012 , <a href="https://github.com/etaoux/" target="_blank">EtaoUX Team</a>
+    </div>
+</div>
+<a class="go-top" href="#page">Top</a>
+        </div>
+<link href='http://www.36ria.com/demo/gal/gallery/form/1.0/demo/form/uploader/assets/syntaxhighlighter_3.0.83/sh.css' rel='stylesheet' type='text/css' />
+<script type="text/javascript" src="http://www.36ria.com/demo/gal/gallery/form/1.0/demo/form/uploader/assets/syntaxhighlighter_3.0.83/sh.js"></script>
+<script type="text/javascript">SyntaxHighlighter.all();</script>
+    </body>
+</html>

@@ -4,4 +4,5 @@
 *.bat
 *.idea
 .DS_Store
+test/
 magix.iml

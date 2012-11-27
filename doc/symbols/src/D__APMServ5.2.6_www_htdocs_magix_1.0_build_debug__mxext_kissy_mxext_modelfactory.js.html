@@ -1,0 +1,401 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * @fileOverview model管理工厂，可方便的对Model进行缓存和更新
+<span class='line'>  3</span>  * @author 行列
+<span class='line'>  4</span>  * @version 1.0
+<span class='line'>  5</span>  **/</span><span class="WHIT">
+<span class='line'>  6</span> </span><span class="NAME">KISSY.add</span><span class="PUNC">(</span><span class="STRN">"mxext/modelfactory"</span><span class="PUNC">,</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">S</span><span class="PUNC">,</span><span class="NAME">Magix</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="WHIT">	</span><span class="COMM">/**
+<span class='line'>  8</span> 	 * 工厂类，可方便的对Model进行缓存和更新
+<span class='line'>  9</span> 	 * @name ModelFactory
+<span class='line'> 10</span> 	 * @class
+<span class='line'> 11</span> 	 * @namespace
+<span class='line'> 12</span> 	 * @param {Model} modelClass Model类
+<span class='line'> 13</span> 	 */</span><span class="WHIT">
+<span class='line'> 14</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Factory</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">modelClass</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="WHIT">		</span><span class="NAME">me.$modelClass</span><span class="PUNC">=</span><span class="NAME">modelClass</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">WrapRequest</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">request._wraped_</span><span class="PUNC">)</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">request</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">req</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bakSucc</span><span class="PUNC">=</span><span class="NAME">ops.success</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">model</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 23</span> </span><span class="WHIT">			</span><span class="NAME">ops.success</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="WHIT">				</span><span class="WHIT">
+<span class='line'> 25</span> </span><span class="WHIT">				</span><span class="NAME">model.set</span><span class="PUNC">(</span><span class="STRN">'updateIdent'</span><span class="PUNC">,</span><span class="KEYW">false</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">model._after</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="WHIT">					</span><span class="NAME">Magix.safeExec</span><span class="PUNC">(</span><span class="NAME">model._after</span><span class="PUNC">,</span><span class="NAME">model</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="WHIT">				</span><span class="NAME">bakSucc.apply</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">,</span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 30</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="WHIT">			</span><span class="NAME">request.call</span><span class="PUNC">(</span><span class="NAME">model</span><span class="PUNC">,</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 32</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 33</span> </span><span class="WHIT">		</span><span class="NAME">req._wraped_</span><span class="PUNC">=</span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 34</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">req</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">	</span><span class="NAME">Magix.mix</span><span class="PUNC">(</span><span class="NAME">Factory</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'> 38</span> 		 * @lends ModelFactory
+<span class='line'> 39</span> 		 */</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'> 41</span> 		 * Model类缓存对象
+<span class='line'> 42</span> 		 * @type {Object}
+<span class='line'> 43</span> 		 */</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">		</span><span class="NAME">mClsCache</span><span class="PUNC">:</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'> 46</span> 		 * 创建Model类工厂对象
+<span class='line'> 47</span> 		 * @param {String} key        标识key
+<span class='line'> 48</span> 		 * @param {Model} modelClass Model类
+<span class='line'> 49</span> 		 */</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">		</span><span class="NAME">create</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">,</span><span class="NAME">modelClass</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">modelClass</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">				</span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Error</span><span class="PUNC">(</span><span class="STRN">'Factory.create modelClass ungiven'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">cache</span><span class="PUNC">=</span><span class="NAME">me.mClsCache</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">key</span><span class="PUNC">)</span><span class="NAME">key</span><span class="PUNC">=</span><span class="NAME">S.guid</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">cache</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="WHIT">				</span><span class="NAME">cache</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Factory</span><span class="PUNC">(</span><span class="NAME">modelClass</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">cache</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">FetchFlags</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">		</span><span class="NAME">ALL</span><span class="PUNC">:</span><span class="NUMB">1</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">		</span><span class="NAME">ANY</span><span class="PUNC">:</span><span class="NUMB">2</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="WHIT">		</span><span class="NAME">ONE</span><span class="PUNC">:</span><span class="NUMB">4</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">	</span><span class="NAME">Magix.mix</span><span class="PUNC">(</span><span class="NAME">Factory.prototype</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'> 70</span> 		 * @lends ModelFactory#
+<span class='line'> 71</span> 		 */</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'> 73</span> 		 * 注册APP中用到的model
+<span class='line'> 74</span> 		 * @param {Object|Array} models 模块描述信息
+<span class='line'> 75</span> 		 * @param {String} models.type app中model的唯一标识
+<span class='line'> 76</span> 		 * @param {Object} models.ops 传递的参数信息，如{uri:'test',isJSONP:true,updateIdent:true}
+<span class='line'> 77</span> 		 * @param {Object} models.gets 发起请求时，默认的get参数对象
+<span class='line'> 78</span> 		 * @param {Object} models.posts 发起请求时，默认的post参数对象
+<span class='line'> 79</span> 		 * @param {Function} models.before model在发起请求前的回调
+<span class='line'> 80</span> 		 * @param {Function} models.after model在发起请求，并且通过Model.sync调用success后的回调
+<span class='line'> 81</span> 		 * @example
+<span class='line'> 82</span> 		 * KISSY.add("app/base/mfactory",function(S,MFctory,Model){
+<span class='line'> 83</span> 				var MF=MFctory.create('test/mf',Model);
+<span class='line'> 84</span> 				MF.registerModels([
+<span class='line'> 85</span> 					{
+<span class='line'> 86</span> 						type:'Home_List',
+<span class='line'> 87</span> 						ops:{
+<span class='line'> 88</span> 							uri:'test'
+<span class='line'> 89</span> 						},
+<span class='line'> 90</span> 						gets:{
+<span class='line'> 91</span> 							a:'12'
+<span class='line'> 92</span> 						},
+<span class='line'> 93</span> 						before:function(m){
+<span class='line'> 94</span> 							
+<span class='line'> 95</span> 						},
+<span class='line'> 96</span> 						after:function(m){
+<span class='line'> 97</span> 							
+<span class='line'> 98</span> 						}
+<span class='line'> 99</span> 					},
+<span class='line'>100</span> 					{
+<span class='line'>101</span> 						type:'Home_List1',
+<span class='line'>102</span> 						ops:{
+<span class='line'>103</span> 							uri:'test'
+<span class='line'>104</span> 						},
+<span class='line'>105</span> 						before:function(m){
+<span class='line'>106</span> 							
+<span class='line'>107</span> 						},
+<span class='line'>108</span> 						after:function(m){
+<span class='line'>109</span> 							
+<span class='line'>110</span> 						}
+<span class='line'>111</span> 					}
+<span class='line'>112</span> 				]);
+<span class='line'>113</span> 				return MF;
+<span class='line'>114</span> 			},{
+<span class='line'>115</span> 				requires:["mxext/modelfactory","app/base/model"]
+<span class='line'>116</span> 			});
+<span class='line'>117</span> 
+<span class='line'>118</span> 			//使用
+<span class='line'>119</span> 
+<span class='line'>120</span> 			KISSY.use('app/base/mfactory',function(S,MF){
+<span class='line'>121</span> 				MF.fetchAll([{
+<span class='line'>122</span> 					type:MF.Home_List,cacheKey:'aaa',gets:{e:'f'},
+<span class='line'>123</span> 					type:MF.Home_List1,gets:{a:'b'}
+<span class='line'>124</span> 				}],function(m1,m2){
+<span class='line'>125</span> 	
+<span class='line'>126</span> 				},function(msg){
+<span class='line'>127</span> 	
+<span class='line'>128</span> 				});
+<span class='line'>129</span> 			});
+<span class='line'>130</span> 		 */</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="WHIT">		</span><span class="NAME">registerModels</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">models</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="WHIT">			</span><span class="COMM">/*
+<span class='line'>133</span> 				type:'',
+<span class='line'>134</span> 				ops:{
+<span class='line'>135</span> 					uri:'',
+<span class='line'>136</span> 					isJSONP:'',
+<span class='line'>137</span> 					updateIdent:false
+<span class='line'>138</span> 				},
+<span class='line'>139</span> 				gets:'',
+<span class='line'>140</span> 				posts:'',
+<span class='line'>141</span> 				before:function(m){
+<span class='line'>142</span> 	
+<span class='line'>143</span> 				},
+<span class='line'>144</span> 				after:function(m){
+<span class='line'>145</span> 					
+<span class='line'>146</span> 				}
+<span class='line'>147</span> 			 */</span><span class="WHIT">
+<span class='line'>148</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">Magix.isArray</span><span class="PUNC">(</span><span class="NAME">models</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="WHIT">				</span><span class="NAME">models</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="NAME">models</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>151</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>152</span> </span><span class="WHIT">			</span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="NAME">model</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">models.length</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>153</span> </span><span class="WHIT">				</span><span class="NAME">model</span><span class="PUNC">=</span><span class="NAME">models</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>154</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">model.type</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>155</span> </span><span class="WHIT">					</span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Error</span><span class="PUNC">(</span><span class="STRN">'model must own a type attribute'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>156</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>157</span> </span><span class="WHIT">				</span><span class="NAME">me</span><span class="PUNC">[</span><span class="NAME">model.type</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">model</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>158</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>159</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>160</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>161</span> 		 * 获取models，该用缓存的用缓存，该发起请求的请求
+<span class='line'>162</span> 		 * @see ModelFactory#registerModels
+<span class='line'>163</span> 		 * @param {Object|Array} models 获取models时的描述信息，如:{type:F.Home,cacheKey:'key',gets:{a:'12'},posts:{b:2}}
+<span class='line'>164</span> 		 * @param {Function} succ   成功时的回调
+<span class='line'>165</span> 		 * @param {Function} fail   失败时的回调
+<span class='line'>166</span> 		 * @param {Integer} flag   获取哪种类型的models
+<span class='line'>167</span> 		 * @return {Object} 返回一个带abort方法的对象，用于取消所有请求的model
+<span class='line'>168</span> 		 */</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="WHIT">		</span><span class="NAME">fetchModels</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">models</span><span class="PUNC">,</span><span class="NAME">succ</span><span class="PUNC">,</span><span class="NAME">fail</span><span class="PUNC">,</span><span class="NAME">flag</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>170</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$modelsCache</span><span class="PUNC">)</span><span class="NAME">me.$modelsCache</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$modelsCacheKeys</span><span class="PUNC">)</span><span class="NAME">me.$modelsCacheKeys</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">modelsCache</span><span class="PUNC">=</span><span class="NAME">me.$modelsCache</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">modelsCacheKeys</span><span class="PUNC">=</span><span class="NAME">me.$modelsCacheKeys</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>175</span> 
+<span class='line'>176</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">Magix.isArray</span><span class="PUNC">(</span><span class="NAME">models</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="WHIT">				</span><span class="NAME">models</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="NAME">models</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>179</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">total</span><span class="PUNC">=</span><span class="NAME">models.length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>180</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">current</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>181</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">failMsg</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>182</span> 
+<span class='line'>183</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">doneArr</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>184</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">abortArr</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>185</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">hasOneSuccess</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>186</span> 
+<span class='line'>187</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">doneFn</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">idx</span><span class="PUNC">,</span><span class="NAME">isFail</span><span class="PUNC">,</span><span class="NAME">model</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>188</span> </span><span class="WHIT">				</span><span class="NAME">current</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">isFail</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>190</span> </span><span class="WHIT">					</span><span class="NAME">failMsg</span><span class="PUNC">=</span><span class="NAME">args</span><span class="PUNC">||</span><span class="STRN">'fetch data error'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>191</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>192</span> </span><span class="WHIT">					</span><span class="NAME">hasOneSuccess</span><span class="PUNC">=</span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>193</span> </span><span class="WHIT">					</span><span class="NAME">model.set</span><span class="PUNC">(</span><span class="STRN">'updateIdent'</span><span class="PUNC">,</span><span class="KEYW">false</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="COMM">//成功后标识model不需要更新，防止需要缓存的model下次使用时发起请求</span><span class="WHIT">
+<span class='line'>194</span> </span><span class="WHIT">					</span><span class="NAME">doneArr</span><span class="PUNC">[</span><span class="NAME">idx</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">model</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>195</span> </span><span class="WHIT">					</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">model._cacheKey</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//需要缓存</span><span class="WHIT">
+<span class='line'>196</span> </span><span class="WHIT">						</span><span class="NAME">modelsCache</span><span class="PUNC">[</span><span class="NAME">model._cacheKey</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">model</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>197</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>198</span> </span><span class="WHIT">					</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">model._after</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//有after</span><span class="WHIT">
+<span class='line'>199</span> </span><span class="WHIT">						</span><span class="NAME">Magix.safeExec</span><span class="PUNC">(</span><span class="NAME">model._after</span><span class="PUNC">,</span><span class="NAME">model</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>200</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>201</span> </span><span class="WHIT">					</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">flag</span><span class="PUNC">==</span><span class="NAME">FetchFlags.ONE</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//如果是其中一个成功，则每次成功回调一次</span><span class="WHIT">
+<span class='line'>202</span> </span><span class="WHIT">						</span><span class="NAME">succ</span><span class="PUNC">(</span><span class="NAME">model</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="WHIT">				</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">cacheKey</span><span class="PUNC">=</span><span class="NAME">model._cacheKey</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>206</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">&&</span><span class="NAME">Magix.hasProp</span><span class="PUNC">(</span><span class="NAME">modelsCacheKeys</span><span class="PUNC">,</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">fns</span><span class="PUNC">=</span><span class="NAME">modelsCacheKeys</span><span class="PUNC">[</span><span class="NAME">cacheKey</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>208</span> </span><span class="WHIT">					</span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">modelsCacheKeys</span><span class="PUNC">[</span><span class="NAME">cacheKey</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>209</span> </span><span class="WHIT">					</span><span class="COMM">//</span><span class="WHIT">
+<span class='line'>210</span> </span><span class="WHIT">					</span><span class="NAME">Magix.safeExec</span><span class="PUNC">(</span><span class="NAME">fns</span><span class="PUNC">,</span><span class="PUNC">[</span><span class="NAME">isFail</span><span class="PUNC">,</span><span class="NAME">model</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="NAME">model</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>211</span> </span><span class="WHIT">					</span><span class="COMM">//</span><span class="WHIT">
+<span class='line'>212</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">flag</span><span class="PUNC">!=</span><span class="NAME">FetchFlags.ONE</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>214</span> </span><span class="WHIT">					</span><span class="COMM">//</span><span class="WHIT">
+<span class='line'>215</span> </span><span class="WHIT">					</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">current</span><span class="PUNC">>=</span><span class="NAME">total</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>216</span> </span><span class="WHIT">						</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">flag</span><span class="PUNC">==</span><span class="NAME">FetchFlags.ANY</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//任意一个成功</span><span class="WHIT">
+<span class='line'>217</span> </span><span class="WHIT">							</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">hasOneSuccess</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>218</span> </span><span class="WHIT">								</span><span class="NAME">succ.apply</span><span class="PUNC">(</span><span class="NAME">me</span><span class="PUNC">,</span><span class="NAME">doneArr</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>219</span> </span><span class="WHIT">							</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>220</span> </span><span class="WHIT">								</span><span class="NAME">fail</span><span class="PUNC">(</span><span class="NAME">failMsg</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>221</span> </span><span class="WHIT">							</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>222</span> </span><span class="WHIT">						</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="COMM">//所有的都要成功</span><span class="WHIT">
+<span class='line'>223</span> </span><span class="WHIT">							</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">failMsg</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>224</span> </span><span class="WHIT">								</span><span class="NAME">succ.apply</span><span class="PUNC">(</span><span class="NAME">me</span><span class="PUNC">,</span><span class="NAME">doneArr</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>225</span> </span><span class="WHIT">							</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>226</span> </span><span class="WHIT">								</span><span class="NAME">fail</span><span class="PUNC">(</span><span class="NAME">failMsg</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>227</span> </span><span class="WHIT">							</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>228</span> </span><span class="WHIT">						</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>229</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>230</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>231</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>232</span> </span><span class="WHIT">			</span><span class="COMM">//</span><span class="WHIT">
+<span class='line'>233</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Slice</span><span class="PUNC">=</span><span class="NAME">Array.prototype.slice</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>234</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">wrapDone</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">,</span><span class="NAME">context</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>235</span> </span><span class="WHIT">				</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">a</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Slice.call</span><span class="PUNC">(</span><span class="NAME">arguments</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">2</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>236</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>237</span> </span><span class="WHIT">					</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">fn.apply</span><span class="PUNC">(</span><span class="NAME">context</span><span class="PUNC">,</span><span class="NAME">a.concat</span><span class="PUNC">(</span><span class="NAME">Slice.call</span><span class="PUNC">(</span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>238</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="WHIT">			</span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="NAME">model</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">models.length</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="WHIT">				</span><span class="NAME">model</span><span class="PUNC">=</span><span class="NAME">models</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>242</span> 
+<span class='line'>243</span> </span><span class="WHIT">				</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">cacheKey</span><span class="PUNC">=</span><span class="NAME">model.cacheKey</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>244</span> </span><span class="WHIT">				</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">modelEntity</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>245</span> 
+<span class='line'>246</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">&&</span><span class="NAME">Magix.hasProp</span><span class="PUNC">(</span><span class="NAME">modelsCacheKeys</span><span class="PUNC">,</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>247</span> </span><span class="WHIT">					</span><span class="NAME">modelsCacheKeys</span><span class="PUNC">[</span><span class="NAME">cacheKey</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">push</span><span class="PUNC">(</span><span class="NAME">wrapDone</span><span class="PUNC">(</span><span class="NAME">doneFn</span><span class="PUNC">,</span><span class="NAME">me</span><span class="PUNC">,</span><span class="NAME">i</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>248</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>249</span> </span><span class="WHIT">					</span><span class="NAME">modelEntity</span><span class="PUNC">=</span><span class="NAME">me.create</span><span class="PUNC">(</span><span class="NAME">model</span><span class="PUNC">,</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>250</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">updateIdent</span><span class="PUNC">=</span><span class="NAME">modelEntity.get</span><span class="PUNC">(</span><span class="STRN">'updateIdent'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="COMM">//是否需要更新</span><span class="WHIT">
+<span class='line'>251</span> </span><span class="WHIT">					</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">updateIdent</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>252</span> </span><span class="WHIT">						</span><span class="NAME">abortArr.push</span><span class="PUNC">(</span><span class="NAME">modelEntity</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>253</span> </span><span class="WHIT">						</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>254</span> </span><span class="WHIT">							</span><span class="NAME">modelsCacheKeys</span><span class="PUNC">[</span><span class="NAME">cacheKey</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>255</span> </span><span class="WHIT">						</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>256</span> </span><span class="WHIT">						</span><span class="NAME">modelEntity.request</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>257</span> </span><span class="WHIT">							</span><span class="NAME">success</span><span class="PUNC">:</span><span class="NAME">wrapDone</span><span class="PUNC">(</span><span class="NAME">doneFn</span><span class="PUNC">,</span><span class="NAME">modelEntity</span><span class="PUNC">,</span><span class="NAME">i</span><span class="PUNC">,</span><span class="KEYW">false</span><span class="PUNC">,</span><span class="NAME">modelEntity</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>258</span> </span><span class="WHIT">							</span><span class="NAME">error</span><span class="PUNC">:</span><span class="NAME">wrapDone</span><span class="PUNC">(</span><span class="NAME">doneFn</span><span class="PUNC">,</span><span class="NAME">modelEntity</span><span class="PUNC">,</span><span class="NAME">i</span><span class="PUNC">,</span><span class="KEYW">true</span><span class="PUNC">,</span><span class="NAME">modelEntity</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>259</span> </span><span class="WHIT">						</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>260</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>261</span> </span><span class="WHIT">						</span><span class="NAME">doneFn</span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">,</span><span class="KEYW">false</span><span class="PUNC">,</span><span class="NAME">modelEntity</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>262</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>263</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>264</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>265</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>266</span> </span><span class="WHIT">				</span><span class="NAME">abort</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>267</span> </span><span class="WHIT">					</span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="NAME">m</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">abortArr.length</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>268</span> </span><span class="WHIT">						</span><span class="NAME">m</span><span class="PUNC">=</span><span class="NAME">abortArr</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>269</span> </span><span class="WHIT">						</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">cacheKey</span><span class="PUNC">=</span><span class="NAME">m._cacheKey</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>270</span> </span><span class="WHIT">						</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">&&</span><span class="NAME">Magix.hasProp</span><span class="PUNC">(</span><span class="NAME">modelsCacheKeys</span><span class="PUNC">,</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>271</span> </span><span class="WHIT">							</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">fns</span><span class="PUNC">=</span><span class="NAME">modelsCacheKeys</span><span class="PUNC">[</span><span class="NAME">cacheKey</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>272</span> </span><span class="WHIT">							</span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">modelsCacheKeys</span><span class="PUNC">[</span><span class="NAME">cacheKey</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>273</span> </span><span class="WHIT">							</span><span class="NAME">Magix.safeExec</span><span class="PUNC">(</span><span class="NAME">fns</span><span class="PUNC">,</span><span class="PUNC">[</span><span class="KEYW">true</span><span class="PUNC">,</span><span class="NAME">m</span><span class="PUNC">,</span><span class="STRN">'abort'</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="NAME">m</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>274</span> </span><span class="WHIT">						</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>275</span> </span><span class="WHIT">						</span><span class="NAME">m.abort</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>276</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>277</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>278</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>279</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>280</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>281</span> 		 * 获取models，所有成功才回调succ，任意一个失败最终会回调fail
+<span class='line'>282</span> 		 * @param {Object|Array} models 获取models时的描述信息，如:{type:F.Home,cacheKey:'key',gets:{a:'12'},posts:{b:2}}
+<span class='line'>283</span> 		 * @param {Function} succ   成功时的回调
+<span class='line'>284</span> 		 * @param {Function} fail   失败时的回调
+<span class='line'>285</span> 		 * @return {Array} 返回一个带abort方法的对象，用于取消所有请求的model
+<span class='line'>286</span> 		 */</span><span class="WHIT">
+<span class='line'>287</span> </span><span class="WHIT">		</span><span class="NAME">fetchAll</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">models</span><span class="PUNC">,</span><span class="NAME">succ</span><span class="PUNC">,</span><span class="NAME">fail</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>288</span> </span><span class="WHIT">			</span><span class="COMM">/*
+<span class='line'>289</span> 				[{type:F.ASide,cacheKey:'',gets:{},posts:{}}]
+<span class='line'>290</span> 			 */</span><span class="WHIT">
+<span class='line'>291</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.fetchModels</span><span class="PUNC">(</span><span class="NAME">models</span><span class="PUNC">,</span><span class="NAME">succ</span><span class="PUNC">,</span><span class="NAME">fail</span><span class="PUNC">,</span><span class="NAME">FetchFlags.ALL</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>292</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>293</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>294</span> 		 * 获取models，其中任意一个成功最终回调succ，全部失败才回调fail
+<span class='line'>295</span> 		 * @param {Object|Array} models 获取models时的描述信息，如:{type:F.Home,cacheKey:'key',gets:{a:'12'},posts:{b:2}}
+<span class='line'>296</span> 		 * @param {Function} succ   成功时的回调
+<span class='line'>297</span> 		 * @param {Function} fail   失败时的回调
+<span class='line'>298</span> 		 * @return {Array} 返回一个带abort方法的对象，用于取消所有请求的model
+<span class='line'>299</span> 		 */</span><span class="WHIT">
+<span class='line'>300</span> </span><span class="WHIT">		</span><span class="NAME">fetchAny</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">models</span><span class="PUNC">,</span><span class="NAME">succ</span><span class="PUNC">,</span><span class="NAME">fail</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>301</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.fetchModels</span><span class="PUNC">(</span><span class="NAME">models</span><span class="PUNC">,</span><span class="NAME">succ</span><span class="PUNC">,</span><span class="NAME">fail</span><span class="PUNC">,</span><span class="NAME">FetchFlags.ANY</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>302</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>303</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>304</span> 		 * 获取models，其中任意一个成功均立即回调，回调会被调用多次
+<span class='line'>305</span> 		 * @param {Object|Array} models 获取models时的描述信息，如:{type:F.Home,cacheKey:'key',gets:{a:'12'},posts:{b:2}}
+<span class='line'>306</span> 		 * @param {Function} callback   成功时的回调
+<span class='line'>307</span> 		 * @return {Array} 返回一个带abort方法的对象，用于取消所有请求的model
+<span class='line'>308</span> 		 */</span><span class="WHIT">
+<span class='line'>309</span> </span><span class="WHIT">		</span><span class="NAME">fetchOne</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">models</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>310</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.fetchModels</span><span class="PUNC">(</span><span class="NAME">models</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">,</span><span class="NAME">Magix.noop</span><span class="PUNC">,</span><span class="NAME">FetchFlags.ONE</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>311</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>312</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>313</span> 		 * 尝试获取缓存的model
+<span class='line'>314</span> 		 * @param {String} cacheKey 缓存时的key
+<span class='line'>315</span> 		 * @return {Object} null或缓存的model
+<span class='line'>316</span> 		 */</span><span class="WHIT">
+<span class='line'>317</span> </span><span class="WHIT">		</span><span class="NAME">getIf</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>318</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>319</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">modelsCache</span><span class="PUNC">=</span><span class="NAME">me.$modelsCache</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>320</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">modelsCache</span><span class="PUNC">&&</span><span class="NAME">Magix.hasProp</span><span class="PUNC">(</span><span class="NAME">modelsCache</span><span class="PUNC">,</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>321</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">modelsCache</span><span class="PUNC">[</span><span class="NAME">cacheKey</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>322</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>323</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>324</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>325</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>326</span> 		 * 设置缓存的model需要更新
+<span class='line'>327</span> 		 * @param {String} cacheKey 缓存时的key
+<span class='line'>328</span> 		 */</span><span class="WHIT">
+<span class='line'>329</span> </span><span class="WHIT">		</span><span class="NAME">setUpdateIdent</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>330</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>331</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">model</span><span class="PUNC">=</span><span class="NAME">me.getIf</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>332</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">model</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>333</span> </span><span class="WHIT">				</span><span class="NAME">model.set</span><span class="PUNC">(</span><span class="STRN">'updateIdent'</span><span class="PUNC">,</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>334</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>335</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>336</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>337</span> 		 * 创建model对象
+<span class='line'>338</span> 		 * @param {Object} model            model描述信息
+<span class='line'>339</span> 		 * @param {Boolean} doNotWrapRequest 是否不对request进行包装，默认会对model的request进行一次包装，以完成后续的状态更新
+<span class='line'>340</span> 		 * @return {Model} model对象
+<span class='line'>341</span> 		 */</span><span class="WHIT">
+<span class='line'>342</span> </span><span class="WHIT">		</span><span class="NAME">create</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">model</span><span class="PUNC">,</span><span class="NAME">doNotWrapRequest</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>343</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">model.type</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>344</span> </span><span class="WHIT">				</span><span class="KEYW">throw</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Error</span><span class="PUNC">(</span><span class="STRN">'model must own a "type" attribute'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>345</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>346</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>347</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">metas</span><span class="PUNC">=</span><span class="NAME">model.type</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>348</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">cacheKey</span><span class="PUNC">=</span><span class="NAME">model.cacheKey</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>349</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">modelEntity</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>350</span> 
+<span class='line'>351</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$modelsCache</span><span class="PUNC">)</span><span class="NAME">me.$modelsCache</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>352</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">modelsCache</span><span class="PUNC">=</span><span class="NAME">me.$modelsCache</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>353</span> 
+<span class='line'>354</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">&&</span><span class="NAME">Magix.hasProp</span><span class="PUNC">(</span><span class="NAME">modelsCache</span><span class="PUNC">,</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//缓存</span><span class="WHIT">
+<span class='line'>355</span> </span><span class="WHIT">				</span><span class="WHIT">
+<span class='line'>356</span> </span><span class="WHIT">				</span><span class="NAME">modelEntity</span><span class="PUNC">=</span><span class="NAME">modelsCache</span><span class="PUNC">[</span><span class="NAME">cacheKey</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>357</span> 
+<span class='line'>358</span> </span><span class="WHIT">				</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">updateIdent</span><span class="PUNC">=</span><span class="NAME">modelEntity.get</span><span class="PUNC">(</span><span class="STRN">'updateIdent'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>359</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">updateIdent</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//当有更新时，从缓存中删除，防止多次获取该缓存对象导致数据错误</span><span class="WHIT">
+<span class='line'>360</span> </span><span class="WHIT">					</span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">modelsCache</span><span class="PUNC">[</span><span class="NAME">cacheKey</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>361</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>362</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>363</span> </span><span class="WHIT">				</span><span class="WHIT">
+<span class='line'>364</span> </span><span class="WHIT">				</span><span class="NAME">modelEntity</span><span class="PUNC">=</span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">me.$modelClass</span><span class="PUNC">(</span><span class="NAME">metas.ops</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>365</span> </span><span class="WHIT">				</span><span class="NAME">modelEntity._after</span><span class="PUNC">=</span><span class="NAME">metas.after</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>366</span> </span><span class="WHIT">				</span><span class="NAME">modelEntity._cacheKey</span><span class="PUNC">=</span><span class="NAME">cacheKey</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>367</span> </span><span class="WHIT">				</span><span class="NAME">modelEntity.set</span><span class="PUNC">(</span><span class="STRN">'updateIdent'</span><span class="PUNC">,</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>368</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>369</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">updateIdent</span><span class="PUNC">=</span><span class="NAME">modelEntity.get</span><span class="PUNC">(</span><span class="STRN">'updateIdent'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="COMM">//是否需要更新</span><span class="WHIT">
+<span class='line'>370</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">updateIdent</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>371</span> </span><span class="WHIT">				</span><span class="NAME">modelEntity.reset</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>372</span> </span><span class="WHIT">				</span><span class="WHIT">
+<span class='line'>373</span> </span><span class="WHIT">				</span><span class="COMM">//默认设置的</span><span class="WHIT">
+<span class='line'>374</span> </span><span class="WHIT">				</span><span class="NAME">modelEntity.setParams</span><span class="PUNC">(</span><span class="NAME">metas.gets</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>375</span> </span><span class="WHIT">				</span><span class="NAME">modelEntity.setPostParams</span><span class="PUNC">(</span><span class="NAME">metas.posts</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>376</span> 
+<span class='line'>377</span> </span><span class="WHIT">				</span><span class="COMM">//临时传递的</span><span class="WHIT">
+<span class='line'>378</span> </span><span class="WHIT">				</span><span class="NAME">modelEntity.setParams</span><span class="PUNC">(</span><span class="NAME">model.gets</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>379</span> </span><span class="WHIT">				</span><span class="NAME">modelEntity.setPostParams</span><span class="PUNC">(</span><span class="NAME">model.posts</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>380</span> </span><span class="WHIT">				</span><span class="WHIT">
+<span class='line'>381</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">Magix.isFunction</span><span class="PUNC">(</span><span class="NAME">metas.before</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>382</span> </span><span class="WHIT">					</span><span class="NAME">Magix.safeExec</span><span class="PUNC">(</span><span class="NAME">metas.before</span><span class="PUNC">,</span><span class="NAME">modelEntity</span><span class="PUNC">,</span><span class="NAME">metas</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>383</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>384</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>385</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">doNotWrapRequest</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>386</span> </span><span class="WHIT">				</span><span class="NAME">modelEntity.request</span><span class="PUNC">=</span><span class="NAME">WrapRequest</span><span class="PUNC">(</span><span class="NAME">modelEntity.request</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>387</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>388</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">modelEntity</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>389</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>390</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>391</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Factory</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>392</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>393</span> </span><span class="WHIT">	</span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/magix"</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>394</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

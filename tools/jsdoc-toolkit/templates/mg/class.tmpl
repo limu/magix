@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="{+IO.encoding+}" />
+        <meta name="generator" content="JsDoc Toolkit" />
+        {! Link.base = "../"; /* all generated links will be relative to this */ !}
+        <title>{+data.alias+}</title>
+        <style>
+            {+include("static/style.css")+}
+        </style>
+    </head>
+
+    <body>
+        <div id="page">
+        
+            {+include("static/header.html")+}
+
+            <div id="content">
+                <div class="layout">
+                    <div class="col-main">
+                        <div class="main-wrap">
+                            {!
+                            var classType = "";
+
+                            if (data.isBuiltin()) {
+                            classType += "Built-In ";
+                            }
+
+                            if (data.isNamespace) {
+                            if (data.is('FUNCTION')) {
+                            classType += "Function ";
+                            }
+                            classType += "Namespace ";
+                            }
+                            else {
+                            classType += "Class ";
+                            }
+                            !}
+                            <!-- contructor START -->
+                            <div class="box constructor-box">
+                                <div class="box-hd">
+                                    <if test="!data.isBuiltin() && (data.isNamespace || data.is('CONSTRUCTOR'))">
+                                    <h3><b class="name">{+ new Link().toSymbol(data.alias).inner('constructor')+}</b>
+                                        <if test="classType != 'Namespace '"><span class="param">{+ makeSignature(data.params) +}</span></if>
+                                        <if test="data.isPrivate"><span class="attr">&lt;private&gt;</span></if>
+                                        <if test="data.isInner"><span class="attr">&lt;inner&gt;</span></if>
+                                        <if test="data.desc"><span class="desc">{+resolveLinks(summarize(data.desc))+}</span></if>
+                                    </h3>
+                                    </if>
+                                </div>
+                                <div class="box-bd">
+                                    <if test="data.classDesc">
+                                        <p class="desc">描述：{+resolveLinks(data.classDesc)+}</p>
+                                    </if>
+
+                                    <if test="data.version">
+                                        <p>版本：
+                                            {+ data.version +}</p>
+                                    </if>
+
+                                    <if test="data.augments.length">
+                                        <p>继承自：
+                                            {+
+                                            data.augments
+                                            .sort()
+                                            .map(
+                                            function($) { return new Link().toSymbol($); }
+                                            )
+                                            .join(", ")
+                                            +}
+                                        </p>
+                                    </if>
+
+                                    <if test="data.see.length">
+                                        <p>看：
+                                            <for each="item" in="data.see">
+                                                <span>{+ new Link().toSymbol(item) +}</span>
+                                            </for>
+                                        </p>
+                                    </if>
+
+                                    <if test="!data.isBuiltin()">{# isn't defined in any file #}
+                                        <p>源码：
+                                            {+new Link().toSrc(data.srcFile)+}</p>
+
+                                    </if>
+
+                                    <if test="data.author"><p>author：{+data.author+}</p></if>
+                                </div>
+                            </div>
+                            <!-- constructor END -->
+                            
+                            <!-- properties START -->
+                            <if test="data.properties.length">
+                                {! var ownProperties = data.properties.filter(function($){return $.memberOf == data.alias && !$.isNamespace}).sort(makeSortby("name")); !}
+                                <if test="ownProperties.length">
+                                <div class="box properties-box">
+                                    <div class="box-hd">
+                                        <h3>Config Attributes（Properties）- 使用get和set方法获取/设置属性</h3>
+                                    </div>
+                                    <div class="box-bd">
+                                        <ul class="list summary-list">
+                                            <for each="member" in="ownProperties">
+                                                <if test="!member.isStatic">
+                                                    <li class="li">
+                                                        <b class="name">{+new Link().toSymbol(member.alias).withText(member.name)+}</b>
+                                                        <span class="type">{{+member.type+}}</span>
+                                                        <if test="member.isPrivate"><span class="attr">&lt;private&gt;</span></if>
+                                                        <if test="member.isInner"><span class="attr">&lt;inner&gt;</span></if>
+                                                        <if test="member.isStatic"><span class="attr">&lt;static&gt;</span></if>
+                                                        <if test="member.isConstant"><span class="attr">&lt;constant&gt;</span></if>
+                                                        <span class="desc">{+resolveLinks(summarize(member.desc))+}</span>
+                                                    </li>
+                                                </if>
+                                            </for>
+                                        </ul>
+                                        <if test="data.inheritsFrom.length">
+                                        <hr/>
+                                        <ul class="list summary-list">
+                                        {!
+                                            var borrowedMembers = data.properties.filter(function($) {return $.memberOf != data.alias});
+                                            
+                                            var contributers = [];
+                                            borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});
+                                            for (var i = 0, l = contributers.length; i < l; i++) {
+                                                output +=
+                                                    "<li class=\"li\">Fields borrowed from class "+new Link().toSymbol(contributers[i])+": "
+                                                    +
+                                                    borrowedMembers
+                                                    .filter(
+                                                        function($) { return $.memberOf == contributers[i] }
+                                                    )
+                                                    .sort(makeSortby("name"))
+                                                    .map(
+                                                        function($) { return new Link().toSymbol($.alias).withText($.name) }
+                                                    )
+                                                    .join(", ")
+                                                    +
+                                                    "</li>";
+                                            }
+                                        !}
+                                        </ul>
+                                        </if>
+                                    </div>
+                                </div>
+                                </if>                    
+                            </if>
+                            <if test="data.properties.length">
+                                {! var ownProperties = data.properties.filter(function($){return $.memberOf == data.alias && !$.isNamespace}).sort(makeSortby("name")); !}
+                                <if test="ownProperties.length">
+                                    <div class="box properties-box">
+                                        <div class="box-hd">
+                                            <h3>Static Properties</h3>
+                                        </div>
+                                        <div class="box-bd">
+                                            <ul class="static-list">
+                                            <for each="member" in="ownProperties">
+                                                <if test="member.isStatic && member.memberOf != '_global_'">
+                                                    <li class="li">
+                                                        {+member.memberOf+}.<b class="name">{+new Link().toSymbol(member.alias).withText(member.name)+}</b>
+                                                        <span class="type">{{+member.type+}}</span>
+                                                        <span class="desc">{+resolveLinks(summarize(member.desc))+}</span>
+                                                    </li>
+                                                </if>
+                                            </for>
+                                            </ul>
+                                        </div>
+                                     </div>
+                                </if>
+                            </if>
+                            <!-- properties END -->
+                            
+                            <!-- methods START -->
+                            <if test="data.methods.length">
+                                {! var ownMethods = data.methods.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
+                                <if test="ownMethods.length">
+                                <div class="box methods-box">
+                                    <div class="box-hd">
+                                        <h3>Methods</h3>
+                                    </div>
+                                    <div class="box-bd">
+                                        <ul class="list summary-list">
+                                            <for each="member" in="ownMethods">
+                                            <li class="li">                                                
+                                                <if test="member.isStatic && member.memberOf != '_global_'">{+member.memberOf+}.</if>
+                                                <b class="name">{+new Link().toSymbol(member.alias).withText(member.name.replace(/\^\d+$/, ''))+}</b>
+                                                <span class="param">{+makeSignature(member.params)+}</span>
+                                                <if test="member.isPrivate"><span class="attr">&lt;private&gt;</span></if>
+                                                <if test="member.isInner"><span class="attr">&lt;inner&gt;</span></if>
+                                                <if test="member.isStatic"><span class="attr">&lt;static&gt;</span></if>
+                                                <span class="desc">{+resolveLinks(summarize(member.desc))+}</span>                                                
+                                            </li>
+                                            </for>
+                                        </ul>
+                                        <if test="data.inheritsFrom.length">
+                                        <hr/>
+                                        <ul class="summary-list">
+                                        {!
+                                            var borrowedMembers = data.methods.filter(function($) {return $.memberOf != data.alias});                                            
+                                            var contributers = [];
+                                            borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});
+                                            for (var i = 0, l = contributers.length; i < l; i++) {
+                                                output +=
+                                                    "<li>Methods borrowed from class "+new Link().toSymbol(contributers[i])+": "
+                                                    +
+                                                    borrowedMembers
+                                                    .filter(
+                                                        function($) { return $.memberOf == contributers[i] }
+                                                    )
+                                                    .sort(makeSortby("name"))
+                                                    .map(
+                                                        function($) { return new Link().toSymbol($.alias).withText($.name) }
+                                                    )
+                                                    .join(", ")
+                                                    +
+                                                    "</li>";
+                                            }
+                                        !}
+                                        </ul>
+                                        </if>
+                                    </div>
+                                </div>
+                                </if>
+                            </if>
+                            <!-- methods END -->
+                            
+                            <!-- events START -->
+                            <if test="data.events.length">
+                                {! var ownEvents = data.events.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
+                                <if test="ownEvents.length">
+                                <div class="box events-box">
+                                    <div class="box-hd">
+                                        <h3>Events</h3>
+                                    </div>
+                                    <div class="box-bd">
+                                        <ul class="list summary-list">
+                                            <for each="member" in="ownEvents">
+                                            <li class="li">
+                                                <if test="member.isStatic && member.memberOf != '_global_'">{+member.memberOf+}.</if>
+                                                <b class="name">{+new Link().toSymbol(member.alias).withText(member.name)+}</b>
+                                                <span class="param">{+makeSignature(member.params)+}</span>
+                                                <if test="member.isPrivate"><span class="attr">&lt;private&gt;</span></if>
+                                                <if test="member.isInner"><span class="attr">&lt;inner&gt;</span></if>
+                                                <if test="member.isStatic"><span class="attr">&lt;static&gt;</span></if>
+                                                <span class="desc">{+resolveLinks(summarize(member.desc))+}</span>
+                                            </li>
+                                            </for>
+                                        </ul>
+                                        <if test="data.inheritsFrom.length">
+                                        <hr/>
+                                        <ul class="list summary-list">
+                                        {!
+                                            var borrowedMembers = data.events.filter(function($) {return $.memberOf != data.alias});
+                                            var contributers = [];
+                                            borrowedMembers.map(function($) {if (contributers.indexOf($.memberOf) < 0) contributers.push($.memberOf)});
+                                            for (var i = 0, l = contributers.length; i < l; i++) {
+                                                output +=
+                                                    "<li class=\"li\">Events borrowed from class "+new Link().toSymbol(contributers[i])+": "
+                                                    +
+                                                    borrowedMembers
+                                                    .filter(
+                                                        function($) { return $.memberOf == contributers[i] }
+                                                    )
+                                                    .sort(makeSortby("name"))
+                                                    .map(
+                                                        function($) { return new Link().toSymbol($.alias).withText($.name) }
+                                                    )
+                                                    .join(", ")
+                                                    +
+                                                    "</li>";
+                                            }
+                                        !}
+                                        </ul>
+                                        </if>
+                                    </div>
+                                </div>
+                                </if>
+                            </if>
+                            <!-- events END -->
+
+                            <!-- constructor details START-->
+                            <if test="!data.isBuiltin() && (data.isNamespace || data.is('CONSTRUCTOR'))">
+                            <div class="detail-box">
+                                <a name="constructor"></a>
+                                <div class="box-hd">
+                                    <h3>{+classType+}Detail</h3>
+                                </div>
+                                <div class="box-bd">
+                                    <ul class="list detail-list">
+                                        <li class="li">
+                                            <div class="title">
+                                                <b class="name">{+ data.alias +}</b>
+                                                <if test="classType != 'Namespace '"><span class="param">{+ makeSignature(data.params) +}</span></if>
+                                            </div>
+                                            
+                                            <div class="desc">{+resolveLinks(data.classDesc)+}</div>
+                                            
+                                            <dl>                                                
+                                                
+                                                
+                                                <if test="data.params.length">
+                                                <dt>参数：</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                        <for each="item" in="data.params">
+                                                        <li class="li">
+                                                            <if test="item.isOptional"><span>[ </span><else/>&nbsp;</if>
+                                                                <b>{+item.name+}</b>
+                                                            <if test="item.defaultValue"><span> = {+item.defaultValue+}</span></if>
+                                                            <if test="item.isOptional"><span> ]</span></if>
+                                                            <span class="type">{+((item.type)?""+("<span class=\"light fixedFont\">{"+(new Link().toSymbol(item.type)+"}</span> ")) : "")+}</span>
+                                                            <span class="desc">{+resolveLinks(item.desc)+}</span>
+                                                        </li>
+                                                        </for>
+                                                    </ul>
+                                                </dd>
+                                                </if>
+                                                
+                                                <if test="data.deprecated">
+                                                <dt>Deprecated</dt>
+                                                <dd>
+                                                    {+resolveLinks(data.deprecated)+}
+                                                </dd>
+                                                </if>
+
+                                                <if test="data.since">
+                                                <dt>Since</dt>
+                                                <dd>{+ data.since +}</dd>
+                                                </div>
+                                                </if>
+                                                <if test="data.exceptions.length">
+                                                <dt>Throws</dt>
+                                                <dd>
+                                                    <ul class="list exception-list">
+                                                    <for each="item" in="data.exceptions">
+                                                        <li class="li">
+                                                            {+((item.type)?"<span>{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}
+                                                            <b class="name">{+item.name+}</b>
+                                                            <span class="desc">{+resolveLinks(item.desc)+}</span>
+                                                        </li>
+                                                    </for>
+                                                    </ul>
+                                                 </dd>
+                                                 </if>
+
+                                                <if test="data.returns.length">
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul>
+                                                    <for each="item" in="data.returns">
+                                                        <li>
+                                                            {+((item.type)?"<span>{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}
+                                                            <span class="desc">{+resolveLinks(item.desc)+}</span>
+                                                        </li>
+                                                    </for>
+                                                    </ul>
+                                                </dd>
+                                                </if>
+                                                <if test="data.requires.length">
+                                                <dt>依赖：</dt>
+                                                <dd>
+                                                    <ul>
+                                                    <for each="item" in="data.requires">
+                                                        <li>{+ new Link().toSymbol(item) +}</li>
+                                                    </for>
+                                                    <ul>
+                                                </dd>
+                                                </if>
+                                                
+                                                <if test="data.example.length">
+                                                <dt>示例：</dt>
+                                                <dd>
+                                                    <for each="example" in="data.example">
+                                                    <pre class='brush: js;'>{+example+}</pre>
+                                                    </for>
+                                                </dd>                                                
+                                                </if>
+                                            </dl>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            </if>
+                            <!-- constructor details START-->
+
+                            <!-- properties details START -->
+                            <if test="defined(ownProperties) && ownProperties.length">
+                            <div class="box">
+                                <div class="box-hd">
+                                    <h3>Properties Detail</h3>
+                                </div>
+                                <div class="box-bd">
+                                    <ul class="list detail-list">
+                                    <for each="member" in="ownProperties">
+                                    <if test="!member.isStatic">
+                                        <li class="li">
+                                            <a name="{+Link.symbolNameToLinkName(member)+}"> </a>
+                                            <div class="title">                                                
+                                                <b class="name">{+member.name+}</b>
+                                                <if test="member.type"><span class="type">{{+new Link().toSymbol(member.type)+}}</span> </if>
+                                                <if test="member.isPrivate"><span class="attr">&lt;private&gt;</span></if>
+                                                <if test="member.isInner"><span class="attr">&lt;inner&gt;</span></if>
+                                                <if test="member.isStatic"><span class="attr">&lt;static&gt;</span></if>
+                                                <if test="member.isConstant"><span class="attr">&lt;constant&gt;</span></if>
+                                                <span class="desc">
+                                                    — {+resolveLinks(member.desc)+}
+                                                    <if test="member.srcFile != data.srcFile">
+                                                        <br />Defined in:{+new Link().toSrc(member.srcFile)+}.
+                                                    </if>
+                                                    <if test="member.author"><br />Author: {+member.author+}.</if>
+                                                </span>
+                                            </div>
+                                            <!--
+                                            <if test="member.deprecated">
+                                            <dt>弃用</dt>
+                                            <dd>
+                                                {+resolveLinks(member.deprecated)+}
+                                            </dd>
+                                            </if>-->
+                                            <if test="member.defaultValue">
+                                                <div class="member-data"><span>默认值：</span>{+resolveLinks(member.defaultValue)+}</div>
+                                            </if>
+                                            <if test="member.see.length">
+                                                <div class="member-data"><span>看：</span>{+ new Link().toSymbol(item) +}</div>
+                                            </if>
+                                            <if test="member.example.length">
+                                                <dl>
+                                                    <dt>示例：</dt>
+                                                    <dd>
+                                                            <for each="example" in="member.example">
+                                                                <pre class='brush: js;'>
+                                                                    {+example+}
+                                                                </pre>
+                                                            </for>
+                                                    </dd>
+                                                </dl>
+                                            </if>
+                                        </li>
+                                    </if>
+                                    </for>
+                                    </ul>
+                                </div>
+                            </div>
+                            </if>
+                            <!-- properties detail END -->
+
+                            <!-- methods detail START -->
+                            <if test="defined(ownMethods) && ownMethods.length">
+                            <div class="box">
+                                <div class="box-hd">
+                                    <h3>Methods Detail</h3>
+                                </div>
+                                <div class="box-bd">
+                                    <ul class="list detail-list">
+                                        <for each="member" in="ownMethods">
+                                        <li class="li">
+                                            <div class="title">
+                                                <if test="member.isStatic && member.memberOf != '_global_'"><span>{+member.memberOf+}.</span></if>
+                                                <b class="name">{+member.name.replace(/\^\d+$/, '')+}</b>
+                                                <span class="param">{+makeSignature(member.params)+}</span>
+                                                <if test="member.isPrivate"><span class="attr">&lt;private&gt;</span></if>
+                                                <if test="member.isInner"><span class="attr">&lt;inner&gt;</span></if>
+                                                <if test="member.isStatic"><span class="attr">&lt;static&gt;</span></if>
+                                            </div>
+
+                                            <div class="desc">
+                                                {+resolveLinks(member.desc)+}
+                                                <if test="member.srcFile != data.srcFile">
+                                                    <br />Defined in:{+new Link().toSrc(member.srcFile)+}.
+                                                </if>
+                                                <if test="member.author"><br />Author: {+member.author+}.</if>
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                <if test="member.params.length">
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    <for each="item" in="member.params">
+                                                        <li class="li">
+                                                            <if test="item.isOptional">[ <else/>&nbsp;</if>
+                                                            <b class="name">{+item.name+}</b>
+                                                            <if test="item.defaultValue">= {+item.defaultValue+}</if>
+                                                            <if test="item.isOptional"> ]</if>
+                                                            {+((item.type)?"<span class=\"type\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}
+                                                            <span class="desc">{+resolveLinks(item.desc)+}</span>
+                                                        </li>
+                                                    </for>
+                                                    </ul>
+                                                </dd>
+                                                </if>
+                                                
+                                                <if test="member.deprecated">
+                                                <dt>Deprecated</dt>
+                                                <dd>
+                                                    {+resolveLinks(member.deprecated)+}
+                                                </dd>
+                                                </if>
+                                                
+                                                <if test="member.since">
+                                                <dt>Since</dt>
+                                                <dd>
+                                                    {+ member.since +}
+                                                </dd>
+                                                </if>
+                                                
+                                                <if test="member.exceptions.length">
+                                                <dt>Throws</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    <for each="item" in="member.exceptions">
+                                                        <li class="li">
+                                                            <b class="param">{+item.name+}</b>
+                                                            {+((item.type)?"<span class=\"type\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}
+                                                            <span class="desc">{+resolveLinks(item.desc)+}</span>
+                                                        </li>
+                                                    </for>
+                                                    </ul>
+                                                </dd>
+                                                </if>
+                                                
+                                                <if test="member.returns.length">
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    <for each="item" in="member.returns">
+                                                        <li class="li">
+                                                            {+((item.type)?"<span class=\"type\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}
+                                                            <span>{+resolveLinks(item.desc)+}</span>
+                                                        </li>
+                                                    </for>
+                                                    </ul>
+                                                </dd>
+                                                </if>
+                                                
+                                                <if test="member.requires.length">
+                                                <dt>Requires</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    <for each="item" in="member.requires">
+                                                        <li class="li">{+ resolveLinks(item) +}</li>
+                                                    </for>
+                                                    </ul>
+                                                </dd>
+                                                </if>
+                                                
+                                                <if test="member.see.length">
+                                                <dt>See</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    <for each="item" in="member.see">
+                                                        <li class="li">{+ new Link().toSymbol(item) +}</li>
+                                                    </for>
+                                                    </ul>
+                                                </dd>
+                                                </if>                                                
+                                                
+                                                <if test="member.example.length">
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        <for each="example" in="member.example">
+                                                            <pre class="brush: js; ">{+example+}</pre>
+                                                        </for>
+                                                </dd>
+                                                </if>
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        </for>
+                                    </ul>
+                                </div>
+                            </div>
+                            </if>
+                            <!-- methods detail END -->
+
+                            <!-- events detail START -->
+                            <if test="defined(ownEvents) && ownEvents.length">
+                            <div class="box">
+                                <div class="box-hd">
+                                    <h3>Events Detail</h3>
+                                </div>
+                                <div class="box-bd">
+                                <ul class="detail-list">
+                                    <for each="member" in="ownEvents">
+                                    <li>
+                                        <div class="title">
+                                            <if test="member.type"><span>{{+new Link().toSymbol(member.type)+}}</span></if>
+                                            <if test="member.isStatic && member.memberOf != '_global_'"><span>{+member.memberOf+}.</span></if>
+                                            <b class="name">{+member.name.replace(/\^\d+$/, '')+}</b>
+                                            <span class="param">{+makeSignature(member.params)+}</span>
+                                            <if test="member.isPrivate"><span class="attr">&lt;private&gt;</span></if>
+                                            <if test="member.isInner"><span class="attr">&lt;inner&gt;</span></if>
+                                            <if test="member.isStatic"><span class="attr">&lt;static&gt;</span></if>
+                                        </div>
+                                        
+                                        <div class="desc">
+                                            {+resolveLinks(member.desc)+}
+                                            <if test="member.srcFile != data.srcFile">
+                                                <br />Defined in:{+new Link().toSrc(member.srcFile)+}.
+                                            </if>
+                                            <if test="member.author"><br />Author: {+member.author+}.</if>
+                                        </div>
+                                        
+                                        <dl>
+                                            <if test="member.params.length">
+                                            <dt>参数：</dt>
+                                            <dd>
+                                                <ul class="list param-list">
+                                                <for each="item" in="member.params">
+                                                    <li class="li">
+                                                        <if test="item.isOptional">[ <else/>&nbsp;</if>
+                                                        <b class="name">{+item.name+}</b>
+                                                        <if test="item.defaultValue">= {+item.defaultValue+}</if>
+                                                        <if test="item.isOptional"> ]</if>
+                                                        {+((item.type)?"<span class=\"type\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}
+                                                        <span class="desc">{+resolveLinks(item.desc)+}</span>
+                                                    </li>
+                                                </for>
+                                                </ul>
+                                            </dd>
+                                            </if>
+                                            
+                                            <if test="member.deprecated">
+                                            <dt>Deprecated</dt>
+                                            <dd>
+                                                {+resolveLinks(member.deprecated)+}
+                                            </dd>
+                                            </if>
+                                            
+                                            <if test="member.since">
+                                            <dt>Since</dt>
+                                            <dd>
+                                                {+ member.since +}
+                                            </dd>
+                                            </if>
+                                            
+                                            <if test="member.exceptions.length">
+                                            <dt>Throws</dt>
+                                            <dd>
+                                                <ul class="list">
+                                                <for each="item" in="member.exceptions">
+                                                    <li class="li">
+                                                        <b class="param">{+item.name+}</b>
+                                                        {+((item.type)?"<span class=\"type\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}
+                                                        <span class="desc">{+resolveLinks(item.desc)+}</span>
+                                                    </li>
+                                                </for>
+                                                </ul>
+                                            </dd>
+                                            </if>
+                                            
+                                            <if test="member.returns.length">
+                                            <dt>Returns</dt>
+                                            <dd>
+                                                <ul class="list">
+                                                <for each="item" in="member.returns">
+                                                    <li class="li">
+                                                        {+((item.type)?"<span class=\"type\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}
+                                                        <span>{+resolveLinks(item.desc)+}</span>
+                                                    </li>
+                                                </for>
+                                                </ul>
+                                            </dd>
+                                            </if>
+                                            
+                                            <if test="member.requires.length">
+                                            <dt>Requires</dt>
+                                            <dd>
+                                                <ul class="list">
+                                                <for each="item" in="member.requires">
+                                                    <li class="li">{+ resolveLinks(item) +}</li>
+                                                </for>
+                                                </ul>
+                                            </dd>
+                                            </if>
+                                            
+                                            <dt><if test="member.see.length"></dt>
+                                            <dd>
+                                                <ul class="list">
+                                                <for each="item" in="member.see">
+                                                    <li class="li">{+ new Link().toSymbol(item) +}</li>
+                                                </for>
+                                                <ul>
+                                            </dd>
+                                            </if>
+
+                                            <if test="member.example.length">
+                                            <dt>Example</dt>
+                                            <dd>
+                                                <ul class="list">
+                                                    <for each="example" in="member.example">
+                                                    <li class="li">
+                                                        <pre class="code">{+example+}</pre>
+                                                    </li>
+                                                    </for>
+                                                </ul>
+                                            </dd>
+                                            </if>
+                                            
+                                        </dl>
+                                    </li>
+                                    </for>
+                                </ul>
+                                </div>
+                            </div>
+                            </if>
+                            <!-- events detail START -->
+
+                        </div>
+                    </div>
+                    <div class="col-sub">
+                        {+include("static/menu.html")+}
+                    </div>
+                </div>
+            </div>
+            {+include("static/footer.html")+}
+        </div>
+<link href='http://www.36ria.com/demo/gal/gallery/form/1.0/demo/form/uploader/assets/syntaxhighlighter_3.0.83/sh.css' rel='stylesheet' type='text/css' />
+<script type="text/javascript" src="http://www.36ria.com/demo/gal/gallery/form/1.0/demo/form/uploader/assets/syntaxhighlighter_3.0.83/sh.js"></script>
+<script type="text/javascript">SyntaxHighlighter.all();</script>
+    </body>
+</html>
