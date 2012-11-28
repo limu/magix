@@ -73,6 +73,7 @@ var VOM={
 	},
 	/**
 	 * 重新渲染根vframe
+	 * @param {Object} e Router.locationChanged事件对象
 	 * @param {Object} e.location window.location.href解析出来的对象
 	 * @param {Object} e.changed 包含有哪些变化的对象
 	 */

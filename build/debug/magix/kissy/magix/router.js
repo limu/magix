@@ -7,13 +7,13 @@ KISSY.add('magix/router',function(S,IRouter,Magix,Event){
 	
 var HAS=Magix.hasProp;
 
-var isParamChanged=function(key){
+var isParam=function(key){
 	return HAS(this.params,key);
 };
-var isPathnameChanged=function(){
+var isPathname=function(){
 	return HAS(this,PATHNAME);	
 };
-var isViewPathChanged=function(){
+var isViewPath=function(){
 	return HAS(this,'viewPath');
 };
 /*var isParamChangedExcept=function(args){
@@ -46,18 +46,18 @@ var isParamDiff=function(param){
 	var query=me.query;
 	return hash.params[param]!=query.params[param];
 };
-var hashParamsHas=function(key){
+var hashParamsOwn=function(key){
 	var me=this;
 	var hash=me.hash;
 	return HAS(hash.params,key);
 };
-var queryParamsHas=function(key){
+var queryParamsOwn=function(key){
 	var me=this;
 	var query=me.query;
 	return HAS(query.params,key);
 };
 
-var getParams=function(key){
+var getParam=function(key){
 	var me=this;
 	var params=me.params;
 	return params[key];
@@ -314,11 +314,15 @@ var Router=Magix.mix({
 	 * @return {Object} 解析的对象
 	 */
 	parseQueryAndHash:function(){
-		var params=DECODE(WIN.location.href).replace(/^[^?#]+/g,EMPTY);
+		var me=this;
+		var href=DECODE(WIN.location.href);
+		var cache=me.$QH;
+		if(cache&&cache.p==href){
+			return cache.o;
+		}
+		var params=href.replace(/^[^?#]+/g,EMPTY);
 		var query=WIN.location[PATHNAME]+params.replace(/^([^#]+).*$/g,'$1');
 		var hash=params.replace(/^[^#]*#?/g,EMPTY);//原始hash
-		//
-		var me=this;
 
 		var queryObj=me.pathToObject(query);
 		//
@@ -327,19 +331,22 @@ var Router=Magix.mix({
 		var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
 		Magix.mix(comObj,queryObj.params);
 		Magix.mix(comObj,hashObj.params);
-
-		return {
-			isPathnameDiff:isPathnameDiff,
-			isParamDiff:isParamDiff,
-			hashParamsHas:hashParamsHas,
-			queryParamsHas:queryParamsHas,
-			get:getParams,
-			originalQuery:query,
-			originalHash:hash,
-			query:queryObj,
-			hash:hashObj,
-			params:comObj
-		}
+		cache=me.$QH={
+			p:href,
+			o:{
+				isPathnameDiff:isPathnameDiff,
+				isParamDiff:isParamDiff,
+				hashParamsOwn:hashParamsOwn,
+				queryParamsOwn:queryParamsOwn,
+				get:getParam,
+				originalQuery:query,
+				originalHash:hash,
+				query:queryObj,
+				hash:hashObj,
+				params:comObj
+			}
+		};
+		return cache.o;
 	},
 	/**
 	 * 解析window.location.href字符串为对象
@@ -422,9 +429,9 @@ var Router=Magix.mix({
 				temp.params[key]=true;
 			}
 		}
-		temp.isParamChanged=isParamChanged;
-		temp.isPathnameChanged=isPathnameChanged;
-		temp.isViewPathChanged=isViewPathChanged;
+		temp.isParam=isParam;
+		temp.isPathname=isPathname;
+		temp.isViewPath=isViewPath;
 		//temp.isParamChangedExcept=isParamChangedExcept;
 		return temp;
 	},
@@ -435,7 +442,7 @@ var Router=Magix.mix({
 		var me=this;
 		var location=me.parseLocation();
 		var oldLocation=me.$location||{params:{}};
-		var isFirstFired=!me.$location;//是否强制触发的locationChange，对于首次加载会强制触发一次
+		var firstFired=!me.$location;//是否强制触发的locationChange，对于首次加载会强制触发一次
 		var oldViewPath=oldLocation.viewPath||EMPTY;
 		var needFire;
 		if(location.viewPath==oldViewPath){//要加载的根view路径没变化
@@ -450,11 +457,11 @@ var Router=Magix.mix({
 			me.trigger('locationChanged',{
 				location:location,
 				changed:changed,
-				isFirstFired:isFirstFired
+				firstFired:firstFired
 			});
 		}
 		me.$location=location;
-		me.$referrer=DECODE(WIN.location.href);
+		//me.$referrer=DECODE(WIN.location.href);
 		
 		me.resume();
 	},
@@ -613,7 +620,7 @@ var Router=Magix.mix({
 	 * @param {Object} e 事件对象
 	 * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
 	 * @param {Object} e.changed 有哪些值发生改变的对象
-	 * @param {Boolean} e.isFirstFired 标识是否是第一次强制触发的locationChanged，对于首次加载完Magix，会强制触发一次locationChanged
+	 * @param {Boolean} e.firstFired 标识是否是第一次强制触发的locationChanged，对于首次加载完Magix，会强制触发一次locationChanged
 	 */
 
 	/**

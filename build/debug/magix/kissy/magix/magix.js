@@ -265,7 +265,7 @@ var Magix={
 		me.libRequire('magix/router',function(R){
 			me.libRequire('magix/vom',function(V){
 				R.bind('locationChanged',function(e){
-					if(e.changed.isViewPathChanged()){
+					if(e.changed.isViewPath()){
 						V.remountRootVframe(e);
 					}else{
 						V.notifyLocationChange(e);

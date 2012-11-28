@@ -512,7 +512,7 @@ var Magix={
 		me.libRequire('magix/router',function(R){
 			me.libRequire('magix/vom',function(V){
 				R.bind('locationChanged',function(e){
-					if(e.changed.isViewPathChanged()){
+					if(e.changed.isViewPath()){
 						V.remountRootVframe(e);
 					}else{
 						V.notifyLocationChange(e);
@@ -598,13 +598,13 @@ KISSY.add('magix/router',function(S,IRouter,Magix,Event){
 	
 var HAS=Magix.hasProp;
 
-var isParamChanged=function(key){
+var isParam=function(key){
 	return HAS(this.params,key);
 };
-var isPathnameChanged=function(){
+var isPathname=function(){
 	return HAS(this,PATHNAME);	
 };
-var isViewPathChanged=function(){
+var isViewPath=function(){
 	return HAS(this,'viewPath');
 };
 /*var isParamChangedExcept=function(args){
@@ -637,18 +637,18 @@ var isParamDiff=function(param){
 	var query=me.query;
 	return hash.params[param]!=query.params[param];
 };
-var hashParamsHas=function(key){
+var hashParamsOwn=function(key){
 	var me=this;
 	var hash=me.hash;
 	return HAS(hash.params,key);
 };
-var queryParamsHas=function(key){
+var queryParamsOwn=function(key){
 	var me=this;
 	var query=me.query;
 	return HAS(query.params,key);
 };
 
-var getParams=function(key){
+var getParam=function(key){
 	var me=this;
 	var params=me.params;
 	return params[key];
@@ -905,11 +905,15 @@ var Router=Magix.mix({
 	 * @return {Object} 解析的对象
 	 */
 	parseQueryAndHash:function(){
-		var params=DECODE(WIN.location.href).replace(/^[^?#]+/g,EMPTY);
+		var me=this;
+		var href=DECODE(WIN.location.href);
+		var cache=me.$QH;
+		if(cache&&cache.p==href){
+			return cache.o;
+		}
+		var params=href.replace(/^[^?#]+/g,EMPTY);
 		var query=WIN.location[PATHNAME]+params.replace(/^([^#]+).*$/g,'$1');
 		var hash=params.replace(/^[^#]*#?/g,EMPTY);//原始hash
-		//
-		var me=this;
 
 		var queryObj=me.pathToObject(query);
 		//
@@ -918,19 +922,22 @@ var Router=Magix.mix({
 		var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
 		Magix.mix(comObj,queryObj.params);
 		Magix.mix(comObj,hashObj.params);
-
-		return {
-			isPathnameDiff:isPathnameDiff,
-			isParamDiff:isParamDiff,
-			hashParamsHas:hashParamsHas,
-			queryParamsHas:queryParamsHas,
-			get:getParams,
-			originalQuery:query,
-			originalHash:hash,
-			query:queryObj,
-			hash:hashObj,
-			params:comObj
-		}
+		cache=me.$QH={
+			p:href,
+			o:{
+				isPathnameDiff:isPathnameDiff,
+				isParamDiff:isParamDiff,
+				hashParamsOwn:hashParamsOwn,
+				queryParamsOwn:queryParamsOwn,
+				get:getParam,
+				originalQuery:query,
+				originalHash:hash,
+				query:queryObj,
+				hash:hashObj,
+				params:comObj
+			}
+		};
+		return cache.o;
 	},
 	/**
 	 * 解析window.location.href字符串为对象
@@ -1013,9 +1020,9 @@ var Router=Magix.mix({
 				temp.params[key]=true;
 			}
 		}
-		temp.isParamChanged=isParamChanged;
-		temp.isPathnameChanged=isPathnameChanged;
-		temp.isViewPathChanged=isViewPathChanged;
+		temp.isParam=isParam;
+		temp.isPathname=isPathname;
+		temp.isViewPath=isViewPath;
 		//temp.isParamChangedExcept=isParamChangedExcept;
 		return temp;
 	},
@@ -1026,7 +1033,7 @@ var Router=Magix.mix({
 		var me=this;
 		var location=me.parseLocation();
 		var oldLocation=me.$location||{params:{}};
-		var isFirstFired=!me.$location;//是否强制触发的locationChange，对于首次加载会强制触发一次
+		var firstFired=!me.$location;//是否强制触发的locationChange，对于首次加载会强制触发一次
 		var oldViewPath=oldLocation.viewPath||EMPTY;
 		var needFire;
 		if(location.viewPath==oldViewPath){//要加载的根view路径没变化
@@ -1041,11 +1048,11 @@ var Router=Magix.mix({
 			me.trigger('locationChanged',{
 				location:location,
 				changed:changed,
-				isFirstFired:isFirstFired
+				firstFired:firstFired
 			});
 		}
 		me.$location=location;
-		me.$referrer=DECODE(WIN.location.href);
+		//me.$referrer=DECODE(WIN.location.href);
 		
 		me.resume();
 	},
@@ -1204,7 +1211,7 @@ var Router=Magix.mix({
 	 * @param {Object} e 事件对象
 	 * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
 	 * @param {Object} e.changed 有哪些值发生改变的对象
-	 * @param {Boolean} e.isFirstFired 标识是否是第一次强制触发的locationChanged，对于首次加载完Magix，会强制触发一次locationChanged
+	 * @param {Boolean} e.firstFired 标识是否是第一次强制触发的locationChanged，对于首次加载完Magix，会强制触发一次locationChanged
 	 */
 
 	/**
@@ -1403,7 +1410,6 @@ Magix.mix(Vframe.prototype,{
 			var callback=function(View){
 				
 				if(viewName!=me.viewName){
-					me.unbind(ViewLoad);
 					return;//有可能在view载入后，vframe已经卸载了
 				}
 
@@ -1574,7 +1580,7 @@ Magix.mix(Vframe.prototype,{
 			
 			if(vframe){
 				var view=vframe.view;
-				if(view){//表明属于vframe的view对象已经加载完成
+				if(view&&view.rendered){//表明属于vframe的view对象已经加载完成
 					/*
 						考虑
 						<vframe id="v1" data-view="..."></vframe>
@@ -1583,13 +1589,13 @@ Magix.mix(Vframe.prototype,{
 						
 						v1渲染后postMessage向v2 v3发消息，此时v2 v3的view对象是构建好了，但它对应的模板可能并未就绪，需要等待到view创建完成后再发消息过去
 					 */
-					if(view.rendered){
+					//if(view.rendered){
 						safeExec(view.receiveMessage,args,view);
-					}else{
+					/*}else{ //使用ViewLoad
 						view.bind('created',function(){
 							safeExec(this.receiveMessage,args,this);
 						});
-					}					
+					}	*/				
 				}else if(vframe.viewName){//经过上面的判断，到这一步说明开始加载view但尚未加载完成
 					/*
 						Q:当vframe没有view属性但有viewName表明属于这个vframe的view异步加载尚未完成，但为什么还要向这个view发送消息呢，丢弃不可以吗？
@@ -1679,7 +1685,7 @@ Magix.mix(Vframe.prototype,{
 				safeExec(view.trigger,ChildrenCreated,view);
 			}
 			
-			me.trigger(ChildrenCreated);
+			me.trigger(ChildrenCreated,0,true);
 		}
 		if(me.viewCreated)fn();
 		else me.bind(ViewLoad,fn);
@@ -2285,10 +2291,10 @@ Magix.mix(VProto,{
 	 * 		init:function(){
 	 * 			this.observeLocation('page,rows',true);//关注地址栏中的page rows2个参数的变化，并且关注pathname的改变，当其中的任意一个改变时，才引起当前view的locationChange被调用
 	 * 		},
-	 * 		locationChange:function(location,changed){
-	 * 			if(changed.isParamChanged('page')){};//检测是否是page发生的改变
-	 * 			if(changed.isParamChanged('rows')){};//检测是否是rows发生的改变
-	 * 			if(changed.isPathnameChanged()){};//是否是pathname发生的改变
+	 * 		locationChange:function(e){
+	 * 			if(e.changed.isParam('page')){};//检测是否是page发生的改变
+	 * 			if(e.changed.isParam('rows')){};//检测是否是rows发生的改变
+	 * 			if(e.changed.isPathname()){};//是否是pathname发生的改变
 	 * 		}
 	 * });
 	 */
@@ -2301,7 +2307,7 @@ Magix.mix(VProto,{
 		if(args.length){
 			me.$location={
 				keys:Magix.isArray(keys)?keys:String(keys).split(','),
-				pathname:observePathname
+				pn:observePathname
 			};
 		}
 	},
@@ -2313,17 +2319,17 @@ Magix.mix(VProto,{
 	testObserveLocationChanged:function(e){
 		var me=this;
 		var location=me.$location;
-		var loc=e.changed;
+		var changed=e.changed;
 		if(location){
 			var res=false;
-			if(location.pathname){
-				res=loc.isPathnameChanged(location.pathname);
+			if(location.pn){
+				res=changed.isPathname();
 			}
 			if(!res){
 				var keys=location.keys;
 				for(var i=0;i<keys.length;i++){
 					var key=keys[i];
-					if(loc.isParamChanged(key)){
+					if(changed.isParam(key)){
 						res=true;
 						break;
 					}
@@ -2418,10 +2424,17 @@ Magix.mix(VProto,{
 			var info=current.getAttribute(type);
 			var node=$(me.vfId);
 
-			while(!info&&current!=node){
+			while(!info&&current!=node){//跨vframe的咱也不处理
 				current=current.parentNode;
 				info=current.getAttribute(type);
 			}
+			/*var begin=current;
+			while(begin!=node){
+				if(begin.tagName==node.tagName){
+					info=0;
+				}
+				begin=begin.parentNode;
+			}*/
 			if(info){
 				var infos=info.split(':');
 				var evtName=infos.shift();
@@ -2456,7 +2469,7 @@ Magix.mix(VProto,{
 						events:events,
 						params:infos
 					},eventsType);
-					//e.stopPropagation();
+					
 				}
 			}
 		}
@@ -3098,6 +3111,7 @@ var VOM={
 	},
 	/**
 	 * 重新渲染根vframe
+	 * @param {Object} e Router.locationChanged事件对象
 	 * @param {Object} e.location window.location.href解析出来的对象
 	 * @param {Object} e.changed 包含有哪些变化的对象
 	 */

@@ -588,10 +588,10 @@ Magix.mix(VProto,{
 	 * 		init:function(){
 	 * 			this.observeLocation('page,rows',true);//关注地址栏中的page rows2个参数的变化，并且关注pathname的改变，当其中的任意一个改变时，才引起当前view的locationChange被调用
 	 * 		},
-	 * 		locationChange:function(location,changed){
-	 * 			if(changed.isParamChanged('page')){};//检测是否是page发生的改变
-	 * 			if(changed.isParamChanged('rows')){};//检测是否是rows发生的改变
-	 * 			if(changed.isPathnameChanged()){};//是否是pathname发生的改变
+	 * 		locationChange:function(e){
+	 * 			if(e.changed.isParam('page')){};//检测是否是page发生的改变
+	 * 			if(e.changed.isParam('rows')){};//检测是否是rows发生的改变
+	 * 			if(e.changed.isPathname()){};//是否是pathname发生的改变
 	 * 		}
 	 * });
 	 */
@@ -604,7 +604,7 @@ Magix.mix(VProto,{
 		if(args.length){
 			me.$location={
 				keys:Magix.isArray(keys)?keys:String(keys).split(','),
-				pathname:observePathname
+				pn:observePathname
 			};
 		}
 	},
@@ -616,17 +616,17 @@ Magix.mix(VProto,{
 	testObserveLocationChanged:function(e){
 		var me=this;
 		var location=me.$location;
-		var loc=e.changed;
+		var changed=e.changed;
 		if(location){
 			var res=false;
-			if(location.pathname){
-				res=loc.isPathnameChanged(location.pathname);
+			if(location.pn){
+				res=changed.isPathname();
 			}
 			if(!res){
 				var keys=location.keys;
 				for(var i=0;i<keys.length;i++){
 					var key=keys[i];
-					if(loc.isParamChanged(key)){
+					if(changed.isParam(key)){
 						res=true;
 						break;
 					}
@@ -721,10 +721,17 @@ Magix.mix(VProto,{
 			var info=current.getAttribute(type);
 			var node=$(me.vfId);
 
-			while(!info&&current!=node){
+			while(!info&&current!=node){//跨vframe的咱也不处理
 				current=current.parentNode;
 				info=current.getAttribute(type);
 			}
+			/*var begin=current;
+			while(begin!=node){
+				if(begin.tagName==node.tagName){
+					info=0;
+				}
+				begin=begin.parentNode;
+			}*/
 			if(info){
 				var infos=info.split(':');
 				var evtName=infos.shift();
@@ -759,7 +766,7 @@ Magix.mix(VProto,{
 						events:events,
 						params:infos
 					},eventsType);
-					//e.stopPropagation();
+					
 				}
 			}
 		}

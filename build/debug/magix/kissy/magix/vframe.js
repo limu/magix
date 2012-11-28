@@ -177,7 +177,6 @@ Magix.mix(Vframe.prototype,{
 			var callback=function(View){
 				
 				if(viewName!=me.viewName){
-					me.unbind(ViewLoad);
 					return;//有可能在view载入后，vframe已经卸载了
 				}
 
@@ -348,7 +347,7 @@ Magix.mix(Vframe.prototype,{
 			
 			if(vframe){
 				var view=vframe.view;
-				if(view){//表明属于vframe的view对象已经加载完成
+				if(view&&view.rendered){//表明属于vframe的view对象已经加载完成
 					/*
 						考虑
 						<vframe id="v1" data-view="..."></vframe>
@@ -357,13 +356,13 @@ Magix.mix(Vframe.prototype,{
 						
 						v1渲染后postMessage向v2 v3发消息，此时v2 v3的view对象是构建好了，但它对应的模板可能并未就绪，需要等待到view创建完成后再发消息过去
 					 */
-					if(view.rendered){
+					//if(view.rendered){
 						safeExec(view.receiveMessage,args,view);
-					}else{
+					/*}else{ //使用ViewLoad
 						view.bind('created',function(){
 							safeExec(this.receiveMessage,args,this);
 						});
-					}					
+					}	*/				
 				}else if(vframe.viewName){//经过上面的判断，到这一步说明开始加载view但尚未加载完成
 					/*
 						Q:当vframe没有view属性但有viewName表明属于这个vframe的view异步加载尚未完成，但为什么还要向这个view发送消息呢，丢弃不可以吗？
@@ -453,7 +452,7 @@ Magix.mix(Vframe.prototype,{
 				safeExec(view.trigger,ChildrenCreated,view);
 			}
 			
-			me.trigger(ChildrenCreated);
+			me.trigger(ChildrenCreated,0,true);
 		}
 		if(me.viewCreated)fn();
 		else me.bind(ViewLoad,fn);

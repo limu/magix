@@ -247,7 +247,7 @@ dl.data .dd{
         
             <div id="header">
     <!--<h1 class="logo"><a alt="KISSY" href="http://kissyui.com/"><img src="http://docs.kissyui.com/docs/html/static/logo.png"/></a></h1>-->
-    <p class="sub-title"><a href="http://magixjs.github.com/docs/">Magix—API文档</a></p>
+    <p class="sub-title"><a href="http://magixjs.github.com/doc/">Magix—API文档</a></p>
     <ul class="navigation">
         <li><a href="http://ux.etao.net/wiki/doku.php/circle:opoa:start">wiki</a></li>
         <li><a href="https://github.com/limu/magix">源码</a></li>
@@ -282,7 +282,7 @@ dl.data .dd{
 
                                     
                                         <p>源码：
-                                            <a href="../symbols/src/D__wamp_www_magix_1.0_build_debug__magix_kissy_magix_view.js.html">view.js</a></p>
+                                            <a href="../symbols/src/D__wamp_www_magix_git_build_debug__magix_kissy_magix_view.js.html">view.js</a></p>
 
                                     
 
@@ -1306,7 +1306,7 @@ dl.data .dd{
                                             <div class="desc">
                                                 绑定事件
                                                 
-                                                    <br />Defined in:<a href="../symbols/src/D__wamp_www_magix_1.0_build_debug__magix_kissy_magix_event.js.html">event.js</a>.
+                                                    <br />Defined in:<a href="../symbols/src/D__wamp_www_magix_git_build_debug__magix_kissy_magix_event.js.html">event.js</a>.
                                                 
                                                 
                                             </div>
@@ -2400,7 +2400,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">return View.extend({		init:function(){			this.observeLocation('page,rows',true);//关注地址栏中的page rows2个参数的变化，并且关注pathname的改变，当其中的任意一个改变时，才引起当前view的locationChange被调用		},		locationChange:function(location,changed){			if(changed.isParamChanged('page')){};//检测是否是page发生的改变			if(changed.isParamChanged('rows')){};//检测是否是rows发生的改变			if(changed.isPathnameChanged()){};//是否是pathname发生的改变		}});</pre>
+                                                            <pre class="brush: js; ">return View.extend({		init:function(){			this.observeLocation('page,rows',true);//关注地址栏中的page rows2个参数的变化，并且关注pathname的改变，当其中的任意一个改变时，才引起当前view的locationChange被调用		},		locationChange:function(e){			if(e.changed.isParam('page')){};//检测是否是page发生的改变			if(e.changed.isParam('rows')){};//检测是否是rows发生的改变			if(e.changed.isPathname()){};//是否是pathname发生的改变		}});</pre>
                                                         
                                                 </dd>
                                                 
@@ -3108,7 +3108,7 @@ dl.data .dd{
                                             <div class="desc">
                                                 触发事件
                                                 
-                                                    <br />Defined in:<a href="../symbols/src/D__wamp_www_magix_1.0_build_debug__magix_kissy_magix_event.js.html">event.js</a>.
+                                                    <br />Defined in:<a href="../symbols/src/D__wamp_www_magix_git_build_debug__magix_kissy_magix_event.js.html">event.js</a>.
                                                 
                                                 
                                             </div>
@@ -3191,7 +3191,7 @@ dl.data .dd{
                                             <div class="desc">
                                                 解除事件绑定
                                                 
-                                                    <br />Defined in:<a href="../symbols/src/D__wamp_www_magix_1.0_build_debug__magix_kissy_magix_event.js.html">event.js</a>.
+                                                    <br />Defined in:<a href="../symbols/src/D__wamp_www_magix_git_build_debug__magix_kissy_magix_event.js.html">event.js</a>.
                                                 
                                                 
                                             </div>
