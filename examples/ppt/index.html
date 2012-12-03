@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Magix核心升级总结</title>
+		<link rel="stylesheet" type="text/css" href="theme/css/style.css" />
+	</head>
+	<body>
+		<script type="text/javascript" src="../../libs/debug/kissy/kissy.js"></script>
+		<script type="text/javascript" src="../../build/raw/kissy-magix-mxext-pkg.js"></script>
+		<script type="text/javascript">
+			Magix.start({
+				appHome:"app",
+				release:false,
+				pathCfg:{
+					defaultView:'app/views/index',
+					map:{//虚拟路径关系
+						'app/views/index':['/ppt']
+					}
+				},
+				viewChangeAnim:true,
+				viewChange:function(e){
+					var S=KISSY;
+					if(S.UA.ie){
+						e.collectGarbage();
+						return;
+					}
+					var EndAngle=360;
+					var EndScale=0;
+					var currentAngle=0;
+					var currentScale=1;
+					var now=new Date().getTime();
+					var end=now+1000;
+					var tId=setInterval(function(){
+						var n=new Date().getTime();
+						if(n>=end){
+							clearInterval(tId);
+							e.collectGarbage();
+						}else{
+							var p=KISSY.Easing.backIn((n-now)/1000);
+							S.one(e.oldViewNode).css({
+								MozTransform:'scale('+(1-p)+') rotate('+(p*EndAngle)+'deg)',
+								WebkitTransform:'scale('+(1-p)+') rotate('+(p*EndAngle)+'deg)'
+							});
+						}
+					},13);
+				}
+			});
+			/*
+				KISSY.use('magix/router,magix/vom',function(S,R,V){
+				    for(var i=0;i<70;i++){
+				        R.navigate({
+				            page:i%7
+				        });
+				    }
+				});
+			 */
+		</script>
+	</body>
+</html>

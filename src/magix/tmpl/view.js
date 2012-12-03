@@ -2,6 +2,9 @@ var counter=1;
 var safeExec=Magix.safeExec;
 var HAS=Magix.hasProp;
 var EMPTY='';
+var DataHandler="data-handler";
+var VframeTagName='VFRAME';
+var COMMA=',';
 /**
  * View类
  * @name View
@@ -45,7 +48,7 @@ var EMPTY='';
  *   	}
  *   }
  */
-var WrapAsyncUpdateNames=['render','renderUI','updateUI'];
+var WrapAsyncUpdateNames='render,renderUI,updateUI'.split(COMMA);
 
 var View=function(ops){
 	var me=this;
@@ -53,6 +56,7 @@ var View=function(ops){
 	me.exist=true;
 	me.iQ=[];
 	me.iC=0;
+	console.log('base view ctor',me.id);
 	me.sign=0;//标识view是否刷新过，对于托管的函数资源，在回调这个函数时，不但要确保view没有销毁，而且要确保view没有刷新过，如果刷新过则不回调
 };
 var BaseViewProto=View.prototype;
@@ -229,6 +233,7 @@ Magix.mix(View,{
 });
 
 var UnsupportBubble={
+	submit:1,
 	blur:1,
 	focus:1,
 	focusin:1,
@@ -241,7 +246,7 @@ var UnsupportBubble={
 var VProto=View.prototype;
 var D=document;
 var WIN=window;
-var DestroyManagedTryList=['abort','stop','cancel','destroy','dispose'];
+var DestroyManagedTryList='abort,stop,cancel,destroy,dispose'.split(COMMA);
 var $=function(id){
 	return typeof id=='object'?id:D.getElementById(id);
 };
@@ -319,6 +324,7 @@ Magix.mix(VProto,{
 		var me=this;
 		//if(me.$loaded)return;
 		//me.$loaded=true;
+		var hasTemplate=me.hasTemplate;
 		var ready=function(){
 			//me.owner.owner.suspend();
 			me.suspend();
@@ -351,16 +357,16 @@ Magix.mix(VProto,{
 
 				@1 用户重写了render方法后，vframe接收ready事件：
 					
-					ready
+					interact
 					    |
-					加载子view(此时尚未有内容，所以暂时找不到子view)
+					//加载子view(此时尚未有内容，所以暂时找不到子view)
 					    |
 					绑定prerender与rendered事件
 					    |
 					当view调用setViewHTML方法后则后续正常执行
 				
 				@2
-				     ready
+				     interact
 				        |
 				     加载子view（模板在页面上，所以会执行，有子view时则加载）
 				        |
@@ -398,23 +404,83 @@ Magix.mix(VProto,{
 			me.delegateBubbleEvents();
 			me.idle(function(){
 				//console.log(me.id,'xx',me.rendered)
-				if(!me.rendered){//监视有没有在调用render方法内使用setViewHTML更新view，对于没有模板的view，是不需要调用的，此时我们需要添加不冒泡的事件处理，如果调用了，则在setViewHTML中处理，首次就不再处理了，只有冒泡的事件才适合在首次处理
+				
+				var noTemplateAndNoRendered=!hasTemplate&&!me.rendered;//没模板，调用render后，render里面也没调用setViewHTML
+
+				if(noTemplateAndNoRendered){//监视有没有在调用render方法内使用setViewHTML更新view，对于没有模板的view，是不需要调用的，此时我们需要添加不冒泡的事件处理，如果调用了，则在setViewHTML中处理，首次就不再处理了，只有冒泡的事件才适合在首次处理
 					me.delegateUnbubbleEvents();
 					me.rendered=true;
 				}
+				/*
+					关于view init调用时间点：
+					view 无模板文件 ：new -> base ctor -> view ctor -> load -> interact -> render -> init  -> created 
+					
+					view 有模板无缓存：new -> base cotr ->  view ctor -> load -> getTmpl -> interact -> render(同步调用setViewHTML) -> setViewHTML -> prerender -> rendered -> created -> init
+					
+					view 有模板无缓存：new -> base cotr ->  view ctor -> load -> getTmpl -> interact -> render(异步调用setViewHTML) -> init -> setViewHTML -> prerender -> rendered -> created 
+
+
+					view 有模板有缓存 new -> base ctor -> view ctor -> load -> getTmpl -> interact -> render(同步调用setViewHTML) -> prerender -> rendered -> created -> init 
+
+					view 有模板有缓存 new -> base ctor -> view ctor -> load -> getTmpl -> interact -> render(异步调用setViewHTML) -> init -> setViewHTML -> prerender -> rendered  -> created 
+
+
+					init受getTmpl方法的影响，在开发app时，获取模板是异步的，因此init是在获取完模板后才被调用的，那么在这个等待过程中，有locationChange或其它事件发生怎么办？
+
+					return MxView.extend({
+						init:function(){
+							this.observeLocation('page,rows');
+						},
+						locationChange:function(){
+							this.render();
+						},
+						render:function(){
+							//...
+						}
+					});
+
+					比如这样，我监控page和rows这2个参数的改变，有改变时重新渲染，当获取模板时间较长，而此时其它参数有变化（page rows没有变化），因init方法中指定监控的参数还未生效，此时会引起这个view的locationChange方法被调用，render会被多调用一次，但这不影响最终渲染的结果，一旦发布上线模板与js文件打包在一起时，获取模板的过程就是同步的了，也就不会再有这个重复渲染的问题，当然如果您介意这个问题，可以这样解决：
+
+					return MxView.extend({
+						locationChange:function(){
+							this.render();
+						},
+						render:function(){
+							//...
+						}
+					},funciton(){//在构造方法内进行监控，而不是在init方法内
+						this.observeLocation('page,rows')
+					});
+
+					init方法为什么会设计的这么靠后？
+
+					view没被创建出来前，是不能做其它动作的，如果在此之前调用了init，而用户可以在init中做其它的动作，假设view还未创建完成就销毁，会给销毁带来一定的麻烦
+
+					通常在init中还会访问其它对象，因此放在render后
+				 */
 				safeExec(me.init,[],me);
-				me.trigger('created',null,true);//先注册的事件先调用
-				var mxConfig=Magix.config();
+				//me.trigger('complete',null,true);//完成
+				if(noTemplateAndNoRendered){
+					me.trigger('created',null,true);//created事件只触发一次
+				}
+				/*var mxConfig=Magix.config();
 				var fn=mxConfig.viewLoad;
 				if(Magix.isFunction(fn)){
 					safeExec(fn,{name:me.viewName,location:me.getLocation()});
-				}
+				}*/
 			});
-			me.trigger('ready',{tmpl:me.hasTemplate},true);//已就绪
+			/*
+				关于interact事件的设计 ：
+				首先这个事件是对内的，当然外部也可以用，API文档上就不再体现了
+
+				interact : view准备好，让外部尽早介入，进行其它事件的监听 ，当这个事件触发时，view有可能已经有html了(无模板的情况)，所以此时外部可以去加载相应的子view了，同时要考虑在调用render方法后，有可能在该方法内通过setViewHTML更新html，所以在使用setViewHTML更新界面前，一定要先监听prerender rendered事件，因此设计了该  interact事件
+
+			 */
+			me.trigger('interact',{tmpl:hasTemplate},true);//可交互
 			me.resume();
 			//me.owner.owner.resume();
 		};
-		if(me.hasTemplate){
+		if(hasTemplate){
 			me.getTemplate(me.manage(function(tmpl){//模板获取也是异步的，防止模板没取回来时，view已经销毁或刷新了
 				me.template=tmpl;
 				ready();
@@ -449,38 +515,34 @@ Magix.mix(VProto,{
 	setViewHTML:function(param){
 		var me=this;
 		if(me.exist){
-			me.trigger('refresh',null,true,true);//从最后注册的事件一直清到最先注册的事件
-			var mxConfig=Magix.config();
-			console.log('rrrrrrrrrrrrrrrrrrrrrrrrrr',me.rendered);
-
-			var enableAnim=mxConfig.viewChangeAnim&&me.rendered&&me.enableRefreshAnim;//渲染过才使用动画
-
-			me.trigger('prerender',{anim:enableAnim});
-
-			//console.log('uddddddddddddddddddd');
-			me.destroyManaged(true);
-			me.undelegateUnBubbleEvents();
-			me.destroyFrames();
-			
-
-			var owner=me.owner;
-			if(enableAnim){
-				safeExec(owner.oldViewDestroy,[],owner);
-				safeExec(owner.prepareNextView,[],owner);
-				me.updateViewId();
-			}
-			if(!me.rendered){
+			var isRendered=me.rendered;
+			if(isRendered){//渲染过才使用动画
+				var mxConfig=Magix.config();
+				var enableAnim=mxConfig.viewChangeAnim&&me.enableRefreshAnim;//
+				me.trigger('refresh',null,true,true);//从最后注册的事件一直清到最先注册的事件
+				me.trigger('prerender',{anim:enableAnim});
+				me.destroyManaged(true);
+				me.undelegateUnBubbleEvents();
+				me.destroyFrames();
+				var owner=me.owner;
+				if(enableAnim){
+					safeExec(owner.oldViewDestroy,[],owner);
+					safeExec(owner.prepareNextView,[],owner);
+					me.updateViewId();
+				}
+			}else{
 				me.$bakHTML=$(me.id).innerHTML;
 			}
-
 			me.setNodeHTML(param);
-
 			if(enableAnim){
 				safeExec(owner.newViewCreated,[],owner);
 			}
 			me.delegateUnbubbleEvents();
 			me.rendered=true;
 			me.trigger('rendered');//可以在rendered事件中访问view.rendered属性
+			if(!isRendered){//触发一次created事件
+				me.trigger('created',null,true);
+			}
 		}
 	},
 	/**
@@ -607,7 +669,7 @@ Magix.mix(VProto,{
 	 * @param {Object} e Router.locationChanged事件对象
 	 * @return {Boolean} 是否发生改变
 	 */
-	testObserveLocationChanged:function(e){
+	testOLChanged:function(e){
 		var me=this;
 		var location=me.$location;
 		var changed=e.changed;
@@ -688,10 +750,10 @@ Magix.mix(VProto,{
 			}else{
 				var mxConfig=Magix.config();
 				var isReleased=mxConfig.release;
-
-				var path=mxConfig.appHome+me.viewName+'.html';
+				var suffix='.html';
+				var path=mxConfig.appHome+me.viewName+suffix;
 				if(!isReleased){
-					path+='?_='+new Date().getTime();
+					path+='?_='+new Date().getTime()+suffix;
 				}
 				me.getTmplByXHR(path,function(tmpl){
 					fn(Magix.templates[me.viewName]=tmpl);
@@ -707,17 +769,94 @@ Magix.mix(VProto,{
 		var me=this;
 		if(me.enableEvent&&me.exist){
 			var target=e.target;
-			var current=target;
-			while(current.nodeType!=1){
-				current=current.parentNode;
+			while(target&&target.nodeType!=1){
+				target=target.parentNode;
 			}
+			var current=target;
 			var type='mx'+e.type;
-			var info=current.getAttribute(type);
+			var info;//=current.getAttribute(type);
 			var node=$(me.vfId);
+			var handle;
 
-			while(!info&&current!=node){//跨vframe的咱也不处理
-				current=current.parentNode;
+			/*
+				<vframe id="magix_main">
+					<button mxclick="change"> change </button>
+					<vframe id="magix_vf1">
+						<button mxclick="change"> change </button>
+					</vframe>
+				</vframe>
+				
+				vf1:
+					events:{
+						click:{
+							change:function(e){
+								alert(e);
+							}
+						}
+					}
+				
+				main:
+					events:{
+						click:{
+							change:function(e){
+								alert(e);
+							}
+						}
+					}
+				问题：1.因为事件的冒泡，vf1中的click完成后会冒到main中，导致main中的也会触发
+					  2.假设vf1中没有events，没有处理函数，而vf1的html中有mxclick并且它的名称change跟main中的click处理名称一样，这样main中的也会被触发
+
+				现阶段的方案是这样的：
+					冒泡是保留的，这样会方便第三方组件，比如点击某处后弹出菜单关闭等
+					所以就要想办法识别当前点击的是属于自已处理范围，vframe只处理只身，不包括子view的事件
+
+				新引入的特性：
+					针对上述问题，处理后就能达到事件虽然冒泡，但处理时以最近的vframe进行处理，当我们需要vf1中的mx事件占位需要在main中处理时，可以使用data-handler来进行指定在哪个vframe中进行处理，示例代码如下：
+
+				<vframe id="magix_main">
+					<button mxclick="change"> change </button>
+					<vframe id="magix_vf1">
+						<button mxclick="change" data-handler="magix_main"> change </button>
+					</vframe>
+				</vframe>
+
+				通过data-handler指定由哪个vframe进行处理
+
+				跨vframe事件处理，只能是嵌套关系，只能由子级指定父级（只能向上指定）
+
+				当指定后，只能由指定的vframe处理，比如上面的 data-handler="magix_main"之后，只能在magix_main中处理change事件，如果您需要在vf1和main中都处理这个事件，可以这样写：
+
+				data-handler="magix_main,magix_vf1" 用逗号割开，需要注意的是，处理顺序取决于事件冒泡顺序，也就是说vf1先处理main后处理，并不取决于您写 data-handler 的顺序
+
+			 */
+
+			while(current&&current!=node){//跨vframe的咱也不处理
 				info=current.getAttribute(type);
+				if(info){
+					break;
+				}else{
+					current=current.parentNode;
+				}
+			}
+			if(info){
+				handle=current.getAttribute(DataHandler);
+				if(!handle){
+					var begin=current;
+					while(begin&&begin!=node){
+						if(begin.tagName.toUpperCase()==VframeTagName){
+							current.setAttribute(DataHandler,begin.id);
+							info=0;
+							break;
+						}else{
+							begin=begin.parentNode;
+						}
+					}
+					if(info){
+						current.setAttribute(DataHandler,me.vfId);
+					}
+				}else if(!~[COMMA,handle,COMMA].join().indexOf(COMMA+me.vfId+COMMA)){
+					info=0;
+				}
 			}
 			/*var begin=current;
 			while(begin!=node){
@@ -732,6 +871,10 @@ Magix.mix(VProto,{
 				var flag=infos[infos.length-1];
 				var needPop;
 				var id=View.idIt(current);
+				/*
+					考虑到与第三方组件集成，所以暂试点取消事件冒泡的功能
+					@2012.11.30 对于弹出层内删除节点的问题，似乎只有取消冒泡能解决，所以还是恢复原来的样子，晕哦
+				 */
 				if(flag=='_halt_'||flag=='_stop_'){
 					e.stopPropagation();
 					needPop=true;
@@ -1257,7 +1400,7 @@ Magix.mix(VProto,{
 	 */
 	
 	/**
-	 * 当view首次调用render完成渲染后触发
+	 * 当view首次完成界面的html设置后触发，view有没有模板均会触发该事件，对于有模板的view，会等到模板取回，第一次调用setViewHTML更新界面后才触发，总之该事件触发后，您就可以访问view的HTML DOM节点对象（该事件仅代表自身的html创建完成，如果需要对整个子view也要监控，请使用childrenCreated事件）
 	 * @name View#created 
 	 * @event
 	 * @param {Object} e view首次调用render完成界面的创建后触发
@@ -1310,7 +1453,7 @@ Magix.mix(VProto,{
 	 */
 	
 	/**
-	 * view的所有子view包括孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子view组成的，通过监听该事件可知道子view什么时间创建完成
+	 * view自身和所有子孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子孙view组成的，通过监听该事件可知道子孙view什么时间创建完成（注意：当view中有子view，且该子view是通过程序动态mountView而不是通过data-view指定时，该事件会也会等待到view创建完成触发，而对于您在某个view中有如下代码：<div><vframe></vframe></div>，有一个空的vframe且未指定data-view属性，同时您在这个view中没有动态渲染vframe对应的view，则该事件不会触发，magix无法识别出您留空vframe的意图，到底是需要动态mount还是手误，不过在具体应用中，出现空vframe且没有动态mount几乎是不存在的^_^）
 	 * @name View#childrenCreated
 	 * @event
 	 * @param {Object} e
@@ -1320,5 +1463,12 @@ Magix.mix(VProto,{
 	 * 			//
 	 * 		})
 	 * }
+	 */
+	
+	/**
+	 * view自身和所有子孙view有改动时触发，改动包括刷新和重新mountView，与childrenCreated一起使用，当view自身和所有子孙view创建完成会触发childrenCreated，当其中的一个view刷新或重新mountView，会触发childrenAlter，当是刷新时，刷新完成会再次触发childrenCreated事件，因此这2个事件不只触发一次！！
+	 * @name View#childrenAlter
+	 * @event
+	 * @param {Object} e
 	 */
 });

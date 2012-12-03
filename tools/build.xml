@@ -28,7 +28,7 @@
     <property name="tmpl.event" value="eval(Magix.include('../tmpl/event'));"></property>
 
     <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask" classpath="${gcc.jar}"/>
-    <target name="build" depends="prepare,delconsole,subtmpls,concatfile,release,gjslint,gccompressor,finish,jsdocgen">
+    <target name="build" depends="prepare,s_console,delconsole,subtmpls,concatfile,removeInclude,removeImpl,gjslint,gccompressor,finish,jsdocgen">
     </target>
     <!--<target name="build" depends="prepare">-->
     <!--</target>-->
@@ -45,6 +45,16 @@
     </target>
 
     <!--delete console.log(XX);-->
+    <target name="s_console">
+        <replaceregexp byline="true">
+            <regexp pattern="\/\*KEEP\*\/console\."/>
+            <substitution expression="S."/>
+            <fileset dir="${debug.dir}">
+                <include name="**/*.js"/>
+            </fileset>
+        </replaceregexp>
+    </target>
+
     <target name="delconsole">
         <replaceregexp byline="true">
             <regexp pattern="console\.\w+\((.*)\);?"/>
@@ -55,9 +65,29 @@
         </replaceregexp>
     </target>
 	
-	<target name="release">
+	<!--<target name="release">
         <replaceregexp byline="true">
             <regexp pattern="%DEV%"/>
+            <substitution expression=""/>
+            <fileset dir="${debug.dir}">
+                <include name="**/*-pkg.js"/>
+            </fileset>
+        </replaceregexp>
+    </target>-->
+
+    <target name="removeInclude">
+        <replaceregexp flags="gm">
+            <regexp pattern="include\s*:\s*(?:unimpl|function\([\s\w]*\)\s*\{[\s\S]*?\}),"/>
+            <substitution expression=""/>
+            <fileset dir="${debug.dir}">
+                <include name="**/*-pkg.js"/>
+            </fileset>
+        </replaceregexp>
+    </target>
+
+    <target name="removeImpl">
+        <replaceregexp flags="gm">
+            <regexp pattern="\w+:(Magix\.)?unimpl,?"/>
             <substitution expression=""/>
             <fileset dir="${debug.dir}">
                 <include name="**/*-pkg.js"/>

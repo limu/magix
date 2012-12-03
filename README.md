@@ -7,7 +7,7 @@
 5. 全新的代码组织方式，高内聚，低耦合，Router可单独使用
 6. 改进的渲染流程和事件派发
 
-#老版本升级到1.0指南
+### 老版本升级到1.0指南
 1. vframe标签的view_name修改为data-view(<vframe view_name=""></vframe> => <vframe data-view=""></vframe>)
 2. view中queryModelChange => locationChange (参数也有变化，可console.log出来看下)
 3. view中observeHash => observeLocation(params,observePathname) 由原来的一个参数变成两个参数

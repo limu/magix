@@ -788,7 +788,7 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#testObserveLocationChanged">testObserveLocationChanged</a></b>
+                                                <b class="name"><a href="../symbols/View.html#testOLChanged">testOLChanged</a></b>
                                                 <span class="param">(e)</span>
                                                 
                                                 
@@ -897,12 +897,22 @@ dl.data .dd{
                                             
                                             <li class="li">
                                                 
+                                                <b class="name"><a href="../symbols/View.html#event:childrenAlter">childrenAlter</a></b>
+                                                <span class="param">(e)</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">view自身和所有子孙view有改动时触发，改动包括刷新和重新mountView，与childrenCreated一起使用，当view自身和所有子孙view创建完成会触发childrenCreated，当其中的一个view刷新或重新mountView，会触发childrenAlter，当是刷新时，刷新完成会再次触发childrenCreated事件，因此这2个事件不只触发一次！！</span>
+                                            </li>
+                                            
+                                            <li class="li">
+                                                
                                                 <b class="name"><a href="../symbols/View.html#event:childrenCreated">childrenCreated</a></b>
                                                 <span class="param">(e)</span>
                                                 
                                                 
                                                 
-                                                <span class="desc">view的所有子view包括孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子view组成的，通过监听该事件可知道子view什么时间创建完成</span>
+                                                <span class="desc">view自身和所有子孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子孙view组成的，通过监听该事件可知道子孙view什么时间创建完成（注意：当view中有子view，且该子view是通过程序动态mountView而不是通过data-view指定时，该事件会也会等待到view创建完成触发，而对于您在某个view中有如下代码：<div><vframe></vframe></div>，有一个空的vframe且未指定data-view属性，同时您在这个view中没有动态渲染vframe对应的view，则该事件不会触发，magix无法识别出您留空vframe的意图，到底是需要动态mount还是手误，不过在具体应用中，出现空vframe且没有动态mount几乎是不存在的^_^）</span>
                                             </li>
                                             
                                             <li class="li">
@@ -912,7 +922,7 @@ dl.data .dd{
                                                 
                                                 
                                                 
-                                                <span class="desc">当view首次调用render完成渲染后触发</span>
+                                                <span class="desc">当view首次完成界面的html设置后触发，view有没有模板均会触发该事件，对于有模板的view，会等到模板取回，第一次调用setViewHTML更新界面后才触发，总之该事件触发后，您就可以访问view的HTML DOM节点对象（该事件仅代表自身的html创建完成，如果需要对整个子view也要监控，请使用childrenCreated事件）</span>
                                             </li>
                                             
                                             <li class="li">
@@ -3029,10 +3039,10 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="testObserveLocationChanged"> </a>
+                                            <a name="testOLChanged"> </a>
                                             <div class="title" >
                                                 
-                                                <b class="name">testObserveLocationChanged</b>
+                                                <b class="name">testOLChanged</b>
                                                 <span class="param">(e)</span>
                                                 
                                                 
@@ -3514,6 +3524,61 @@ dl.data .dd{
                                 <ul class="detail-list">
                                     
                                     <li>
+                                        <a name="event:childrenAlter"> </a>
+                                        <div class="title">
+                                            <a  name="event:childrenAlter"></a>
+                                            
+                                            
+                                            <b class="name">childrenAlter</b>
+                                            <span class="param">(e)</span>
+                                            
+                                            
+                                            
+                                        </div>
+                                        
+                                        <div class="desc">
+                                            view自身和所有子孙view有改动时触发，改动包括刷新和重新mountView，与childrenCreated一起使用，当view自身和所有子孙view创建完成会触发childrenCreated，当其中的一个view刷新或重新mountView，会触发childrenAlter，当是刷新时，刷新完成会再次触发childrenCreated事件，因此这2个事件不只触发一次！！
+                                            
+                                            
+                                        </div>
+                                        
+                                        <dl>
+                                            
+                                            <dt>参数：</dt>
+                                            <dd>
+                                                <ul class="list param-list">
+                                                
+                                                    <li class="li">
+                                                        &nbsp;
+                                                        <b class="name">e</b>
+                                                        
+                                                        
+                                                        <span class="type">{Object}</span> 
+                                                        <span class="desc"></span>
+                                                    </li>
+                                                
+                                                </ul>
+                                            </dd>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            <dt>
+
+                                            
+                                            
+                                        </dl>
+                                    </li>
+                                    
+                                    <li>
                                         <a name="event:childrenCreated"> </a>
                                         <div class="title">
                                             <a  name="event:childrenCreated"></a>
@@ -3527,7 +3592,7 @@ dl.data .dd{
                                         </div>
                                         
                                         <div class="desc">
-                                            view的所有子view包括孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子view组成的，通过监听该事件可知道子view什么时间创建完成
+                                            view自身和所有子孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子孙view组成的，通过监听该事件可知道子孙view什么时间创建完成（注意：当view中有子view，且该子view是通过程序动态mountView而不是通过data-view指定时，该事件会也会等待到view创建完成触发，而对于您在某个view中有如下代码：<div><vframe></vframe></div>，有一个空的vframe且未指定data-view属性，同时您在这个view中没有动态渲染vframe对应的view，则该事件不会触发，magix无法识别出您留空vframe的意图，到底是需要动态mount还是手误，不过在具体应用中，出现空vframe且没有动态mount几乎是不存在的^_^）
                                             
                                             
                                         </div>
@@ -3593,7 +3658,7 @@ dl.data .dd{
                                         </div>
                                         
                                         <div class="desc">
-                                            当view首次调用render完成渲染后触发
+                                            当view首次完成界面的html设置后触发，view有没有模板均会触发该事件，对于有模板的view，会等到模板取回，第一次调用setViewHTML更新界面后才触发，总之该事件触发后，您就可以访问view的HTML DOM节点对象（该事件仅代表自身的html创建完成，如果需要对整个子view也要监控，请使用childrenCreated事件）
                                             
                                             
                                         </div>

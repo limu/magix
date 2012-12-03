@@ -84,6 +84,7 @@ var Router=Magix.mix({
 	 */
 	iQ:[],
 	iC:0,
+	qH:{},
 	/**
 	 * 使用history state做为改变url的方式来保存当前页面的状态
 	 * @function
@@ -176,8 +177,8 @@ var Router=Magix.mix({
 			}
 		}
 		
-		if(!home||!dPathname){
-			throw new Error('unset defaultPathname or defaultView attribute for pathCfg');
+		if(!home){
+			throw new Error('unset defaultView');
 		}
 		temp.home=home;//||temp.virtualToReal[EMPTY];
 		temp[PATHNAME]=dPathname;
@@ -309,11 +310,17 @@ var Router=Magix.mix({
 	 */
 	parseQueryAndHash:function(){
 		var me=this;
-		var href=DECODE(WIN.location.href);
-		var cache=me.$QH;
-		if(cache&&cache.p==href){
-			return cache.o;
+		var href=WIN.location.href;
+		var cache=me.qH;
+		try{
+			href=DECODE(href);//解码有问题 http://fashion.s.etao.com/search?q=%CF%CA%BB%A8&initiative_id=setao_20120529&tbpm=t => error:URIError: malformed URI sequence
+		}catch(ignore){
+
 		}
+		if(HAS(cache,href)){
+			return cache[href];
+		}
+		console.log('parse new query and hash');
 		var params=href.replace(/^[^?#]+/g,EMPTY);
 		var query=WIN.location[PATHNAME]+params.replace(/^([^#]+).*$/g,'$1');
 		var hash=params.replace(/^[^#]*#?/g,EMPTY);//原始hash
@@ -325,22 +332,18 @@ var Router=Magix.mix({
 		var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
 		Magix.mix(comObj,queryObj.params);
 		Magix.mix(comObj,hashObj.params);
-		cache=me.$QH={
-			p:href,
-			o:{
-				isPathnameDiff:isPathnameDiff,
-				isParamDiff:isParamDiff,
-				hashParamsOwn:hashParamsOwn,
-				queryParamsOwn:queryParamsOwn,
-				get:getParam,
-				originalQuery:query,
-				originalHash:hash,
-				query:queryObj,
-				hash:hashObj,
-				params:comObj
-			}
+		return cache[href]={
+			isPathnameDiff:isPathnameDiff,
+			isParamDiff:isParamDiff,
+			hashParamsOwn:hashParamsOwn,
+			queryParamsOwn:queryParamsOwn,
+			get:getParam,
+			originalQuery:query,
+			originalHash:hash,
+			query:queryObj,
+			hash:hashObj,
+			params:comObj
 		};
-		return cache.o;
 	},
 	/**
 	 * 解析window.location.href字符串为对象
@@ -436,7 +439,7 @@ var Router=Magix.mix({
 		var me=this;
 		var location=me.parseLocation();
 		var oldLocation=me.$location||{params:{}};
-		var firstFired=!me.$location;//是否强制触发的locationChange，对于首次加载会强制触发一次
+		var firstFire=!me.$location;//是否强制触发的locationChange，对于首次加载会强制触发一次
 		var oldViewPath=oldLocation.viewPath||EMPTY;
 		var needFire;
 		if(location.viewPath==oldViewPath){//要加载的根view路径没变化
@@ -451,7 +454,7 @@ var Router=Magix.mix({
 			me.trigger('locationChanged',{
 				location:location,
 				changed:changed,
-				firstFired:firstFired
+				firstFire:firstFire
 			});
 		}
 		me.$location=location;
@@ -479,8 +482,14 @@ var Router=Magix.mix({
 		var me=this;
 		if(path&&Magix.isString(path)){
 			me.idle(function(){
+				/*
+					busy的触发与idle要成对出现，原来并没有加if(!me.iC)进行判断，导致busy触发的次数与idle的次数不一致，导致vom那边不能正常响应locationChange
+				 */
+				if(!me.$busy){
+					me.$busy=true;
+					me.trigger('busy');
+				}
 				me.suspend();
-				me.trigger('busy');
 				//分析出pathname params
 				//与当前的比较是否有变化
 				//如果没变化什么也不做
@@ -604,6 +613,7 @@ var Router=Magix.mix({
 				}
 			}else{
 				me.trigger('idle');
+				delete me.$busy;
 			}
 		}
 	}
@@ -614,7 +624,7 @@ var Router=Magix.mix({
 	 * @param {Object} e 事件对象
 	 * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
 	 * @param {Object} e.changed 有哪些值发生改变的对象
-	 * @param {Boolean} e.firstFired 标识是否是第一次强制触发的locationChanged，对于首次加载完Magix，会强制触发一次locationChanged
+	 * @param {Boolean} e.firstFire 标识是否是第一次强制触发的locationChanged，对于首次加载完Magix，会强制触发一次locationChanged
 	 */
 
 	/**

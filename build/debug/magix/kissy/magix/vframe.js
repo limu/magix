@@ -21,7 +21,16 @@ var $C=function(tag){
 	return D.createElement(tag);
 };
 var ViewLoad='viewLoad';
-var ChildrenCreated='childrenCreated';
+
+var fnUnloadView=function(anim){
+	var me=this;
+	me.rC=0;
+	me.rM={};
+	me.notifyParentAlter();
+	var view=me.view;
+	safeExec(view.trigger,'childrenAlter',view);
+	me.unloadSubVframes(anim);
+};
 /**
  * Vframe类
  * @name Vframe
@@ -42,8 +51,10 @@ var Vframe=function(element){
 	me.viewId=me.id+'_view';
 	me.children=[];
 	me.view=null;
-	me.ready={o:{},c:0};
+	me.rC=0;
+	me.rM={};
 };
+
 Magix.mix(Vframe,{
 	/**
 	 * @lends Vframe
@@ -199,12 +210,10 @@ Magix.mix(Vframe.prototype,{
 					vfId:me.id
 				});
 
-				view.bind('ready',function(e){//view准备好后触发
-					view.bind('created',function(){
-						
-						me.trigger(ViewLoad,{view:view},true);
-						me.viewCreated=true;
-					});	
+				view.bind('interact',function(e){//view准备好后触发
+
+					me.trigger(ViewLoad,{view:view},me.vced=true);
+
 					if(useTurnaround){
 						me.newViewCreated(true);
 					}
@@ -215,7 +224,7 @@ Magix.mix(Vframe.prototype,{
 						me.loadSubVframes();
 					});
 					view.bind('prerender',function(e){
-						me.unloadSubVframes(e.anim);
+						fnUnloadView.call(me,e.anim);
 					});
 				});
 				me.view=view;
@@ -234,8 +243,11 @@ Magix.mix(Vframe.prototype,{
 		var me=this;
 		//me.owner.suspend();
 		if(me.view){
-			me.unloadSubVframes(useAnim);
+			fnUnloadView.call(me,useAnim);
+
 			me.view.destroy(useAnim);
+			me.vced=false;
+			
 			if(useAnim&&isOutermostView){//在动画启用的情况下才调用相关接口
 				me.oldViewDestroy();
 			}		
@@ -243,7 +255,6 @@ Magix.mix(Vframe.prototype,{
 			delete me.viewName;
 		}else if(me.viewName){//view有可能在未载入就进行了unmoutView
 			me.unbind(ViewLoad);
-			me.unbind(ChildrenCreated);
 			delete me.viewName;
 		}
 		//me.owner.resume();
@@ -265,7 +276,7 @@ Magix.mix(Vframe.prototype,{
 
 			注：如果未挂起vframe在mount left时，load left后，render(suspend)->delegate events->callback(suspend)->fire ready->(vframe listener)->left(resume)->render(find right->NULL)->callback
 
-			挂起后;
+			挂起后：
 				
 				vframe loadSubVframes:
 					leftVframe->loadLeftView->leftViewSuspend->render(suspend)->delegate evetns->callback(suspend)->fire ready->(vframe listener)->leftViewResume->..外界仍然挂起，leftView挂起的render callback不执行
@@ -291,18 +302,6 @@ Magix.mix(Vframe.prototype,{
 				});
 				me.children.push(vframe.id);
 				me.owner.registerVframe(vframe);
-				vframe.bind(ChildrenCreated,function(){
-					var r=me.ready;
-					var id=this.id;
-					if(!Magix.hasProp(r.o,id)){
-						r.o[id]=1;
-						r.c++;
-					}
-					if(r.c==me.children.length){
-						me.ready={o:{},c:0};
-						me.notifyChildrenCreated();
-					}
-				});
 				vframe.mountView(vframes[i].getAttribute(DataView));
 			}
 		}else{
@@ -341,13 +340,13 @@ Magix.mix(Vframe.prototype,{
 			aim=[aim];
 		}
 		if(!args)args={};
-		
+		//
 		for(var i=0;i<aim.length;i++){
 			var vframe=vom.getVframe(aim[i]);
-			
+			//
 			if(vframe){
 				var view=vframe.view;
-				if(view&&view.rendered){//表明属于vframe的view对象已经加载完成
+				if(view&&vframe.vced){//表明属于vframe的view对象已经加载完成
 					/*
 						考虑
 						<vframe id="v1" data-view="..."></vframe>
@@ -369,6 +368,7 @@ Magix.mix(Vframe.prototype,{
 
 						A:考虑这样的情况，页面上有A B两个view，A在拿到数据完成渲染后会向B发送一个消息，B收到消息后才渲染。在加载A B两个view时，是同时加载的，这两个加载是异步，A在加载、渲染完成向B发送消息时，B view对应的js文件很有可能尚未载入完成，所以这个消息会由B vframe先持有，等B对应的view载入后再传递这个消息过去。如果不传递这个消息则Bview无法完成后续的渲染。vframe是通过对内容分析立即就构建出来的，view是对应的js加载完成才存在的，因异步的存在，所以需要这样的处理。
 					 */
+					
 					vframe.bind(ViewLoad,function(e){
 						safeExec(e.view.receiveMessage,args,e.view);
 					});
@@ -422,7 +422,7 @@ Magix.mix(Vframe.prototype,{
 				0.3把块放在view中了，在vom中取出vframe，但这块的职责应该在vframe中做才对，view只管显示，vframe负责父子关系
 		 */
 		if(view&&view.exist&&view.rendered){//存在view时才进行广播，对于加载中的可在加载完成后通过调用view.getLocation()拿到对应的window.location.href对象，对于销毁的也不需要广播
-			var isChanged=safeExec(view.testObserveLocationChanged,e,view);
+			var isChanged=safeExec(view.testOLChanged,e,view);
 			if(isChanged){//检测view所关注的相应的参数是否发生了变化
 				//safeExec(view.render,[],view);//如果关注的参数有变化，默认调用render方法
 				//否定了这个想法，有时关注的参数有变化，不一定需要调用render方法
@@ -446,16 +446,46 @@ Magix.mix(Vframe.prototype,{
 	 */
 	notifyChildrenCreated:function(){
 		var me=this;
-		var fn=function(){
+		//var fn=function(){
 			var view=me.view;
 			if(view){
-				safeExec(view.trigger,ChildrenCreated,view);
+				safeExec(view.trigger,'childrenCreated',view);
 			}
 			
-			me.trigger(ChildrenCreated,0,true);
+			me.notifyParentAlter(true);
+		//}
+		//fn();
+		//if(me.vced)fn();
+		//else me.bind(ViewLoad,fn);
+	},
+	/**
+	 * 通知父vframe有变化
+	 * @param {Boolean} rendered 是否是view的渲染完成
+	 */
+	notifyParentAlter:function(rendered){
+		var me=this;
+		var pId=me.parentId;
+		if(pId){
+			var parent=me.owner.getVframe(pId);
+			if(rendered){
+				if(!Magix.hasProp(parent.rM,me.id)){
+					parent.rM[me.id]=1;
+					parent.rC++;
+					if(parent.rC==parent.children.length){
+						
+						parent.notifyChildrenCreated();
+					}
+				}
+			}else{
+				if(Magix.hasProp(parent.rM,me.id)){
+					delete parent.rM[me.id];
+					parent.rC--;
+					var view=parent.view;
+					safeExec(view.trigger,'childrenAlter',view);
+					parent.notifyParentAlter();
+				}
+			}
 		}
-		if(me.viewCreated)fn();
-		else me.bind(ViewLoad,fn);
 	}
 	/**
 	 * view加载完成时触发

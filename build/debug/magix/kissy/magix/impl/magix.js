@@ -6,7 +6,7 @@
 KISSY.add('magix/impl/magix',function(S){
 	return {
 		include:function(path){
-			var url = S.Config.packages.magix.path+path + ".js?r=" + Math.random();
+			var url = S.Config.packages.magix.path+path + ".js?r=" + Math.random()+'.js';
 			var xhr = window.ActiveXObject || window.XMLHttpRequest;
 			var r = new xhr('Microsoft.XMLHTTP');
 			r.open('GET', url, false);
@@ -43,7 +43,7 @@ KISSY.add('magix/impl/magix',function(S){
 				packages:[{
 					name:'app',
 					path:appHome,
-					tag:cfg.release?'':S.now()
+					tag:cfg.release?'':S.now()+'.js'
 				}]
 			});
 			if(cfg.viewChangeAnim){

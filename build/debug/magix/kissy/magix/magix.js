@@ -51,7 +51,7 @@ var safeExec=function(fns,args,context,i,r,e){
 			e=fns[i];
 			r=Magix.isFunction(e)&&e.apply(context,args);
 		}catch(x){
-			
+			S.log(x,e);
 		}
 	}
 	return r;

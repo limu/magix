@@ -1671,6 +1671,7 @@ KISSY.add('mxext/view',function(S,View,Router){
 	    }
 	},function(){
 		var me=this;
+		
 		me.bind('created',function(){
 			me.attachQueryEvents();
 			me.bind('prerender',function(){
