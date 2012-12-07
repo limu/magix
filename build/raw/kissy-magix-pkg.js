@@ -124,11 +124,20 @@ KISSY.add('magix/impl/magix',function(S){
 					map:[[reg,'$1.js$2']]
 				});
 			}
+			var appTag='';
+			if(cfg.release){
+				appTag=cfg.appTag;
+			}else{
+				appTag=S.now();
+			}
+			if(appTag){
+				appTag+='.js';
+			}
 			S.config({
 				packages:[{
 					name:'app',
 					path:appHome,
-					tag:cfg.release?'':S.now()+'.js'
+					tag:appTag
 				}]
 			});
 			if(cfg.viewChangeAnim){
@@ -471,11 +480,13 @@ var Magix={
 	 * @param {Boolean} cfg.release 指定当前app是否是发布版本，当使用发布版本时，view的html和js应该打包成一个 view-min.js文件，否则Magix在加载view时会分开加载view.js和view.html(view.hasTemplate为true的情况下)
 	 * @param {Boolean} cfg.useHistoryState 是否使用history state,当为true，并且浏览器支持的情况下会用history.pushState修改url，您应该确保服务器能给予支持。如果useHistoryState为false将使用hash修改url
 	 * @param {Object} cfg.pathCfg 前端view与地址栏中的pathname对应关系
+	 * @param {String} cfg.appTag app的资源获取时的后缀tag，增量更新时，清除缓存用
 	 * @example
 	 * Magix.start({
 	 * 		useHistoryState:true,
 	 * 		appHome:'http://etao.com/srp/app/',
 	 * 		release:false,
+	 * 		appTag:'20121205',
 	 * 		pathCfg:{
 	 * 			index:'app/views/layouts/default',//默认首页
 	 * 			map:{
@@ -725,16 +736,16 @@ var Router=Magix.mix({
 		//var pathnameHome=pathCfg.path||EMPTY;
 		var map=pathCfg.map;
 		var home=pathCfg.defaultView;//处理默认加载的viewPath
-		var dPathname=pathCfg.defaultPathname;
+		var dPathname=pathCfg.defaultPathname||EMPTY;
 
 		
 		if(Magix.isObject(map)){//我们无法获知当前项目硬盘上存在多少个layouts（不借助其它工具）,但我们可以通过对代码的分析得到，因为有用到的都应该配置出来，所以我们对虚拟配置进行分析
 			for(var p in map){
 				if(HAS(map,p)){
 					var pn=/*pathnameHome+*/p;
-					if(pn.charAt(pn.length-1)=='/'){//保持与kissy的一致处理
+					/*if(pn.charAt(pn.length-1)=='/'){//保持与kissy的一致处理
 						pn+='index';
-					}
+					}*/
 					//temp.realPathname[pn]=true;
 					var pv=map[p];
 					var pvs=[];
@@ -757,26 +768,27 @@ var Router=Magix.mix({
 					}
 				}
 			}
-			if(home){
+			/*if(home){
 				//home=pathnameHome+home;
 				if(home.charAt(home.length-1)=='/'){
 					home+='index';
 				}
 				//temp.realPathname[home]=true;
 				//temp.virtualToReal[EMPTY]=home;
-			}
+			}*/
 		}
 		
 		if(!home){
 			throw new Error('unset defaultView');
 		}
+		temp.virtualToReal[EMPTY]=home;
 		temp.home=home;//||temp.virtualToReal[EMPTY];
 		temp[PATHNAME]=dPathname;
 
 		//关于notFound
 		//当用户配置了notFound则认为找不到相应的前端view时显示notFound的view
 		//如果没有配置，则在找不到相应的view时，显示默认的首页view
-		temp.hasNotFound=HAS(pathCfg,'notFound');
+		//temp.hasNotFound=HAS(pathCfg,'notFound');
 		temp.notFound=pathCfg.notFound;
 		
 		return me.$pnr=temp;
@@ -803,8 +815,8 @@ var Router=Magix.mix({
 		}
 
 		return {
-			viewPath:result?result:(pnr.hasNotFound?pnr.notFound:pnr.home),
-			pathname:result?pathname:(pnr.hasNotFound?pathname:pnr[PATHNAME])
+			viewPath:result?result:pnr.notFound||pnr.home,
+			pathname:result?pathname:(pnr.notFound?pathname:pnr[PATHNAME])
 		}
 	},
 	/**
@@ -1075,10 +1087,10 @@ var Router=Magix.mix({
 				/*
 					busy的触发与idle要成对出现，原来并没有加if(!me.iC)进行判断，导致busy触发的次数与idle的次数不一致，导致vom那边不能正常响应locationChange
 				 */
-				if(!me.$busy){
-					me.$busy=true;
+				///if(!me.$busy){
+					//me.$busy=true;
 					me.trigger('busy');
-				}
+				//}
 				me.suspend();
 				//分析出pathname params
 				//与当前的比较是否有变化
@@ -1192,18 +1204,23 @@ var Router=Magix.mix({
 		var me=this;
 		if(me.iC>0){
 			me.iC--;
-		}
-		if(!me.iC){
-			var list=me.iQ;
-			if(list.length){
-				var tasks=[].slice.call(me.iQ);
-				me.iQ=[];
-				while(tasks.length){
-					me.idle(tasks.shift());
-				}
-			}else{
+		
+			if(!me.iC){
 				me.trigger('idle');
-				delete me.$busy;
+				if(me.iQ.length){
+					me.idle(me.iQ.shift());
+				}
+				//var list=me.iQ;
+				//if(list.length){
+					/*var tasks=[].slice.call(me.iQ);
+					me.iQ=[];
+					while(tasks.length){
+						me.idle(tasks.shift());
+					}*/
+				//}else{
+					//me.trigger('idle');
+					//delete me.$busy;
+				//}
 			}
 		}
 	}
@@ -1975,6 +1992,7 @@ Magix.mix(View,{
 });
 
 var UnsupportBubble={
+	submit:1,
 	blur:1,
 	focus:1,
 	focusin:1,
@@ -2098,16 +2116,16 @@ Magix.mix(VProto,{
 
 				@1 用户重写了render方法后，vframe接收ready事件：
 					
-					ready
+					interact
 					    |
-					加载子view(此时尚未有内容，所以暂时找不到子view)
+					//加载子view(此时尚未有内容，所以暂时找不到子view)
 					    |
 					绑定prerender与rendered事件
 					    |
 					当view调用setViewHTML方法后则后续正常执行
 				
 				@2
-				     ready
+				     interact
 				        |
 				     加载子view（模板在页面上，所以会执行，有子view时则加载）
 				        |
@@ -2212,7 +2230,7 @@ Magix.mix(VProto,{
 			});
 			/*
 				关于interact事件的设计 ：
-				首先这2个事件是对内的，当然外部也可以用，API文档上就不再体现了
+				首先这个事件是对内的，当然外部也可以用，API文档上就不再体现了
 
 				interact : view准备好，让外部尽早介入，进行其它事件的监听 ，当这个事件触发时，view有可能已经有html了(无模板的情况)，所以此时外部可以去加载相应的子view了，同时要考虑在调用render方法后，有可能在该方法内通过setViewHTML更新html，所以在使用setViewHTML更新界面前，一定要先监听prerender rendered事件，因此设计了该  interact事件
 

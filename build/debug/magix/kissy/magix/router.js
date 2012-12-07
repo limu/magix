@@ -141,16 +141,16 @@ var Router=Magix.mix({
 		//var pathnameHome=pathCfg.path||EMPTY;
 		var map=pathCfg.map;
 		var home=pathCfg.defaultView;//处理默认加载的viewPath
-		var dPathname=pathCfg.defaultPathname;
+		var dPathname=pathCfg.defaultPathname||EMPTY;
 
 		
 		if(Magix.isObject(map)){//我们无法获知当前项目硬盘上存在多少个layouts（不借助其它工具）,但我们可以通过对代码的分析得到，因为有用到的都应该配置出来，所以我们对虚拟配置进行分析
 			for(var p in map){
 				if(HAS(map,p)){
 					var pn=/*pathnameHome+*/p;
-					if(pn.charAt(pn.length-1)=='/'){//保持与kissy的一致处理
+					/*if(pn.charAt(pn.length-1)=='/'){//保持与kissy的一致处理
 						pn+='index';
-					}
+					}*/
 					//temp.realPathname[pn]=true;
 					var pv=map[p];
 					var pvs=[];
@@ -173,26 +173,27 @@ var Router=Magix.mix({
 					}
 				}
 			}
-			if(home){
+			/*if(home){
 				//home=pathnameHome+home;
 				if(home.charAt(home.length-1)=='/'){
 					home+='index';
 				}
 				//temp.realPathname[home]=true;
 				//temp.virtualToReal[EMPTY]=home;
-			}
+			}*/
 		}
 		
 		if(!home){
 			throw new Error('unset defaultView');
 		}
+		temp.virtualToReal[EMPTY]=home;
 		temp.home=home;//||temp.virtualToReal[EMPTY];
 		temp[PATHNAME]=dPathname;
 
 		//关于notFound
 		//当用户配置了notFound则认为找不到相应的前端view时显示notFound的view
 		//如果没有配置，则在找不到相应的view时，显示默认的首页view
-		temp.hasNotFound=HAS(pathCfg,'notFound');
+		//temp.hasNotFound=HAS(pathCfg,'notFound');
 		temp.notFound=pathCfg.notFound;
 		
 		return me.$pnr=temp;
@@ -219,8 +220,8 @@ var Router=Magix.mix({
 		}
 
 		return {
-			viewPath:result?result:(pnr.hasNotFound?pnr.notFound:pnr.home),
-			pathname:result?pathname:(pnr.hasNotFound?pathname:pnr[PATHNAME])
+			viewPath:result?result:pnr.notFound||pnr.home,
+			pathname:result?pathname:(pnr.notFound?pathname:pnr[PATHNAME])
 		}
 	},
 	/**
@@ -491,10 +492,10 @@ var Router=Magix.mix({
 				/*
 					busy的触发与idle要成对出现，原来并没有加if(!me.iC)进行判断，导致busy触发的次数与idle的次数不一致，导致vom那边不能正常响应locationChange
 				 */
-				if(!me.$busy){
-					me.$busy=true;
+				///if(!me.$busy){
+					//me.$busy=true;
 					me.trigger('busy');
-				}
+				//}
 				me.suspend();
 				//分析出pathname params
 				//与当前的比较是否有变化
@@ -608,18 +609,23 @@ var Router=Magix.mix({
 		var me=this;
 		if(me.iC>0){
 			me.iC--;
-		}
-		if(!me.iC){
-			var list=me.iQ;
-			if(list.length){
-				var tasks=[].slice.call(me.iQ);
-				me.iQ=[];
-				while(tasks.length){
-					me.idle(tasks.shift());
-				}
-			}else{
+		
+			if(!me.iC){
 				me.trigger('idle');
-				delete me.$busy;
+				if(me.iQ.length){
+					me.idle(me.iQ.shift());
+				}
+				//var list=me.iQ;
+				//if(list.length){
+					/*var tasks=[].slice.call(me.iQ);
+					me.iQ=[];
+					while(tasks.length){
+						me.idle(tasks.shift());
+					}*/
+				//}else{
+					//me.trigger('idle');
+					//delete me.$busy;
+				//}
 			}
 		}
 	}

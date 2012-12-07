@@ -231,11 +231,13 @@ var Magix={
 	 * @param {Boolean} cfg.release 指定当前app是否是发布版本，当使用发布版本时，view的html和js应该打包成一个 view-min.js文件，否则Magix在加载view时会分开加载view.js和view.html(view.hasTemplate为true的情况下)
 	 * @param {Boolean} cfg.useHistoryState 是否使用history state,当为true，并且浏览器支持的情况下会用history.pushState修改url，您应该确保服务器能给予支持。如果useHistoryState为false将使用hash修改url
 	 * @param {Object} cfg.pathCfg 前端view与地址栏中的pathname对应关系
+	 * @param {String} cfg.appTag app的资源获取时的后缀tag，增量更新时，清除缓存用
 	 * @example
 	 * Magix.start({
 	 * 		useHistoryState:true,
 	 * 		appHome:'http://etao.com/srp/app/',
 	 * 		release:false,
+	 * 		appTag:'20121205',
 	 * 		pathCfg:{
 	 * 			index:'app/views/layouts/default',//默认首页
 	 * 			map:{

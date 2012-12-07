@@ -7,16 +7,15 @@
 	</head>
 	<body>
 		<script type="text/javascript" src="../../libs/debug/kissy/kissy.js"></script>
-		<script type="text/javascript" src="../../build/raw/kissy-magix-mxext-pkg.js"></script>
+		<script type="text/javascript" src="libs/kissy-magix-mxext.min.js"></script>
 		<script type="text/javascript">
+			var latest;
 			Magix.start({
 				appHome:"app",
-				release:false,
+				//release:true,
 				pathCfg:{
 					defaultView:'app/views/index',
-					map:{//虚拟路径关系
-						'app/views/index':['/ppt']
-					}
+					defaultPathname:'/ppt'
 				},
 				viewChangeAnim:true,
 				viewChange:function(e){
@@ -25,25 +24,46 @@
 						e.collectGarbage();
 						return;
 					}
-					var EndAngle=360;
-					var EndScale=0;
-					var currentAngle=0;
-					var currentScale=1;
+					if(latest){
+						latest();
+					}
+					S.one(e.oldViewNode).addClass('trans-conver');
+					S.one(e.newViewNode).addClass('trans-conver').css({
+						MozTransform:'rotateY(-180deg)',
+						WebkitTransform:'rotateY(-180deg)',
+						OTransform:'rotateY(-180deg)'
+					});
 					var now=new Date().getTime();
-					var end=now+1000;
+					var end=now+500;
 					var tId=setInterval(function(){
 						var n=new Date().getTime();
+						var finished;
 						if(n>=end){
-							clearInterval(tId);
-							e.collectGarbage();
-						}else{
-							var p=KISSY.Easing.backIn((n-now)/1000);
-							S.one(e.oldViewNode).css({
-								MozTransform:'scale('+(1-p)+') rotate('+(p*EndAngle)+'deg)',
-								WebkitTransform:'scale('+(1-p)+') rotate('+(p*EndAngle)+'deg)'
-							});
+							n=end;
+							finished=true;
+						}
+
+						var p=(n-now)/500;
+						S.one(e.oldViewNode).css({
+							MozTransform:'rotateY('+p*180+'deg)',
+							WebkitTransform:'rotateY('+p*180+'deg)',
+							OTransform:'rotateY('+p*180+'deg)'
+						});
+						S.one(e.newViewNode).css({
+							MozTransform:'rotateY(-'+(1-p)*180+'deg)',
+							WebkitTransform:'rotateY(-'+(1-p)*180+'deg)',
+							OTransform:'rotateY(-'+(1-p)*180+'deg)'
+						});
+
+						if(finished){
+							latest();
 						}
 					},13);
+					latest=function(){
+						clearInterval(tId);
+						e.collectGarbage();
+						latest=null;
+					}
 				}
 			});
 			/*

@@ -167,9 +167,82 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 			}
 		},
 		/**
+		 * 注册方法，前面是参数，后面2个是成功和失败的回调
+		 * @param {Object} methods 方法对象
+		 */
+		registerMethods:function(methods){
+			var me=this;
+			for(var p in methods){
+				if(Magix.hasProp(methods,p)){
+					me[p]=methods[p];
+				}
+			}
+		},
+		/**
+		 * 调用多个方法
+		 * @param {Array} args 要调用的方法列表，形如：[{name:'x',params:['o']},{name:'y',params:['z']}]
+		 * @param {Function} succ 成功时的回调，传入参数跟args数组中对应的成功方法的返回值
+		 * @param {Function} fail 失败回调，参数同上
+		 * @return {Object} 返回一个带abort方法的对象，用于取消这些方法的调用
+		 */
+		callMethods:function(args,succ,fail){
+			var me=this,
+                succArgs=[],
+                failMsg='',
+                total=args.length,
+                exec= 0,
+                aborted,
+                doneCheck=function(args,idx,isFail){
+                	if(aborted)return;
+                    exec++;
+                    if(isFail){
+                        failMsg=args;
+                    }else{
+                         succArgs[idx]=args;
+                    }
+                    if(total<=exec){
+                        if(!failMsg){
+                            if(S.isFunction(succ)){
+                                succ.apply(succ,succArgs);
+                            }
+                        }else{
+                            if(S.isFunction(fail)){
+                                fail(failMsg);
+                            }
+                        }
+                    }
+                },
+                check=function(idx,isSucc){
+                    return function(args){
+                    	doneCheck(args,idx,!isSucc);
+                    };
+                };
+            for(var i=0,one;i<args.length;i++){
+                one=args[i];
+                var fn;
+                if(S.isFunction(one.name)){
+                	fn=one.name;
+                }else{
+                	fn=me[one.name];
+                }
+                if(fn){
+                	if(!one.params)one.params=[];
+                    one.params.push(check(i,true),check(i));
+                    fn.apply(me,one.params);
+                }else{
+                	doneCheck('unfound:'+one.name,i,true);
+                }
+            }
+            return {
+            	abort:function(){
+            		aborted=true;
+            	}
+            }
+		},
+		/**
 		 * 获取models，该用缓存的用缓存，该发起请求的请求
 		 * @see ModelFactory#registerModels
-		 * @param {Object|Array} models 获取models时的描述信息，如:{type:F.Home,cacheKey:'key',gets:{a:'12'},posts:{b:2}}
+		 * @param {Object|Array} models 获取models时的描述信息，如:{type:F.Home,cacheKey:'key',gets:{a:'12'},posts:{b:2},params:[]}
 		 * @param {Function} succ   成功时的回调
 		 * @param {Function} fail   失败时的回调
 		 * @param {Integer} flag   获取哪种类型的models
@@ -204,8 +277,9 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 					var cacheKey=model._cacheKey;
 					if(cacheKey&&!Magix.hasProp(modelsCache,cacheKey)){//需要缓存
 						modelsCache[model._cacheKey]=model;
+						var params=model._params;
 						if(model._after){//有after
-							Magix.safeExec(model._after,model);
+							Magix.safeExec(model._after,[model].concat(params));
 						}
 					}
 					if(flag==FetchFlags.ONE){//如果是其中一个成功，则每次成功回调一次
@@ -360,6 +434,7 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 			
 			if(!me.$modelsCache)me.$modelsCache={};
 			var modelsCache=me.$modelsCache;
+			var params=model.params||[];
 
 			if(cacheKey&&Magix.hasProp(modelsCache,cacheKey)){//缓存
 				console.log('hit cache',modelsCache[cacheKey]);
@@ -376,6 +451,8 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 				modelEntity._cacheKey=cacheKey;
 				modelEntity.set('updateIdent',true);
 			}
+			modelEntity._params=params;
+
 			var updateIdent=modelEntity.get('updateIdent');//是否需要更新
 			if(updateIdent){
 				modelEntity.reset();
@@ -390,7 +467,7 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 				modelEntity.setPostParams(model.posts);
 				
 				if(Magix.isFunction(metas.before)){
-					Magix.safeExec(metas.before,modelEntity,metas);
+					Magix.safeExec(metas.before,[modelEntity].concat(params),metas);
 				}
 			}
 			if(!doNotWrapRequest){

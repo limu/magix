@@ -1,18 +1,33 @@
 <!--page master-->
 <div id="main_wrap">
 	<div id="main">
-		<img src="<#=Magix.config().appHome+'theme/'#>images/<#=page==0?'index_bg':'content_bg'#>.png" />
+		<img src="<#=Magix.config().appHome+'theme/'#>images/<#=page<=1?'index':'content'#>.jpg" />
 		<#=pageContent#>
 	</div>
+</div>
+
+<!--page-->
+<div class="title theme">
+	末日前的黎明
+</div>
+<div class="content theme-content">
+	<div class="item i1">习惯</div>
+	<div class="item i2">知己知彼</div>
+	<div class="item i3">解决方案</div>
+	<div class="item i4">内在美</div>
+	<div class="item i5">弹性</div>
+	<div class="item i6">以人为本</div>
+	<div class="item i7">信任</div>
+	<div class="item i8">爱</div>
+	<div class="item i9">问题</div>
+	<div class="item i10">隐患</div>
 </div>
 
 <!--page-->
 <div class="lecture">
 	Magix核心升级总结<br />
 	1.0来了，嘎嘎~~
-</div>
-<div class="name">
-	行列
+	<div class="name">--行列</div>
 </div>
 
 <!--page-->
@@ -546,6 +561,69 @@
 	<br />
 	开发人员的编程习惯需要照顾，虽然一些问题magix中给出了解决方案，但要针对经常出现的问题给予良好的解决，要不然会让开发人员感觉很不爽，这一块会在后面的代码细节与风险中给出示例和解决方案，<a href="linkTo:core_code_habit">点击这里直达</a>
 </div>
+
+<!--page-->
+<div class="title">
+	目录-过去的问题-其它
+</div>
+<div class="content text">
+	考虑这样的代码：<br />
+	S.io({<br />
+	　　url:'...',<br />
+	　　data:'...',<br />
+	　　success:function(){<br />
+	　　　　<br />
+	　　},<br />
+	　　error:function(){<br />
+	　　　　<br />
+	　　}<br />
+	})<br />
+	很常见的ajax请求书写方法，有问题吗？
+</div>
+
+<!--page-->
+<div class="title">
+	目录-过去的问题-其它
+</div>
+<div class="content text">
+	放在我们的view中：<br />
+	render:function(){<br />
+	　　S.io({<br />
+	　　　　url:'...',<br />
+	　　　　data:'...',<br />
+	　　　　success:function(){<br />
+	　　　　　　<br />
+	　　　　},<br />
+	　　　　error:function(){<br />
+	　　　　　　<br />
+	　　　　}<br />
+	　　})<br />
+	}<br />
+	有问题吗？
+</div>
+
+<!--page-->
+<div class="title">
+	目录-过去的问题-其它
+</div>
+<div class="content text">
+	render:function(){<br />
+	　　S.io({<br />
+	　　　　url:'...',<br />
+	　　　　data:'...',<br />
+	　　　　success:function(){<br />
+	　　　　　　<span class="red">if(_self.exist){</span><br />
+	　　　　　　　　...<br />
+	　　　　　　<span class="red">}</span><br />
+	　　　　},<br />
+	　　　　error:function(){<br />
+	　　　　　　<br />
+	　　　　}<br />
+	　　})<br />
+	}<br />
+	有问题吗？
+</div>
+
 <!--page-->
 <div class="title">
 	目录
@@ -1973,7 +2051,7 @@
 <div class="content text">
 	init方法为什么会设计的这么靠后？<br /><br />
 	view没被创建出来前，是不能做其它动作的，如果在此之前调用了init，而用户可以在init中做其它的动作，假设view还未创建完成就销毁，会给销毁带来一定的麻烦<br /><br />
-	通常在init中还会访问其它对象，因此放在interact事件后，接下来讲解interact事件的设计
+	通常在init中还会访问其它对象，因此放在interact事件后，接下来讲解interact事件的设计(同时您也将看到为什么init不放在created事件之后，init是放在interact可交互之被调用，既不会太靠前，也不会太靠后)
 </div>
 
 <!--page-->
@@ -1984,6 +2062,24 @@
 	view的interact事件：<br /><br />
 	这是一个不推荐在外部使用的事件，仅magix内部使用，当然外部也可以用，API文档上就不再体现了<br /><br />
 	interact : view准备好，让外部尽早介入，进行其它事件的监听 ，当interact事件触发时，view有可能已经有html了(无模板的情况)，所以此时外部可以去加载相应的子view了，同时要考虑在调用render方法后，有可能在该方法内通过setViewHTML更新html，所以在使用setViewHTML更新界面前，一定要先监听prerender rendered事件，因此设计了该  interact事件，在该事件内，去监听别的事件
+</div>
+
+<!--page-->
+<div class="title">
+	目录-代码细节与风险-View
+</div>
+<div class="content text">
+	风险：view的init与created事件：<br /><br />
+	init尽可能早的被调用，以完成相关的事件绑定和location监控，但这并不意味着init被调用时，created事件一定被触发，或在init后created事件才被触发，如前面所看到的初始化流程，由于应用的复杂性，这2个的先后是不定的，因此如果您需要在init中首次创建完界面做一些事情时，可参考以下代码：<br />
+	init:function(){<br />
+	　　if(this.rendered){//已渲染完成<br />
+	　　　　//TODO<br />
+	　　}else{<br />
+	　　　　this.bind('created',function(){//绑定created事件<br />
+	　　　　　　//TODO<br />
+	　　　　})<br />
+	　　}<br />
+	}<br />
 </div>
 
 <!--page-->
@@ -2272,6 +2368,17 @@
 	　　})<br />
 	　　<span class="red bold">_self.manage(m);</span>//托管model对象后无须托管model的回调<br />
 	}<br />
+</div>
+
+<!--page-->
+<a name="core_code_habit"></a>
+<div class="title">
+	目录-代码细节与风险-View
+</div>
+<div class="content text">
+	关于开发人员编程习惯的考虑与设计：<br /><br />
+	正如你前面看到的<span class="red bold">_self.manage(m);</span>magix本身来讲已经提供了manage管理回调函数，并且能很好的解决问题，那为什么还会有托管model对象？通常来讲，写异步，写回调是每个前端开发人员都少不了的，但从来没有在哪个地方需要对回调托管，开发人员已经习惯顺手写一个函数，而不是顺手写一个manage里面再写一个函数。<br /><br />
+	改变习惯很难，就算改，也不可能一下子转变过来，肯定会有疏忽，有遗漏，引导并建立新的习惯，这样开发人员才乐于接受。这块在闲聊分享时会做重点举例和讲解
 </div>
 
 <!--page-->

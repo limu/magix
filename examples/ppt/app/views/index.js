@@ -13,7 +13,7 @@ KISSY.add("app/views/index",function(S,MxView,Tmpl,Event,Router){
 				var main=S.one('#main');
 				var vHeight=S.DOM.viewportHeight()-20;
 				var vWidth=S.DOM.viewportWidth()-20;
-
+				console.log(vHeight,oldHeight,vWidth,oldWidth);
 				var vScale=vHeight/oldHeight;
 				var hScale=vWidth/oldWidth;
 				var scale=Math.min(vScale,hScale);
@@ -24,7 +24,9 @@ KISSY.add("app/views/index",function(S,MxView,Tmpl,Event,Router){
 					MozTransformOrigin:'0 0',
 					WebkitTransformOrigin:'0 0',
 					OTransform:'scale('+scale+')',
-					OTransformOrigin:'0 0'
+					OTransformOrigin:'0 0',
+					MozBackfaceVisibility:'hidden',
+					OBackfaceVisibility:'hidden'
 				});
 				if(S.UA.ie){//Y的 webkit支持zoom
 					main.css({zoom:scale});
@@ -35,6 +37,8 @@ KISSY.add("app/views/index",function(S,MxView,Tmpl,Event,Router){
 				mainWrap.css({
 					left:centerLeft+10,
 					top:centerTop+10,
+					width:scale*oldWidth,
+					height:scale*oldHeight,
 					position:'absolute'
 				})
 			};
@@ -119,7 +123,8 @@ KISSY.add("app/views/index",function(S,MxView,Tmpl,Event,Router){
 		render:function(){
 			var me=this;
 			var loc=me.getLocation();
-			var page=Number(loc.get('page'))||0;
+			var page=Number(loc.get('page'));
+			if(page!=0&&!page)page=1;
 
 			
 			if(!me.pageMaster){
@@ -129,7 +134,7 @@ KISSY.add("app/views/index",function(S,MxView,Tmpl,Event,Router){
 			if(!me.pages){
 				me.pages=[];
 				me.pagesContents={
-					page:0,
+					page:1,
 					subs:{
 						'目录':{
 							subs:{},
@@ -166,7 +171,7 @@ KISSY.add("app/views/index",function(S,MxView,Tmpl,Event,Router){
 					me.pages.push(a);
 					tempPage++
 				});
-				console.log(me.pagesContents,me.pagesAnchors);
+				//console.log(me.pagesContents,me.pagesAnchors);
 			}
 			maxStep=me.pages.length-1;
 			
@@ -178,23 +183,27 @@ KISSY.add("app/views/index",function(S,MxView,Tmpl,Event,Router){
 			var subsTitleObj;
 			var subsTitle=/<li>([\s\S]*?)<\/li>/gi;
 			var linkTo=/<a\s*href=(['"])linkTo:(\w+)\1/gi;
-			pageContent=pageContent.replace(title,function(m,a){
-				if(S.trim(a)){
-					var sTitles=S.trim(a).split('-');
-					var temp=me.pagesContents;
-					var ta=[];
-					for(var i=0;i<sTitles.length;i++){
-						ta.push('<a href="#!/ppt?page='+temp.subs[sTitles[i]].page+'">'+sTitles[i]+'</a>');
-						temp=temp.subs[sTitles[i]];
+			if(page>1){
+				pageContent=pageContent.replace(title,function(m,a){
+					if(S.trim(a)){
+						var sTitles=S.trim(a).split('-');
+						var temp=me.pagesContents;
+						var ta=[];
+						for(var i=0;i<sTitles.length;i++){
+							ta.push('<a href="#!/ppt?page='+temp.subs[sTitles[i]].page+'">'+sTitles[i]+'</a>');
+							temp=temp.subs[sTitles[i]];
+						}
+						subsTitleObj=temp;
+						return '<div class="title">'+ta.join('-')+'</div>';
 					}
-					subsTitleObj=temp;
-					return '<div class="title">'+ta.join('-')+'</div>';
-				}
-				return m;
-			});
+					return m;
+				});
+			}
+			//console.log(pageContent);
 			if(subsTitle.test(pageContent)){
 				pageContent=pageContent.replace(subsTitle,function(m,a){
 					a=S.trim(a);
+					console.log(a);
 					if(Magix.hasProp(subsTitleObj.subs,a)){
 						return '<li><a href="#!/ppt?page='+subsTitleObj.subs[a].page+'">'+a+'</a></li>';
 					}
@@ -209,7 +218,7 @@ KISSY.add("app/views/index",function(S,MxView,Tmpl,Event,Router){
 					return m;
 				});
 			}
-			console.log(subsTitleObj);
+			//console.log(subsTitleObj,page,page,pageContent);
 			me.setViewHTML(Tmpl.toHTML(me.pageMaster,{
 				page:page,
 				pageContent:pageContent

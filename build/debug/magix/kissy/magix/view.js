@@ -239,6 +239,7 @@ Magix.mix(View,{
 });
 
 var UnsupportBubble={
+	submit:1,
 	blur:1,
 	focus:1,
 	focusin:1,
@@ -362,16 +363,16 @@ Magix.mix(VProto,{
 
 				@1 用户重写了render方法后，vframe接收ready事件：
 					
-					ready
+					interact
 					    |
-					加载子view(此时尚未有内容，所以暂时找不到子view)
+					//加载子view(此时尚未有内容，所以暂时找不到子view)
 					    |
 					绑定prerender与rendered事件
 					    |
 					当view调用setViewHTML方法后则后续正常执行
 				
 				@2
-				     ready
+				     interact
 				        |
 				     加载子view（模板在页面上，所以会执行，有子view时则加载）
 				        |
@@ -476,7 +477,7 @@ Magix.mix(VProto,{
 			});
 			/*
 				关于interact事件的设计 ：
-				首先这2个事件是对内的，当然外部也可以用，API文档上就不再体现了
+				首先这个事件是对内的，当然外部也可以用，API文档上就不再体现了
 
 				interact : view准备好，让外部尽早介入，进行其它事件的监听 ，当这个事件触发时，view有可能已经有html了(无模板的情况)，所以此时外部可以去加载相应的子view了，同时要考虑在调用render方法后，有可能在该方法内通过setViewHTML更新html，所以在使用setViewHTML更新界面前，一定要先监听prerender rendered事件，因此设计了该  interact事件
 

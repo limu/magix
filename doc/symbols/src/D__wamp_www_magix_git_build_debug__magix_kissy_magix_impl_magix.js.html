@@ -46,22 +46,31 @@
 <span class='line'> 39</span> </span><span class="WHIT">					</span><span class="NAME">map</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="PUNC">[</span><span class="NAME">reg</span><span class="PUNC">,</span><span class="STRN">'$1.js$2'</span><span class="PUNC">]</span><span class="PUNC">]</span><span class="WHIT">
 <span class='line'> 40</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 41</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 42</span> </span><span class="WHIT">			</span><span class="NAME">S.config</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 43</span> </span><span class="WHIT">				</span><span class="NAME">packages</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 44</span> </span><span class="WHIT">					</span><span class="NAME">name</span><span class="PUNC">:</span><span class="STRN">'app'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 45</span> </span><span class="WHIT">					</span><span class="NAME">path</span><span class="PUNC">:</span><span class="NAME">appHome</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 46</span> </span><span class="WHIT">					</span><span class="NAME">tag</span><span class="PUNC">:</span><span class="NAME">cfg.release</span><span class="PUNC">?</span><span class="STRN">''</span><span class="PUNC">:</span><span class="NAME">S.now</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">+</span><span class="STRN">'.js'</span><span class="WHIT">
-<span class='line'> 47</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="PUNC">]</span><span class="WHIT">
-<span class='line'> 48</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 49</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cfg.viewChangeAnim</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 50</span> </span><span class="WHIT">				</span><span class="NAME">S.use</span><span class="PUNC">(</span><span class="STRN">'mxext/vfanim'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 51</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 52</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 53</span> </span><span class="WHIT">		</span><span class="NAME">isArray</span><span class="PUNC">:</span><span class="NAME">S.isArray</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 54</span> </span><span class="WHIT">		</span><span class="NAME">isFunction</span><span class="PUNC">:</span><span class="NAME">S.isFunction</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 55</span> </span><span class="WHIT">		</span><span class="NAME">isObject</span><span class="PUNC">:</span><span class="NAME">S.isObject</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 56</span> </span><span class="WHIT">		</span><span class="NAME">isRegExp</span><span class="PUNC">:</span><span class="NAME">S.isRegExp</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 57</span> </span><span class="WHIT">		</span><span class="NAME">isString</span><span class="PUNC">:</span><span class="NAME">S.isString</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 58</span> </span><span class="WHIT">		</span><span class="NAME">isNumber</span><span class="PUNC">:</span><span class="NAME">S.isNumber</span><span class="WHIT">
-<span class='line'> 59</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 60</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'> 42</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">appTag</span><span class="PUNC">=</span><span class="STRN">''</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cfg.release</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">				</span><span class="NAME">appTag</span><span class="PUNC">=</span><span class="NAME">cfg.appTag</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="WHIT">				</span><span class="NAME">appTag</span><span class="PUNC">=</span><span class="NAME">S.now</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 47</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 48</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">appTag</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="WHIT">				</span><span class="NAME">appTag</span><span class="PUNC">+</span><span class="PUNC">=</span><span class="STRN">'.js'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">			</span><span class="NAME">S.config</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">				</span><span class="NAME">packages</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">					</span><span class="NAME">name</span><span class="PUNC">:</span><span class="STRN">'app'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">					</span><span class="NAME">path</span><span class="PUNC">:</span><span class="NAME">appHome</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="WHIT">					</span><span class="NAME">tag</span><span class="PUNC">:</span><span class="NAME">appTag</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cfg.viewChangeAnim</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="WHIT">				</span><span class="NAME">S.use</span><span class="PUNC">(</span><span class="STRN">'mxext/vfanim'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">		</span><span class="NAME">isArray</span><span class="PUNC">:</span><span class="NAME">S.isArray</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">		</span><span class="NAME">isFunction</span><span class="PUNC">:</span><span class="NAME">S.isFunction</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">		</span><span class="NAME">isObject</span><span class="PUNC">:</span><span class="NAME">S.isObject</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">		</span><span class="NAME">isRegExp</span><span class="PUNC">:</span><span class="NAME">S.isRegExp</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="WHIT">		</span><span class="NAME">isString</span><span class="PUNC">:</span><span class="NAME">S.isString</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">		</span><span class="NAME">isNumber</span><span class="PUNC">:</span><span class="NAME">S.isNumber</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

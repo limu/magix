@@ -126,11 +126,27 @@ KISSY.add("mxext/model",function(S,Magix){
          */
         parse:Magix.noop,
         /**
+         * 获取参数对象
+         * @param  {String} [key] 参数分组的key[Model.GET,Model.POST]，默认为Model.GET
+         * @return {Object}
+         */
+        getParamsObject:function(key){
+            if(!key)key=Model.GET;
+            return this['$'+key]||null;
+        },
+        /**
+         * 获取Post参数对象
+         * @return {Object}
+         */
+        getPostParamsObject:function(){
+            return this.getPostParamsObject(Model.POST);
+        },
+        /**
          * 获取通过setPostParams放入的参数
          * @return {String}
          */
         getPostParams:function () {
-            return this.getParams("POST");
+            return this.getParams(Model.POST);
         },
         /**
          * 获取参数
@@ -219,6 +235,13 @@ KISSY.add("mxext/model",function(S,Magix){
         setPostParamsIf:function(obj1,obj2){
         	var me=this;
         	me.setParams(obj1,obj2,Model.POST,true);
+        },
+        removeParamsObject:function(key){
+            if(!key)key=Model.GET;
+            delete this['$'+key];
+        },
+        removePostParamsObject:function(){
+            this.removeParamsObject(Model.POST);
         },
         /**
          * 重置缓存的参数对象，对于同一个model反复使用前，最好能reset一下，防止把上次请求的参数也带上

@@ -1828,6 +1828,15 @@ dl.data .dd{
                                                             <span class="desc">前端view与地址栏中的pathname对应关系</span>
                                                         </li>
                                                     
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">cfg.appTag</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">app的资源获取时的后缀tag，增量更新时，清除缓存用</span>
+                                                        </li>
+                                                    
                                                     </ul>
                                                 </dd>
                                                 
@@ -1848,7 +1857,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">Magix.start({		useHistoryState:true,		appHome:'http://etao.com/srp/app/',		release:false,		pathCfg:{			index:'app/views/layouts/default',//默认首页			map:{				'app/views/layouts/default':['/list','/home',/^\/list\/\d+/i],//前端的app/views/layouts/default可对应哪些pathname,可以是正则				'app/views/layouts/modules':['/module']			}		}});// 为什么在map中是真实的映射到虚拟的？// 原来是虚拟的映射真实的，如：// {//    '/home':'app/views/layouts/default',//    '/modules':'app/views/layouts/default'// }// 虚拟的个数>=真实的个数// 所以如果是虚拟的对应真实的，映射列表将非常长// 而且无法用正则来表示虚拟的pathname</pre>
+                                                            <pre class="brush: js; ">Magix.start({		useHistoryState:true,		appHome:'http://etao.com/srp/app/',		release:false,		appTag:'20121205',		pathCfg:{			index:'app/views/layouts/default',//默认首页			map:{				'app/views/layouts/default':['/list','/home',/^\/list\/\d+/i],//前端的app/views/layouts/default可对应哪些pathname,可以是正则				'app/views/layouts/modules':['/module']			}		}});// 为什么在map中是真实的映射到虚拟的？// 原来是虚拟的映射真实的，如：// {//    '/home':'app/views/layouts/default',//    '/modules':'app/views/layouts/default'// }// 虚拟的个数>=真实的个数// 所以如果是虚拟的对应真实的，映射列表将非常长// 而且无法用正则来表示虚拟的pathname</pre>
                                                         
                                                 </dd>
                                                 
@@ -1927,10 +1936,7 @@ dl.data .dd{
     <div class="box-bd">
         <ul class="list class-list">
             <li><a href="../symbols/Model.html">Model</a></li>
-            <li><a href="../symbols/Tmpl.html">Tmpl</a></li>
             <li><a href="../symbols/MxView.html">MxView</a></li>
-            <li><a href="../symbols/Mustache.html">Mustache</a></li>
-            <li><a href="../symbols/Mu.html">Mu</a></li>
             <li><a href="../symbols/ModelFactory.html">ModelFactory</a></li>
             <li><a href="../symbols/VfAnim.html">VfAnim</a></li>
         </ul>

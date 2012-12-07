@@ -350,12 +350,12 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/ModelFactory.html#create">create</a></b>
-                                                <span class="param">(model, doNotWrapRequest)</span>
+                                                <b class="name"><a href="../symbols/ModelFactory.html#callMethods">callMethods</a></b>
+                                                <span class="param">(args, succ, fail)</span>
                                                 
                                                 
                                                 
-                                                <span class="desc">创建model对象</span>                                                
+                                                <span class="desc">调用多个方法</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -366,6 +366,16 @@ dl.data .dd{
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
                                                 <span class="desc">创建Model类工厂对象</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                
+                                                <b class="name"><a href="../symbols/ModelFactory.html#create">create</a></b>
+                                                <span class="param">(model, doNotWrapRequest)</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">创建model对象</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -416,6 +426,16 @@ dl.data .dd{
                                                 
                                                 
                                                 <span class="desc">尝试获取缓存的model</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                
+                                                <b class="name"><a href="../symbols/ModelFactory.html#registerMethods">registerMethods</a></b>
+                                                <span class="param">(methods)</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">注册方法，前面是参数，后面2个是成功和失败的回调</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -546,18 +566,18 @@ dl.data .dd{
                                     <ul class="list detail-list">
                                         
                                         <li class="li">
-                                            <a name="create"> </a>
+                                            <a name="callMethods"> </a>
                                             <div class="title" >
                                                 
-                                                <b class="name">create</b>
-                                                <span class="param">(model, doNotWrapRequest)</span>
+                                                <b class="name">callMethods</b>
+                                                <span class="param">(args, succ, fail)</span>
                                                 
                                                 
                                                 
                                             </div>
 
                                             <div class="desc">
-                                                创建model对象
+                                                调用多个方法
                                                 
                                                 
                                             </div>
@@ -571,20 +591,29 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">model</b>
+                                                            <b class="name">args</b>
                                                             
                                                             
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">model描述信息</span>
+                                                            <span class="type">{Array}</span> 
+                                                            <span class="desc">要调用的方法列表，形如：[{name:'x',params:['o']},{name:'y',params:['z']}]</span>
                                                         </li>
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">doNotWrapRequest</b>
+                                                            <b class="name">succ</b>
                                                             
                                                             
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否不对request进行包装，默认会对model的request进行一次包装，以完成后续的状态更新</span>
+                                                            <span class="type">{Function}</span> 
+                                                            <span class="desc">成功时的回调，传入参数跟args数组中对应的成功方法的返回值</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">fail</b>
+                                                            
+                                                            
+                                                            <span class="type">{Function}</span> 
+                                                            <span class="desc">失败回调，参数同上</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -603,8 +632,8 @@ dl.data .dd{
                                                     <ul class="list">
                                                     
                                                         <li class="li">
-                                                            <span class="type">{<a href="../symbols/Model.html">Model</a>}</span> 
-                                                            <span>model对象</span>
+                                                            <span class="type">{Object}</span> 
+                                                            <span>返回一个带abort方法的对象，用于取消这些方法的调用</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -672,6 +701,81 @@ dl.data .dd{
                                                 
                                                 
                                                 
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name="create"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">create</b>
+                                                <span class="param">(model, doNotWrapRequest)</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                创建model对象
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">model</b>
+                                                            
+                                                            
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">model描述信息</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">doNotWrapRequest</b>
+                                                            
+                                                            
+                                                            <span class="type">{Boolean}</span> 
+                                                            <span class="desc">是否不对request进行包装，默认会对model的request进行一次包装，以完成后续的状态更新</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    
+                                                        <li class="li">
+                                                            <span class="type">{<a href="../symbols/Model.html">Model</a>}</span> 
+                                                            <span>model对象</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
                                                 
                                                 
                                                 
@@ -881,7 +985,7 @@ dl.data .dd{
                                                             
                                                             
                                                             <span class="type">{Object|Array}</span> 
-                                                            <span class="desc">获取models时的描述信息，如:{type:F.Home,cacheKey:'key',gets:{a:'12'},posts:{b:2}}</span>
+                                                            <span class="desc">获取models时的描述信息，如:{type:F.Home,cacheKey:'key',gets:{a:'12'},posts:{b:2},params:[]}</span>
                                                         </li>
                                                     
                                                         <li class="li">
@@ -1083,6 +1187,60 @@ dl.data .dd{
                                                     
                                                     </ul>
                                                 </dd>
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name="registerMethods"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">registerMethods</b>
+                                                <span class="param">(methods)</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                注册方法，前面是参数，后面2个是成功和失败的回调
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">methods</b>
+                                                            
+                                                            
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">方法对象</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
                                                 
                                                 
                                                 
@@ -1343,10 +1501,7 @@ dl.data .dd{
     <div class="box-bd">
         <ul class="list class-list">
             <li><a href="../symbols/Model.html">Model</a></li>
-            <li><a href="../symbols/Tmpl.html">Tmpl</a></li>
             <li><a href="../symbols/MxView.html">MxView</a></li>
-            <li><a href="../symbols/Mustache.html">Mustache</a></li>
-            <li><a href="../symbols/Mu.html">Mu</a></li>
             <li><a href="../symbols/ModelFactory.html">ModelFactory</a></li>
             <li><a href="../symbols/VfAnim.html">VfAnim</a></li>
         </ul>

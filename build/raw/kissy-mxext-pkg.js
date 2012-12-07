@@ -126,11 +126,27 @@ KISSY.add("mxext/model",function(S,Magix){
          */
         parse:Magix.noop,
         /**
+         * 获取参数对象
+         * @param  {String} [key] 参数分组的key[Model.GET,Model.POST]，默认为Model.GET
+         * @return {Object}
+         */
+        getParamsObject:function(key){
+            if(!key)key=Model.GET;
+            return this['$'+key]||null;
+        },
+        /**
+         * 获取Post参数对象
+         * @return {Object}
+         */
+        getPostParamsObject:function(){
+            return this.getPostParamsObject(Model.POST);
+        },
+        /**
          * 获取通过setPostParams放入的参数
          * @return {String}
          */
         getPostParams:function () {
-            return this.getParams("POST");
+            return this.getParams(Model.POST);
         },
         /**
          * 获取参数
@@ -219,6 +235,13 @@ KISSY.add("mxext/model",function(S,Magix){
         setPostParamsIf:function(obj1,obj2){
         	var me=this;
         	me.setParams(obj1,obj2,Model.POST,true);
+        },
+        removeParamsObject:function(key){
+            if(!key)key=Model.GET;
+            delete this['$'+key];
+        },
+        removePostParamsObject:function(){
+            this.removeParamsObject(Model.POST);
         },
         /**
          * 重置缓存的参数对象，对于同一个model反复使用前，最好能reset一下，防止把上次请求的参数也带上
@@ -601,9 +624,82 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 			}
 		},
 		/**
+		 * 注册方法，前面是参数，后面2个是成功和失败的回调
+		 * @param {Object} methods 方法对象
+		 */
+		registerMethods:function(methods){
+			var me=this;
+			for(var p in methods){
+				if(Magix.hasProp(methods,p)){
+					me[p]=methods[p];
+				}
+			}
+		},
+		/**
+		 * 调用多个方法
+		 * @param {Array} args 要调用的方法列表，形如：[{name:'x',params:['o']},{name:'y',params:['z']}]
+		 * @param {Function} succ 成功时的回调，传入参数跟args数组中对应的成功方法的返回值
+		 * @param {Function} fail 失败回调，参数同上
+		 * @return {Object} 返回一个带abort方法的对象，用于取消这些方法的调用
+		 */
+		callMethods:function(args,succ,fail){
+			var me=this,
+                succArgs=[],
+                failMsg='',
+                total=args.length,
+                exec= 0,
+                aborted,
+                doneCheck=function(args,idx,isFail){
+                	if(aborted)return;
+                    exec++;
+                    if(isFail){
+                        failMsg=args;
+                    }else{
+                         succArgs[idx]=args;
+                    }
+                    if(total<=exec){
+                        if(!failMsg){
+                            if(S.isFunction(succ)){
+                                succ.apply(succ,succArgs);
+                            }
+                        }else{
+                            if(S.isFunction(fail)){
+                                fail(failMsg);
+                            }
+                        }
+                    }
+                },
+                check=function(idx,isSucc){
+                    return function(args){
+                    	doneCheck(args,idx,!isSucc);
+                    };
+                };
+            for(var i=0,one;i<args.length;i++){
+                one=args[i];
+                var fn;
+                if(S.isFunction(one.name)){
+                	fn=one.name;
+                }else{
+                	fn=me[one.name];
+                }
+                if(fn){
+                	if(!one.params)one.params=[];
+                    one.params.push(check(i,true),check(i));
+                    fn.apply(me,one.params);
+                }else{
+                	doneCheck('unfound:'+one.name,i,true);
+                }
+            }
+            return {
+            	abort:function(){
+            		aborted=true;
+            	}
+            }
+		},
+		/**
 		 * 获取models，该用缓存的用缓存，该发起请求的请求
 		 * @see ModelFactory#registerModels
-		 * @param {Object|Array} models 获取models时的描述信息，如:{type:F.Home,cacheKey:'key',gets:{a:'12'},posts:{b:2}}
+		 * @param {Object|Array} models 获取models时的描述信息，如:{type:F.Home,cacheKey:'key',gets:{a:'12'},posts:{b:2},params:[]}
 		 * @param {Function} succ   成功时的回调
 		 * @param {Function} fail   失败时的回调
 		 * @param {Integer} flag   获取哪种类型的models
@@ -638,8 +734,9 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 					var cacheKey=model._cacheKey;
 					if(cacheKey&&!Magix.hasProp(modelsCache,cacheKey)){//需要缓存
 						modelsCache[model._cacheKey]=model;
+						var params=model._params;
 						if(model._after){//有after
-							Magix.safeExec(model._after,model);
+							Magix.safeExec(model._after,[model].concat(params));
 						}
 					}
 					if(flag==FetchFlags.ONE){//如果是其中一个成功，则每次成功回调一次
@@ -794,6 +891,7 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 			
 			if(!me.$modelsCache)me.$modelsCache={};
 			var modelsCache=me.$modelsCache;
+			var params=model.params||[];
 
 			if(cacheKey&&Magix.hasProp(modelsCache,cacheKey)){//缓存
 				
@@ -810,6 +908,8 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 				modelEntity._cacheKey=cacheKey;
 				modelEntity.set('updateIdent',true);
 			}
+			modelEntity._params=params;
+
 			var updateIdent=modelEntity.get('updateIdent');//是否需要更新
 			if(updateIdent){
 				modelEntity.reset();
@@ -824,7 +924,7 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 				modelEntity.setPostParams(model.posts);
 				
 				if(Magix.isFunction(metas.before)){
-					Magix.safeExec(metas.before,modelEntity,metas);
+					Magix.safeExec(metas.before,[modelEntity].concat(params),metas);
 				}
 			}
 			if(!doNotWrapRequest){
@@ -836,578 +936,6 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 	return Factory;
 },{
 	requires:["magix/magix"]
-}); /**
-  * Magix扩展的Mustache
-  * @name Mu
-  * @namespace
-  * @requires Mustache
-  * @author 李牧
-  * @example
-  * 支持简单的条件判断 如:
-  * <pre>
-    {{#list}}
-    &nbsp;&nbsp;&nbsp;&nbsp;{{#if(status==P)}}ID:{{id}},status:&lt;b style='color:green'>通过&lt;/b>{{/if(status==P)}}
-    &nbsp;&nbsp;&nbsp;&nbsp;{{#if(status==W)}}ID:{{id}},status:等待{{/if(status==W)}}
-    &nbsp;&nbsp;&nbsp;&nbsp;{{#if(status==R)}}ID:{{id}},status&lt;b style='color:red'>拒绝&lt;/b>{{/if(status==R)}}
-    {{/list}}
-    </pre>
-    对于数组对象可以通过{{__index__}}访问数组下标
-  */
-KISSY.add("mxext/mu",function(S,Mustache){
-    var notRender=/\s*<script[^>]+type\s*=\s*(['"])\s*text\/tmpl\1[^>]*>([\s\S]*?)<\/script>\s*/gi;
-    function addFns(template, data){
-        var ifs = getConditions(template);
-        var key = "";
-        for (var i = 0; i < ifs.length; i++) {
-            key = "if(" + ifs[i] + ")";
-            if (data[key]) {
-                continue;
-            }
-            else {
-                data[key] = buildFn(ifs[i]);
-            }
-        }
-    }
-    function getConditions(template){
-        var ifregexp_ig = /\{{2,3}[\^#]?if\((.*?)\)\}{2,3}?/ig;
-        var ifregexp_i = /\{{2,3}[\^#]?if\((.*?)\)\}{2,3}?/i;
-        var gx = template.match(ifregexp_ig);
-        var ret = [];
-        if (gx) {
-            for (var i = 0; i < gx.length; i++) {
-                ret.push(gx[i].match(ifregexp_i)[1]);
-            }
-        }
-        return ret;
-    }
-    function buildFn(key){
-        key = key.split("==");
-        var res = function(){
-            var ns = key[0].split("."), value = key[1];
-            var curData = this;
-            for (var i = ns.length - 1; i > -1; i--) {
-                var cns = ns.slice(i);
-                var d = curData;
-                try {
-                    for (var j = 0; j < cns.length - 1; j++) {
-                        d = d[cns[j]];
-                    }
-                    if (cns[cns.length - 1] in d) {
-                        if (d[cns[cns.length - 1]].toString() === value) {
-                            return true;
-                        }
-                        else {
-                            return false;
-                        }
-                    }
-                } 
-                catch (err) {
-                }
-            }
-            return false;
-        };
-        return res;
-    }
-    function findArray(o, depth){
-        var k, v;
-        for (k in o) {
-            v = o[k];
-            if (v instanceof Array) {
-                addArrayIndex(v);
-            }
-            else 
-                if (typeof(v) == "object" && depth < 5) {
-                    findArray(v, depth + 1);
-                }
-        }
-    }
-    function addArrayIndex(v){
-        for (var i = 0; i < v.length; i++) {
-            var o = v[i];
-            if (typeof(o) == "object") {
-                if (i === 0) {
-                    o.__first__ = true;
-                }
-                else 
-                    if (i == (v.length - 1)) {
-                        o.__last__ = true;
-                    }
-                    else {
-                        o.__mid__ = true;
-                    }
-                o.__index__ = i;
-            }
-        }
-    }
-    return {
-        /**
-         * @lends Mu
-         */
-        /**
-         * 输出模板和数据,返回渲染后结果字符串,接口与Mustache完全一致
-         * @method to_html
-         * @param {String} template 模板字符串
-         * @param {Object} data 数据Object
-         * @return {String}
-         */
-        to_html: function(template, data){
-            if (typeof(data) == "object") {
-                findArray(data, 0);
-            }
-            var notRenders=template.match(notRender);
-            if(notRenders){
-                template=template.replace(notRender,function(){//防止不必要的解析
-                    return '<script type="text/tmpl"></script>';
-                });
-                addFns(template, data);
-                template=Mustache.to_html.apply(this, arguments);
-                var idx=0;
-                template=template.replace(notRender,function(){
-                    return notRenders[idx++];
-                });
-            }else{
-                addFns(template, data);
-                template=Mustache.to_html.apply(this, arguments);
-            }
-            return template;
-        }
-    };
-},{
-	requires:["mxext/mustache"]
-});
-
-
-KISSY.add("mxext/mustache", function(S) {
-
-	/*
-	 mustache.js — Logic-less templates in JavaScript
-
-	 See http://mustache.github.com/ for more info.
-	 */
-	 /**
-	  * Mustache模板
-	  * @name Mustache
-	  * @namespace
-	  */
-	var Mustache = function() {
-		/**
-		 * @name Renderer
-		 * @inner
-		 */
-		var Renderer = function() {
-		};
-
-		Renderer.prototype = {
-			otag : "{{",
-			ctag : "}}",
-			pragmas : {},
-			buffer : [],
-			pragmas_implemented : {
-				"IMPLICIT-ITERATOR" : true
-			},
-			context : {},
-
-			render : function(template, context, partials, in_recursion) {
-				// reset buffer & set context
-				if(!in_recursion) {
-					this.context = context;
-					this.buffer = [];
-					// TODO: make this non-lazy
-				}
-
-				// fail fast
-				if(!this.includes("", template)) {
-					if(in_recursion) {
-						return template;
-					} else {
-						this.send(template);
-						return;
-					}
-				}
-				template = this.render_pragmas(template);
-				var html = this.render_section(template, context, partials);
-				if(in_recursion) {
-					return this.render_tags(html, context, partials, in_recursion);
-				}
-
-				this.render_tags(html, context, partials, in_recursion);
-			},
-			/*
-			 Sends parsed lines
-			 */
-			send : function(line) {
-				if(line != "") {
-					this.buffer.push(line);
-				}
-			},
-			/*
-			 Looks for %PRAGMAS
-			 */
-			render_pragmas : function(template) {
-				// no pragmas
-				if(!this.includes("%", template)) {
-					return template;
-				}
-
-				var that = this;
-				var regex = new RegExp(this.otag + "%([\\w-]+) ?([\\w]+=[\\w]+)?" + this.ctag);
-				return template.replace(regex, function(match, pragma, options) {
-					if(!that.pragmas_implemented[pragma]) {
-						throw ( {
-							message : "This implementation of mustache doesn't understand the '" + pragma + "' pragma"
-						});
-					}
-					that.pragmas[pragma] = {};
-					if(options) {
-						var opts = options.split("=");
-						that.pragmas[pragma][opts[0]] = opts[1];
-					}
-					return "";
-					// ignore unknown pragmas silently
-				});
-			},
-			/*
-			 Tries to find a partial in the curent scope and render it
-			 */
-			render_partial : function(name, context, partials) {
-				name = this.trim(name);
-				if(!partials || partials[name] === undefined) {
-					throw ( {
-						message : "unknown_partial '" + name + "'"
-					});
-				}
-				if( typeof (context[name]) != "object") {
-					return this.render(partials[name], context, partials, true);
-				}
-				return this.render(partials[name], context[name], partials, true);
-			},
-			/*
-			 Renders inverted (^) and normal (#) sections
-			 */
-			render_section : function(template, context, partials) {
-				if(!this.includes("#", template) && !this.includes("^", template)) {
-					return template;
-				}
-
-				var that = this;
-				// CSW - Added "+?" so it finds the tighest bound, not the widest
-				var regex = new RegExp(this.otag + "(\\^|\\#)\\s*(.+)\\s*" + this.ctag + "\n*([\\s\\S]+?)" + this.otag + "\\/\\s*\\2\\s*" + this.ctag + "\\s*", "mg");
-
-				// for each {{#foo}}{{/foo}} section do...
-				return template.replace(regex, function(match, type, name, content) {
-					var value = that.find(name, context);
-					if(type == "^") {// inverted section
-						if(!value || that.is_array(value) && value.length === 0) {
-							// false or empty list, render it
-							return that.render(content, context, partials, true);
-						} else {
-							return "";
-						}
-					} else if(type == "#") {// normal section
-						if(that.is_array(value)) {// Enumerable, Let's loop!
-							return that.map(value, function(row) {
-								return that.render(content, that.create_context(row), partials, true);
-							}).join("");
-						} else if(that.is_object(value)) {// Object, Use it as subcontext!
-							return that.render(content, that.create_context(value), partials, true);
-						} else if( typeof value === "function") {
-							// higher order section
-							return value.call(context, content, function(text) {
-								return that.render(text, context, partials, true);
-							});
-						} else if(value) {// boolean section
-							return that.render(content, context, partials, true);
-						} else {
-							return "";
-						}
-					}
-				});
-			},
-			/*
-			 Replace {{foo}} and friends with values from our view
-			 */
-			render_tags : function(template, context, partials, in_recursion) {
-				// tit for tat
-				var that = this;
-
-				var new_regex = function() {
-					return new RegExp(that.otag + "(=|!|>|\\{|%)?([^\\/#\\^]+?)\\1?" + that.ctag + "+", "g");
-				};
-				var regex = new_regex();
-				var tag_replace_callback = function(match, operator, name) {
-					switch(operator) {
-						case "!":
-							// ignore comments
-							return "";
-						case "=":
-							// set new delimiters, rebuild the replace regexp
-							that.set_delimiters(name);
-							regex = new_regex();
-							return "";
-						case ">":
-							// render partial
-							return that.render_partial(name, context, partials);
-						case "{":
-							// the triple mustache is unescaped
-							return that.find(name, context);
-						default:
-							// escape the value
-							return that.escape(that.find(name, context));
-					}
-				};
-				var lines = template.split("\n");
-				for(var i = 0; i < lines.length; i++) {
-					lines[i] = lines[i].replace(regex, tag_replace_callback, this);
-					if(!in_recursion) {
-						this.send(lines[i]);
-					}
-				}
-
-				if(in_recursion) {
-					return lines.join("\n");
-				}
-			},
-			set_delimiters : function(delimiters) {
-				var dels = delimiters.split(" ");
-				this.otag = this.escape_regex(dels[0]);
-				this.ctag = this.escape_regex(dels[1]);
-			},
-			escape_regex : function(text) {
-				// thank you Simon Willison
-				if(!arguments.callee.sRE) {
-					var specials = ['/', '.', '*', '+', '?', '|', '(', ')', '[', ']', '{', '}', '\\'];
-					arguments.callee.sRE = new RegExp('(\\' + specials.join('|\\') + ')', 'g');
-				}
-				return text.replace(arguments.callee.sRE, '\\$1');
-			},
-			/*
-			 find `name` in current `context`. That is find me a value
-			 from the view object
-			 */
-			find : function(name, context) {
-				name = this.trim(name);
-
-				// Checks whether a value is thruthy or false or 0
-				function is_kinda_truthy(bool) {
-					return bool === false || bool === 0 || bool;
-				}
-
-				var value;
-				if(is_kinda_truthy(context[name])) {
-					value = context[name];
-				} else if(is_kinda_truthy(this.context[name])) {
-					value = this.context[name];
-				}
-
-				if( typeof value === "function") {
-					return value.apply(context);
-				}
-				if(value !== undefined) {
-					return value;
-				}
-				// silently ignore unkown variables
-				return "";
-			},
-			// Utility methods
-
-			/* includes tag */
-			includes : function(needle, haystack) {
-				return haystack.indexOf(this.otag + needle) != -1;
-			},
-			/*
-			 Does away with nasty characters
-			 */
-			escape : function(s) {
-				s = String(s === null ? "" : s);
-				return s.replace(/&(?!\w+;)|["'<>\\]/g, function(s) {
-					switch(s) {
-						case "&":
-							return "&amp;";
-						case "\\":
-							return "\\\\";
-						case '"':
-							return '&quot;';
-						case "'":
-							return '&#39;';
-						case "<":
-							return "&lt;";
-						case ">":
-							return "&gt;";
-						default:
-							return s;
-					}
-				});
-			},
-			// by @langalex, support for arrays of strings
-			create_context : function(_context) {
-				if(this.is_object(_context)) {
-					return _context;
-				} else {
-					var iterator = ".";
-					if(this.pragmas["IMPLICIT-ITERATOR"]) {
-						iterator = this.pragmas["IMPLICIT-ITERATOR"].iterator;
-					}
-					var ctx = {};
-					ctx[iterator] = _context;
-					return ctx;
-				}
-			},
-			is_object : function(a) {
-				return a && typeof a == "object";
-			},
-			is_array : function(a) {
-				return Object.prototype.toString.call(a) === '[object Array]';
-			},
-			/*
-			 Gets rid of leading and trailing whitespace
-			 */
-			trim : function(s) {
-				return s.replace(/^\s*|\s*$/g, "");
-			},
-			/*
-			 Why, why, why? Because IE. Cry, cry cry.
-			 */
-			map : function(array, fn) {
-				if( typeof array.map == "function") {
-					return array.map(fn);
-				} else {
-					var r = [];
-					var l = array.length;
-					for(var i = 0; i < l; i++) {
-						r.push(fn(array[i]));
-					}
-					return r;
-				}
-			}
-		};
-
-		return ( {
-			/**
-			 * @lends Mustache
-			 */
-			/**
-			 * 名称
-			 */
-			name : "mustache.js",
-			/**
-			 * 版本
-			 */
-			version : "0.3.1-dev",
-
-			/**
-			 * 把模板根据数据翻译成最终字符串
-			 * @param {String} template 模板
-			 * @param {Object} view     数据
-			 * @return {String}
-			 */
-			to_html : function(template, view, partials, send_fun) {
-				var renderer = new Renderer();
-				if(send_fun) {
-					renderer.send = send_fun;
-				}
-				
-				renderer.render(template, view, partials);
-				if(!send_fun) {
-					return renderer.buffer.join("\n");
-				}
-			}
-		});
-	}();
-	return Mustache;
-});
-/**
- * @fileOverview 模板
- * @version 1.0
- * @author 行列
- */
-KISSY.add("mxext/tmpl",function(S){
-	var fnCaches={},
-		tmplCaches={},
-		stack='_'+new Date().getTime(),
-		notRender=/\s*<script[^>]+type\s*=\s*(['"])\s*text\/tmpl\1[^>]*>([\s\S]*?)<\/script>\s*/gi;
-	var tmpl=function(template,data){
-		if(template){
-			var resultTemplate;
-			resultTemplate=tmplCaches[template];
-			if(!resultTemplate){
-				resultTemplate=stack + ".push('" + template
-				.replace(/\s+/g," ")
-				.replace(/<#/g,"\r")
-				.replace(/;*#>/g,"\n")
-				.replace(/\\(?=[^\r\n]*\n)/g,"\t")
-				.replace(/\\/g,"\\\\")
-				.replace(/\t/g,"\\")
-				.replace(/'(?=[^\r\n]*\n)/g,"\t")
-				.replace(/'/g,"\\'")
-				.replace(/\t/g,"'")
-				.replace(/\r=([^\n]+)\n/g,"',$1,'")
-				.replace(/\r/g,"');")
-				.replace(/\n/g,";"+stack+".push('")+ "');return "+stack+".join('')";
-				 tmplCaches[template]=resultTemplate;
-			}
-			var vars=[stack],values=[[]],fnKey;
-			if(data){
-				for(var p in data){
-					vars.push(p.replace(/[:+\-*\/&^%#@!~]/g,'$'));
-					values.push(data[p]);
-				}
-			}
-			fnKey=vars.join('_')+'_'+resultTemplate;
-			if(!fnCaches[fnKey]){
-				try{
-					fnCaches[fnKey]=new Function(vars,resultTemplate);
-				}catch(e){
-					
-					return resultTemplate=e.message;
-				}
-			}
-			try{
-				resultTemplate=fnCaches[fnKey].apply(data,values);
-			}catch(e){
-				
-				resultTemplate=e.message;
-			}
-			return resultTemplate;
-		}
-		return template;
-	};
-	/**
-	 * 语法为<# #>的模板，<# #>语句 <#= #>输出
-	 * @name Tmpl
-	 * @namespace
-	 * @example
-	 * &lt;#for(var i=0;i&lt;10;i++){#&gt;
-	 *    &lt;#=i#&gt; &lt;br /&gt;
-	 * &lt;#}#&gt;
-	 */
-	var Tmpl={
-		/**
-		 * @lends Tmpl
-		 */
-		/**
-		 * 把模板与数据翻译成最终的字符串
-		 * @param {String} template 模板字符串
-		 * @param {Object} data     数据对象
-		 * @return {String}
-		 */
-		toHTML:function(template,data){
-			var notRenders=template.match(notRender);
-			if(notRenders){
-				template=template.replace(notRender,function(){//防止不必要的解析
-					return '<script type="text/tmpl"></script>';
-				});
-				template=tmpl(template,data);
-				var idx=0;
-				template=template.replace(notRender,function(){
-					return notRenders[idx++];
-				});
-			}else{
-				template=tmpl(template,data);
-			}
-			return template;
-		}
-	};
-	return Tmpl;
 });/**
  * @fileOverview view转场动画
  * @author 行列

@@ -39,11 +39,20 @@ KISSY.add('magix/impl/magix',function(S){
 					map:[[reg,'$1.js$2']]
 				});
 			}
+			var appTag='';
+			if(cfg.release){
+				appTag=cfg.appTag;
+			}else{
+				appTag=S.now();
+			}
+			if(appTag){
+				appTag+='.js';
+			}
 			S.config({
 				packages:[{
 					name:'app',
 					path:appHome,
-					tag:cfg.release?'':S.now()+'.js'
+					tag:appTag
 				}]
 			});
 			if(cfg.viewChangeAnim){
