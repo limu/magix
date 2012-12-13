@@ -6,7 +6,8 @@
 KISSY.add('magix/vframe',function(S,Magix,Event){
 	var D=document;
 var VframeIdCounter=0;
-
+var WIN=window;
+var CollectGarbage=WIN.CollectGarbage||Magix.noop;
 var safeExec=Magix.safeExec;
 
 var DataView='data-view';
@@ -31,6 +32,7 @@ var fnUnloadView=function(anim){
 	safeExec(view.trigger,'childrenAlter',view);
 	me.unloadSubVframes(anim);
 };
+var ScriptsReg=/<script[^>]*>[\s\S]*?<\/script>/ig
 /**
  * Vframe类
  * @name Vframe
@@ -179,6 +181,11 @@ Magix.mix(Vframe.prototype,{
 		var me=this;
 		//me.owner.suspend();
 		
+		var node=$(me.id);
+		if(!node._dataBak){
+			node._dataBak=true;
+			node._dataTmpl=node.innerHTML.replace(ScriptsReg,'');
+		}
 		var useTurnaround=me.viewName&&me.viewChangeUseAnim();
 		//
 		me.unmountView(useTurnaround,true);
@@ -218,6 +225,9 @@ Magix.mix(Vframe.prototype,{
 						me.newViewCreated(true);
 					}
 					if(!e.tmpl){
+						if(!useTurnaround){
+							node.innerHTML=node._dataTmpl;
+						}
 						me.loadSubVframes();
 					}
 					view.bind('rendered',function(){//再绑定rendered
@@ -245,9 +255,13 @@ Magix.mix(Vframe.prototype,{
 		if(me.view){
 			fnUnloadView.call(me,useAnim);
 
-			me.view.destroy(useAnim);
+			me.view.destroy();
 			me.vced=false;
-			
+			var node=$(me.id);
+			if(!useAnim&&node._dataBak){
+				node.innerHTML=node._dataTmpl;
+				CollectGarbage();
+			}
 			if(useAnim&&isOutermostView){//在动画启用的情况下才调用相关接口
 				me.oldViewDestroy();
 			}		

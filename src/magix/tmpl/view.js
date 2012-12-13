@@ -71,7 +71,7 @@ var WrapFn=function(fn,update){
 			}
 			//console.log(me);
 			fn.apply(me,args);
-		});
+		},[],me,fn);
 	}
 };
 /*
@@ -246,6 +246,8 @@ var UnsupportBubble={
 var VProto=View.prototype;
 var D=document;
 var WIN=window;
+var CollectGarbage=WIN.CollectGarbage||Magix.noop;
+
 var DestroyManagedTryList='abort,stop,cancel,destroy,dispose'.split(COMMA);
 var $=function(id){
 	return typeof id=='object'?id:D.getElementById(id);
@@ -523,17 +525,16 @@ Magix.mix(VProto,{
 				me.trigger('prerender',{anim:enableAnim});
 				me.destroyManaged(true);
 				me.undelegateUnBubbleEvents();
-				me.destroyFrames();
+				//me.destroyFrames();
 				var owner=me.owner;
 				if(enableAnim){
 					safeExec(owner.oldViewDestroy,[],owner);
 					safeExec(owner.prepareNextView,[],owner);
 					me.updateViewId();
 				}
-			}else{
-				me.$bakHTML=$(me.id).innerHTML;
 			}
 			me.setNodeHTML(param);
+			CollectGarbage();
 			if(enableAnim){
 				safeExec(owner.newViewCreated,[],owner);
 			}
@@ -615,13 +616,33 @@ Magix.mix(VProto,{
 	 *
 	 * //
 	 */
-	idle:function(fn,args,context){
+	idle:function(fn,args,context,anchor){
 		var me=this;
+		if(!anchor)anchor=fn;
+		var id=WrapKey+'_id_';
+		var v=anchor[id];
+		var iQ=me.iQ;
+		console.log(iQ);
 		if(me.iC){
-			me.iQ.push([fn,args,context]);
-		}else{
+			if(!v)v=anchor[id]=WrapKey+(counter++);
+			else if(iQ[v]){
+				/*for(var i=0;i<iQ.length;i++){
+					if(iQ[i][3]===anchor){
+						iQ.splice(i,1);
+						break;
+					}
+				}*/
+				console.log('ignore:',iQ[v]);
+				iQ[v][id]=id;
+			}
+			iQ.push([fn,args,context,anchor]);
+			iQ[v]=fn;
+		}else if(fn[id]!=id){
 			me.ownerVOM.idle(function(){//在应用中，有可能是在异步中回调，为了防止应用中没有做判断，所以在此做下判断，只有view存在的情况下才调用
-				if(me.exist&&Magix.isFunction(fn)){
+				if(me.exist){
+					if(v){
+						delete iQ[v];
+					}
 					safeExec(fn,args,context);
 				}
 			});
@@ -654,12 +675,13 @@ Magix.mix(VProto,{
 	observeLocation:function(keys,observePathname){//区分params与pathname
 		var me=this;
 		var args=arguments;
-		if(args.length==1){
-			observePathname=false;
-		}
-		if(args.length){
+		var len=args.length;
+		if(len){
+			if(len==1){
+				observePathname=false;
+			}
 			me.$location={
-				keys:Magix.isArray(keys)?keys:String(keys).split(','),
+				keys:Magix.isArray(keys)?keys:String(keys).split(COMMA),
 				pn:observePathname
 			};
 		}
@@ -680,13 +702,7 @@ Magix.mix(VProto,{
 			}
 			if(!res){
 				var keys=location.keys;
-				for(var i=0;i<keys.length;i++){
-					var key=keys[i];
-					if(changed.isParam(key)){
-						res=true;
-						break;
-					}
-				}
+				res=changed.isParam(keys);
 			}
 			return res;
 		}
@@ -695,8 +711,8 @@ Magix.mix(VProto,{
 	/**
 	 * 销毁当前view内的iframes 
 	 */
-	destroyFrames:function(){
-		var me=this;
+	/*destroyFrames:function(){
+		/*var me=this;
 		var node=$(me.id),
 			iframes=node.getElementsByTagName('iframe'),
 			iframe, parent;
@@ -707,27 +723,29 @@ Magix.mix(VProto,{
             parent.removeChild(iframe);
             //parent.parentNode.removeChild(parent);
             iframe = parent = null;
-        }
-        if(WIN.CollectGarbage){
+        }*/
+        /*if(WIN.CollectGarbage){
         	WIN.CollectGarbage();
         }
-	},
+	},*/
 	/**
 	 * 销毁当前view
-	 * @param {Boolean} [keepContent] 销毁view时，是否保留内容，默认对于有模板的view才删除内容，没有模板的是不做删除处理的
 	 */
-	destroy:function(keepContent){
+	destroy:function(){
 		var me=this;
 		me.trigger('refresh',null,true,true);//先清除绑定在上面的app中的刷新
 		me.trigger('destroy',null,true,true);//同上
 		me.destroyManaged();
 		me.undelegateUnBubbleEvents();
 		me.undelegateBubbleEvents();
-		if(me.hasTemplate&&!keepContent){
-			me.destroyFrames();
-			//console.log('destroy html',me,keepContent);
-			$(me.vfId).innerHTML=me.$bakHTML||EMPTY;
-		}
+		//if(!keepContent){
+			//me.destroyFrames();
+			//var node=$(me.vfId);
+			//if(node._dataBak){
+				//node.innerHTML=node._dataTmpl;
+			//}
+		//}
+		
 		//me.unbind('prerender',null,true); 销毁的话也就访问不到view对象了，这些事件不解绑也没问题
 		//me.unbind('rendered',null,true);
 		me.exist=false;
@@ -1109,22 +1127,26 @@ Magix.mix(VProto,{
 	/**
 	 * 移除托管的资源
 	 * @param {String|Object} param 托管时标识key或托管的对象
+	 * @return {Object} 返回移除的资源
 	 */
 	removeManaged:function(param){
-		var me=this;
+		var me=this,res=null;
 		var cache=me.$resCache;
 		if(cache){
 			if(HAS(cache,param)){
+				res=cache[param].res;
 				delete cache[param];
 			}else{
 				for(var p in cache){
 					if(cache[p].res===param){
+						res=cache[p].res;
 						delete cache[p];
 						break;
 					}
 				}
 			}
 		}
+		return res;
 	},
 	/**
 	 * 销毁托管的资源

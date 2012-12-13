@@ -1,8 +1,16 @@
 
 var HAS=Magix.hasProp;
+var MIX=Magix.mix;
 
-var isParam=function(key){
-	return HAS(this.params,key);
+var isParam=function(params){
+	var r;
+	var ps=this.params;
+	if(!Magix.isArray(params))params=String(params).split(',');
+	for(var i=0;i<params.length;i++){
+		r=HAS(ps,params[i]);
+		if(r)break;
+	}
+	return r;
 };
 var isPathname=function(){
 	return HAS(this,PATHNAME);	
@@ -78,7 +86,7 @@ var PATHNAME='pathname';
  * @borrows Event.trigger as trigger
  * @borrows Event.unbind as unbind
  */
-var Router=Magix.mix({
+var Router=MIX({
 	/**
 	 * @lends Router
 	 */
@@ -102,21 +110,16 @@ var Router=Magix.mix({
 	 * @return {Boolean} 2个对象的内容是否一样
 	 */
 	compareObject:function(p1,p2){
-		var me=Magix;
-		if(me.isObject(p1)&&me.isObject(p2)){
-			var keys=[];
-			keys=keys.concat(me.objectKeys(p1));
-			keys=keys.concat(me.objectKeys(p2));
-			for(var i=0;i<keys.length;i++){
-				var key=keys[i];
-				if(p1[key]!=p2[key]){
-					return false;
-				}
+		var keys=[];
+		keys=keys.concat(Magix.objectKeys(p1));
+		keys=keys.concat(Magix.objectKeys(p2));
+		for(var i=0;i<keys.length;i++){
+			var key=keys[i];
+			if(p1[key]!=p2[key]){
+				return false;
 			}
-			return true;
-		}else{
-			return p1==p2;
 		}
+		return true;
 	},
 	/**
 	 * 获取pathname前端真实路径跟虚拟路径之间的映射关系
@@ -331,8 +334,8 @@ var Router=Magix.mix({
 		var hashObj=me.pathToObject(hash.replace(/^!?/,EMPTY));//去掉可能的！开始符号
 		//console.log(hashObj.pathname,'hhhhhhhhhhhhhhhhhhhhhhhhh');
 		var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
-		Magix.mix(comObj,queryObj.params);
-		Magix.mix(comObj,hashObj.params);
+		MIX(comObj,queryObj.params);
+		MIX(comObj,hashObj.params);
 		return cache[href]={
 			isPathnameDiff:isPathnameDiff,
 			isParamDiff:isParamDiff,
@@ -399,8 +402,8 @@ var Router=Magix.mix({
 			tempPathname=queryHash.hash[PATHNAME];
 		}
 		var viewPath=me.getViewPath(tempPathname);
-		return Magix.mix(queryHash,viewPath);
-		/*return Magix.mix(queryHash,{ //先不加referrer 
+		return MIX(queryHash,viewPath);
+		/*return MIX(queryHash,{ //先不加referrer 
 			referrer:me.$referrer||EMPTY,
 			referrerLocation:me.$location||null
 		});*/
@@ -423,7 +426,7 @@ var Router=Magix.mix({
 		keys=keys.concat(Magix.objectKeys(newLocation.params));
 		for(var i=0;i<keys.length;i++){
 			var key=keys[i];
-			if(oldLocation.params[key]!=newLocation.params[key]){
+			if(oldLocation.params[key]!==newLocation.params[key]){
 				temp.params[key]=true;
 			}
 		}
@@ -495,8 +498,8 @@ var Router=Magix.mix({
 				//与当前的比较是否有变化
 				//如果没变化什么也不做
 				var pathObj=me.pathToObject(path);
-				var tempParams=Magix.mix({},me.$location.params);
-				tempParams=Magix.mix(tempParams,pathObj.params);
+				var tempParams=MIX({},me.$location.params);
+				tempParams=MIX(tempParams,pathObj.params);
 
 				if(pathObj[PATHNAME]){
 					var mxConfig=Magix.config();

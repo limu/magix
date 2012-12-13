@@ -390,7 +390,7 @@
 	<br />
 	在我们的magix支撑的项目中，每个项目或多或少的都有这个问题，抛开magix，包括传统的ajax取内容，比如新闻列表的翻页，在用户点击较快的情况下，因为异步并不能保证先发出的请求先返回，所以很有可能页码选中第3页，但显示却是第2页的内容<br />
 	<br />
-	当出现这种问题时，我们只有在回调中进行一次环境判断，识别出返回的数据是否对应着当前的环境，如果对应就进行后续的操作，否则就扔掉这个数据，幸运的是，在这次重构中解决掉了这个问题^_^
+	当出现这种问题时，我们只能在回调中进行一次环境判断，识别出返回的数据是否对应着当前的环境，如果对应就进行后续的操作，否则就扔掉这个数据，幸运的是，在这次重构中解决掉了这个问题^_^
 </div>
 
 <!--page-->
@@ -455,7 +455,7 @@
 <div class="content text">
 	setTimeout引入后带来的问题<br />
 	<br />
-	这个问题似乎比前面的ajax请求还要严重些，就是引入后整个vom vframe view渲染的流程变得异常复杂，magix开发者很难确定并识别setTimeout对应的方法什么时间点被调用，给难维护带来很大的困难，虽然到线上后并没有因它出过什么问题，但是有它的存在还是像个炸弹一样，不知道什么时间就bomb了
+	这个问题似乎比前面的ajax请求还要严重些，就是引入后整个vom vframe view渲染的流程变得异常复杂，magix开发者很难确定并识别setTimeout对应的方法什么时间点被调用，给维护带来很大的困难，虽然到线上后并没有因它出过什么问题，但是有它的存在还是像个炸弹一样，不知道什么时间就bomb了
 </div>
 
 <!--page-->
@@ -509,8 +509,7 @@
 	具体描述为：<br >
 	1. A B 2个View的渲染依赖同一份数据，这份数据有可能在前端，也有可能在后台，A B如何共享同一份数据？当是后台数据时，难道A B各发起一个请求到后台取这同一份数据？如何只发起一个请求？(项目中最常见)<br />
 	2. B view的渲染依赖A view的渲染完成，参考insight项目，B view如何知道A已渲染完成？<br />
-	3. 后台取数据请求是异步的，如何保证安全(依赖安全，并非安全的取数据)？<br />
-	4. B依赖A渲染完成，A view 的js加载，甚至数据都是异步的，如何保证B安全的知道A已经完成了？
+	3. 后台取数据请求是异步的，如何保证安全(依赖安全，并非安全的取数据)？
 </div>
 
 <!--page-->
@@ -553,14 +552,6 @@
 	<div class="main-sub">其它</div>
 </div>
 
-<!--page-->
-<div class="title">
-	目录-过去的问题-其它
-</div>
-<div class="content text">
-	<br />
-	开发人员的编程习惯需要照顾，虽然一些问题magix中给出了解决方案，但要针对经常出现的问题给予良好的解决，要不然会让开发人员感觉很不爽，这一块会在后面的代码细节与风险中给出示例和解决方案，<a href="linkTo:core_code_habit">点击这里直达</a>
-</div>
 
 <!--page-->
 <div class="title">
@@ -622,6 +613,15 @@
 	　　})<br />
 	}<br />
 	有问题吗？
+</div>
+
+<!--page-->
+<div class="title">
+	目录-过去的问题-其它
+</div>
+<div class="content text">
+	<br />
+	开发人员的编程习惯需要照顾，虽然一些问题magix中给出了解决方案，但要针对经常出现的问题给予良好的解决，要不然会让开发人员感觉很不爽，这一块会在后面的代码细节与风险中给出示例和解决方案，<a href="linkTo:core_code_habit">点击这里直达</a>
 </div>
 
 <!--page-->
@@ -697,7 +697,7 @@
 <div class="content text">
 	<br />
 	所以针对上述问题，希望magix/view能够提供基础的生命周期，在此基础上，view分发为PC端 mobile端等各自的view，可以在各自的view添加自已所需要的功能，但是它们的生命周期和一些基础事件的派发是一样的，即使开发mobile的人员改到PC端来开发，也会很容易上手<br /><br />
-	同样在分发PC 和 mobile view时，也同样会有一些代码是公用的，另外一些代码是基于底层类库的，我们规定好接口名称，这样虽然底层类库不同，但我们对外是一致的，所以一刀切开公用和依赖底层类库实现的代码，同时回字形增强是逐渐的增强，增大view，增大的同时也遵循一刀切的原则
+	同样在分发PC 和 mobile view时，也同样会有一些代码是公用的，另外一些代码是基于底层类库的，我们规定好接口名称，这样虽然底层类库不同，但我们对外是一致的，所以一刀切开公用和依赖底层类库实现的代码，同时以回字形逐渐的增强，增大view。增大的同时也遵循一刀切的原则
 </div>
 
 <!--page-->
@@ -737,8 +737,8 @@
 </div>
 <div class="content text">
 	<br />
-	以住我们开发中，免不了使用后台数据，通常我们会在需要的地方直接ajax取，这样一些后台的URL可能就散落在各个Model和Collection中，有的写死在view中，不易查找，维护<br /><br />
-	希望magix能集中管理请求的后台url，这样当我需要查找或修改某个接口地址时非常方便，要不然就要到各个view的js文件中去慢慢找。
+	以往我们开发中，免不了使用后台数据，通常我们会在需要的地方直接ajax取，这样一些后台的URL可能就散落在各个Model和Collection中，有的写死在view中，不易查找，维护<br /><br />
+	希望magix能集中管理请求的后台url，这样当我们需要查找或修改某个接口地址时非常方便，要不然就要到各个view的js文件中去慢慢找。
 </div>
 
 <!--page-->
@@ -963,7 +963,7 @@
 	magix核心部分：router提供对url的解析与修改，vom vframe view(仅核心)构成整个页面的管理<br />
 	magix扩展部分：model collection 动画 模板等提供app中常用的工具<br />
 	<br />
-	magix核心更侧重基础生命周期管理，事件派发等，提供严谨的流程控制，开核心维护人员友好。magix扩展更侧重在magix核心的基础上向app开发人员提供常用工具，对开发人员友好
+	magix核心更侧重基础生命周期管理，事件派发等，提供严谨的流程控制，对核心维护人员友好。magix扩展更侧重在magix核心的基础上向app开发人员提供常用工具，对开发人员友好
 </div>
 
 <!--page-->
@@ -1002,7 +1002,7 @@
 </div>
 <div class="content text">
 	<br />
-	扩展这块简单，除了view继承magix/view外，其它都是工具库的罗列，简单的堆砌哦~~
+	扩展这块较简单，除了view继承magix/view外，其它都是工具库的罗列，简单的堆砌哦~~
 </div>
 
 <!--page-->
@@ -1096,7 +1096,7 @@
 <div class="content text">
 	<br />
 	向setTimeout 说不！！(前面setTimeout的问题)<br /><br />
-	在这次重构中，对整个流程进行了详细的梳理，每一个环节都精确把控，避免setTimeout后整个过程扑朔迷离，同时解决了前面所说的，有些地方似乎不用setTimeout解决不了的问题^_%，为了这个问题也得走一杯
+	在这次重构中，对整个流程进行了详细的梳理，每一个环节都精确把控，避免setTimeout后整个过程扑朔迷离。同时解决了前面所说的，有些地方看似不用setTimeout解决不了的问题^_%，为了这个问题也得走一杯
 </div>
 
 <!--page-->
@@ -1114,7 +1114,7 @@
 <div class="content text">
 	<br />
 	首先去掉了app/config/ini的硬性配置<br /><br />
-	所有的映射都是view路径在前，映射在后，不管在哪view都是主动的<br /><br />
+	<span class="red">所有的映射都是view路径在前，映射在后。不管在哪view都是主动的，统一与view相关的配置</span><br /><br />
 	弹性配置，我先告诉你一个1，你就能把你的app跑起来，各种异常都已帮你处理，不会因为一些东西没有配置，在某些时候出错。当你需要进行特殊定制时，比如404，那我再告诉你一个2，你就能实现404定制，你还需要其它时，我再告诉你3，一层层的引导、弹性配置，不至于上来就要配置一大堆参数吓跑初学者<br /><br />
 	更规范的，更接近大众的命名与属性约定，咱不搞另类
 </div>
@@ -1198,9 +1198,9 @@
 	<br />
 	http://etao.com/#!/home<span class="red">/</span>a=b&c=d;调整为：<br /><br />
 	http://etao.com/#!/home<span class="red">?</span>a=b&c=d;<br /><br />
-	更好的区分/home与/home/比如：<br />
-	http://etao.com/#!/home?a=b&c=d;与<br />
-	http://etao.com/#!/home/?a=b&c=d;<br />
+	更好的区分<span class="red">/home</span>与<span class="red">/home/</span>：<br />
+	http://etao.com/#!<span class="red">/home</span>?a=b&c=d;与<br />
+	http://etao.com/#!<span class="red">/home/</span>?a=b&c=d;<br />
 	是不一样的<br /><br />
 	那么以后在a标签中写href时现在应该写：href="#!/home?a=b&c=d"<br /><br />
 	这一步的调整也是为支持pushState进行做的修改(<a href="linkTo:core_code_router">router解释</a>)
@@ -1307,7 +1307,7 @@
 	&lt;a href="#!/home" mxclick="name:xinglie.lkf@taobao.com@name:58782@userId:_prevent_"&gt;x&lt;/a&gt;<br />
 	<br />
 	首先你用e.params.name是可以取出来前面的邮箱地址的，以最后一个@为准<br /><br />
-	那么当你继续沿用原来数组取值方式时，你并没有使用@key的新形式，如：<br />
+	如果你继续沿用原来数组取值方式，并没有使用@key的新形式时，如：<br />
 	&lt;a href="#!/home" mxclick="name:xinglie.lkf@taobao.com:58782:_prevent_"&gt;x&lt;/a&gt;<br />
 	你用e.params[0],e.params[1]依然可以取得到对应的值，这块是向上兼容的，@key只是在保持原来不变的情况下，尽可能的方便开发人员
 </div>
@@ -1343,10 +1343,10 @@
 	目录-升级指南-location相关
 </div>
 <div class="content text">
-	首先去掉了view的queryModel属性，跟本次的设计有关。当需要访问地址栏参数时，请使用view的getLocation(API)方法，同时也避免了直接访问queryModel绑定changed事件带来的隐患。通过getLoation()方法拿到的对象请参考API<br /><br />
+	首先去掉了view的queryModel属性，跟本次的设计有关。当需要访问地址栏参数时，请使用view的getLocation()方法，同时也避免了直接访问queryModel绑定changed事件带来的隐患。<a href="http://magixjs.github.com/doc/symbols/View.html#getLocation" target="_blank">查看getLocation API</a><br /><br />
 	同时view的queryModelChange(qm)方法修改为<span class="red bold">locationChange(e)</span>(<a href="http://magixjs.github.com/doc/symbols/View.html#locationChange" target="_blank">参考API</a>)<br /><br />
 	原来的observeHash(params)方法修改为<span class="red bold">observeLocation(params,observePathname)</span>(<a href="http://magixjs.github.com/doc/symbols/View.html#observeLocation" target="_blank">参考API</a>)<br /><br />
-	关于observeLocation的方法设计请参考代码细节与风险(链接)
+	关于observeLocation的方法设计请参考代码细节与风险
 </div>
 
 <!--page-->
@@ -1596,7 +1596,7 @@
 </div>
 <div class="content text">
 	<br />
-	当启用history state之后，如何确定url中的pathname?：<br /><br />
+	当启用history state之后，如何确定url中的pathname?<br /><br />
 	http://etao.com/list?page=20;<br /><br />
 	因为您明确指定了使用history state则在所有浏览器中pathname均为/list<br />
 	当您未启用history state时，则表示使用hash，但上述url中并没有hash，此时使用Magix.start配置信息中，pathCfg.defaultPathname来做为当前的pathname，以上页的代码为例，在没有启用history state，并且hash为空的情况下，pathname默认为 /ppt
@@ -1846,20 +1846,6 @@
 	渲染时，J_main渲染后，发现子view left和right，在渲染子view时，是顺序渲染的，所以先渲染left,在left的render中假如我们要postMessageTo right(因为相关模板数据都是缓存的，所以代码顺序执行)，而此时还没渲染到right，所以这个消息肯定发送不成功
 </div>
 
-<!--page-->
-<div class="title">
-	目录-代码细节与风险-Vframe
-</div>
-<div class="content text">
-	vframe在渲染子view时，是采取挂起整个VOM的方式，即会临时中断view之间的消息传递和view部分方法对locationChange事件的接收<br /><br />
-	为什么要挂起？<br />
-	&lt;vframe data-view="app/views/main" id="J_main"&gt;<br />
-	　　&lt;vframe data-view="app/view/left" id="J_left"&gt;&lt;/vframe&gt;<br />
-	　　&lt;vframe data-view="app/view/right" id="J_right"&gt;&lt;/vframe&gt;<br />
-	&lt;/vframe&gt;<br />
-	考虑缓存的情况下，非缓存的不考虑：<br />
-	渲染时，J_main渲染后，发现子view left和right，在渲染子view时，是顺序渲染的，所以先渲染left,在left的render中假如我们要postMessageTo right，而此时显示还没渲染到right，所以这个消息肯定发送不成功
-</div>
 
 <!--page-->
 <div class="title">
@@ -2051,7 +2037,7 @@
 <div class="content text">
 	init方法为什么会设计的这么靠后？<br /><br />
 	view没被创建出来前，是不能做其它动作的，如果在此之前调用了init，而用户可以在init中做其它的动作，假设view还未创建完成就销毁，会给销毁带来一定的麻烦<br /><br />
-	通常在init中还会访问其它对象，因此放在interact事件后，接下来讲解interact事件的设计(同时您也将看到为什么init不放在created事件之后，init是放在interact可交互之被调用，既不会太靠前，也不会太靠后)
+	通常在init中还会访问其它对象，因此放在interact事件后，接下来讲解interact事件的设计(同时您也将看到为什么init不放在created事件之后，init是放在interact可交互之后立即被调用，既不会太靠前，也不会太靠后)
 </div>
 
 <!--page-->
@@ -2129,7 +2115,7 @@
 </div>
 <div class="content text">
 	<br />
-	当view挂起时，postMessageTo等方法的调用并不是立即的，这样可以给外部足够的时间建立起相应的对象，当view运行挂起的这些方法时，会确保个部的资源已经就绪，这块跟view的初始化过程有很大的关系，初始化较复杂，因此设计了suspend与resume方法
+	当view挂起时，postMessageTo等方法的调用并不是立即的，这样可以给外部足够的时间建立起相应的对象，当view运行挂起的这些方法时，会确保外部的资源已经就绪，这块跟view的初始化过程有很大的关系，初始化较复杂，因此设计了suspend与resume方法
 </div>
 
 
@@ -2189,7 +2175,7 @@
 	所以要么你自已在回调中做判断，要么把上面的示例改写成下面这样的：<br />
 	render:function(){<br />
 	　　var _self=this;<br />
-	　　_self.beginAsyncUpdate();//开始异步更新<br />
+	　　<span class="red">_self.beginAsyncUpdate();</span>//开始异步更新<br />
 	　　var m=new Model({uri:'user:list'});<br />
 	　　m.load({<br />
 	　　　　success:_self.manage(function(data){<br />
@@ -2200,7 +2186,7 @@
 	　　　　　　_self.setViewHTML(msg);<br />
 	　　　　})<br />
 	　　});<br />
-	　　_self.endAsyncUpdate();//结束异步更新<br />
+	　　<span class="red">_self.endAsyncUpdate();</span>//结束异步更新<br />
 	}<br />
 </div>
 
@@ -2221,7 +2207,8 @@
 	目录-代码细节与风险-View
 </div>
 <div class="content text" style="font-size:140%">
-	renderUI:function(){//当方法名为 render renderUI updateUI时您不需要考虑异步更新带来的问题<br />
+	<br />
+	<span class="red">renderUI</span>:function(){//当方法名为 render renderUI updateUI时您不需要考虑异步更新带来的问题<br />
 	　　var _self=this;<br />
 	　　setTimeout(this.manage(function(){<br />
 	　　　　_self.setViewHTML(_self.template);<br />
@@ -2242,11 +2229,11 @@
 	当您不想托管回调方法，又想消除异步更新带来的隐患时，可以这样：<br /><br />
 	updateHTML:function(){<br />
 	　　var _self=this;<br />
-	　　var begin=_self.beginAsyncUpdate();//记录异步更新标识<br />
+	　　<span class="red">var begin=_self.beginAsyncUpdate();</span>//记录异步更新标识<br />
 	　　S.io({<br />
 	　　　　success:function(html){<br />
 	　　　　//if(_self.exist){//(使用异步更新标识时，不需要判断exist)<br />
-	　　　　　　　　var end=_self.endAsyncUpdate();//结束异步更新<br />
+	　　　　　　　　<span class="red">var end=_self.endAsyncUpdate();</span>//结束异步更新<br />
 	　　　　　　　　if(begin==end){//一样，表示view没有刷新或销毁<br />
 	　　　　　　　　　　_self.setViewHTML(html);<br />
 	　　　　　　　　}<br />
@@ -2338,8 +2325,8 @@
 	　　　　　　　　<span class="red bold">}</span><br />
 	　　　　　　},<br />
 	　　　　　　error:function(msg){//该方法同样不适合托管，当数据保存失败时，需要回滚数据，而如果此时view有刷新或销毁，会导致该方法不被调用，无法达到数据的回滚<br />
-	　　　　　　　　<span class="red bold">if(sign==e.view.signature()){</span><br />
-	　　　　　　　　　　m.rollbackTransaction();<br />
+	　　　　　　　　m.rollbackTransaction();<br />
+		　　　　　　　　<span class="red bold">if(sign==e.view.signature()){</span><br />
 	　　　　　　　　　　Helper.tipMsg('添加失败')<br />
 	　　　　　　　　<span class="red bold">}</span><br />
 	　　　　　　}<br />

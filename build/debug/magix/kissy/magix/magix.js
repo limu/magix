@@ -239,7 +239,7 @@ var Magix={
 	 * 		release:false,
 	 * 		appTag:'20121205',
 	 * 		pathCfg:{
-	 * 			index:'app/views/layouts/default',//默认首页
+	 * 			defaultView:'app/views/layouts/default',//默认加载的view
 	 * 			map:{
 	 * 				'app/views/layouts/default':['/list','/home',/^\/list\/\d+/i],//前端的app/views/layouts/default可对应哪些pathname,可以是正则
 	 * 				'app/views/layouts/modules':['/module']
@@ -327,11 +327,7 @@ var Magix={
 			return locals;
 		}else if(args.length==1){
 			if(me.isObject(key)){
-				for(var p in key){
-					if(has(key,p)){
-						locals[p]=key[p];
-					}
-				}
+				mix(locals,key)
 			}else{
 				return locals[key];
 			}

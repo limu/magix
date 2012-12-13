@@ -85,6 +85,8 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 		 * @param {Object} models.ops 传递的参数信息，如{uri:'test',isJSONP:true,updateIdent:true}
 		 * @param {Object} models.gets 发起请求时，默认的get参数对象
 		 * @param {Object} models.posts 发起请求时，默认的post参数对象
+		 * @param {String} models.cacheKey 指定model缓存的key，当指定后，该model会进行缓存，下次不再发起请求，可使用该key通过getIf方法获取缓存的这个model
+		 * @param {Integer} models.expires 缓存过期时间，以毫秒为单位，当过期后，再次使用该model时会发起新的请求(前提是该model指定cacheKey被缓存后expires才有效)
 		 * @param {Function} models.before model在发起请求前的回调
 		 * @param {Function} models.after model在发起请求，并且通过Model.sync调用success后的回调
 		 * @example
@@ -99,6 +101,8 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 						gets:{
 							a:'12'
 						},
+						cacheKey:'',
+						expires:20000,//缓存多久
 						before:function(m){
 							
 						},
@@ -147,6 +151,7 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 				},
 				gets:'',
 				posts:'',
+				expires:20000,//缓存多久
 				before:function(m){
 	
 				},
@@ -273,11 +278,14 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 				}else{
 					hasOneSuccess=true;
 					model.set('updateIdent',false);//成功后标识model不需要更新，防止需要缓存的model下次使用时发起请求
+					
+					
 					doneArr[idx]=model;
 					var cacheKey=model._cacheKey;
 					if(cacheKey&&!Magix.hasProp(modelsCache,cacheKey)){//需要缓存
 						modelsCache[model._cacheKey]=model;
 						var params=model._params;
+						model._doneAt=S.now();
 						if(model._after){//有after
 							Magix.safeExec(model._after,[model].concat(params));
 						}
@@ -432,6 +440,9 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 			var cacheKey=model.cacheKey||metas.cacheKey;
 			var modelEntity;
 			
+			var expires=model.expires||metas.expires||0;
+
+
 			if(!me.$modelsCache)me.$modelsCache={};
 			var modelsCache=me.$modelsCache;
 			var params=model.params||[];
@@ -441,8 +452,15 @@ KISSY.add("mxext/modelfactory",function(S,Magix){
 				modelEntity=modelsCache[cacheKey];
 
 				var updateIdent=modelEntity.get('updateIdent');
+				if(!updateIdent&&expires>0){
+					
+					if(S.now()-modelEntity._doneAt>expires){
+						updateIdent=true;
+					}
+				}
 				if(updateIdent){//当有更新时，从缓存中删除，防止多次获取该缓存对象导致数据错误
 					delete modelsCache[cacheKey];
+					modelEntity.set('updateIdent',true);
 				}
 			}else{
 				

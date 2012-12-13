@@ -246,7 +246,7 @@
 <span class='line'>239</span> 	 * 		release:false,
 <span class='line'>240</span> 	 * 		appTag:'20121205',
 <span class='line'>241</span> 	 * 		pathCfg:{
-<span class='line'>242</span> 	 * 			index:'app/views/layouts/default',//默认首页
+<span class='line'>242</span> 	 * 			defaultView:'app/views/layouts/default',//默认加载的view
 <span class='line'>243</span> 	 * 			map:{
 <span class='line'>244</span> 	 * 				'app/views/layouts/default':['/list','/home',/^\/list\/\d+/i],//前端的app/views/layouts/default可对应哪些pathname,可以是正则
 <span class='line'>245</span> 	 * 				'app/views/layouts/modules':['/module']
@@ -334,21 +334,17 @@
 <span class='line'>327</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">locals</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>328</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">args.length</span><span class="PUNC">==</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>329</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">me.isObject</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>330</span> </span><span class="WHIT">				</span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">p</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>331</span> </span><span class="WHIT">					</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">has</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">,</span><span class="NAME">p</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>332</span> </span><span class="WHIT">						</span><span class="NAME">locals</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">key</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>333</span> </span><span class="WHIT">					</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>334</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>335</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>336</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">locals</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>337</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>338</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>339</span> </span><span class="WHIT">			</span><span class="NAME">locals</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">val</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>340</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>341</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>342</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>343</span> 
-<span class='line'>344</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Magix.mix</span><span class="PUNC">(</span><span class="NAME">Magix</span><span class="PUNC">,</span><span class="NAME">IMagix</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>345</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>346</span> </span><span class="WHIT">	</span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/impl/magix"</span><span class="PUNC">]</span><span class="WHIT">
-<span class='line'>347</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>330</span> </span><span class="WHIT">				</span><span class="NAME">mix</span><span class="PUNC">(</span><span class="NAME">locals</span><span class="PUNC">,</span><span class="NAME">key</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>331</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>332</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">locals</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>333</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>334</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>335</span> </span><span class="WHIT">			</span><span class="NAME">locals</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">val</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>336</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>337</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>338</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>339</span> 
+<span class='line'>340</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Magix.mix</span><span class="PUNC">(</span><span class="NAME">Magix</span><span class="PUNC">,</span><span class="NAME">IMagix</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>341</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>342</span> </span><span class="WHIT">	</span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/impl/magix"</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>343</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

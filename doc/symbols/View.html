@@ -509,21 +509,11 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/View.html#destroy">destroy</a></b>
-                                                <span class="param">(keepContent)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">销毁当前view</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#destroyFrames">destroyFrames</a></b>
                                                 <span class="param">()</span>
                                                 
                                                 
                                                 
-                                                <span class="desc">销毁当前view内的iframes</span>                                                
+                                                <span class="desc">销毁当前view</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -609,7 +599,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/View.html#idle">idle</a></b>
-                                                <span class="param">(fn, args, context)</span>
+                                                <span class="param">(fn, args, context, anchor)</span>
                                                 
                                                 
                                                 
@@ -1486,60 +1476,6 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">destroy</b>
-                                                <span class="param">(keepContent)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                销毁当前view
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            [ 
-                                                            <b class="name">keepContent</b>
-                                                            
-                                                             ]
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">销毁view时，是否保留内容，默认对于有模板的view才删除内容，没有模板的是不做删除处理的</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="destroyFrames"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">destroyFrames</b>
                                                 <span class="param">()</span>
                                                 
                                                 
@@ -1547,7 +1483,7 @@ dl.data .dd{
                                             </div>
 
                                             <div class="desc">
-                                                销毁当前view内的iframes
+                                                销毁当前view
                                                 
                                                 
                                             </div>
@@ -2044,7 +1980,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">idle</b>
-                                                <span class="param">(fn, args, context)</span>
+                                                <span class="param">(fn, args, context, anchor)</span>
                                                 
                                                 
                                                 
@@ -2088,6 +2024,15 @@ dl.data .dd{
                                                              ]
                                                             <span class="type">{Object}</span> 
                                                             <span class="desc">fn内this指向</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">anchor</b>
+                                                            
+                                                            
+                                                            
+                                                            <span class="desc"></span>
                                                         </li>
                                                     
                                                     </ul>
@@ -2758,6 +2703,18 @@ dl.data .dd{
                                                 
                                                 
                                                 
+                                                
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    
+                                                        <li class="li">
+                                                            <span class="type">{Object}</span> 
+                                                            <span>返回移除的资源</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
                                                 
                                                 
                                                 

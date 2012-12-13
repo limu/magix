@@ -99,6 +99,9 @@ KISSY.add('mxext/vfanim',function(S,Vf,Magix){
 			var ownerNode=$(me.id);
 			var div=D.createElement('div');
 			div.id=me.viewId;
+			if(ownerNode._dataBak){
+				div.innerHTML=ownerNode._dataTmpl;
+			}
 			ownerNode.insertBefore(div,ownerNode.firstChild);
 		},
 		newViewCreated:function(isViewChange){

@@ -1323,6 +1323,24 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
+                                                            <b class="name">models.cacheKey</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">指定model缓存的key，当指定后，该model会进行缓存，下次不再发起请求，可使用该key通过getIf方法获取缓存的这个model</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">models.expires</b>
+                                                            
+                                                            
+                                                            <span class="type">{Integer}</span> 
+                                                            <span class="desc">缓存过期时间，以毫秒为单位，当过期后，再次使用该model时会发起新的请求(前提是该model指定cacheKey被缓存后expires才有效)</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
                                                             <b class="name">models.before</b>
                                                             
                                                             
@@ -1370,6 +1388,8 @@ dl.data .dd{
 						gets:{
 							a:'12'
 						},
+						cacheKey:'',
+						expires:20000,//缓存多久
 						before:function(m){
 							
 						},

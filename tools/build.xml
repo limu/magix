@@ -115,21 +115,21 @@
 
      <!--concat all the files to pkg js-->
     <target name="concatfile">
-        <concat destfile="${debug.dir}/kissy-magix.js">
+        <concat destfile="${debug.dir}/kissy-magix-core.js">
             <fileset dir="${debug.dir}/magix/kissy/magix"></fileset>
         </concat>
-        <concat destfile="${debug.dir}/kissy-magix-pkg.js">
-            <path path="${debug.dir}/kissy-magix.js" />
+        <concat destfile="${debug.dir}/kissy-magix.js">
+            <path path="${debug.dir}/kissy-magix-core.js" />
             <path path="${src.dir}/magix/kissy/magix/magix_start.js" />
         </concat>
 
-        <concat destfile="${debug.dir}/kissy-mxext-pkg.js">
+        <concat destfile="${debug.dir}/kissy-mxext.js">
             <fileset dir="${debug.dir}/mxext/kissy/mxext"></fileset>
         </concat>
 
-        <concat destfile="${debug.dir}/kissy-magix-mxext-pkg.js">
-            <path path="${debug.dir}/kissy-magix.js" />
-            <path path="${debug.dir}/kissy-mxext-pkg.js" />
+        <concat destfile="${debug.dir}/kissy-magix-mxext.js">
+            <path path="${debug.dir}/kissy-magix-core.js" />
+            <path path="${debug.dir}/kissy-mxext.js" />
             <path path="${src.dir}/magix/kissy/magix/magix_start.js" />
         </concat>
 
@@ -145,23 +145,23 @@
     <!--using google closure compressor to compress js files -->
     <target name="gccompressor">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="${raw.dir}/kissy-magix.min.js">
+                debug="false" output="${raw.dir}/kissy-magix-min.js">
             <sources dir="${debug.dir}">
-                <file name="kissy-magix-pkg.js" />
+                <file name="kissy-magix.js" />
             </sources>
         </jscomp>
 
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="${raw.dir}/kissy-mxext.min.js">
+                debug="false" output="${raw.dir}/kissy-mxext-min.js">
             <sources dir="${debug.dir}">
-                <file name="kissy-mxext-pkg.js" />
+                <file name="kissy-mxext.js" />
             </sources>
         </jscomp>
 
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="${raw.dir}/kissy-magix-mxext.min.js">
+                debug="false" output="${raw.dir}/kissy-magix-mxext-min.js">
             <sources dir="${debug.dir}">
-                <file name="kissy-magix-mxext-pkg.js" />
+                <file name="kissy-magix-mxext.js" />
             </sources>
         </jscomp>
 
@@ -175,13 +175,13 @@
 
     <!--delete tmpl folder and clean all up-->
     <target name="finish">
-        <copyfile src="${debug.dir}/kissy-magix-pkg.js" dest="${raw.dir}/kissy-magix-pkg.js"></copyfile>
-        <copyfile src="${debug.dir}/kissy-mxext-pkg.js" dest="${raw.dir}/kissy-mxext-pkg.js"></copyfile>
-        <copyfile src="${debug.dir}/kissy-magix-mxext-pkg.js" dest="${raw.dir}/kissy-magix-mxext-pkg.js"></copyfile>
+        <copyfile src="${debug.dir}/kissy-magix.js" dest="${raw.dir}/kissy-magix.js"></copyfile>
+        <copyfile src="${debug.dir}/kissy-mxext.js" dest="${raw.dir}/kissy-mxext.js"></copyfile>
+        <copyfile src="${debug.dir}/kissy-magix-mxext.js" dest="${raw.dir}/kissy-magix-mxext.js"></copyfile>
         <delete dir="${debug.dir}" includes="**/kissy-magix.js"></delete>
-        <delete dir="${debug.dir}" includes="kissy-magix-pkg.js"></delete>
-        <delete dir="${debug.dir}" includes="kissy-mxext-pkg.js"></delete>
-        <delete dir="${debug.dir}" includes="kissy-magix-mxext-pkg.js"></delete>
+        <delete dir="${debug.dir}" includes="kissy-magix-core.js"></delete>
+        <delete dir="${debug.dir}" includes="kissy-mxext.js"></delete>
+        <delete dir="${debug.dir}" includes="kissy-magix-mxext.js"></delete>
         <delete dir="${debug.dir}/magix/tmpl"></delete>
         <copyfile src="${src.dir}/magix/kissy/magix/magix_start.js" dest="${debug.dir}/magix/kissy/magix/magix_start.js"></copyfile>
     </target>

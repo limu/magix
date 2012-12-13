@@ -55,8 +55,9 @@ KISSY.add('magix/impl/magix',function(S){
 					tag:appTag
 				}]
 			});
-			if(cfg.viewChangeAnim){
-				S.use('mxext/vfanim');
+			var vfanim='mxext/vfanim';
+			if(cfg.viewChangeAnim&&S.Env.mods[vfanim]){
+				S.use(vfanim);
 			}
 		},
 		isArray:S.isArray,
