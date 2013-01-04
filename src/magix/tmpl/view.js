@@ -548,12 +548,13 @@ Magix.mix(VProto,{
 	},
 	/**
 	 * 向某个view发送消息
-	 * @param {Array|String} aim  发送的目标id或id数组
+	 * @param {Array|String} aims  发送的目标id或id数组
 	 * @param {Object} args 消息对象
 	 */
-	postMessageTo:function(aim,args){
+	postMessageTo:function(aims,args){
 		var me=this;
-		me.idle(me.owner.postMessageTo,[aim,args],me.owner);
+		var vom=me.ownerVOM;
+		me.idle(vom.postMessage,[aims,args],vom);
 	},
 	/**
 	 * 当view处于闲置状态时回调传入的fn

@@ -1,11 +1,11 @@
 var D=document;
-
+var safeExec=Magix.safeExec;
 /**
  * VOM对象
  * @name VOM
  * @namespace
  */
-var VOM={
+var VOM=Magix.mix({
 	/**
 	 * @lends VOM
 	 */
@@ -34,6 +34,7 @@ var VOM={
 	registerVframe:function(vf){
 		var me=this;
 		me.vframes[vf.id]=vf;
+		me.trigger(vf.id,{vframe:vf},true);
 	},
 	/**
 	 * 根据vframe的id获取vframe对象
@@ -133,5 +134,29 @@ var VOM={
 				}
 			}
 		}
+	},
+	/**
+	 * 向某个vframe发送消息
+	 * @param {Array|String} aims  目标vframe id数组
+	 * @param {Object} args 消息对象
+	 */
+	postMessage:function(aims,args){
+		var me=this;
+		if(!Magix.isArray(aims)){
+			aims=[aims];
+		}
+		if(!args)args={};
+		for(var i=0;i<aims.length;i++){
+			var vframe=me.getVframe(aims[i]);
+			//console.log(aim,vframe);
+			if(vframe){
+				vframe.message(args);
+			}else{//没view也没viewName，可能这个vframe是一个空的或者已经销毁，忽略掉这个消息
+				me.bind(aims[i],function(e){
+					e.vframe.message(args);
+				});
+			}
+		}
+		//});	
 	}
-}
+},Event);

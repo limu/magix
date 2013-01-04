@@ -193,7 +193,8 @@ Magix.mix(Vframe.prototype,{
 				if(viewName!=me.viewName){
 					return;//有可能在view载入后，vframe已经卸载了
 				}
-
+				BaseView.prepare(View);
+				
 				View.wrapAsyncUpdate();
 
 				var viewId;
@@ -311,8 +312,8 @@ Magix.mix(Vframe.prototype,{
 					parentId:me.id
 				});
 				me.children.push(vframe.id);
-				me.owner.registerVframe(vframe);
 				vframe.mountView(vframes[i].getAttribute(DataView));
+				me.owner.registerVframe(vframe);
 			}
 		}else{
 			me.notifyChildrenCreated();
@@ -336,56 +337,6 @@ Magix.mix(Vframe.prototype,{
 			$(id).id='';
 		}
 		me.children=[];
-	},
-	/**
-	 * 向某个vframe发送消息
-	 * @param {Array|String} aim  目标vframe id数组
-	 * @param {Object} args 消息对象
-	 */
-	postMessageTo:function(aim,args){
-		var me=this;
-		//me.owner.idle(function(){//在外部闲置状态下才进行后续的处理
-		var vom=me.owner;
-		if(!Magix.isArray(aim)){
-			aim=[aim];
-		}
-		if(!args)args={};
-		//console.log(aim);
-		for(var i=0;i<aim.length;i++){
-			var vframe=vom.getVframe(aim[i]);
-			//console.log(aim,vframe);
-			if(vframe){
-				var view=vframe.view;
-				if(view&&vframe.vced){//表明属于vframe的view对象已经加载完成
-					/*
-						考虑
-						<vframe id="v1" data-view="..."></vframe>
-						<vframe id="v2" data-view="..."></vframe>
-						<vframe id="v3" data-view="..."></vframe>
-						
-						v1渲染后postMessage向v2 v3发消息，此时v2 v3的view对象是构建好了，但它对应的模板可能并未就绪，需要等待到view创建完成后再发消息过去
-					 */
-					//if(view.rendered){
-						safeExec(view.receiveMessage,args,view);
-					/*}else{ //使用ViewLoad
-						view.bind('created',function(){
-							safeExec(this.receiveMessage,args,this);
-						});
-					}	*/				
-				}else if(vframe.viewName){//经过上面的判断，到这一步说明开始加载view但尚未加载完成
-					/*
-						Q:当vframe没有view属性但有viewName表明属于这个vframe的view异步加载尚未完成，但为什么还要向这个view发送消息呢，丢弃不可以吗？
-
-						A:考虑这样的情况，页面上有A B两个view，A在拿到数据完成渲染后会向B发送一个消息，B收到消息后才渲染。在加载A B两个view时，是同时加载的，这两个加载是异步，A在加载、渲染完成向B发送消息时，B view对应的js文件很有可能尚未载入完成，所以这个消息会由B vframe先持有，等B对应的view载入后再传递这个消息过去。如果不传递这个消息则Bview无法完成后续的渲染。vframe是通过对内容分析立即就构建出来的，view是对应的js加载完成才存在的，因异步的存在，所以需要这样的处理。
-					 */
-					console.log('callback postMessageTo',vframe.id);
-					vframe.bind(ViewLoad,function(e){
-						safeExec(e.view.receiveMessage,args,e.view);
-					});
-				}//没view也没viewName，可能这个vframe是一个空的或者已经销毁，忽略掉这个消息
-			}
-		}
-		//});	
 	},
 	/**
 	 * 通知当前vframe，地址栏发生变化
@@ -495,6 +446,41 @@ Magix.mix(Vframe.prototype,{
 					parent.notifyParentAlter();
 				}
 			}
+		}
+	},
+	/**
+	 * 向当前vframe发送消息
+	 * @param {Object} args 消息对象
+	 */
+	message:function(args){
+		var me=this;
+		var view=me.view;
+		if(view&&me.vced){//表明属于vframe的view对象已经加载完成
+			/*
+				考虑
+				<vframe id="v1" data-view="..."></vframe>
+				<vframe id="v2" data-view="..."></vframe>
+				<vframe id="v3" data-view="..."></vframe>
+				
+				v1渲染后postMessage向v2 v3发消息，此时v2 v3的view对象是构建好了，但它对应的模板可能并未就绪，需要等待到view创建完成后再发消息过去
+			 */
+			//if(view.rendered){
+				safeExec(view.receiveMessage,args,view);
+			/*}else{ //使用ViewLoad
+				view.bind('created',function(){
+					safeExec(this.receiveMessage,args,this);
+				});
+			}	*/				
+		}else if(me.viewName){//经过上面的判断，到这一步说明开始加载view但尚未加载完成
+			/*
+				Q:当vframe没有view属性但有viewName表明属于这个vframe的view异步加载尚未完成，但为什么还要向这个view发送消息呢，丢弃不可以吗？
+
+				A:考虑这样的情况，页面上有A B两个view，A在拿到数据完成渲染后会向B发送一个消息，B收到消息后才渲染。在加载A B两个view时，是同时加载的，这两个加载是异步，A在加载、渲染完成向B发送消息时，B view对应的js文件很有可能尚未载入完成，所以这个消息会由B vframe先持有，等B对应的view载入后再传递这个消息过去。如果不传递这个消息则Bview无法完成后续的渲染。vframe是通过对内容分析立即就构建出来的，view是对应的js加载完成才存在的，因异步的存在，所以需要这样的处理。
+			 */
+			console.log('callback postMessageTo',vframe.id);
+			me.bind(ViewLoad,function(e){
+				safeExec(e.view.receiveMessage,args,e.view);
+			});
 		}
 	}
 	/**

@@ -11,9 +11,11 @@ KISSY.add("magix/impl/view",function(S,io,Sizzle,Magix){
 		idIt:1,
 		wrapAsyncUpdate:1,
 		registerAsyncUpdateName:1,
-		extend:1
+		extend:1,
+		prepare:1
 	};
-	var ex=function(props,ctor){
+
+	IView.extend=function(props,ctor){
 		var me=this;
 		var fn=function(){
 			fn.superclass.constructor.apply(this,arguments);
@@ -21,15 +23,20 @@ KISSY.add("magix/impl/view",function(S,io,Sizzle,Magix){
 				Magix.safeExec(ctor,[],this);
 			}
 		}
-		for(var p in me){
-			if(Magix.hasProp(StaticWhiteList,p)){
-				fn[p]=me[p];
-			}
-		}
+		fn.extend=IView.extend;
 		return S.extend(fn,me,props);
 	};
 
-	IView.extend=ex;
+	IView.prepare=function(oView){
+		var me=this;
+		if(!oView.prepare){
+			for(var p in me){
+				if(Magix.hasProp(StaticWhiteList,p)){
+					oView[p]=me[p];
+				}
+			}
+		}
+	};
 
 	Magix.mix(IView.prototype,{
 		getTmplByXHR:function(path,fn){
