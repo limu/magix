@@ -4,8 +4,8 @@
  * @version 1.0
  **/
 KISSY.add("magix/event",function(S,Magix){
-	eval(Magix.include('../tmpl/event'));
-	return Event;
+    eval(Magix.include('../tmpl/event'));
+    return Event;
 },{
-	requires:["magix/magix"]
+    requires:["magix/magix"]
 });

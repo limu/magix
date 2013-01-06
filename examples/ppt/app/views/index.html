@@ -1938,9 +1938,9 @@
 	view的init方法调用时间点：<br />
 	<br />
 	在当前view没有模板文件的情况下:<br />
-	new -> base ctor -> view ctor -> load -> interact(事件) -> render -> init  -> created(事件)<br /><br />
+	new -> base ctor -> view ctor -> load -> init -> interact(事件) -> render  -> created(事件)<br /><br />
 	view 有模板无缓存，调用render方法时，同步调用setViewHTML：<br />
-	new -> base cotr ->  view ctor -> load -> getTmpl -> interact(事件) -> render -> setViewHTML -> prerender(事件) -> rendered(事件) -> created(事件) -> init
+	new -> base cotr ->  view ctor -> load -> getTmpl -> init -> interact(事件) -> render -> setViewHTML -> prerender(事件) -> rendered(事件) -> created(事件)
 </div>
 
 <!--page-->
@@ -1951,10 +1951,10 @@
 	view的init方法调用时间点：<br />
 	<br />
 	view 有模板无缓存，调用render方法时，异步调用setViewHTML：<br />
-	new -> base cotr ->  view ctor -> load -> getTmpl -> interact(事件) -> render -> init -> setViewHTML -> prerender(事件) -> rendered(事件) -> created(事件) <br /><br />
+	new -> base cotr ->  view ctor -> load -> getTmpl -> init -> interact(事件) -> render -> setViewHTML -> prerender(事件) -> rendered(事件) -> created(事件) <br /><br />
 
 	view 有模板有缓存， 调用render方法时，同步调用setViewHTML：<br />
-	new -> base ctor -> view ctor -> load -> getTmpl -> interact(事件) -> render -> setViewHTML -> prerender(事件) -> rendered(事件) -> created(事件) -> init 
+	new -> base ctor -> view ctor -> load -> getTmpl -> init  -> interact(事件) -> render -> setViewHTML -> prerender(事件) -> rendered(事件) -> created(事件)
 </div>
 
 <!--page-->
@@ -1965,7 +1965,7 @@
 	view的init方法调用时间点：<br />
 	<br />
 	view 有模板有缓存， 调用render方法时，异步调用setViewHTML：<br />
-	new -> base ctor -> view ctor -> load -> getTmpl -> interact(事件) -> render -> init -> setViewHTML -> prerender(事件) -> rendered(事件)  -> created(事件)<br /><br />
+	new -> base ctor -> view ctor -> load -> getTmpl -> init -> interact(事件) -> render -> setViewHTML -> prerender(事件) -> rendered(事件)  -> created(事件)<br /><br />
 	<span class="red">通过以上的初始化过程，我们会发现，新版本的init的调用时间点并不像老版本那样在构造时调用，而是向后推迟了</span>
 </div>
 
@@ -1976,7 +1976,7 @@
 <div class="content text">
 	为什么推迟view的init方法的调用：<br />
 	<br />
-	1. view的整个初始化过程正如前面看到的，情况多，需求复杂，而init又是提供给开发人员覆盖重写的，因此具体的情况会更复杂，为了减少用户在init中出现问题，因此推迟到interact事件后才调用(后面会讲interact事件的设计)<br />
+	1. view的整个初始化过程正如前面看到的，情况多，需求复杂，而init又是提供给开发人员覆盖重写的，因此具体的情况会更复杂，为了减少用户在init中出现问题，因此推迟到interact事件前才调用(后面会讲interact事件的设计)<br />
 	2. 推迟init事件的调用，并不会引入其它问题，相反能够帮使你在init方法中访问到其它资源，不必去绑定某些事件后在回调中去处理<br />
 	3. 如果你一定要在构造时就做一些事情，仍然是可以做到的，这个不必担心哦，下页会讲init的其它问题
 </div>

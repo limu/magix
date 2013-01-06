@@ -11,7 +11,7 @@
 <span class='line'>  4</span>  * @version 1.0
 <span class='line'>  5</span>  */</span><span class="WHIT">
 <span class='line'>  6</span> </span><span class="NAME">KISSY.add</span><span class="PUNC">(</span><span class="STRN">"magix/vom"</span><span class="PUNC">,</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">S</span><span class="PUNC">,</span><span class="NAME">Vframe</span><span class="PUNC">,</span><span class="NAME">Magix</span><span class="PUNC">,</span><span class="NAME">Event</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>  7</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">D</span><span class="PUNC">=</span><span class="NAME">document</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">D</span><span class="PUNC">=</span><span class="NAME">document</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>  8</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">safeExec</span><span class="PUNC">=</span><span class="NAME">Magix.safeExec</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>  9</span> </span><span class="COMM">/**
 <span class='line'> 10</span>  * VOM对象
@@ -19,161 +19,162 @@
 <span class='line'> 12</span>  * @namespace
 <span class='line'> 13</span>  */</span><span class="WHIT">
 <span class='line'> 14</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">VOM</span><span class="PUNC">=</span><span class="NAME">Magix.mix</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 15</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'> 16</span> 	 * @lends VOM
-<span class='line'> 17</span> 	 */</span><span class="WHIT">
-<span class='line'> 18</span> </span><span class="WHIT">	</span><span class="NAME">iC</span><span class="PUNC">:</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 19</span> </span><span class="WHIT">	</span><span class="NAME">iQ</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 20</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'> 21</span> 	 * 根vframe对象
-<span class='line'> 22</span> 	 * @type {Vframe}
-<span class='line'> 23</span> 	 */</span><span class="WHIT">
-<span class='line'> 24</span> </span><span class="WHIT">	</span><span class="NAME">rootVframe</span><span class="PUNC">:</span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 25</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'> 26</span> 	 * 注册的vframes集合
-<span class='line'> 27</span> 	 * @type {Object}
-<span class='line'> 28</span> 	 */</span><span class="WHIT">
-<span class='line'> 29</span> </span><span class="WHIT">	</span><span class="NAME">vframes</span><span class="PUNC">:</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 30</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'> 31</span> 	 * 根vframe的id
-<span class='line'> 32</span> 	 * @default magix_vf_root
-<span class='line'> 33</span> 	 * @type {String}
-<span class='line'> 34</span> 	 */</span><span class="WHIT">
-<span class='line'> 35</span> </span><span class="WHIT">	</span><span class="NAME">rootVframeId</span><span class="PUNC">:</span><span class="STRN">'magix_vf_root'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 36</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'> 37</span> 	 * 注册vframe对象
-<span class='line'> 38</span> 	 * @param {Vframe} vf Vframe对象
-<span class='line'> 39</span> 	 */</span><span class="WHIT">
-<span class='line'> 40</span> </span><span class="WHIT">	</span><span class="NAME">registerVframe</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">vf</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 41</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 42</span> </span><span class="WHIT">		</span><span class="NAME">me.vframes</span><span class="PUNC">[</span><span class="NAME">vf.id</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">vf</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 43</span> </span><span class="WHIT">		</span><span class="NAME">me.trigger</span><span class="PUNC">(</span><span class="NAME">vf.id</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="NAME">vframe</span><span class="PUNC">:</span><span class="NAME">vf</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 44</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 45</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'> 46</span> 	 * 根据vframe的id获取vframe对象
-<span class='line'> 47</span> 	 * @param {String} id vframe的id
-<span class='line'> 48</span> 	 * @return {Vframe} vframe对象
-<span class='line'> 49</span> 	 */</span><span class="WHIT">
-<span class='line'> 50</span> </span><span class="WHIT">	</span><span class="NAME">getVframe</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 51</span> </span><span class="WHIT">		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.vframes</span><span class="PUNC">[</span><span class="NAME">id</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 52</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 53</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'> 54</span> 	 * 删除已注册的vframe对象
-<span class='line'> 55</span> 	 * @param {Vframe|String} vf vframe对象或对象的id
-<span class='line'> 56</span> 	 */</span><span class="WHIT">
-<span class='line'> 57</span> </span><span class="WHIT">	</span><span class="NAME">unregisterVframe</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">vf</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 58</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">id</span><span class="PUNC">=</span><span class="NAME">Magix.isString</span><span class="PUNC">(</span><span class="NAME">vf</span><span class="PUNC">)</span><span class="PUNC">?</span><span class="NAME">vf</span><span class="PUNC">:</span><span class="NAME">vf.id</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 59</span> </span><span class="WHIT">		</span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">this.vframes</span><span class="PUNC">[</span><span class="NAME">id</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 60</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 61</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'> 62</span> 	 * 构建根vframe对象
-<span class='line'> 63</span> 	 */</span><span class="WHIT">
-<span class='line'> 64</span> </span><span class="WHIT">	</span><span class="NAME">buildRootVframe</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 65</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 66</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.rootVframe</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 67</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">rootVframeNode</span><span class="PUNC">=</span><span class="NAME">D.getElementById</span><span class="PUNC">(</span><span class="NAME">me.rootVframeId</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 68</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">rootVframeNode</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//当发现不存在的节点时，由Vframe对象负责创建</span><span class="WHIT">
-<span class='line'> 69</span> </span><span class="WHIT">				</span><span class="NAME">Vframe.createVframeNode</span><span class="PUNC">(</span><span class="NAME">me.rootVframeId</span><span class="PUNC">,</span><span class="NAME">D.body.firstChild</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 70</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 71</span> </span><span class="WHIT">			</span><span class="NAME">me.rootVframe</span><span class="PUNC">=</span><span class="NAME">Vframe.createVframe</span><span class="PUNC">(</span><span class="NAME">me.rootVframeId</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="NAME">owner</span><span class="PUNC">:</span><span class="NAME">me</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 72</span> </span><span class="WHIT">			</span><span class="NAME">me.registerVframe</span><span class="PUNC">(</span><span class="NAME">me.rootVframe</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 73</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'> 74</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 75</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'> 76</span> 	 * 重新渲染根vframe
-<span class='line'> 77</span> 	 * @param {Object} e Router.locationChanged事件对象
-<span class='line'> 78</span> 	 * @param {Object} e.location window.location.href解析出来的对象
-<span class='line'> 79</span> 	 * @param {Object} e.changed 包含有哪些变化的对象
-<span class='line'> 80</span> 	 */</span><span class="WHIT">
-<span class='line'> 81</span> </span><span class="WHIT">	</span><span class="NAME">remountRootVframe</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 82</span> </span><span class="WHIT">		</span><span class="COMM">//</span><span class="WHIT">
-<span class='line'> 83</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 84</span> </span><span class="WHIT">		</span><span class="NAME">me.$location</span><span class="PUNC">=</span><span class="NAME">e.location</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 85</span> </span><span class="WHIT">		</span><span class="NAME">me.buildRootVframe</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 86</span> </span><span class="WHIT">		</span><span class="COMM">//</span><span class="WHIT">
-<span class='line'> 87</span> </span><span class="WHIT">		</span><span class="NAME">me.rootVframe.mountView</span><span class="PUNC">(</span><span class="NAME">e.location.viewPath</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 88</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 89</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'> 90</span> 	 * 向vframe通知地址栏发生变化
-<span class='line'> 91</span> 	 * @param {Object} e 事件对象
-<span class='line'> 92</span> 	 * @param {Object} e.location window.location.href解析出来的对象
-<span class='line'> 93</span> 	 * @param {Object} e.changed 包含有哪些变化的对象
-<span class='line'> 94</span> 	 */</span><span class="WHIT">
-<span class='line'> 95</span> </span><span class="WHIT">	</span><span class="NAME">notifyLocationChange</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 96</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 97</span> </span><span class="WHIT">		</span><span class="NAME">me.$location</span><span class="PUNC">=</span><span class="NAME">e.location</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 98</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">me.rootVframe</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 99</span> </span><span class="WHIT">			</span><span class="NAME">me.rootVframe.notifyLocationChange</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>100</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>101</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>102</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'>103</span> 	 * 当VOM处于闲置状态时回调传入的fn，当VOM忙碌时则把fn添加到等待队列
-<span class='line'>104</span> 	 * @param {Function} fn 闲置时的回调函数
-<span class='line'>105</span> 	 * @param {Array} [args] 参数
-<span class='line'>106</span> 	 * @param {Object} [context] fn内this指向
-<span class='line'>107</span> 	 */</span><span class="WHIT">
-<span class='line'>108</span> </span><span class="WHIT">	</span><span class="NAME">idle</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">,</span><span class="NAME">context</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>109</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>110</span> </span><span class="WHIT">		</span><span class="COMM">//</span><span class="WHIT">
-<span class='line'>111</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">me.iC</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>112</span> </span><span class="WHIT">			</span><span class="NAME">me.iQ.push</span><span class="PUNC">(</span><span class="PUNC">[</span><span class="NAME">fn</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">,</span><span class="NAME">context</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>113</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>114</span> </span><span class="WHIT">			</span><span class="NAME">Magix.safeExec</span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">,</span><span class="NAME">context</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>115</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>116</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>117</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'>118</span> 	 * 挂起VOM，等待外部的操作完成
-<span class='line'>119</span> 	 */</span><span class="WHIT">
-<span class='line'>120</span> </span><span class="WHIT">	</span><span class="NAME">suspend</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>121</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>122</span> </span><span class="WHIT">		</span><span class="NAME">me.iC</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>123</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>124</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'>125</span> 	 * 恢复挂起的VOM
-<span class='line'>126</span> 	 */</span><span class="WHIT">
-<span class='line'>127</span> </span><span class="WHIT">	</span><span class="NAME">resume</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>128</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>129</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">me.iC</span><span class="PUNC">></span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>130</span> </span><span class="WHIT">			</span><span class="NAME">me.iC</span><span class="PUNC">--</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>131</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>132</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.iC</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>133</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">list</span><span class="PUNC">=</span><span class="NAME">me.iQ</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>134</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">list.length</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>135</span> </span><span class="WHIT">				</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">tasks</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">slice.call</span><span class="PUNC">(</span><span class="NAME">list</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>136</span> </span><span class="WHIT">				</span><span class="NAME">me.iQ</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>137</span> </span><span class="WHIT">				</span><span class="KEYW">while</span><span class="PUNC">(</span><span class="NAME">tasks.length</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>138</span> </span><span class="WHIT">					</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">o</span><span class="PUNC">=</span><span class="NAME">tasks.shift</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>139</span> </span><span class="WHIT">					</span><span class="NAME">me.idle.apply</span><span class="PUNC">(</span><span class="NAME">me</span><span class="PUNC">,</span><span class="NAME">o</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>140</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>141</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>142</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>143</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>144</span> </span><span class="WHIT">	</span><span class="COMM">/**
-<span class='line'>145</span> 	 * 向某个vframe发送消息
-<span class='line'>146</span> 	 * @param {Array|String} aims  目标vframe id数组
-<span class='line'>147</span> 	 * @param {Object} args 消息对象
-<span class='line'>148</span> 	 */</span><span class="WHIT">
-<span class='line'>149</span> </span><span class="WHIT">	</span><span class="NAME">postMessage</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">aims</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>150</span> </span><span class="WHIT">		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>151</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">Magix.isArray</span><span class="PUNC">(</span><span class="NAME">aims</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>152</span> </span><span class="WHIT">			</span><span class="NAME">aims</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="NAME">aims</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>153</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>154</span> </span><span class="WHIT">		</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">args</span><span class="PUNC">)</span><span class="NAME">args</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>155</span> </span><span class="WHIT">		</span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">aims.length</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>156</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">vframe</span><span class="PUNC">=</span><span class="NAME">me.getVframe</span><span class="PUNC">(</span><span class="NAME">aims</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>157</span> </span><span class="WHIT">			</span><span class="COMM">//</span><span class="WHIT">
-<span class='line'>158</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">vframe</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>159</span> </span><span class="WHIT">				</span><span class="NAME">vframe.message</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>160</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="COMM">//没view也没viewName，可能这个vframe是一个空的或者已经销毁，忽略掉这个消息</span><span class="WHIT">
-<span class='line'>161</span> </span><span class="WHIT">				</span><span class="NAME">me.bind</span><span class="PUNC">(</span><span class="NAME">aims</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>162</span> </span><span class="WHIT">					</span><span class="NAME">e.vframe.message</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>163</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>164</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>165</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>166</span> </span><span class="WHIT">		</span><span class="COMM">//});	</span><span class="WHIT">
-<span class='line'>167</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>168</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">Event</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>169</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">VOM</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>170</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>171</span> </span><span class="WHIT">	</span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/vframe"</span><span class="PUNC">,</span><span class="STRN">"magix/magix"</span><span class="PUNC">,</span><span class="STRN">"magix/event"</span><span class="PUNC">]</span><span class="WHIT">
-<span class='line'>172</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'> 15</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 16</span>      * @lends VOM
+<span class='line'> 17</span>      */</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="WHIT">    </span><span class="NAME">iC</span><span class="PUNC">:</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="WHIT">    </span><span class="NAME">iQ</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 21</span>      * 根vframe对象
+<span class='line'> 22</span>      * @type {Vframe}
+<span class='line'> 23</span>      */</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="WHIT">    </span><span class="NAME">rootVframe</span><span class="PUNC">:</span><span class="KEYW">null</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 25</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 26</span>      * 注册的vframes集合
+<span class='line'> 27</span>      * @type {Object}
+<span class='line'> 28</span>      */</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="WHIT">    </span><span class="NAME">vframes</span><span class="PUNC">:</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 30</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 31</span>      * 根vframe的id
+<span class='line'> 32</span>      * @default magix_vf_root
+<span class='line'> 33</span>      * @type {String}
+<span class='line'> 34</span>      */</span><span class="WHIT">
+<span class='line'> 35</span> </span><span class="WHIT">    </span><span class="NAME">rootVframeId</span><span class="PUNC">:</span><span class="STRN">'magix_vf_root'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 37</span>      * 注册vframe对象
+<span class='line'> 38</span>      * @param {Vframe} vf Vframe对象
+<span class='line'> 39</span>      */</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="WHIT">    </span><span class="NAME">registerVframe</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">vf</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 41</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">        </span><span class="NAME">me.vframes</span><span class="PUNC">[</span><span class="NAME">vf.id</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">vf</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">        </span><span class="NAME">me.trigger</span><span class="PUNC">(</span><span class="NAME">vf.id</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="NAME">vframe</span><span class="PUNC">:</span><span class="NAME">vf</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 46</span>      * 根据vframe的id获取vframe对象
+<span class='line'> 47</span>      * @param {String} id vframe的id
+<span class='line'> 48</span>      * @return {Vframe} vframe对象
+<span class='line'> 49</span>      */</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">    </span><span class="NAME">getVframe</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.vframes</span><span class="PUNC">[</span><span class="NAME">id</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 54</span>      * 删除已注册的vframe对象
+<span class='line'> 55</span>      * @param {Vframe|String} vf vframe对象或对象的id
+<span class='line'> 56</span>      */</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="WHIT">    </span><span class="NAME">unregisterVframe</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">vf</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 58</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">id</span><span class="PUNC">=</span><span class="NAME">Magix.isString</span><span class="PUNC">(</span><span class="NAME">vf</span><span class="PUNC">)</span><span class="PUNC">?</span><span class="NAME">vf</span><span class="PUNC">:</span><span class="NAME">vf.id</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="WHIT">        </span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">this.vframes</span><span class="PUNC">[</span><span class="NAME">id</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">        </span><span class="NAME">this.unbind</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 63</span>      * 构建根vframe对象
+<span class='line'> 64</span>      */</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">    </span><span class="NAME">buildRootVframe</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.rootVframe</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">rootVframeNode</span><span class="PUNC">=</span><span class="NAME">D.getElementById</span><span class="PUNC">(</span><span class="NAME">me.rootVframeId</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">rootVframeNode</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//当发现不存在的节点时，由Vframe对象负责创建</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">                </span><span class="NAME">Vframe.createVframeNode</span><span class="PUNC">(</span><span class="NAME">me.rootVframeId</span><span class="PUNC">,</span><span class="NAME">D.body.firstChild</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">            </span><span class="NAME">me.rootVframe</span><span class="PUNC">=</span><span class="NAME">Vframe.createVframe</span><span class="PUNC">(</span><span class="NAME">me.rootVframeId</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="NAME">owner</span><span class="PUNC">:</span><span class="NAME">me</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">            </span><span class="NAME">me.registerVframe</span><span class="PUNC">(</span><span class="NAME">me.rootVframe</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 77</span>      * 重新渲染根vframe
+<span class='line'> 78</span>      * @param {Object} e Router.locationChanged事件对象
+<span class='line'> 79</span>      * @param {Object} e.location window.location.href解析出来的对象
+<span class='line'> 80</span>      * @param {Object} e.changed 包含有哪些变化的对象
+<span class='line'> 81</span>      */</span><span class="WHIT">
+<span class='line'> 82</span> </span><span class="WHIT">    </span><span class="NAME">remountRootVframe</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 83</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
+<span class='line'> 84</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="WHIT">        </span><span class="NAME">me.$location</span><span class="PUNC">=</span><span class="NAME">e.location</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">        </span><span class="NAME">me.buildRootVframe</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
+<span class='line'> 88</span> </span><span class="WHIT">        </span><span class="NAME">me.rootVframe.mountView</span><span class="PUNC">(</span><span class="NAME">e.location.viewPath</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 91</span>      * 向vframe通知地址栏发生变化
+<span class='line'> 92</span>      * @param {Object} e 事件对象
+<span class='line'> 93</span>      * @param {Object} e.location window.location.href解析出来的对象
+<span class='line'> 94</span>      * @param {Object} e.changed 包含有哪些变化的对象
+<span class='line'> 95</span>      */</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">    </span><span class="NAME">notifyLocationChange</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">        </span><span class="NAME">me.$location</span><span class="PUNC">=</span><span class="NAME">e.location</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">me.rootVframe</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="WHIT">            </span><span class="NAME">me.rootVframe.notifyLocationChange</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>104</span>      * 当VOM处于闲置状态时回调传入的fn，当VOM忙碌时则把fn添加到等待队列
+<span class='line'>105</span>      * @param {Function} fn 闲置时的回调函数
+<span class='line'>106</span>      * @param {Array} [args] 参数
+<span class='line'>107</span>      * @param {Object} [context] fn内this指向
+<span class='line'>108</span>      */</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="WHIT">    </span><span class="NAME">idle</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">,</span><span class="NAME">context</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">me.iC</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="WHIT">            </span><span class="NAME">me.iQ.push</span><span class="PUNC">(</span><span class="PUNC">[</span><span class="NAME">fn</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">,</span><span class="NAME">context</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="WHIT">            </span><span class="NAME">Magix.safeExec</span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">,</span><span class="NAME">context</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>116</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>117</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>118</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>119</span>      * 挂起VOM，等待外部的操作完成
+<span class='line'>120</span>      */</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="WHIT">    </span><span class="NAME">suspend</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="WHIT">        </span><span class="NAME">me.iC</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>124</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>125</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>126</span>      * 恢复挂起的VOM
+<span class='line'>127</span>      */</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="WHIT">    </span><span class="NAME">resume</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">me.iC</span><span class="PUNC">></span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="WHIT">            </span><span class="NAME">me.iC</span><span class="PUNC">--</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.iC</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">list</span><span class="PUNC">=</span><span class="NAME">me.iQ</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>135</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">list.length</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">tasks</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">slice.call</span><span class="PUNC">(</span><span class="NAME">list</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">                </span><span class="NAME">me.iQ</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="WHIT">                </span><span class="KEYW">while</span><span class="PUNC">(</span><span class="NAME">tasks.length</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>139</span> </span><span class="WHIT">                    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">o</span><span class="PUNC">=</span><span class="NAME">tasks.shift</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>140</span> </span><span class="WHIT">                    </span><span class="NAME">me.idle.apply</span><span class="PUNC">(</span><span class="NAME">me</span><span class="PUNC">,</span><span class="NAME">o</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>141</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>142</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>143</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>144</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>145</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>146</span>      * 向某个vframe发送消息
+<span class='line'>147</span>      * @param {Array|String} aims  目标vframe id数组
+<span class='line'>148</span>      * @param {Object} args 消息对象
+<span class='line'>149</span>      */</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="WHIT">    </span><span class="NAME">postMessage</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">aims</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>151</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>152</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">Magix.isArray</span><span class="PUNC">(</span><span class="NAME">aims</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>153</span> </span><span class="WHIT">            </span><span class="NAME">aims</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="NAME">aims</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>154</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>155</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">args</span><span class="PUNC">)</span><span class="NAME">args</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>156</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">aims.length</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>157</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">vframe</span><span class="PUNC">=</span><span class="NAME">me.getVframe</span><span class="PUNC">(</span><span class="NAME">aims</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>158</span> </span><span class="WHIT">            </span><span class="COMM">//</span><span class="WHIT">
+<span class='line'>159</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">vframe</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>160</span> </span><span class="WHIT">                </span><span class="NAME">vframe.message</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>161</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>162</span> </span><span class="WHIT">                </span><span class="NAME">me.bind</span><span class="PUNC">(</span><span class="NAME">aims</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="WHIT">                    </span><span class="WHIT">
+<span class='line'>164</span> </span><span class="WHIT">                    </span><span class="NAME">e.vframe.message</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>165</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>166</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>167</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>168</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">Event</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>170</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">VOM</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/vframe"</span><span class="PUNC">,</span><span class="STRN">"magix/magix"</span><span class="PUNC">,</span><span class="STRN">"magix/event"</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

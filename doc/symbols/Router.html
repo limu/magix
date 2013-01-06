@@ -375,9 +375,9 @@ dl.data .dd{
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
                                                 <span class="desc">主要解决：
-	location.hash='a';
-	location.hash='b';运行这2行代码
-	触发2次hashchange事件，但在这2次事件中通过location.hash拿到的值都是b，所以Router引入idle，当处于闲置状态时，才进行下一个操作，否则就等待上次的完成</span>                                                
+    location.hash='a';
+    location.hash='b';运行这2行代码
+    触发2次hashchange事件，但在这2次事件中通过location.hash拿到的值都是b，所以Router引入idle，当处于闲置状态时，才进行下一个操作，否则就等待上次的完成</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -1058,9 +1058,9 @@ dl.data .dd{
 
                                             <div class="desc">
                                                 主要解决：
-	location.hash='a';
-	location.hash='b';运行这2行代码
-	触发2次hashchange事件，但在这2次事件中通过location.hash拿到的值都是b，所以Router引入idle，当处于闲置状态时，才进行下一个操作，否则就等待上次的完成
+    location.hash='a';
+    location.hash='b';运行这2行代码
+    触发2次hashchange事件，但在这2次事件中通过location.hash拿到的值都是b，所以Router引入idle，当处于闲置状态时，才进行下一个操作，否则就等待上次的完成
                                                 
                                                 
                                             </div>
@@ -1164,7 +1164,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">KISSY.use('magix/router',function(S,R){		R.navigate('/list?page=2&rows=20');//改变pathname和相关的参数，地址栏上的其它参数会进行丢弃，不会保留		R.navigate('page=2&rows=20');//只修改参数，地址栏上的其它参数会保留		R.navigate({//通过对象修改参数，地址栏上的其它参数会保留			page:2,			rows:20		});		R.navigate({			page:2,			rows:20		},'/list');//导航到 /list?page=2&rows=20 });</pre>
+                                                            <pre class="brush: js; ">KISSY.use('magix/router',function(S,R){     R.navigate('/list?page=2&rows=20');//改变pathname和相关的参数，地址栏上的其它参数会进行丢弃，不会保留     R.navigate('page=2&rows=20');//只修改参数，地址栏上的其它参数会保留     R.navigate({//通过对象修改参数，地址栏上的其它参数会保留         page:2,         rows:20     });     R.navigate({         page:2,         rows:20     },'/list');//导航到 /list?page=2&rows=20 });</pre>
                                                         
                                                 </dd>
                                                 

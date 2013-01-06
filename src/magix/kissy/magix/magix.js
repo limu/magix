@@ -4,8 +4,8 @@
  * @version 1.0
  **/
 KISSY.add('magix/magix',function(S,IMagix){
-	eval(IMagix.include('../tmpl/magix'));
-	return Magix.mix(Magix,IMagix);
+    eval(IMagix.include('../tmpl/magix'));
+    return Magix.mix(Magix,IMagix);
 },{
-	requires:["magix/impl/magix"]
+    requires:["magix/impl/magix"]
 });

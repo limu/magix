@@ -57,14 +57,14 @@ KISSY.add("mxext/model",function(S,Magix){
             })
         }
      */
-	var Model=function(ops){
+    var Model=function(ops){
         if(ops){
             this.set(ops);
         }
         this.id=S.guid('m');
         this.locker=false;
         this.hasLocker=false;
-	};
+    };
     var ex=function(props,ctor){
         var fn=function(){
             fn.superclass.constructor.apply(this,arguments);
@@ -99,7 +99,7 @@ KISSY.add("mxext/model",function(S,Magix){
     });
 
 
-	Magix.mix(Model.prototype,{
+    Magix.mix(Model.prototype,{
         /**
          * @lends Model#
          */
@@ -233,8 +233,8 @@ KISSY.add("mxext/model",function(S,Magix){
          * @param {String} [obj2] 参数内容
          */
         setPostParamsIf:function(obj1,obj2){
-        	var me=this;
-        	me.setParams(obj1,obj2,Model.POST,true);
+            var me=this;
+            me.setParams(obj1,obj2,Model.POST,true);
         },
         removeParamsObject:function(key){
             if(!key)key=Model.GET;
@@ -451,8 +451,8 @@ KISSY.add("mxext/model",function(S,Magix){
         lock:function(locker){
             this.hasLocker=!!locker;
         }
-	});
-	return Model;
+    });
+    return Model;
 },{
     requires:["magix/magix"]
 });

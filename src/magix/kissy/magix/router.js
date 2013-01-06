@@ -4,8 +4,8 @@
  * @version 1.0
  */
 KISSY.add('magix/router',function(S,IRouter,Magix,Event){
-	eval(Magix.include('../tmpl/router'));
-	return Magix.mix(Router,IRouter);
+    eval(Magix.include('../tmpl/router'));
+    return Magix.mix(Router,IRouter);
 },{
-	requires:["magix/impl/router","magix/magix","magix/event"]
+    requires:["magix/impl/router","magix/magix","magix/event"]
 });

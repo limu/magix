@@ -1378,55 +1378,55 @@ dl.data .dd{
                                                 <dd>
                                                         
                                                             <pre class="brush: js; ">KISSY.add("app/base/mfactory",function(S,MFctory,Model){
-				var MF=MFctory.create('test/mf',Model);
-				MF.registerModels([
-					{
-						type:'Home_List',
-						ops:{
-							uri:'test'
-						},
-						gets:{
-							a:'12'
-						},
-						cacheKey:'',
-						expires:20000,//缓存多久
-						before:function(m){
-							
-						},
-						after:function(m){
-							
-						}
-					},
-					{
-						type:'Home_List1',
-						ops:{
-							uri:'test'
-						},
-						before:function(m){
-							
-						},
-						after:function(m){
-							
-						}
-					}
-				]);
-				return MF;
-			},{
-				requires:["mxext/modelfactory","app/base/model"]
-			});
+                var MF=MFctory.create('test/mf',Model);
+                MF.registerModels([
+                    {
+                        type:'Home_List',
+                        ops:{
+                            uri:'test'
+                        },
+                        gets:{
+                            a:'12'
+                        },
+                        cacheKey:'',
+                        expires:20000,//缓存多久
+                        before:function(m){
+                            
+                        },
+                        after:function(m){
+                            
+                        }
+                    },
+                    {
+                        type:'Home_List1',
+                        ops:{
+                            uri:'test'
+                        },
+                        before:function(m){
+                            
+                        },
+                        after:function(m){
+                            
+                        }
+                    }
+                ]);
+                return MF;
+            },{
+                requires:["mxext/modelfactory","app/base/model"]
+            });
 
-			//使用
+            //使用
 
-			KISSY.use('app/base/mfactory',function(S,MF){
-				MF.fetchAll([{
-					type:MF.Home_List,cacheKey:'aaa',gets:{e:'f'},
-					type:MF.Home_List1,gets:{a:'b'}
-				}],function(m1,m2){
-	
-				},function(msg){
-	
-				});
-			});</pre>
+            KISSY.use('app/base/mfactory',function(S,MF){
+                MF.fetchAll([{
+                    type:MF.Home_List,cacheKey:'aaa',gets:{e:'f'},
+                    type:MF.Home_List1,gets:{a:'b'}
+                }],function(m1,m2){
+    
+                },function(msg){
+    
+                });
+            });</pre>
                                                         
                                                 </dd>
                                                 

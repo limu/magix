@@ -64,14 +64,14 @@
 <span class='line'> 57</span>             })
 <span class='line'> 58</span>         }
 <span class='line'> 59</span>      */</span><span class="WHIT">
-<span class='line'> 60</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Model</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Model</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 61</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 62</span> </span><span class="WHIT">            </span><span class="NAME">this.set</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 63</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'> 64</span> </span><span class="WHIT">        </span><span class="NAME">this.id</span><span class="PUNC">=</span><span class="NAME">S.guid</span><span class="PUNC">(</span><span class="STRN">'m'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 65</span> </span><span class="WHIT">        </span><span class="NAME">this.locker</span><span class="PUNC">=</span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 66</span> </span><span class="WHIT">        </span><span class="NAME">this.hasLocker</span><span class="PUNC">=</span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 67</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 68</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ex</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">props</span><span class="PUNC">,</span><span class="NAME">ctor</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 69</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">fn</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 70</span> </span><span class="WHIT">            </span><span class="NAME">fn.superclass.constructor.apply</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
@@ -106,7 +106,7 @@
 <span class='line'> 99</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>100</span> 
 <span class='line'>101</span> 
-<span class='line'>102</span> </span><span class="WHIT">	</span><span class="NAME">Magix.mix</span><span class="PUNC">(</span><span class="NAME">Model.prototype</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">    </span><span class="NAME">Magix.mix</span><span class="PUNC">(</span><span class="NAME">Model.prototype</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>103</span> </span><span class="WHIT">        </span><span class="COMM">/**
 <span class='line'>104</span>          * @lends Model#
 <span class='line'>105</span>          */</span><span class="WHIT">
@@ -240,8 +240,8 @@
 <span class='line'>233</span>          * @param {String} [obj2] 参数内容
 <span class='line'>234</span>          */</span><span class="WHIT">
 <span class='line'>235</span> </span><span class="WHIT">        </span><span class="NAME">setPostParamsIf</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">obj1</span><span class="PUNC">,</span><span class="NAME">obj2</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>236</span> </span><span class="WHIT">        	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>237</span> </span><span class="WHIT">        	</span><span class="NAME">me.setParams</span><span class="PUNC">(</span><span class="NAME">obj1</span><span class="PUNC">,</span><span class="NAME">obj2</span><span class="PUNC">,</span><span class="NAME">Model.POST</span><span class="PUNC">,</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>236</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>237</span> </span><span class="WHIT">            </span><span class="NAME">me.setParams</span><span class="PUNC">(</span><span class="NAME">obj1</span><span class="PUNC">,</span><span class="NAME">obj2</span><span class="PUNC">,</span><span class="NAME">Model.POST</span><span class="PUNC">,</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>238</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'>239</span> </span><span class="WHIT">        </span><span class="NAME">removeParamsObject</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>240</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">key</span><span class="PUNC">)</span><span class="NAME">key</span><span class="PUNC">=</span><span class="NAME">Model.GET</span><span class="PUNC">;</span><span class="WHIT">
@@ -458,8 +458,8 @@
 <span class='line'>451</span> </span><span class="WHIT">        </span><span class="NAME">lock</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">locker</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>452</span> </span><span class="WHIT">            </span><span class="NAME">this.hasLocker</span><span class="PUNC">=</span><span class="PUNC">!</span><span class="PUNC">!</span><span class="NAME">locker</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>453</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>454</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>455</span> </span><span class="WHIT">	</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Model</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>454</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>455</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Model</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>456</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>457</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/magix"</span><span class="PUNC">]</span><span class="WHIT">
 <span class='line'>458</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

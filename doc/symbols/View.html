@@ -388,13 +388,25 @@ dl.data .dd{
                                             
                                                 
                                                     <li class="li">
+                                                        <b class="name"><a href="../symbols/View.html#rendered">rendered</a></b>
+                                                        <span class="type">{Boolean}</span>
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        <span class="desc">标识当前view有没有渲染过，即created事件有没有触发过</span>
+                                                    </li>
+                                                
+                                            
+                                                
+                                                    <li class="li">
                                                         <b class="name"><a href="../symbols/View.html#template">template</a></b>
                                                         <span class="type">{String}</span>
                                                         
                                                         
                                                         
                                                         
-                                                        <span class="desc">当前view对应的模板字符串(当hasTemplate不为false时)，该属性在created事件触发后才存在</span>
+                                                        <span class="desc">当前view对应的模板字符串(当hasTemplate为true时)，该属性在created事件触发后才存在</span>
                                                     </li>
                                                 
                                             
@@ -413,6 +425,9 @@ dl.data .dd{
                                         </div>
                                         <div class="box-bd">
                                             <ul class="static-list">
+                                            
+                                                
+
                                             
                                                 
 
@@ -478,72 +493,12 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#delegateBubbleEvents">delegateBubbleEvents</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">代理dom冒泡事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#delegateUnbubble">delegateUnbubble</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">代理不冒泡的事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#delegateUnbubbleEvents">delegateUnbubbleEvents</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">代理dom不冒泡事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#destroy">destroy</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">销毁当前view</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#destroyManaged">destroyManaged</a></b>
-                                                <span class="param">(byRefresh)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">销毁托管的资源</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/View.html#endAsyncUpdate">endAsyncUpdate</a></b>
                                                 <span class="param">()</span>
                                                 
                                                 
                                                 
                                                 <span class="desc">通知view结束异步更新html</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#fixedEvent">fixedEvent</a></b>
-                                                <span class="param">(e)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">修正dom事件对象，主要是对IE的修正，添加如target preventDefault等</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -587,16 +542,6 @@ dl.data .dd{
                                             </li>
                                             
                                             <li class="li">                                                
-                                                View.
-                                                <b class="name"><a href="../symbols/View.html#.idIt">idIt</a></b>
-                                                <span class="param">(dom)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">给dom节点添加id</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/View.html#idle">idle</a></b>
                                                 <span class="param">(fn, args, context, anchor)</span>
@@ -614,16 +559,6 @@ dl.data .dd{
                                                 
                                                 
                                                 <span class="desc">初始化方法，供最终的view开发人员进行覆盖，注意：不要在该方法内进行异步数据获取，init仅适用于事件绑定等(init何时被调用？init在view进行一系列的初始化后，在view的created事件后被调用，此时已完成界面的创建。为什么要设计的这么靠后？view没被创建出来前，是不能做其它动作的，如果在此之前调用了init，而用户可以在init中做其它的动作，假设view还未创建完成就销毁，会给销毁带来一定的麻烦)</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#load">load</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">加载view内容</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -664,26 +599,6 @@ dl.data .dd{
                                                 
                                                 
                                                 <span class="desc">向某个view发送消息</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#processDelegateEvents">processDelegateEvents</a></b>
-                                                <span class="param">(bubble, dispose)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">处理代理事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#processEvent">processEvent</a></b>
-                                                <span class="param">(e)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">处理dom事件</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -778,16 +693,6 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#testOLChanged">testOLChanged</a></b>
-                                                <span class="param">(e)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">检测通过observeLocation方法指定的key对应的值有没有发生变化</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/View.html#trigger">trigger</a></b>
                                                 <span class="param">(name, data, remove, lastToFirst)</span>
                                                 
@@ -804,66 +709,6 @@ dl.data .dd{
                                                 
                                                 
                                                 <span class="desc">解除事件绑定</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#undelegateBubbleEvents">undelegateBubbleEvents</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">取消代理dom冒泡事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#undelegateUnbubble">undelegateUnbubble</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">取消代理不冒泡的事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#undelegateUnBubbleEvents">undelegateUnBubbleEvents</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">取消代理dom不冒泡事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#updateViewId">updateViewId</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">更新view的id，在启用动画的情况下，内部会做id转换</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                View.
-                                                <b class="name"><a href="../symbols/View.html#.wrapAsyncUpdate">wrapAsyncUpdate</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">对异步更新view的方法进行一次包装</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#wrapManagedFunction">wrapManagedFunction</a></b>
-                                                <span class="param">(fn)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">包装托管的函数</span>                                                
                                             </li>
                                             
                                         </ul>
@@ -1023,7 +868,7 @@ dl.data .dd{
                                                 <dt>示例：</dt>
                                                 <dd>
                                                     
-                                                    <pre class='brush: js;'>关于View.prototype.events:示例：  html写法：    &lt;input type="button" mxclick="test:100@id:xinglie@name" value="test" /&gt;  &lt;a href="http://etao.com" mxclick="test:etao.com:_prevent_"&gt;http://etao.com&lt;/a&gt;	 view写法：	   events:{  	click:{  		test:function(e){  			//e.view  当前view对象  			//e.currentId 处理事件的dom节点id  			//e.targetId 触发事件的dom节点id  			//e.events  view.events对象，可访问其它事件对象，如：e.events.mousedown.test  			//e.params  传递的参数  			//如果在html上写：mxclick="test:etao.com:_prevent_"，用冒号分割的一个字符串，第1个冒号前的表示要调用的方法。当最后一个是_prevent_（调用e.preventDefault）,_stop_（调用e.stopPropagation）,_halt_（阻止默认行为和冒泡）时，丢弃最后一个，把etao.com做为参数传入，可以用e.params[0]获取  			//如果是mxclick="test:100@id:xinglie@name"时，可以用e.params.id e.params.name取得相应的值，这样更直观些  		}  	},  	mousedown:{  		test:function(e){  			  		}  	}  }</pre>
+                                                    <pre class='brush: js;'>关于View.prototype.events:示例：  html写法：    &lt;input type="button" mxclick="test:100@id:xinglie@name" value="test" /&gt;  &lt;a href="http://etao.com" mxclick="test:etao.com:_prevent_"&gt;http://etao.com&lt;/a&gt;  view写法：    events:{     click:{         test:function(e){             //e.view  当前view对象             //e.currentId 处理事件的dom节点id             //e.targetId 触发事件的dom节点id             //e.events  view.events对象，可访问其它事件对象，如：e.events.mousedown.test             //e.params  传递的参数             //如果在html上写：mxclick="test:etao.com:_prevent_"，用冒号分割的一个字符串，第1个冒号前的表示要调用的方法。当最后一个是_prevent_（调用e.preventDefault）,_stop_（调用e.stopPropagation）,_halt_（阻止默认行为和冒泡）时，丢弃最后一个，把etao.com做为参数传入，可以用e.params[0]获取             //如果是mxclick="test:100@id:xinglie@name"时，可以用e.params.id e.params.name取得相应的值，这样更直观些         }     },     mousedown:{         test:function(e){                      }     }  }</pre>
                                                     
                                                 </dd>                                                
                                                 
@@ -1213,6 +1058,28 @@ dl.data .dd{
 
 					<hr />
 				
+					<a name="rendered"> </a>
+					<div class="fixedFont">
+
+					<span class="light">{Boolean}</span>
+					<b class="name">rendered</b>
+                     
+					</div>
+					<div class="desc">
+						标识当前view有没有渲染过，即created事件有没有触发过
+						
+						
+					</div>
+
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="template"> </a>
 					<div class="fixedFont">
 
@@ -1221,7 +1088,7 @@ dl.data .dd{
                      
 					</div>
 					<div class="desc">
-						当前view对应的模板字符串(当hasTemplate不为false时)，该属性在created事件触发后才存在
+						当前view对应的模板字符串(当hasTemplate为true时)，该属性在created事件触发后才存在
 						
 						
 					</div>
@@ -1284,7 +1151,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">// 什么是异步更新html？render:function(){		var _self=this;		var m=new Model({uri:'user:list'});		m.load({			success:_self.manage(function(data){				var html=Mu.to_html(_self.template,data);				_self.setViewHTML(html);			}),			error:_self.manage(function(msg){				_self.setViewHTML(msg);			})		})}//如上所示，当调用render方法时，render方法内部使用model异步获取数据后才完成html的更新则这个render就是采用异步更新html的//异步更新带来的问题：//view对象监听地址栏中的某个参数，当这个参数发生变化时，view调用render方法进行刷新，因为是异步的，所以并不能立即更新界面，//当监控的这个参数连续变化时，view会多次调用render方法进行刷新，由于异步，你并不能保证最后刷新时发出的异步请求最后返回，//有可能先发出的请求后返回，这样就会出现界面与url并不符合的情况，比如tabs的切换和tabPanel的更新，连续点击tab1 tab2 tab3 //会引起tabPanel这个view刷新，但是异步返回有可能3先回来2最后回来，会导致明明选中的是tab3，却显示着tab2的内容//所以要么你自已在回调中做判断，要么把上面的示例改写成下面这样的：	render:function(){		var _self=this;		_self.beginAsyncUpdate();//开始异步更新		var m=new Model({uri:'user:list'});		m.load({			success:_self.manage(function(data){				var html=Mu.to_html(_self.template,data);				_self.setViewHTML(html);			}),			error:_self.manage(function(msg){				_self.setViewHTML(msg);			})		});		_self.endAsyncUpdate();//结束异步更新}//其中endAsyncUpdate是备用的，把你的异步更新的代码放begin end之间即可//当然如果在每个异步更新的都需要这样写的话来带来差劲的编码体验，所以View会对render,renderUI,updateUI三个方法自动进行异步更新包装//您在使用这三个方法异步更新html时无须调用beginAsyncUpdate和endAsyncUpdate方法//如果除了这三个方法外你还要添加其它的异步更新方法，可调用View静态方法View.registerAsyncUpdateName来注册自已的方法//请优先考虑使用render renderUI updateUI 这三个方法来实现view的html更新，其中render方法magix会自动调用，您就考虑后2个方法吧//比如这样：renderUI:function(){//当方法名为 render renderUI updateUI时您不需要考虑异步更新带来的问题		var _self=this;		setTimeout(this.manage(function(){			_self.setViewHTML(_self.template);		}),5000);},receiveMessage:function(e){		if(e.action=='render'){			this.renderUI();		}}//当您需要自定义异步更新方法时，可以这样：KISSY.add("app/views/list",function(S,MxView){		var ListView=MxView.extend({			updateHTMLByXHR:function(){				var _self=this;				S.io({					success:_self.manage(function(html){						//TODO						_self.setViewHTML(html);					})				});			},			receiveMessage:function(e){				if(e.action=='update'){					this.updateHTMLByXHR();				}			}		});  	ListView.registerAsyncUpdateName('updateHTMLByXHR');//注册异步更新html的方法名		return ListView;},{		requires:["magix/view"]})//当您不想托管回调方法，又想消除异步更新带来的隐患时，可以这样：updateHTML:function(){		var _self=this;		var begin=_self.beginAsyncUpdate();//记录异步更新标识		S.io({			success:function(html){				//if(_self.exist){//不托管方法时，您需要自已判断view有没有销毁(使用异步更新标识时，不需要判断exist)					var end=_self.endAsyncUpdate();//结束异步更新					if(begin==end){//开始和结束时的标识一样，表示view没有更新过						_self.setViewHTML(html);					}				//}			}		});}//顺带说一下signature//并不是所有的异步更新都需要托管，考虑这样的情况：render:function(){		ModelFactory.fetchAll({			type:'User_List',			cacheKey:'User_List'		},function(m){			//render		});},//...click:{		addUser:function(e){			var m=ModelFactory.getIf('User_List');		 	var userList=m.get("userList");		 	m.beginTransaction();		 	userList.push({		 		id:'xinglie',		 		name:'xl'		 	});			m.save({				success:function(){//该回调不太适合托管					m.endTransaction();					Helper.tipMsg('添加成功')				},				error:function(msg){//该方法同样不适合托管，当数据保存失败时，需要回滚数据，而如果此时view有刷新或销毁，会导致该方法不被调用，无法达到数据的回滚					m.rollbackTransaction();					Helper.tipMsg('添加失败')				}			})				}}//以上click中的方法这样写较合适：click:{		addUser:function(e){			var m=ModelFactory.getIf('User_List');		 	var userList=m.get("userList");		 	m.beginTransaction();		 	userList.push({		 		id:'xinglie',		 		name:'xl'		 	});			var sign=e.view.signature();//获取签名			m.save({				success:function(){//该回调不太适合托管					m.endTransaction();					if(sign==e.view.signature()){//相等时表示view即没刷新也没销毁，此时才提示						Helper.tipMsg('添加成功')					}						},				error:function(msg){//该方法同样不适合托管，当数据保存失败时，需要回滚数据，而如果此时view有刷新或销毁，会导致该方法不被调用，无法达到数据的回滚					m.rollbackTransaction();					if(sign==e.view.signature()){//view即没刷新也没销毁						Helper.tipMsg('添加失败')					}				}			})				}}//如果您无法识别哪些需要托管，哪些需要签名，统一使用托管方法就好了</pre>
+                                                            <pre class="brush: js; ">// 什么是异步更新html？render:function(){     var _self=this;     var m=new Model({uri:'user:list'});     m.load({         success:_self.manage(function(data){             var html=Mu.to_html(_self.template,data);             _self.setViewHTML(html);         }),         error:_self.manage(function(msg){             _self.setViewHTML(msg);         })     })}//如上所示，当调用render方法时，render方法内部使用model异步获取数据后才完成html的更新则这个render就是采用异步更新html的//异步更新带来的问题：//view对象监听地址栏中的某个参数，当这个参数发生变化时，view调用render方法进行刷新，因为是异步的，所以并不能立即更新界面，//当监控的这个参数连续变化时，view会多次调用render方法进行刷新，由于异步，你并不能保证最后刷新时发出的异步请求最后返回，//有可能先发出的请求后返回，这样就会出现界面与url并不符合的情况，比如tabs的切换和tabPanel的更新，连续点击tab1 tab2 tab3 //会引起tabPanel这个view刷新，但是异步返回有可能3先回来2最后回来，会导致明明选中的是tab3，却显示着tab2的内容//所以要么你自已在回调中做判断，要么把上面的示例改写成下面这样的： render:function(){     var _self=this;     _self.beginAsyncUpdate();//开始异步更新     var m=new Model({uri:'user:list'});     m.load({         success:_self.manage(function(data){             var html=Mu.to_html(_self.template,data);             _self.setViewHTML(html);         }),         error:_self.manage(function(msg){             _self.setViewHTML(msg);         })     });     _self.endAsyncUpdate();//结束异步更新}//其中endAsyncUpdate是备用的，把你的异步更新的代码放begin end之间即可//当然如果在每个异步更新的都需要这样写的话来带来差劲的编码体验，所以View会对render,renderUI,updateUI三个方法自动进行异步更新包装//您在使用这三个方法异步更新html时无须调用beginAsyncUpdate和endAsyncUpdate方法//如果除了这三个方法外你还要添加其它的异步更新方法，可调用View静态方法View.registerAsyncUpdateName来注册自已的方法//请优先考虑使用render renderUI updateUI 这三个方法来实现view的html更新，其中render方法magix会自动调用，您就考虑后2个方法吧//比如这样：renderUI:function(){//当方法名为 render renderUI updateUI时您不需要考虑异步更新带来的问题     var _self=this;     setTimeout(this.manage(function(){         _self.setViewHTML(_self.template);     }),5000);},receiveMessage:function(e){     if(e.action=='render'){         this.renderUI();     }}//当您需要自定义异步更新方法时，可以这样：KISSY.add("app/views/list",function(S,MxView){     var ListView=MxView.extend({         updateHTMLByXHR:function(){             var _self=this;             S.io({                 success:_self.manage(function(html){                     //TODO                     _self.setViewHTML(html);                 })             });         },         receiveMessage:function(e){             if(e.action=='update'){                 this.updateHTMLByXHR();             }         }     });     ListView.registerAsyncUpdateName('updateHTMLByXHR');//注册异步更新html的方法名     return ListView;},{     requires:["magix/view"]})//当您不想托管回调方法，又想消除异步更新带来的隐患时，可以这样：updateHTML:function(){     var _self=this;     var begin=_self.beginAsyncUpdate();//记录异步更新标识     S.io({         success:function(html){             //if(_self.exist){//不托管方法时，您需要自已判断view有没有销毁(使用异步更新标识时，不需要判断exist)                 var end=_self.endAsyncUpdate();//结束异步更新                 if(begin==end){//开始和结束时的标识一样，表示view没有更新过                     _self.setViewHTML(html);                 }             //}         }     });}//顺带说一下signature//并不是所有的异步更新都需要托管，考虑这样的情况：render:function(){     ModelFactory.fetchAll({         type:'User_List',         cacheKey:'User_List'     },function(m){         //render     });},//...click:{     addUser:function(e){         var m=ModelFactory.getIf('User_List');         var userList=m.get("userList");         m.beginTransaction();         userList.push({             id:'xinglie',             name:'xl'         });         m.save({             success:function(){//该回调不太适合托管                 m.endTransaction();                 Helper.tipMsg('添加成功')             },             error:function(msg){//该方法同样不适合托管，当数据保存失败时，需要回滚数据，而如果此时view有刷新或销毁，会导致该方法不被调用，无法达到数据的回滚                 m.rollbackTransaction();                 Helper.tipMsg('添加失败')             }         })          }}//以上click中的方法这样写较合适：click:{     addUser:function(e){         var m=ModelFactory.getIf('User_List');         var userList=m.get("userList");         m.beginTransaction();         userList.push({             id:'xinglie',             name:'xl'         });         var sign=e.view.signature();//获取签名         m.save({             success:function(){//该回调不太适合托管                 m.endTransaction();                 if(sign==e.view.signature()){//相等时表示view即没刷新也没销毁，此时才提示                     Helper.tipMsg('添加成功')                 }                    },             error:function(msg){//该方法同样不适合托管，当数据保存失败时，需要回滚数据，而如果此时view有刷新或销毁，会导致该方法不被调用，无法达到数据的回滚                 m.rollbackTransaction();                 if(sign==e.view.signature()){//view即没刷新也没销毁                     Helper.tipMsg('添加失败')                 }             }         })          }}//如果您无法识别哪些需要托管，哪些需要签名，统一使用托管方法就好了</pre>
                                                         
                                                 </dd>
                                                 
@@ -1358,212 +1225,6 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="delegateBubbleEvents"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">delegateBubbleEvents</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                代理dom冒泡事件
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="delegateUnbubble"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">delegateUnbubble</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                代理不冒泡的事件
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="delegateUnbubbleEvents"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">delegateUnbubbleEvents</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                代理dom不冒泡事件
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="destroy"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">destroy</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                销毁当前view
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="destroyManaged"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">destroyManaged</b>
-                                                <span class="param">(byRefresh)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                销毁托管的资源
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            [ 
-                                                            <b class="name">byRefresh</b>
-                                                            
-                                                             ]
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否是刷新时的销毁</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
                                             <a name="endAsyncUpdate"> </a>
                                             <div class="title" >
                                                 
@@ -1603,72 +1264,6 @@ dl.data .dd{
                                                     
                                                     </ul>
                                                 </dd>
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="fixedEvent"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">fixedEvent</b>
-                                                <span class="param">(e)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                修正dom事件对象，主要是对IE的修正，添加如target preventDefault等
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">e</b>
-                                                            
-                                                            
-                                                            <span class="type">{event}</span> 
-                                                            <span class="desc">dom事件对象</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{event}</span> 
-                                                            <span>dom事件对象</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
                                                                                                 
                                                 
                                                 
@@ -1910,72 +1505,6 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name=".idIt"> </a>
-                                            <div class="title" >
-                                                <span>View.</span>
-                                                <b class="name">idIt</b>
-                                                <span class="param">(dom)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                给dom节点添加id
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">dom</b>
-                                                            
-                                                            
-                                                            <span class="type">{HTMLElement}</span> 
-                                                            <span class="desc">html节点</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{String}</span> 
-                                                            <span>节点id</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
                                             <a name="idle"> </a>
                                             <div class="title" >
                                                 
@@ -2055,7 +1584,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">//idle的应用场景：update:function(){		var loc=this.getLocation();		}//...click:{		create:function(e){			Router.navigate({a:'b',c:'d'});//此处的更改是异步的			e.view.update();//在0.3版的magix中，这样写在update方法内无法立即得到a的值		}}//上面create中安全的使用方式是这样的：Router.navigate({a:'b',c:'d'});e.view.idle(function(){		e.view.update();});//但是这样的书写明显会带来不方便，需要开发者明白哪些地方是异步的，哪些地方是同步的//所以view会对原型链上的方法进行一次处理，magix 1.0版自动帮你包装一下相关的方法，包装后：Router.navigate({a:'b',c:'d'});e.view.update();//此update是包装后的方法，会等到Router修改完成url后才调用//view在包装原型链上的方法时，对明确有返回值的方法不进行包装//因此下面的情景并不能自动处理，您需要手动判断：getParams:function(){		var loc=this.getLocation();		//...		return newLocParams;//该方法有返回值，无法异步调用}//...click:{		create:function(e){			Router.navigate({a:'b',c:'d'});//此处的更改是异步的			var params=e.view.getParams();//无法在getParams方法内部拿到最新的a和c的值			//对于上面这一行需要修改成：			e.view.idle(function(){				var params=e.view.getParams();			});			//对于getParams方法如果内部没有访问location也是不需要在idle回调中执行的					}}//magix已经尽最大可能解决掉了异步问题，而在项目中一般很少出现上面的情景//因此您不需要考虑每个动作都放在idle里面，出现问题了再考虑//在方法内如果没有访问location也是不需要在idle回调中执行的//忘掉这个方法的存在吧~~//</pre>
+                                                            <pre class="brush: js; ">//idle的应用场景：update:function(){     var loc=this.getLocation();     }//...click:{     create:function(e){         Router.navigate({a:'b',c:'d'});//此处的更改是异步的         e.view.update();//在0.3版的magix中，这样写在update方法内无法立即得到a的值     }}//上面create中安全的使用方式是这样的：Router.navigate({a:'b',c:'d'});e.view.idle(function(){     e.view.update();});//但是这样的书写明显会带来不方便，需要开发者明白哪些地方是异步的，哪些地方是同步的//所以view会对原型链上的方法进行一次处理，magix 1.0版自动帮你包装一下相关的方法，包装后：Router.navigate({a:'b',c:'d'});e.view.update();//此update是包装后的方法，会等到Router修改完成url后才调用//view在包装原型链上的方法时，对明确有返回值的方法不进行包装//因此下面的情景并不能自动处理，您需要手动判断：getParams:function(){     var loc=this.getLocation();     //...     return newLocParams;//该方法有返回值，无法异步调用}//...click:{     create:function(e){         Router.navigate({a:'b',c:'d'});//此处的更改是异步的         var params=e.view.getParams();//无法在getParams方法内部拿到最新的a和c的值         //对于上面这一行需要修改成：         e.view.idle(function(){             var params=e.view.getParams();         });         //对于getParams方法如果内部没有访问location也是不需要在idle回调中执行的              }}//magix已经尽最大可能解决掉了异步问题，而在项目中一般很少出现上面的情景//因此您不需要考虑每个动作都放在idle里面，出现问题了再考虑//在方法内如果没有访问location也是不需要在idle回调中执行的//忘掉这个方法的存在吧~~//</pre>
                                                         
                                                 </dd>
                                                 
@@ -2076,44 +1605,6 @@ dl.data .dd{
 
                                             <div class="desc">
                                                 初始化方法，供最终的view开发人员进行覆盖，注意：不要在该方法内进行异步数据获取，init仅适用于事件绑定等(init何时被调用？init在view进行一系列的初始化后，在view的created事件后被调用，此时已完成界面的创建。为什么要设计的这么靠后？view没被创建出来前，是不能做其它动作的，如果在此之前调用了init，而用户可以在init中做其它的动作，假设view还未创建完成就销毁，会给销毁带来一定的麻烦)
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="load"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">load</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                加载view内容
                                                 
                                                 
                                             </div>
@@ -2285,7 +1776,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">init:function(){		this.manage('user_list',[//管理对象资源			{id:1,name:'a'},			{id:2,name:'b'}		]);},render:function(){		var _self=this;		var m=new Model();		m.load({			success:_self.manage(function(resp){//管理匿名函数				//TODO				var brix=new BrixDropdownList();				_self.manage(brix);//管理组件				var pagination=_self.manage(new BrixPagination());//也可以这样				var timer=_self.manage(setTimeout(function(){					S.log('timer');				},2000));//也可以管理定时器								var userList=_self.getManaged('user_list');//通过key取托管的资源				S.log(userList);			}),			error:_self.manage(function(msg){				//TODO			})		})}</pre>
+                                                            <pre class="brush: js; ">init:function(){     this.manage('user_list',[//管理对象资源         {id:1,name:'a'},         {id:2,name:'b'}     ]);},render:function(){     var _self=this;     var m=new Model();     m.load({         success:_self.manage(function(resp){//管理匿名函数             //TODO             var brix=new BrixDropdownList();             _self.manage(brix);//管理组件             var pagination=_self.manage(new BrixPagination());//也可以这样             var timer=_self.manage(setTimeout(function(){                 S.log('timer');             },2000));//也可以管理定时器                          var userList=_self.getManaged('user_list');//通过key取托管的资源             S.log(userList);         }),         error:_self.manage(function(msg){             //TODO         })     })}</pre>
                                                         
                                                 </dd>
                                                 
@@ -2355,7 +1846,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">return View.extend({		init:function(){			this.observeLocation('page,rows',true);//关注地址栏中的page rows2个参数的变化，并且关注pathname的改变，当其中的任意一个改变时，才引起当前view的locationChange被调用		},		locationChange:function(e){			if(e.changed.isParam('page')){};//检测是否是page发生的改变			if(e.changed.isParam('rows')){};//检测是否是rows发生的改变			if(e.changed.isPathname()){};//是否是pathname发生的改变		}});</pre>
+                                                            <pre class="brush: js; ">return View.extend({     init:function(){         this.observeLocation('page,rows',true);//关注地址栏中的page rows2个参数的变化，并且关注pathname的改变，当其中的任意一个改变时，才引起当前view的locationChange被调用     },     locationChange:function(e){         if(e.changed.isParam('page')){};//检测是否是page发生的改变         if(e.changed.isParam('rows')){};//检测是否是rows发生的改变         if(e.changed.isPathname()){};//是否是pathname发生的改变     }});</pre>
                                                         
                                                 </dd>
                                                 
@@ -2403,123 +1894,6 @@ dl.data .dd{
                                                             
                                                             <span class="type">{Object}</span> 
                                                             <span class="desc">消息对象</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="processDelegateEvents"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">processDelegateEvents</b>
-                                                <span class="param">(bubble, dispose)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                处理代理事件
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">bubble</b>
-                                                            
-                                                            
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否冒泡的事件</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">dispose</b>
-                                                            
-                                                            
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否销毁</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="processEvent"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">processEvent</b>
-                                                <span class="param">(e)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                处理dom事件
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">e</b>
-                                                            
-                                                            
-                                                            <span class="type">{<a href="../symbols/Event.html">Event</a>}</span> 
-                                                            <span class="desc">dom事件对象</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -2996,72 +2370,6 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="testOLChanged"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">testOLChanged</b>
-                                                <span class="param">(e)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                检测通过observeLocation方法指定的key对应的值有没有发生变化
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">e</b>
-                                                            
-                                                            
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">Router.locationChanged事件对象</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span>是否发生改变</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
                                             <a name="trigger"> </a>
                                             <div class="title" >
                                                 
@@ -3209,262 +2517,6 @@ dl.data .dd{
                                             </dl>                                            
                                         </li>
                                         
-                                        <li class="li">
-                                            <a name="undelegateBubbleEvents"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">undelegateBubbleEvents</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                取消代理dom冒泡事件
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="undelegateUnbubble"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">undelegateUnbubble</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                取消代理不冒泡的事件
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="undelegateUnBubbleEvents"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">undelegateUnBubbleEvents</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                取消代理dom不冒泡事件
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="updateViewId"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">updateViewId</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                更新view的id，在启用动画的情况下，内部会做id转换
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name=".wrapAsyncUpdate"> </a>
-                                            <div class="title" >
-                                                <span>View.</span>
-                                                <b class="name">wrapAsyncUpdate</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                对异步更新view的方法进行一次包装
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="wrapManagedFunction"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">wrapManagedFunction</b>
-                                                <span class="param">(fn)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                包装托管的函数
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">fn</b>
-                                                            
-                                                            
-                                                            <span class="type">{Function}</span> 
-                                                            <span class="desc">托管的函数</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{Function}</span> 
-                                                            <span>包装后的函数</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
                                     </ul>
                                 </div>
                             </div>
@@ -3591,7 +2643,7 @@ dl.data .dd{
                                                 <ul class="list">
                                                     
                                                     <li class="li">
-                                                        <pre class="code">init:function(){		this.bind('childrenCreated',function(){			//		})}</pre>
+                                                        <pre class="code">init:function(){     this.bind('childrenCreated',function(){         //     })}</pre>
                                                     </li>
                                                     
                                                 </ul>
@@ -3895,7 +2947,7 @@ dl.data .dd{
                                                 <ul class="list">
                                                     
                                                     <li class="li">
-                                                        <pre class="code">render:function(){		var fn=function(){};		S.one(document).on('click',fn);     this.bind('refresh',function(){//当使用refresh事件时，您不需要考虑移除监听     	S.one(document).detach('click',fn);     });		//如果您使用prerender事件		this.bind('prerender',function(){			this.unbind('prerender',arguments.callee);//您需要移除监听，要不然会越积累越多		 	S.one(document).detach('click',fn);		})		}</pre>
+                                                        <pre class="code">render:function(){     var fn=function(){};     S.one(document).on('click',fn);     this.bind('refresh',function(){//当使用refresh事件时，您不需要考虑移除监听         S.one(document).detach('click',fn);     });     //如果您使用prerender事件     this.bind('prerender',function(){         this.unbind('prerender',arguments.callee);//您需要移除监听，要不然会越积累越多         S.one(document).detach('click',fn);     })     }</pre>
                                                     </li>
                                                     
                                                 </ul>
