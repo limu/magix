@@ -1576,7 +1576,6 @@ var ScriptsReg=/<script[^>]*>[\s\S]*?<\/script>/ig
  * @borrows Event.un as this.un
  * @param {String} id vframe id
  * @property {String} id vframe id
- * @property {Array} children 子vframes
  * @property {View} view view对象
  * @property {VOM} owner VOM对象
  * @property {Boolean} viewUsable view是否可用，即view的interact事件有没有派发
