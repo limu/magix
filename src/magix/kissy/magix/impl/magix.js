@@ -3,10 +3,14 @@
  * @author 行列
  * @version 1.0
  */
-KISSY.add('magix/impl/magix',function(S){
+KISSY.add('magix/impl/magix',function(S,Slice){
+    Slice=[].slice;
     return {
         include:function(path){
-            var url = S.Config.packages.magix.path+path + ".js?r=" + Math.random()+'.js';
+            var magixPackages=S.Config.packages.magix;
+            var mPath=magixPackages.base||magixPackages.path;
+
+            var url = mPath+path + ".js?r=" + Math.random()+'.js';
             var xhr = window.ActiveXObject || window.XMLHttpRequest;
             var r = new xhr('Microsoft.XMLHTTP');
             r.open('GET', url, false);
@@ -14,51 +18,65 @@ KISSY.add('magix/impl/magix',function(S){
             return r.responseText;
         },
         libRequire:function(name,fn){
-            S.use(name,function(S,T){
-                fn(T)
-            });
-        },
-        libEnv:function(){
             var me=this;
-            var cfg=me.config();
+            if(name){
+                var isFn=me.isFunction(fn);
+                var isArr=me.isArray(name);
+
+                S.use(isArr?name.join(','):name,isFn?function(S){
+                    fn.apply(S,Slice.call(arguments,1));
+                }:me.noop);
+            }else{
+                fn();
+            }
+        },
+        libEnv:function(cfg){
+            var me=this;
             var appHome=cfg.appHome;
-            if(!appHome){
-                throw new Error('please set appHome');
+            var loc=location;
+            var protocol=loc.protocol;
+            var appName=cfg.appName;
+
+            if(!~appHome.indexOf(protocol)){
+                appHome=me.path(loc.href,appHome);
             }
-            appHome=appHome.replace(/(^|\/)app\/?/i,function(a,b){
-                return b||'./';
-            });
+
+            if(!S.endsWith(appHome,'/')){
+                appHome+='/';
+            }
             cfg.appHome=appHome;
-            
-            if(!cfg.release&&/^https?:\/\//.test(appHome)){
-                cfg.release= appHome.indexOf(location.protocol+'//'+location.host)==-1;
+            var debug=cfg.debug;
+            if(debug){
+                debug=appHome.indexOf(protocol+'//'+loc.host)==0;
             }
-            if(!cfg.release){
-                var reg=new RegExp("("+appHome+".+)-min\\.js(\\?[^?]+)?");
+            if(appName.charAt(0)=='~'){
+                var reg=new RegExp('/'+appName+'/');
                 S.config({
-                    map:[[reg,'$1.js$2']]
+                    map:[[reg,'/']]
                 });
             }
             var appTag='';
-            if(cfg.release){
-                appTag=cfg.appTag;
-            }else{
+            if(debug){
                 appTag=S.now();
+            }else{
+                appTag=cfg.appTag;
             }
             if(appTag){
                 appTag+='.js';
             }
+            var appCombine=cfg.appCombine;
+            if(S.isUndefined(appCombine)){
+                appCombine=S.config('combine');
+            }
             S.config({
                 packages:[{
-                    name:'app',
+                    name:appName,
                     path:appHome,
+                    debug:cfg.debug=debug,
+                    combine:appCombine,
                     tag:appTag
                 }]
             });
-            var vfanim='mxext/vfanim';
-            if(cfg.viewChangeAnim&&S.Env.mods[vfanim]){
-                S.use(vfanim);
-            }
         },
         isArray:S.isArray,
         isFunction:S.isFunction,

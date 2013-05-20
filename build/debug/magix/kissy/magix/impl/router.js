@@ -3,26 +3,26 @@
  * @author 行列
  * @version 1.0
  */
-KISSY.add("magix/impl/router",function(S){
+KISSY.add("magix/impl/router",function(S,E){
+    var W=window;
     return {
-        useHistoryState:function(){
+        useState:function(){
             var me=this,initialURL=location.href;
-            S.one(window).on('popstate',function(e){
+            E.on(W,'popstate',function(e){
                 var equal=location.href==initialURL;
-                if(!me.$canFirePopState&&equal)return;
-                me.$canFirePopState=true;
+                if(!me.$firedPop&&equal)return;
+                me.$firedPop=true;
                 
                 me.route();
             });
         },
-        useLocationHash:function(){
+        useHash:function(){//extension impl change event
             var me=this;
-            S.one(window).on('hashchange',function(e){
-                me.suspend();
-                
+            E.on(W,'hashchange',function(e){
                 me.route();
-                me.resume();
             });
         }
     }
+},{
+    requires:["event"]
 });

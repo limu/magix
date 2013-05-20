@@ -10,7 +10,9 @@
     <property name="mxext.dir" location="${root.dir}/src/mxext"></property>
     <!--dir that out put product -->
     <property name="debug.dir" location="${build.dir}/debug"></property>
-    <property name="raw.dir" location="${build.dir}/raw"></property>
+    <property name="raw.dir" location="${build.dir}/"></property>
+    <property name="seed.dir" location="${root.dir}/seed"></property>
+    <property name="docsrc.dir" location="${root.dir}/docsrc"></property>
 
     <property name="mtmpl.dir" location="${debug.dir}/magix/tmpl"></property>
     <property name="gcc.jar" location="${root.dir}/tools/compiler.jar" ></property>
@@ -26,39 +28,43 @@
     <property name="tmpl.view" value="eval(Magix.include('../tmpl/view'));"></property>
     <property name="tmpl.vom" value="eval(Magix.include('../tmpl/vom'));"></property>
     <property name="tmpl.event" value="eval(Magix.include('../tmpl/event'));"></property>
+    <property name="tmpl.body" value="eval(Magix.include('../tmpl/body'));"></property>
 
     <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask" classpath="${gcc.jar}"/>
-    <target name="build" depends="prepare,s_console,delconsole,subtmpls,concatfile,removeInclude,removeImpl,gjslint,gccompressor,finish,jsdocgen">
+    <target name="build" depends="prepare,delconsole,subtmpls,concatfile,prepare_docsrc,removeInclude,removeImpl,gjslint,gccompressor,finish,copy_file_to_seed,jsdocgen">
     </target>
     <!--<target name="build" depends="prepare">-->
     <!--</target>-->
     <!--copy src/files to build/debug-->
     <target name="prepare">
         <delete dir="${build.dir}"></delete>
+        <delete dir="${output.dir}"></delete>
+        <delete dir="${docsrc.dir}"></delete>
         <mkdir dir="${build.dir}"></mkdir>
         <mkdir dir="${debug.dir}"></mkdir>
         <mkdir dir="${raw.dir}"></mkdir>
+        <mkdir dir="${docsrc.dir}"></mkdir>
         <copy todir="${debug.dir}">
-            <fileset dir="${src.dir}" excludes="**/magix_start.js"></fileset>
+            <fileset dir="${src.dir}">
+                <exclude name="**/magix_start.js" />
+                <exclude name="**/vfanim.js" />
+                <exclude name="**/mxext/router.js" />
+            </fileset>
         </copy>
 
-    </target>
-
-    <!--delete console.log(XX);-->
-    <target name="s_console">
-        <replaceregexp byline="true">
-            <regexp pattern="\/\*KEEP\*\/console\."/>
-            <substitution expression="S."/>
-            <fileset dir="${debug.dir}">
-                <include name="**/*.js"/>
-            </fileset>
-        </replaceregexp>
     </target>
 
     <target name="delconsole">
         <replaceregexp byline="true">
             <regexp pattern="console\.\w+\((.*)\);?"/>
             <substitution expression=""/>
+            <fileset dir="${debug.dir}">
+                <include name="**/*.js"/>
+            </fileset>
+        </replaceregexp>
+        <replaceregexp byline="true">
+            <regexp pattern="\/\/KEEP\s" />
+            <substitution expression="" />
             <fileset dir="${debug.dir}">
                 <include name="**/*.js"/>
             </fileset>
@@ -80,7 +86,7 @@
             <regexp pattern="include\s*:\s*(?:unimpl|function\([\s\w]*\)\s*\{[\s\S]*?\}),"/>
             <substitution expression=""/>
             <fileset dir="${debug.dir}">
-                <include name="**/*-pkg.js"/>
+                <include name="**/*.js"/>
             </fileset>
         </replaceregexp>
     </target>
@@ -90,7 +96,7 @@
             <regexp pattern="\w+:(Magix\.)?unimpl,?"/>
             <substitution expression=""/>
             <fileset dir="${debug.dir}">
-                <include name="**/*-pkg.js"/>
+                <include name="**/*.js"/>
             </fileset>
         </replaceregexp>
     </target>
@@ -103,6 +109,7 @@
         <loadfile property="tview" srcfile="${mtmpl.dir}/view.js"></loadfile>
         <loadfile property="tvom" srcfile="${mtmpl.dir}/vom.js"></loadfile>
         <loadfile property="tevent" srcfile="${mtmpl.dir}/event.js"></loadfile>
+        <loadfile property="tbody" srcfile="${mtmpl.dir}/body.js"></loadfile>
 
 		 <!--<echo message="${tmagix}"></echo>-->
         <replace dir="${debug.dir}/magix/kissy/magix" token='${tmpl.magix}' value='${tmagix}'/>
@@ -111,6 +118,8 @@
           <replace dir="${debug.dir}/magix/kissy/magix" token='${tmpl.view}' value='${tview}'/>
           <replace dir="${debug.dir}/magix/kissy/magix" token='${tmpl.vom}' value='${tvom}'/>
           <replace dir="${debug.dir}/magix/kissy/magix" token='${tmpl.event}' value='${tevent}'/>
+          <replace dir="${debug.dir}/magix/kissy/magix" token='${tmpl.body}' value='${tbody}'/>
+
     </target>
 
      <!--concat all the files to pkg js-->
@@ -134,7 +143,17 @@
         </concat>
 
     </target>
-
+    <target name="prepare_docsrc">
+        <copy todir="${docsrc.dir}">
+            <fileset dir="${build.dir}/debug" />
+        </copy>
+        <copyfile src="${src.dir}/mxext/kissy/mxext/vfanim.js" dest="${docsrc.dir}/mxext/kissy/mxext/vfanim.js"></copyfile>
+        <delete dir="${docsrc.dir}" includes="**/kissy-magix.js"></delete>
+        <delete dir="${docsrc.dir}" includes="kissy-magix-core.js"></delete>
+        <delete dir="${docsrc.dir}" includes="kissy-mxext.js"></delete>
+        <delete dir="${docsrc.dir}" includes="kissy-magix-mxext.js"></delete>
+        <delete dir="${docsrc.dir}/magix/tmpl"></delete>
+    </target>
     <!--TODO :using google closure linter to validate js files-->
     <target name="gjslint">
       <!--<exec executable="D:\Python25\Scripts\gjslint" dir="${debug.dir}" failonerror="false">-->
@@ -168,8 +187,9 @@
     </target>
     <target name="jsdocgen">
         <taskdef name="jsdoctoolkit" classname="uk.co.darrenhurley.ant.tasks.JsDocToolkit" classpath="${jsdoc.dir}/jsdoc-toolkit-ant-task-1.1.2.jar;${jsdoc.dir}/java/classes/js.jar"></taskdef>
-        <jsdoctoolkit template="mgdoc" jsdochome="${jsdoc.dir}/" outputdir="${output.dir}/" inputdir="${debug.dir}/" encoding="utf-8">
+        <jsdoctoolkit template="mgdoc" jsdochome="${jsdoc.dir}/" outputdir="${output.dir}/" inputdir="${docsrc.dir}/" encoding="utf-8">
         </jsdoctoolkit>
+        <delete dir="${docsrc.dir}"></delete>
     </target>
 
 
@@ -184,5 +204,25 @@
         <delete dir="${debug.dir}" includes="kissy-magix-mxext.js"></delete>
         <delete dir="${debug.dir}/magix/tmpl"></delete>
         <copyfile src="${src.dir}/magix/kissy/magix/magix_start.js" dest="${debug.dir}/magix/kissy/magix/magix_start.js"></copyfile>
+        <copyfile src="${src.dir}/mxext/kissy/mxext/vfanim.js" dest="${debug.dir}/mxext/kissy/mxext/vfanim.js"></copyfile>
+        <copyfile src="${src.dir}/mxext/kissy/mxext/router.js" dest="${debug.dir}/mxext/kissy/mxext/router.js"></copyfile>
+    </target>
+    <target name="copy_file_to_seed">
+        <replaceregexp byline="true">
+            <regexp pattern="\S%DEV%\S" />
+            <substitution expression="false" />
+            <fileset dir="${raw.dir}">
+                <include name="**/*-min.js"/>
+            </fileset>
+        </replaceregexp>
+        <replaceregexp byline="true">
+            <regexp pattern="([\s\S]*?)\/\*_\*\/" />
+            <substitution expression="" />
+            <fileset dir="${raw.dir}">
+                <include name="**/*.js"/>
+            </fileset>
+        </replaceregexp>
+        <copyfile src="${raw.dir}/kissy-magix-mxext.js" dest="${seed.dir}/libs/kissy-magix-mxext.js"></copyfile>
+        <copyfile src="${raw.dir}/kissy-magix-mxext-min.js" dest="${seed.dir}/libs/kissy-magix-mxext-min.js"></copyfile>
     </target>
 </project>

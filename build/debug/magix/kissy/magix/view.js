@@ -3,36 +3,40 @@
  * @author 行列
  * @version 1.0
  */
-KISSY.add('magix/view',function(S,IView,Magix,Event){
-    var counter=1;
+KISSY.add('magix/view',function(S,IView,Magix,Event,Body){
+    
 var safeExec=Magix.safeExec;
-var HAS=Magix.hasProp;
-var EMPTY='';
-var DataHandler="data-handler";
-var VframeTagName;
+var HAS=Magix.has;
 var COMMA=',';
+var EMPTY_ARRAY=[];
+var MxConfig=Magix.config();
+var VName=/^~[^\/]*/;
+var Ud;
+var Mix=Magix.mix;
 /**
  * View类
  * @name View
  * @class
  * @constructor
- * @borrows Event.bind as this.bind
- * @borrows Event.trigger as this.trigger
- * @borrows Event.unbind as this.unbind
+ * @borrows Event.on as this.on
+ * @borrows Event.fire as this.fire
+ * @borrows Event.un as this.un
  * @param {Object} ops 创建view时，需要附加到view对象上的其它属性
  * @property {Object} events 事件对象
- * @property {Boolean} exist 标识当前view是否存在，有没有被销毁
  * @property {String} id 当前view与页面vframe节点对应的id
  * @property {Vframe} owner 拥有当前view的vframe对象
- * @property {String} template 当前view对应的模板字符串(当hasTemplate为true时)，该属性在created事件触发后才存在
- * @property {Boolean} rendered 标识当前view有没有渲染过，即created事件有没有触发过
+ * @property {Object} vom vom对象
+ * @property {Integer} sign view的签名，用于刷新，销毁等的异步标识判断
+ * @property {String} template 当前view对应的模板字符串(当hasTmpl为true时)，该属性在primed事件触发后才存在
+ * @property {Boolean} rendered 标识当前view有没有渲染过，即primed事件有没有触发过
+ * @property {Object} location window.locaiton.href解析出来的对象 
  * @example
  * 关于View.prototype.events:
  * 示例：
  *   html写法：
  *   
- *   &lt;input type="button" mxclick="test:100@id:xinglie@name" value="test" /&gt;
- *   &lt;a href="http://etao.com" mxclick="test:etao.com:_prevent_"&gt;http://etao.com&lt;/a&gt;
+ *   &lt;input type="button" mx-click="test{id:100,name:xinglie}" value="test" /&gt;
+ *   &lt;a href="http://etao.com" mx-click="test&lt;prevent&gt;{com:etao.com}"&gt;http://etao.com&lt;/a&gt;
  *
  *   view写法：
  *   
@@ -44,8 +48,7 @@ var COMMA=',';
  *              //e.targetId 触发事件的dom节点id
  *              //e.events  view.events对象，可访问其它事件对象，如：e.events.mousedown.test
  *              //e.params  传递的参数
- *              //如果在html上写：mxclick="test:etao.com:_prevent_"，用冒号分割的一个字符串，第1个冒号前的表示要调用的方法。当最后一个是_prevent_（调用e.preventDefault）,_stop_（调用e.stopPropagation）,_halt_（阻止默认行为和冒泡）时，丢弃最后一个，把etao.com做为参数传入，可以用e.params[0]获取
- *              //如果是mxclick="test:100@id:xinglie@name"时，可以用e.params.id e.params.name取得相应的值，这样更直观些
+ *              //e.params.com,e.params.id,e.params.name
  *          }
  *      },
  *      mousedown:{
@@ -55,216 +58,91 @@ var COMMA=',';
  *      }
  *   }
  */
-var WrapAsyncUpdateNames='render,renderUI,updateUI'.split(COMMA);
+var WrapAsynUpdateNames=Magix.listToMap('render,renderUI');
+var WrapKey='~~';
+var WrapFn=function(fn){
+    return function(){
+        var me=this;
+        var r;
+        if(me.sign){
+            me.sign++;
+            me.fire('rendercall');
+            r=fn.apply(me,arguments);
+        }
+        return r;
+    }
+};
+
 
 var View=function(ops){
     var me=this;
-    Magix.mix(me,ops);
-    me.exist=true;
-    me.iQ=[];
-    me.iC=0;
-    
-    me.sign=0;//标识view是否刷新过，对于托管的函数资源，在回调这个函数时，不但要确保view没有销毁，而且要确保view没有刷新过，如果刷新过则不回调
+    Mix(me,ops);
+    me.sign=1;//标识view是否刷新过，对于托管的函数资源，在回调这个函数时，不但要确保view没有销毁，而且要确保view没有刷新过，如果刷新过则不回调
 };
 var BaseViewProto=View.prototype;
-var WrapKey='~~';
-var WrapFn=function(fn,update){
-    return function(){
-        var me=this;
-        var args=arguments;
-        me.idle(function(){
-            if(update){
-                me.sign++;
-            }
-            //
-            fn.apply(me,args);
-        },[],me,fn);
-    }
-};
-/*
-    var cases=[
-        'xx\n return ;',
-        'return a',
-        'return {',
-        'return  \r\n',
-        'return{',
-        'return(',
-        'return[',
-        'return   {',
-        'return      [',
-        'return    (',
-        'return;',
-        'return\r\n',
-        'return/\\s+/',
-        'var returned',
-        'xreturn a',
-        'return ""',
-        'return""',
-        'return\'\'',
-        'return \'\''
-    ];
- */
-var ReturnedReg=/(?:^|\s)return(?:(?:\s+[+\-\w$'"{\[\(\/])|[+\-{\[\(\/'"])/;
-var FnBodyReg=/{([\s\S]+)}/;
-var TransReg=/\\[\s\S]/g;
-var LS=/\s*\/\s*/g;
-var SpaceReg=/^[\s\xa0\u3000\uFEFF]*$/;
-var Trims=[
-    /[^\w$_]\/[\s\S]*?\//,//简单识别正则
-    /(?:'[^']*')|(?:"[^"]*")/,//简单识别字符串
-    /{[^{}]+}/ //简单识别大括号
-]
-/*
-    识别函数有没有返回值
-    思路：
-        考虑这样的函数：
-        function test(){
-            function inner(){
-                return true;
-            }
-            var r=inner();
-        }
-    我们不能简单判断函数体内是否有return，考虑上面的函数，有可能里面内部的函数有return 外面的没有return
-    解决办法是把函数体拿出来
-    去掉所有成对出现的{}及它们之间的内容
-    然后再识别剩下的是否有return
-
-    function test(){
-        function a(){
-            return 'xxx{'
-        }
-        var e;
-    }
-
-    像上面的这种其实会识别错误，但这样的情况出现的很少
-    也不是所有的方法都需要进行idle包装，因此忽略
-
-    2012.11.22
-    对于上面的情况，我们最好修正下，防止隐患
-    修改方案为：
-    先去掉 \后跟的字符，去掉转义的（这样也会去掉正则里面的）
-    去除字符串
-    去除大括号
-    最后判断
-
-    Y的 还有个正则
-
-    function(){
-        function a(){
-          var a=/\r\n\\"\//;
-            return '\r\n\\\' return xxx{'
-        }
-        var e;
-    }
-
-    把正则跟字符串一起处理了
- */
-var ReturnedSthOrEmpty=function(fn){
-    fn=String(fn);
-    var body=fn.match(FnBodyReg);
-    if(body){
-        body=body[1];
-        if(SpaceReg.test(body))return true;
-        body=body.replace(TransReg,EMPTY).replace(LS,EMPTY);
-        for(var i=0,reg;i<Trims.length;i++){
-            reg=Trims[i];
-            while(reg.test(body)){
-                body=body.replace(reg,EMPTY);
-            }
-        }
-        return ReturnedReg.test(body);
-    }
-    return false;
-};
-Magix.mix(View,{
+Mix(View,{
     /**
      * @lends View
      */
     /**
-     * 给dom节点添加id
-     * @param {HTMLElement} dom html节点
-     * @return {String} 节点id
-     * @private
-     */
-    idIt:function(dom){
-        return dom.id||(dom.id='magix_mxe_'+(counter++));
-    },
-    /**
      * 对异步更新view的方法进行一次包装
      * @private
      */
-    wrapAsyncUpdate:function(){
+    wrapAsyn:function(){
         var view=this;
         if(!view[WrapKey]){//只处理一次
             view[WrapKey]=1;
             var prop=view.prototype;
             var old;
-            view.registerAsyncUpdateName();
             for(var p in prop){
                 old=prop[p];
                 var wrap=null;
-                //包装function时，需要规避有返回内容的函数，有返回的通常都需要同步调用，因此不能包装
-                if(Magix.isFunction(old)&&old!=Magix.noop&&!old[WrapKey]&&!ReturnedSthOrEmpty(old)){
-                    if(HAS(view.$ans,p)){
-                        wrap=WrapFn(old,true);
-                    }else if(HAS(prop,p)&&!HAS(BaseViewProto,p)){//对继承的原型上的方法进行处理，不对基类里面的处理
-                        wrap=WrapFn(old);
-                    }
-                    if(wrap){
-                        wrap[WrapKey]=old;
-                        prop[p]=wrap;
-                    }
+                if(Magix.isFunction(old)&&
+                    old!=Magix.noop&&
+                    !old[WrapKey]&&
+                    HAS(WrapAsynUpdateNames,p)
+                ){
+                    wrap=WrapFn(old);
+                    wrap[WrapKey]=old;
+                    prop[p]=wrap;
                 }
             }
         }
-    },
-    /**
-     * 注册view类中哪些方法是异步更新的方法，默认已注册render renderUI updateUI三个方法
-     * @param {Array|String} names 方法名字符串或字符串数组
-     * @see View#beginAsyncUpdate
-     */
-    registerAsyncUpdateName:function(names){
-        var me=this;
-        if(!me.$ans){
-            me.$ans={};
-            for(var i=0;i<WrapAsyncUpdateNames.length;i++){
-                me.$ans[WrapAsyncUpdateNames[i]]=true;
-            }
-        }
-        if(names){
-            if(!Magix.isArray(names))names=[names];
-            for(var i=0;i<names.length;i++){
-                me.$ans[names[i]]=true;
-            }
-        }
-        return me;
     }
 });
 
-var UnsupportBubble={
-    submit:1,
-    blur:1,
-    focus:1,
-    focusin:1,
-    focusout:1,
-    mouseenter:1,
-    mouseleave:1,
-    mousewheel:1,
-    valuechange:1
-};
+
 var VProto=View.prototype;
-var D=document;
-var WIN=window;
-var CollectGarbage=WIN.CollectGarbage||Magix.noop;
-
-var DestroyManagedTryList='abort,stop,cancel,destroy,dispose'.split(COMMA);
-var $=function(id){
-    return typeof id=='object'?id:D.getElementById(id);
+var CollectGarbage=window.CollectGarbage||Magix.noop;
+var MxEvent=/\smx-[^ohv][a-z]+\s*=/g;
+var WEvent={
+    prevent:function(e){
+        e=e||this.domEvent;
+        if(e.preventDefault){
+            e.preventDefault();
+        }else{
+            e.returnValue=false;
+        }
+    },
+    stop:function(e){
+        e=e||this.domEvent;
+        if(e.stopPropagation){
+            e.stopPropagation();
+        }else{
+            e.cancelBubble=true;
+        }
+    },
+    halt:function(e){
+        this.prevent(e);
+        this.stop(e);
+    }
 };
+var EvtInfoReg=/(\w+)(?:<(\w+)>)?(?:{([\s\S]*)})?/;
+var EvtParamsReg=/(\w+):([^,]+)/g;
 
-Magix.mix(VProto,Event);
+Mix(VProto,Event);
 
-Magix.mix(VProto,{
+Mix(VProto,{
     /**
      * @lends View#
      */
@@ -274,19 +152,7 @@ Magix.mix(VProto,{
      * @param {String} path 路径
      * @param {Function} fn 获取完成后的回调
      */
-    getTmplByXHR:Magix.unimpl,
-    /**
-     * 代理不冒泡的事件
-     * @function
-     * @private
-     */
-    delegateUnbubble:Magix.unimpl,
-    /**
-     * 取消代理不冒泡的事件
-     * @function
-     * @private
-     */
-    undelegateUnbubble:Magix.unimpl,
+    
     /**
      * 渲染view，供最终view开发者覆盖
      * @function
@@ -298,16 +164,33 @@ Magix.mix(VProto,{
      * @param {Object} e 事件对象
      * @param {Object} e.location window.location.href解析出来的对象
      * @param {Object} e.changed 包含有哪些变化的对象
+     * @param {Function} e.prevent 阻止向所有子view传递locationChange的消息
+     * @param {Function} e.toChildren 向特定的子view传递locationChange的消息
+     * @example
+     * //example1
+     * locationChange:function(e){
+     *     if(e.changed.isPathname()){//pathname的改变
+     *         //...
+     *         e.prevent();//阻止向所有子view传递改变的消息
+     *     }
+     * }
+     *
+     * //example2
+     * locationChange:function(e){
+     *     if(e.changed.isParam('menu')){//menu参数发生改变
+     *         e.toChildren('magix_vf_menus');//只向id为 magix_vf_menus的view传递这个消息
+     *     }
+     * }
+     *
+     * //example3
+     * //当不调用e的阻止或指定子view时，默认向所有子view传递消息
+     * locationChange:function(e){
+     *     //...
+     * }
      */
     locationChange:Magix.noop,
     /**
-     * 用于接受其它view通过postMessageTo方法发来的消息，供最终的view开发人员进行覆盖
-     * @function
-     * @param {Object} e 通过postMessageTo传递的第二个参数
-     */
-    receiveMessage:Magix.noop,
-    /**
-     * 初始化方法，供最终的view开发人员进行覆盖，注意：不要在该方法内进行异步数据获取，init仅适用于事件绑定等(init何时被调用？init在view进行一系列的初始化后，在view的created事件后被调用，此时已完成界面的创建。为什么要设计的这么靠后？view没被创建出来前，是不能做其它动作的，如果在此之前调用了init，而用户可以在init中做其它的动作，假设view还未创建完成就销毁，会给销毁带来一定的麻烦)
+     * 初始化方法，供最终的view开发人员进行覆盖
      * @function
      */
     init:Magix.noop,
@@ -315,9 +198,9 @@ Magix.mix(VProto,{
      * 标识当前view是否有模板文件
      * @default true
      */
-    hasTemplate:true,
+    hasTmpl:true,
     /**
-     * 是否启用DOM事件(events对象指定的事件是否生效)，注意：如果初始化时就为false则不注册代理事件，后续无法通过enableEvent=true启用事件。
+     * 是否启用DOM事件(events对象指定的事件是否生效)
      * @default true
      * @example
      * 该属性在做浏览器兼容时有用：支持pushState的浏览器阻止a标签的默认行为，转用pushState，不支持时直接a标签跳转，view不启用事件
@@ -329,163 +212,17 @@ Magix.mix(VProto,{
      * view刷新时是否采用动画
      * @type {Boolean}
      */
-    enableRefreshAnim:false,
+    enableAnim:false,
     /**
      * 加载view内容
      * @private
      */
-    load:function(Vf){
-        if(!VframeTagName){
-            VframeTagName=Vf.tagName.toUpperCase();
-        }
+    load:function(){
         var me=this;
-        //if(me.$loaded)return;
-        //me.$loaded=true;
-        var hasTemplate=me.hasTemplate;
+        var hasTmpl=me.hasTmpl;
+        var args=arguments;
         var ready=function(){
-            //me.owner.owner.suspend();
-            me.suspend();
-            /*
-                挂起后render方法无法立即执行
-             */
-            safeExec(me.init,[],me);
-            safeExec(me.render,[],me);
-            /*
-                为什么要挂起？下面的代码为什么要放在idle的回调里面？
-
-                <vframe id="magix_vf_root">
-                    <## <vframe id="magix_vf_1" data-view="..."></vframe> ##>
-                </vframe>
-                
-                <## ##>表示是magix_vf_root的view载入后，通过setViewHTML添加的
-
-                在magix_vf_root的render中，如果要调用postMessageTo向vf_1发消息，vf_1接受不到，因为set完后，Vframe还没有建立起相应的vframe对象：
-                
-                用户重写了render方法：
-
-                    代理冒泡事件
-                        |
-                    通知准备完成（vframe接收，有模板时见@1，如果view无模板时见@2）
-                        |
-                    调用init初始化
-                        |
-                    调用render方法（有可能调用setViewHTML方法）
-                        |
-                    调用下面的匿名函数（函数内有判断是否调用了setViewHTML方法）
-
-                @1 用户重写了render方法后，vframe接收ready事件：
-                    
-                    interact
-                        |
-                    //加载子view(此时尚未有内容，所以暂时找不到子view)
-                        |
-                    绑定prerender与rendered事件
-                        |
-                    当view调用setViewHTML方法后则后续正常执行
-                
-                @2
-                     interact
-                        |
-                     加载子view（模板在页面上，所以会执行，有子view时则加载）
-                        |
-                     绑定prerender与rendered事件
-
-                用户未重写render方法：
-                    
-                    调用render空方法
-                        |
-                    代理冒泡事件
-                        |
-                    通知创建完成（vframe接收，有模板时见@1，如果view无模板时见@2）
-                        |
-                    调用init初始化
-                        |
-                    调用下面的匿名函数（函数内有判断是否调用了setViewHTML方法）
-
-                如果在view render中要访问其它vframe时，应放在idle回调内，如：
-
-                me.idle(funciton(){
-                    VOM.getVframe('magix_vf_2');
-                });
-
-                其它常用方法如postMessageTo则不需要放在idle的回调内（view中已处理）
-
-
-                以上是对于有缓存的view，比如调用render方法时，是同步渲染出来的。
-
-                #2012.11.25
-                  cache:ready->(vframe.loadSubVframes)->render(postMessage,idle)->setViewHTML->(prerender,rendered)->(unload,loadSubVframes)->resume;
-                  nocache:ready->(vframe.loadSubVframes)->render(async back[postMessage idle])->resume()
-                          tmplReady->setViewHTML->(prerender,rendered)->(unload,loadSubVframes)->postMessage idle
-
-             */
-            me.delegateBubbleEvents();
-            me.idle(function(){
-                //
-                
-                var noTemplateAndNoRendered=!hasTemplate&&!me.rendered;//没模板，调用render后，render里面也没调用setViewHTML
-
-                if(noTemplateAndNoRendered){//监视有没有在调用render方法内使用setViewHTML更新view，对于没有模板的view，是不需要调用的，此时我们需要添加不冒泡的事件处理，如果调用了，则在setViewHTML中处理，首次就不再处理了，只有冒泡的事件才适合在首次处理
-                    me.delegateUnbubbleEvents();
-                    me.rendered=true;
-                }
-                /*
-                    关于view init调用时间点：
-                    view 无模板文件 ：new -> base ctor -> view ctor -> load -> init-> interact -> render   -> created 
-                    
-                    view 有模板无缓存：new -> base cotr ->  view ctor -> load -> getTmpl -> init -> interact -> render(同步调用setViewHTML) -> setViewHTML -> prerender -> rendered -> created
-                    
-                    view 有模板无缓存：new -> base cotr ->  view ctor -> load -> getTmpl -> init -> interact -> render(异步调用setViewHTML) -> setViewHTML -> prerender -> rendered -> created 
-
-
-                    view 有模板有缓存 new -> base ctor -> view ctor -> load -> getTmpl -> init  -> interact -> render(同步调用setViewHTML) -> prerender -> rendered -> created
-
-                    view 有模板有缓存 new -> base ctor -> view ctor -> load -> getTmpl -> -> init interact -> render(异步调用setViewHTML) -> setViewHTML -> prerender -> rendered  -> created 
-
-
-                    init受getTmpl方法的影响，在开发app时，获取模板是异步的，因此init是在获取完模板后才被调用的，那么在这个等待过程中，有locationChange或其它事件发生怎么办？
-
-                    return MxView.extend({
-                        init:function(){
-                            this.observeLocation('page,rows');
-                        },
-                        locationChange:function(){
-                            this.render();
-                        },
-                        render:function(){
-                            //...
-                        }
-                    });
-
-                    比如这样，我监控page和rows这2个参数的改变，有改变时重新渲染，当获取模板时间较长，而此时其它参数有变化（page rows没有变化），因init方法中指定监控的参数还未生效，此时会引起这个view的locationChange方法被调用，render会被多调用一次，但这不影响最终渲染的结果，一旦发布上线模板与js文件打包在一起时，获取模板的过程就是同步的了，也就不会再有这个重复渲染的问题，当然如果您介意这个问题，可以这样解决：
-
-                    return MxView.extend({
-                        locationChange:function(){
-                            this.render();
-                        },
-                        render:function(){
-                            //...
-                        }
-                    },funciton(){//在构造方法内进行监控，而不是在init方法内
-                        this.observeLocation('page,rows')
-                    });
-
-                    init方法为什么会设计的这么靠后？
-
-                    view没被创建出来前，是不能做其它动作的，如果在此之前调用了init，而用户可以在init中做其它的动作，假设view还未创建完成就销毁，会给销毁带来一定的麻烦
-
-                 */
-                
-                //me.trigger('complete',null,true);//完成
-                if(noTemplateAndNoRendered){
-                    me.trigger('created',null,true);//created事件只触发一次
-                }
-                /*var mxConfig=Magix.config();
-                var fn=mxConfig.viewLoad;
-                if(Magix.isFunction(fn)){
-                    safeExec(fn,{name:me.viewName,location:me.getLocation()});
-                }*/
-            });
+            me.delegateEvents();
             /*
                 关于interact事件的设计 ：
                 首先这个事件是对内的，当然外部也可以用，API文档上就不再体现了
@@ -493,15 +230,24 @@ Magix.mix(VProto,{
                 interact : view准备好，让外部尽早介入，进行其它事件的监听 ，当这个事件触发时，view有可能已经有html了(无模板的情况)，所以此时外部可以去加载相应的子view了，同时要考虑在调用render方法后，有可能在该方法内通过setViewHTML更新html，所以在使用setViewHTML更新界面前，一定要先监听prerender rendered事件，因此设计了该  interact事件
 
              */
-            me.trigger('interact',{tmpl:hasTemplate},true);//可交互
-            me.resume();
-            //me.owner.owner.resume();
+            me.fire('interact',{tmpl:hasTmpl},1);//可交互
+            safeExec(me.init,args,me);
+            safeExec(me.render,EMPTY_ARRAY,me);
+            //
+            var noTemplateAndNoRendered=!hasTmpl&&!me.rendered;//没模板，调用render后，render里面也没调用setViewHTML
+
+            if(noTemplateAndNoRendered){//监视有没有在调用render方法内使用setViewHTML更新view，对于没有模板的view，是不需要调用的，此时我们需要添加不冒泡的事件处理，如果调用了，则在setViewHTML中处理，首次就不再处理了，只有冒泡的事件才适合在首次处理
+                me.rendered=true;
+                me.fire('primed',null,1);//primed事件只触发一次
+            }
         };
-        if(hasTemplate){
-            me.getTemplate(me.manage(function(tmpl){//模板获取也是异步的，防止模板没取回来时，view已经销毁或刷新了
-                me.template=tmpl;
-                ready();
-            }));
+        if(hasTmpl&&!me.template){
+            var sign=me.sign;
+            me.planTmpl(function(){//模板获取也是异步的，防止模板没取回来时，view已经销毁
+                if(sign==me.sign){
+                    ready();
+                }
+            });
         }else{
             ready();
         }
@@ -512,167 +258,133 @@ Magix.mix(VProto,{
      */
     updateViewId:function(){
         var me=this;
-        if($(me.vId)){
+        if(me.$(me.vId)){
             me.id=me.vId;
         }else{
             me.id=me.vfId;
         }
     },
     /**
-     * 设置view节点的html内容，供子类重写
-     * @param {Strig} html html字符串
+     * @private
      */
-    setNodeHTML:function(html){
+    beginUpdateHTML:function(){
         var me=this;
-        $(me.id).innerHTML=html;
+        if(me.sign){
+            var isRendered=me.rendered;
+            if(isRendered){//渲染过才使用动画
+                var enableAnim=me.enableAnim;//
+                //me.fire('refresh',null,true,true);//从最后注册的事件一直清到最先注册的事件
+                me.fire('refresh',0,1);
+                me.fire('prerender',{anim:enableAnim});
+                var owner=me.owner;
+                if(enableAnim){
+                    safeExec(owner.oldViewDestroy,EMPTY_ARRAY,owner);
+                    safeExec(owner.prepareNextView,EMPTY_ARRAY,owner);
+                    me.updateViewId();
+                }
+            }
+        }
+    },
+    /**
+     * @private
+     */
+    endUpdateHTML:function(){
+        var me=this;
+        if(me.sign){
+            if(me.rendered&&me.enableAnim){
+                safeExec(owner.newViewCreated,EMPTY_ARRAY,owner);
+            }
+            if(!me.rendered){//触发一次primed事件
+                me.fire('primed',null,1);
+            }
+            me.rendered=true;
+            me.fire('rendered');//可以在rendered事件中访问view.rendered属性
+            CollectGarbage();
+        }
+    },
+    /**
+     * @private
+     */
+    wrapMxEvent:function(html){
+        return html?String(html).replace(MxEvent,' mx-owner="'+this.vfId+'"$&'):html;
     },
     /**
      * 设置view的html内容
      * @param {Strig} html html字符串
      */
-    setViewHTML:function(param){
-        var me=this;
-        if(me.exist){
-            var isRendered=me.rendered;
-            if(isRendered){//渲染过才使用动画
-                var mxConfig=Magix.config();
-                var enableAnim=mxConfig.viewChangeAnim&&me.enableRefreshAnim;//
-                me.trigger('refresh',null,true,true);//从最后注册的事件一直清到最先注册的事件
-                me.trigger('prerender',{anim:enableAnim});
-                me.destroyManaged(true);
-                me.undelegateUnBubbleEvents();
-                //me.destroyFrames();
-                var owner=me.owner;
-                if(enableAnim){
-                    safeExec(owner.oldViewDestroy,[],owner);
-                    safeExec(owner.prepareNextView,[],owner);
-                    me.updateViewId();
-                }
-            }
-            me.setNodeHTML(param);
-            CollectGarbage();
-            if(enableAnim){
-                safeExec(owner.newViewCreated,[],owner);
-            }
-            me.delegateUnbubbleEvents();
-            me.rendered=true;
-            me.trigger('rendered');//可以在rendered事件中访问view.rendered属性
-            if(!isRendered){//触发一次created事件
-                me.trigger('created',null,true);
-            }
-        }
-    },
-    /**
-     * 向某个view发送消息
-     * @param {Array|String} aims  发送的目标id或id数组
-     * @param {Object} args 消息对象
+    /*
+        1.首次调用：
+            setNodeHTML -> delegate unbubble events -> rendered(事件) -> primed(事件)
+
+        2.再次调用
+            refresh(事件) -> prerender(事件) -> undelegate unbubble events -> anim... -> setNodeHTML -> delegate unbubble events -> rendered(事件)
+
+        当prerender、rendered事件触发时，在vframe中
+
+        prerender : unloadSubVframes
+
+        rendered : loadSubVframes
      */
-    postMessageTo:function(aims,args){
+    setViewHTML:function(html){
         var me=this;
-        var vom=me.ownerVOM;
-        me.idle(vom.postMessage,[aims,args],vom);
+        me.beginUpdateHTML();
+        if(me.sign){
+            me.$(me.id).innerHTML=me.wrapMxEvent(html);
+        }
+        me.endUpdateHTML();
     },
     /**
-     * 当view处于闲置状态时回调传入的fn
-     * @param {Function} fn 闲置时的回调函数
-     * @param {Array} [args] 参数
-     * @param {Object} [context] fn内this指向
+     * 指定要监视地址栏中的哪些值有变化时，或pathname有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
+     * @param {Array|String|Object} args  数组字符串或对象
      * @example
-     * //idle的应用场景：
-     *
-     * update:function(){
-     *      var loc=this.getLocation();
-     *      
-     * }
-     * //...
-     * click:{
-     *      create:function(e){
-     *          Router.navigate({a:'b',c:'d'});//此处的更改是异步的
-     *          e.view.update();//在0.3版的magix中，这样写在update方法内无法立即得到a的值
-     *      }
-     * }
-     * //上面create中安全的使用方式是这样的：
-     * Router.navigate({a:'b',c:'d'});
-     * e.view.idle(function(){
-     *      e.view.update();
-     * });
-     *
-     * //但是这样的书写明显会带来不方便，需要开发者明白哪些地方是异步的，哪些地方是同步的
-     * //所以view会对原型链上的方法进行一次处理，magix 1.0版自动帮你包装一下相关的方法，包装后：
-     *
-     * Router.navigate({a:'b',c:'d'});
-     * e.view.update();//此update是包装后的方法，会等到Router修改完成url后才调用
-     *
-     * //view在包装原型链上的方法时，对明确有返回值的方法不进行包装
-     * //因此下面的情景并不能自动处理，您需要手动判断：
-     *
-     * getParams:function(){
-     *      var loc=this.getLocation();
-     *      //...
-     *      return newLocParams;//该方法有返回值，无法异步调用
-     * }
-     * //...
-     * click:{
-     *      create:function(e){
-     *          Router.navigate({a:'b',c:'d'});//此处的更改是异步的
-     *          var params=e.view.getParams();//无法在getParams方法内部拿到最新的a和c的值
-     *          //对于上面这一行需要修改成：
-     *          e.view.idle(function(){
-     *              var params=e.view.getParams();
+     * return View.extend({
+     *      init:function(){
+     *          this.observeLocation('page,rows');//关注地址栏中的page rows2个参数的变化，当其中的任意一个改变时，才引起当前view的locationChange被调用
+     *          this.observeLocation({
+     *              pathname:true//关注pathname的变化
      *          });
-     *          //对于getParams方法如果内部没有访问location也是不需要在idle回调中执行的
-     *          
+     *          //也可以写成下面的形式
+     *          //this.observeLocation({
+     *          //    keys:['page','rows'],
+     *          //    pathname:true
+     *          //})
+     *      },
+     *      locationChange:function(e){
+     *          if(e.changed.isParam('page')){};//检测是否是page发生的改变
+     *          if(e.changed.isParam('rows')){};//检测是否是rows发生的改变
      *      }
-     * }
-     *
-     * //magix已经尽最大可能解决掉了异步问题，而在项目中一般很少出现上面的情景
-     * //因此您不需要考虑每个动作都放在idle里面，出现问题了再考虑
-     *
-     * //在方法内如果没有访问location也是不需要在idle回调中执行的
-     * //忘掉这个方法的存在吧~~
-     *
-     * //
+     * });
      */
-    idle:function(fn,args,context,anchor){
-        var me=this;
-        if(!anchor)anchor=fn;
-        var id=WrapKey+'_id_';
-        var v=anchor[id];
-        var iQ=me.iQ;
-        
-        if(me.iC){
-            if(!v)v=anchor[id]=WrapKey+(counter++);
-            else if(iQ[v]){
-                /*for(var i=0;i<iQ.length;i++){
-                    if(iQ[i][3]===anchor){
-                        iQ.splice(i,1);
-                        break;
-                    }
-                }*/
-                
-                iQ[v][id]=id;
-            }
-            iQ.push([fn,args,context,anchor]);
-            iQ[v]=fn;
-        }else if(fn[id]!=id){
-            me.ownerVOM.idle(function(){//在应用中，有可能是在异步中回调，为了防止应用中没有做判断，所以在此做下判断，只有view存在的情况下才调用
-                if(me.exist){
-                    if(v){
-                        delete iQ[v];
-                    }
-                    safeExec(fn,args,context);
-                }
-            });
+    observeLocation:function(args){
+        var me=this,loc;
+        if(!me.$ol)me.$ol={keys:[]};
+        loc=me.$ol;
+        var keys=loc.keys;
+        if(Magix.isObject(args)){
+            loc.pn=args.pathname;
+            args=args.keys;
+        }
+        if(args){
+            loc.keys=keys.concat(Magix.isString(args)?args.split(COMMA):args);
         }
     },
     /**
-     * 获取window.location.href解析后的对象
-     * @return {Object}
+     * 指定监控地址栏中pathname的改变
+     * @example
+     * return View.extend({
+     *      init:function(){
+     *          this.observePathname();//关注地址栏中pathname的改变，pathname改变才引起当前view的locationChange被调用
+     *      },
+     *      locationChange:function(e){
+     *          if(e.changed.isPathname()){};//是否是pathname发生的改变
+     *      }
+     * });
      */
-    getLocation:function(){
+    /*observePathname:function(){
         var me=this;
-        return me.ownerVOM.$location;
-    },
+        if(!me.$loc)me.$loc={};
+        me.$loc.pn=true;
+    },*/
     /**
      * 指定要监视地址栏中的哪些值有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
      * @param {Array|String} keys            key数组或字符串
@@ -680,41 +392,30 @@ Magix.mix(VProto,{
      * @example
      * return View.extend({
      *      init:function(){
-     *          this.observeLocation('page,rows',true);//关注地址栏中的page rows2个参数的变化，并且关注pathname的改变，当其中的任意一个改变时，才引起当前view的locationChange被调用
+     *          this.observeParams('page,rows');//关注地址栏中的page rows2个参数的变化，当其中的任意一个改变时，才引起当前view的locationChange被调用
      *      },
      *      locationChange:function(e){
      *          if(e.changed.isParam('page')){};//检测是否是page发生的改变
      *          if(e.changed.isParam('rows')){};//检测是否是rows发生的改变
-     *          if(e.changed.isPathname()){};//是否是pathname发生的改变
      *      }
      * });
      */
-    observeLocation:function(keys,observePathname){//区分params与pathname
+    /*observeParams:function(keys){
         var me=this;
-        var args=arguments;
-        var len=args.length;
-        if(len){
-            if(len==1){
-                observePathname=false;
-            }
-            me.$location={
-                keys:Magix.isArray(keys)?keys:String(keys).split(COMMA),
-                pn:observePathname
-            };
-        }
-    },
+        if(!me.$loc)me.$loc={};
+        me.$loc.keys=Magix.isArray(keys)?keys:String(keys).split(COMMA);
+    },*/
     /**
      * 检测通过observeLocation方法指定的key对应的值有没有发生变化
-     * @param {Object} e Router.locationChanged事件对象
+     * @param {Object} changed 对象
      * @return {Boolean} 是否发生改变
      * @private
      */
-    testOLChanged:function(e){
+    olChanged:function(changed){
         var me=this;
-        var location=me.$location;
-        var changed=e.changed;
+        var location=me.$ol;
         if(location){
-            var res=false;
+            var res=0;
             if(location.pn){
                 res=changed.isPathname();
             }
@@ -724,7 +425,7 @@ Magix.mix(VProto,{
             }
             return res;
         }
-        return true;
+        return 1;
     },
     /**
      * 销毁当前view内的iframes 
@@ -752,11 +453,11 @@ Magix.mix(VProto,{
      */
     destroy:function(){
         var me=this;
-        me.trigger('refresh',null,true,true);//先清除绑定在上面的app中的刷新
-        me.trigger('destroy',null,true,true);//同上
-        me.destroyManaged();
-        me.undelegateUnBubbleEvents();
-        me.undelegateBubbleEvents();
+        //me.fire('refresh',null,true,true);//先清除绑定在上面的app中的刷新
+        me.fire('refresh',0,1);
+        me.fire('destroy',0,1,1);//同上
+        
+        me.delegateEvents(1);
         //if(!keepContent){
             //me.destroyFrames();
             //var node=$(me.vfId);
@@ -765,37 +466,41 @@ Magix.mix(VProto,{
             //}
         //}
         
-        //me.unbind('prerender',null,true); 销毁的话也就访问不到view对象了，这些事件不解绑也没问题
-        //me.unbind('rendered',null,true);
-        me.exist=false;
-        me.iQ=[];
-        me.sign++;
+        //me.un('prerender',null,true); 销毁的话也就访问不到view对象了，这些事件不解绑也没问题
+        //me.un('rendered',null,true);
+        me.sign=0;
         //
+    },
+    /**
+     * 获取渲染当前view的父view
+     * @return {View}
+     */
+    parentView:function(){
+        var me=this,vom=me.vom,owner=me.owner;
+        var pVframe=vom.get(owner.pId),r=null;
+        if(pVframe&&pVframe.viewUsable){
+            r=pVframe.view;
+        }
+        return r;
     },
     /**
      * 获取当前view对应的模板
      * @param {Function} fn 取得模板后的回调方法
      */
-    getTemplate:function(fn){
+    planTmpl:function(fn){
         var me=this;
-        if(me.template){
-            fn(me.template);
+        var tmpl=Magix.tmpl(me.path);
+        if(tmpl===Ud){
+            var isDebug=MxConfig.debug;
+            var suffix='.html';
+            var path=me.home+me.path.replace(VName,'')+suffix;
+            me.fetchTmpl(path,function(t){
+                me.template=Magix.tmpl(me.path,t);
+                fn();
+            },isDebug);
         }else{
-            var tmpl=Magix.templates[me.viewName];
-            if(tmpl){
-                fn(tmpl);
-            }else{
-                var mxConfig=Magix.config();
-                var isReleased=mxConfig.release;
-                var suffix='.html';
-                var path=mxConfig.appHome+me.viewName+suffix;
-                if(!isReleased){
-                    path+='?_='+new Date().getTime()+suffix;
-                }
-                me.getTmplByXHR(path,function(tmpl){
-                    fn(Magix.templates[me.viewName]=tmpl);
-                });
-            }
+            me.template=tmpl;
+            fn();
         }
     },
     /**
@@ -805,171 +510,39 @@ Magix.mix(VProto,{
      */
     processEvent:function(e){
         var me=this;
-        if(me.enableEvent&&me.exist){
-            var target=e.target;
-            while(target&&target.nodeType!=1){
-                target=target.parentNode;
-            }
-            var current=target;
-            var type='mx'+e.type;
-            var info;//=current.getAttribute(type);
-            var node=$(me.vfId);
-            var handle;
+        if(me.enableEvent&&me.sign){
+            var info=e.info;
+            var domEvent=e.se;
 
-            /*
-                <vframe id="magix_main">
-                    <button mxclick="change"> change </button>
-                    <vframe id="magix_vf1">
-                        <button mxclick="change"> change </button>
-                    </vframe>
-                </vframe>
-                
-                vf1:
-                    events:{
-                        click:{
-                            change:function(e){
-                                alert(e);
-                            }
-                        }
-                    }
-                
-                main:
-                    events:{
-                        click:{
-                            change:function(e){
-                                alert(e);
-                            }
-                        }
-                    }
-                问题：1.因为事件的冒泡，vf1中的click完成后会冒到main中，导致main中的也会触发
-                      2.假设vf1中没有events，没有处理函数，而vf1的html中有mxclick并且它的名称change跟main中的click处理名称一样，这样main中的也会被触发
-
-                现阶段的方案是这样的：
-                    冒泡是保留的，这样会方便第三方组件，比如点击某处后弹出菜单关闭等
-                    所以就要想办法识别当前点击的是属于自已处理范围，vframe只处理只身，不包括子view的事件
-
-                新引入的特性：
-                    针对上述问题，处理后就能达到事件虽然冒泡，但处理时以最近的vframe进行处理，当我们需要vf1中的mx事件占位需要在main中处理时，可以使用data-handler来进行指定在哪个vframe中进行处理，示例代码如下：
-
-                <vframe id="magix_main">
-                    <button mxclick="change"> change </button>
-                    <vframe id="magix_vf1">
-                        <button mxclick="change" data-handler="magix_main"> change </button>
-                    </vframe>
-                </vframe>
-
-                通过data-handler指定由哪个vframe进行处理
-
-                跨vframe事件处理，只能是嵌套关系，只能由子级指定父级（只能向上指定）
-
-                当指定后，只能由指定的vframe处理，比如上面的 data-handler="magix_main"之后，只能在magix_main中处理change事件，如果您需要在vf1和main中都处理这个事件，可以这样写：
-
-                data-handler="magix_main,magix_vf1" 用逗号割开，需要注意的是，处理顺序取决于事件冒泡顺序，也就是说vf1先处理main后处理，并不取决于您写 data-handler 的顺序
-
-             */
-
-            while(current&&current!=node){//跨vframe的咱也不处理
-                info=current.getAttribute(type);
-                if(info){
-                    break;
-                }else{
-                    current=current.parentNode;
+            var m=info.match(EvtInfoReg);
+            var evtName=m[1];
+            var flag=m[2];
+            var infos=m[3];
+            var events=me.events;
+            if(events){
+                var eventsType=events[domEvent.type];
+                if(WEvent[flag]){
+                    WEvent[flag](domEvent);
                 }
-            }
-            if(info){
-                handle=current.getAttribute(DataHandler);
-                if(!handle){
-                    var begin=current;
-                    while(begin&&begin!=node){
-                        if(begin.tagName.toUpperCase()==VframeTagName){
-                            current.setAttribute(DataHandler,begin.id);
-                            info=0;
-                            break;
-                        }else{
-                            begin=begin.parentNode;
-                        }
-                    }
-                    if(info){
-                        current.setAttribute(DataHandler,me.vfId);
-                    }
-                }else if(!~[COMMA,handle,COMMA].join().indexOf(COMMA+me.vfId+COMMA)){
-                    info=0;
-                }
-            }
-            /*var begin=current;
-            while(begin!=node){
-                if(begin.tagName==node.tagName){
-                    info=0;
-                }
-                begin=begin.parentNode;
-            }*/
-            if(info){
-                var infos=info.split(':');
-                var evtName=infos.shift();
-                var flag=infos[infos.length-1];
-                var needPop;
-                var id=View.idIt(current);
-                /*
-                    考虑到与第三方组件集成，所以暂试点取消事件冒泡的功能
-                    @2012.11.30 对于弹出层内删除节点的问题，似乎只有取消冒泡能解决，所以还是恢复原来的样子，晕哦
-                 */
-                if(flag=='_halt_'||flag=='_stop_'){
-                    e.stopPropagation();
-                    needPop=true;
-                }
-                if(flag=='_halt_'||flag=='_prevent_'){
-                    e.preventDefault();
-                    needPop=true;
-                }
-                if(needPop)infos.pop();
-
-                var events=me.events;
-                var eventsType=events[e.type];
-                //
-                for(var i=0,atPos;i<infos.length;i++){
-                    atPos=infos[i].lastIndexOf('@');
-                    if(atPos>-1){
-                        infos[infos[i].substring(atPos+1)]=infos[i].substring(0,atPos);
-                    }
-                }
-                if(eventsType[evtName]){
-                    safeExec(eventsType[evtName],{
-                        view:me,
-                        currentId:id,
-                        targetId:View.idIt(target),
-                        domEvent:e,
-                        events:events,
-                        params:infos
-                    },eventsType);
+                if(eventsType&&eventsType[evtName]){
                     
+                    var params={};
+                    if(infos){
+                        infos.replace(EvtParamsReg,function(m,a,b){
+                            params[a]=b;
+                        });
+                    }
+                    safeExec(eventsType[evtName],Mix({
+                        view:me,
+                        currentId:e.cId,
+                        targetId:e.tId,
+                        domEvent:domEvent,
+                        events:events,
+                        params:params
+                    },WEvent),eventsType);
                 }
             }
         }
-    },
-    /**
-     * 修正dom事件对象，主要是对IE的修正，添加如target preventDefault等
-     * @param {event} e dom事件对象
-     * @return {event} dom事件对象
-     * @private
-     */
-    fixedEvent:function(e){
-        if(!e)e=WIN.event;
-        if(e){
-            if(!e.stopPropagation){
-                e.stopPropagation=function(){
-                    e.cancelBubble=true;
-                }
-            }
-            if(!e.preventDefault){
-                e.preventDefault=function(){
-                    e.returnValue=false;
-                }
-            }
-            if(e.srcElement&&!e.target){
-                e.target=e.srcElement;
-            }
-        }
-        return e;
     },
     /**
      * 处理代理事件
@@ -977,260 +550,14 @@ Magix.mix(VProto,{
      * @param {Boolean} dispose 是否销毁
      * @private
      */
-    processDelegateEvents:function(bubble,dispose){
+    delegateEvents:function(destroy){
         var me=this;
-        var viewName=me.viewName;
-        if(me.enableEvent){
-            var events=me.events;
-            var node=$(me.vfId);
-            if(me.$bubbleList&&me.$unbubbleList){
-                var list=bubble?me.$bubbleList:me.$unbubbleList;
-                for(var i=0;i<list.length;i++){
-                    if(bubble){
-                        if(dispose){
-                            node['on'+list[i]]=null;
-                        }else{
-                            node['on'+list[i]]=function(e){
-                                //
-                                e=me.fixedEvent(e);
-                                me.processEvent(e);
-                            }
-                        }
-                    }else{
-                        if(dispose){
-                            me.undelegateUnbubble(node,list[i]);
-                        }else{
-                            me.delegateUnbubble(node,list[i]);
-                        }
-                    }
-                }
-            }else{
-                me.$bubbleList=[];
-                me.$unbubbleList=[];
-                for(var p in events){
-                    if(HAS(events,p)){
-                        if(HAS(UnsupportBubble,p)){
-                            me.$unbubbleList.push(p);
-                            if(!bubble){
-                                if(dispose){
-                                    me.undelegateUnbubble(node,p);
-                                }else{
-                                    me.delegateUnbubble(node,p);
-                                }
-                            }
-                        }else{
-                            me.$bubbleList.push(p);
-                            if(bubble){
-                                if(dispose){
-                                    node['on'+p]=null;
-                                }else{
-                                    node['on'+p]=function(e){
-                                        //
-
-                                        e=me.fixedEvent(e);
-                                        me.processEvent(e);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        var events=me.events;
+        var fn=destroy?Body.detachEvent:Body.attachEvent;
+        for(var p in events){
+            fn.call(Body,p);
         }
-    },
-    /**
-     * 代理dom冒泡事件
-     * @private
-     */
-    delegateBubbleEvents:function(){
-        this.processDelegateEvents(true);
-    },
-    /**
-     * 代理dom不冒泡事件
-     * @private
-     */
-    delegateUnbubbleEvents:function(){
-        this.processDelegateEvents()
-    },
-    /**
-     * 取消代理dom不冒泡事件
-     * @private
-     */
-    undelegateUnBubbleEvents:function(){
-        this.processDelegateEvents(false,true);
-    },
-    /**
-     * 取消代理dom冒泡事件
-     * @private
-     */
-    undelegateBubbleEvents:function(){
-        this.processDelegateEvents(true,true);
-    },
-    /**
-     * 让view帮你管理资源，对于异步回调函数更应该调用该方法进行托管
-     * 当调用该方法后，您不需要在异步回调方法内判断当前view是否已经销毁
-     * 同时对于view刷新后，上个异步请求返回刷新界面的问题也得到很好的解决。<b>强烈建议对异步回调函数，组件等进行托管</b>
-     * @param {String|Object} key 托管的资源或要共享的资源标识key
-     * @param {Object} [res] 要托管的资源
-     * @return {Object} 返回传入的资源，对于函数会自动进行一次包装
-     * @example
-     * init:function(){
-     *      this.manage('user_list',[//管理对象资源
-     *          {id:1,name:'a'},
-     *          {id:2,name:'b'}
-     *      ]);
-     * },
-     * render:function(){
-     *      var _self=this;
-     *      var m=new Model();
-     *      m.load({
-     *          success:_self.manage(function(resp){//管理匿名函数
-     *              //TODO
-     *              var brix=new BrixDropdownList();
-     *
-     *              _self.manage(brix);//管理组件
-     *
-     *              var pagination=_self.manage(new BrixPagination());//也可以这样
-     *
-     *              var timer=_self.manage(setTimeout(function(){
-     *                  S.log('timer');
-     *              },2000));//也可以管理定时器
-     *
-     *              
-     *              var userList=_self.getManaged('user_list');//通过key取托管的资源
-     *
-     *              S.log(userList);
-     *          }),
-     *          error:_self.manage(function(msg){
-     *              //TODO
-     *          })
-     *      })
-     * }
-     */
-    manage:function(key,res){
-        var me=this;
-        var args=arguments;
-        var hasKey=true;
-        if(args.length==1){
-            res=key;
-            key='res_'+(counter++);
-            hasKey=false;
-        }
-        if(!me.$resCache)me.$resCache={};
-        var wrapObj={
-            hasKey:hasKey,
-            res:res
-        };
-        if(Magix.isFunction(res)){
-            res=me.wrapManagedFunction(res);
-            wrapObj[me.sign]=res;
-        }
-        me.$resCache[key]=wrapObj;
-        return res;
-    },
-    /**
-     * 获取托管的资源
-     * @param {String} key 托管资源时传入的标识key
-     * @return {[type]} [description]
-     */
-    getManaged:function(key){
-        var me=this;
-        var cache=me.$resCache;
-        var sign=me.sign;
-        if(cache&&HAS(cache,key)){
-            var wrapObj=cache[key];
-            var resource=wrapObj.res;
-            if(Magix.isFunction(resource)){//托管的是方法，取出用时，依然要考虑view刷新问题，当view刷新后，这个方法是需弃用的
-                if(!wrapObj[sign]){
-                    wrapObj[sign]=me.wrapManagedFunction(resource);
-                }
-                resource=wrapObj[sign];
-            }
-            return resource;
-        }
-        return null;
-    },
-    /**
-     * 移除托管的资源
-     * @param {String|Object} param 托管时标识key或托管的对象
-     * @return {Object} 返回移除的资源
-     */
-    removeManaged:function(param){
-        var me=this,res=null;
-        var cache=me.$resCache;
-        if(cache){
-            if(HAS(cache,param)){
-                res=cache[param].res;
-                delete cache[param];
-            }else{
-                for(var p in cache){
-                    if(cache[p].res===param){
-                        res=cache[p].res;
-                        delete cache[p];
-                        break;
-                    }
-                }
-            }
-        }
-        return res;
-    },
-    /**
-     * 销毁托管的资源
-     * @param {Boolean} [byRefresh] 是否是刷新时的销毁
-     * @private
-     */
-    destroyManaged:function(byRefresh){
-        var me=this;
-        var cache=me.$resCache;
-        //
-        if(cache){
-            for(var p in cache){
-                var o=cache[p];
-                var processed=false;
-                var res=o.res;
-                if(Magix.isNumber(res)){//数字，有可能是定时器
-                    WIN.clearTimeout(res);
-                    WIN.clearInterval(res);
-                    processed=true;
-                }else if(res){
-                    for(var i=0;i<DestroyManagedTryList.length;i++){
-                        if(Magix.isFunction(res[DestroyManagedTryList[i]])){
-                            safeExec(res[DestroyManagedTryList[i]],[],res);
-                            processed=true;
-                            //不进行break,比如有时候可能存在abort 和  destroy
-                        }
-                    }
-                }
-                me.trigger('destroyResource',{
-                    resource:res,
-                    processed:processed
-                });
-                if(byRefresh&&!o.hasKey){//如果是刷新且托管时没有给key值，则表示这是一个不会在其它方法内共享托管的资源，view刷新时可以删除掉
-                    delete cache[p];
-                }
-            }
-            if(!byRefresh){//如果不是刷新，则是view的销毁
-                me.unbind('destroyResource');
-                delete me.$resCache;
-            }
-        }
-    },
-    /**
-     * 包装托管的函数
-     * @param {Function} fn 托管的函数
-     * @return {Function}   包装后的函数
-     * @private
-     */
-    wrapManagedFunction:function(fn){
-        var me=this;
-        var sign=me.sign;
-        return function(){
-            //
-            if(me.sign==sign){
-                safeExec(fn,arguments,me);
-            }
-        }
-    },
+    }
     /**
      * 当您采用setViewHTML方法异步更新html时，通知view做好异步更新的准备，<b>注意:该方法最好和manage，setViewHTML一起使用。当您采用其它方式异步更新整个view的html时，仍需调用该方法</b>，建议对所有的异步更新回调使用manage方法托管，对更新整个view html前，调用beginAsyncUpdate进行更新通知
      * @example
@@ -1322,7 +649,7 @@ Magix.mix(VProto,{
      *      var begin=_self.beginAsyncUpdate();//记录异步更新标识
      *      S.io({
      *          success:function(html){
-     *              //if(_self.exist){//不托管方法时，您需要自已判断view有没有销毁(使用异步更新标识时，不需要判断exist)
+     *              //if(_self.sign){//不托管方法时，您需要自已判断view有没有销毁(使用异步更新标识时，不需要判断exist)
      *                  var end=_self.endAsyncUpdate();//结束异步更新
      *                  if(begin==end){//开始和结束时的标识一样，表示view没有更新过
      *                      _self.setViewHTML(html);
@@ -1402,46 +729,22 @@ Magix.mix(VProto,{
      *
      * //如果您无法识别哪些需要托管，哪些需要签名，统一使用托管方法就好了
      */
-    beginAsyncUpdate:function(){
-        return this.sign++;//更新sign，@see构造函数内的注解
-    },
+    /*beginAsyncUpdate:function(){
+        return this.sign++;//更新sign
+    },*/
     /**
      * 获取view在当前状态下的签名，view在刷新或销毁时，均会更新签名。(通过签名可识别view有没有搞过什么动作)
-     * @see View#beginAsyncUpdate
      */
-    signature:function(){
+/*    signature:function(){
         return this.sign;
-    },
+    },*/
     /**
      * 通知view结束异步更新html
      * @see View#beginAsyncUpdate
      */
-    endAsyncUpdate:function(){
+    /*endAsyncUpdate:function(){
         return this.sign;
-    },
-    /**
-     * 挂起，对于初始化时，需要访问外部资源（vframe）等，需要等待外部执行完才可以访问
-     */
-    suspend:function(){
-        this.iC++;
-    },
-    /**
-     * 恢复并执行挂起的操作
-     */
-    resume:function(){
-        var me=this;
-        if(me.iC>0){
-            me.iC--;
-        }
-        if(!me.iC){
-            var list=[].slice.call(me.iQ);
-            me.iQ=[];
-            while(list.length){
-                var o=list.shift();
-                me.idle.apply(me,o);
-            }
-        }
-    }
+    },*/
     /**
      * 当view调用setViewHTML刷新前触发
      * @name View#prerender
@@ -1450,40 +753,17 @@ Magix.mix(VProto,{
      */
     
     /**
-     * 当view首次完成界面的html设置后触发，view有没有模板均会触发该事件，对于有模板的view，会等到模板取回，第一次调用setViewHTML更新界面后才触发，总之该事件触发后，您就可以访问view的HTML DOM节点对象（该事件仅代表自身的html创建完成，如果需要对整个子view也要监控，请使用childrenCreated事件）
-     * @name View#created 
+     * 当view首次完成界面的html设置后触发，view有没有模板均会触发该事件，对于有模板的view，会等到模板取回，第一次调用setViewHTML更新界面后才触发，总之该事件触发后，您就可以访问view的HTML DOM节点对象（该事件仅代表自身的html创建完成，如果需要对整个子view也要监控，请使用created事件）
+     * @name View#primed 
      * @event
      * @param {Object} e view首次调用render完成界面的创建后触发
      */
 
     /**
-     * 每次调用setViewHTML更新view内容前触发，触发完该事件后即删除监听列表，如果您不需要删除监听列表，请考虑使用prerender事件，为什么设计refresh?见示例
-     * @name View#refresh
-     * @event
-     * @param {Object} e view刷新前触发
-     * @example
-     * render:function(){
-     *      var fn=function(){};
-     *      S.one(document).on('click',fn);
-     *      this.bind('refresh',function(){//当使用refresh事件时，您不需要考虑移除监听
-     *          S.one(document).detach('click',fn);
-     *      });
-     *
-     *      //如果您使用prerender事件
-     *
-     *      this.bind('prerender',function(){
-     *          this.unbind('prerender',arguments.callee);//您需要移除监听，要不然会越积累越多
-     *          S.one(document).detach('click',fn);
-     *      })
-     *      
-     * }
-     */
- 
-    /**
      * 每次调用setViewHTML更新view内容完成后触发
      * @name View#rendered 
      * @event
-     * @param {Object} e view每次调用setViewHTML完成后触发，当hasTemplate属性为false时，并不会触发该事 件，但会触发created首次完成创建界面的事件
+     * @param {Object} e view每次调用setViewHTML完成后触发，当hasTmpl属性为false时，并不会触发该事 件，但会触发primed首次完成创建界面的事件
      */
     
     /**
@@ -1494,37 +774,44 @@ Magix.mix(VProto,{
      */
     
     /**
-     * view销毁托管资源时发生
-     * @name View#destroyResource
-     * @event
-     * @param {Object} e
-     * @param {Object} e.resource 托管的资源
-     * @param {Boolean} e.processed 表示view是否对这个资源做过销毁处理，目前view仅对带 abort destroy dispose方法的资源进行自动处理，其它资源需要您响应该事件自已处理
-     */
-    
-    /**
-     * view自身和所有子孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子孙view组成的，通过监听该事件可知道子孙view什么时间创建完成（注意：当view中有子view，且该子view是通过程序动态mountView而不是通过data-view指定时，该事件会也会等待到view创建完成触发，而对于您在某个view中有如下代码：<div><vframe></vframe></div>，有一个空的vframe且未指定data-view属性，同时您在这个view中没有动态渲染vframe对应的view，则该事件不会触发，magix无法识别出您留空vframe的意图，到底是需要动态mount还是手误，不过在具体应用中，出现空vframe且没有动态mount几乎是不存在的^_^）
-     * @name View#childrenCreated
+     * view自身和所有子孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子孙view组成的，通过监听该事件可知道子孙view什么时间创建完成（注意：当view中有子view，且该子view是通过程序动态mountView而不是通过mx-view指定时，该事件会也会等待到view创建完成触发，而对于您在某个view中有如下代码：<div><vframe></vframe></div>，有一个空的vframe且未指定mx-view属性，同时您在这个view中没有动态渲染vframe对应的view，则该事件不会触发，magix无法识别出您留空vframe的意图，到底是需要动态mount还是手误，不过在具体应用中，出现空vframe且没有动态mount几乎是不存在的^_^）
+     * @name View#created
      * @event
      * @param {Object} e
      * @example
      * init:function(){
-     *      this.bind('childrenCreated',function(){
+     *      this.on('created',function(){
      *          //
      *      })
      * }
      */
     
     /**
-     * view自身和所有子孙view有改动时触发，改动包括刷新和重新mountView，与childrenCreated一起使用，当view自身和所有子孙view创建完成会触发childrenCreated，当其中的一个view刷新或重新mountView，会触发childrenAlter，当是刷新时，刷新完成会再次触发childrenCreated事件，因此这2个事件不只触发一次！！
-     * @name View#childrenAlter
+     * view自身和所有子孙view有改动时触发，改动包括刷新和重新mountView，与created一起使用，当view自身和所有子孙view创建完成会触发created，当其中的一个view刷新或重新mountView，会触发childrenAlter，当是刷新时，刷新完成会再次触发created事件，因此这2个事件不只触发一次！！但这2个事件会成对触发，比如触发几次childrenAlter就会触发几次created
+     * @name View#alter
      * @event
      * @param {Object} e
+     */
+    
+    /**
+     * 异步更新ui的方法(render,renderUI)被调用前触发
+     * @name View#rendercall
+     * @event
+     * @param {Object} e
+     */
+    
+    
+    /**
+     * 每次调用beginUpdateHTML更新view内容前触发
+     * @name View#refresh 
+     * @event
+     * @param {Object} e
+     * 与prerender不同的是：refresh触发后即删除监听列表
      */
 });
     Magix.mix(View,IView,{prototype:true});
     Magix.mix(View.prototype,IView.prototype);
     return View;
 },{
-    requires:["magix/impl/view","magix/magix","magix/event"]
+    requires:["magix/impl/view","magix/magix","magix/event","magix/body"]
 });

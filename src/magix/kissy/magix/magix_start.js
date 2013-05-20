@@ -8,22 +8,27 @@
     if(!W.console){
         W.console={
             log:noop,
-            warn:noop,
-            error:noop,
-            debug:noop
+            info:noop,
+            error:noop
         }
-    }
+    };
+    var tempCfg,cCfg={};
     if(!W.Magix){
         W.Magix={
+            config:function(cfg){
+                for(var p in cfg){
+                    cCfg[p]=cfg[p];
+                }
+            },
             start:function(cfg){
-                this.$tempCfg=cfg;
+                tempCfg=cfg;
             }
-        }
+        };
         KISSY.use('magix/magix',function(S,M){
-            var cfg=W.Magix.$tempCfg;
             W.Magix=M;
-            if(cfg){
-                M.start(cfg);
+            M.config(cCfg);
+            if(tempCfg){
+                M.start(tempCfg);
             }
         });
     }

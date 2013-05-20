@@ -282,7 +282,7 @@ dl.data .dd{
 
                                     
                                         <p>源码：
-                                            <a href="../symbols/src/D__wamp_www_magix_git_build_debug__magix_kissy_magix_magix.js.html">magix.js</a></p>
+                                            <a href="../symbols/src/D__wamp_www_br_luna_subway_20130314_gaiban_2_subway-webapp2_src_main_webapp_src_libs_magix_docsrc__magix_kissy_magix_magix.js.html">magix.js</a></p>
 
                                     
 
@@ -304,10 +304,6 @@ dl.data .dd{
                                             
                                                 
                                             
-                                                
-                                            
-                                                
-                                            
                                         </ul>
                                         
                                     </div>
@@ -326,29 +322,9 @@ dl.data .dd{
                                             
                                                 
                                                     <li class="li">
-                                                        Magix.<b class="name"><a href="../symbols/Magix.html#.cfg">cfg</a></b>
-                                                        
-                                                        <span class="desc">配置信息对象</span>
-                                                    </li>
-
-                                                
-
-                                            
-                                                
-                                                    <li class="li">
-                                                        Magix.<b class="name"><a href="../symbols/Magix.html#.locals">locals</a></b>
-                                                        
-                                                        <span class="desc">全局缓存对象</span>
-                                                    </li>
-
-                                                
-
-                                            
-                                                
-                                                    <li class="li">
-                                                        Magix.<b class="name"><a href="../symbols/Magix.html#.templates">templates</a></b>
-                                                        
-                                                        <span class="desc">供打包上线用的模板缓存对象</span>
+                                                        Magix.<b class="name"><a href="../symbols/Magix.html#.keys">keys</a></b>
+                                                        <span class="type">{Array}</span>
+                                                        <span class="desc">获取对象的keys</span>
                                                     </li>
 
                                                 
@@ -384,22 +360,22 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 Magix.
-                                                <b class="name"><a href="../symbols/Magix.html#.hasProp">hasProp</a></b>
+                                                <b class="name"><a href="../symbols/Magix.html#.createCache">createCache</a></b>
+                                                <span class="param">(max)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">创建缓存对象</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                Magix.
+                                                <b class="name"><a href="../symbols/Magix.html#.has">has</a></b>
                                                 <span class="param">(owner, prop)</span>
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
                                                 <span class="desc">检测某个对象是否拥有某个属性</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                Magix.
-                                                <b class="name"><a href="../symbols/Magix.html#.include">include</a></b>
-                                                <span class="param">(path)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">通过xhr同步获取文件的内容，仅开发magix时使用</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -434,6 +410,16 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 Magix.
+                                                <b class="name"><a href="../symbols/Magix.html#.isNumeric">isNumeric</a></b>
+                                                <span class="param">(o)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">判断是否可转为数字</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                Magix.
                                                 <b class="name"><a href="../symbols/Magix.html#.isObject">isObject</a></b>
                                                 <span class="param">(o)</span>
                                                 
@@ -464,22 +450,12 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 Magix.
-                                                <b class="name"><a href="../symbols/Magix.html#.libEnv">libEnv</a></b>
-                                                <span class="param">()</span>
+                                                <b class="name"><a href="../symbols/Magix.html#.listToMap">listToMap</a></b>
+                                                <span class="param">(list, key)</span>
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">设置底层类库的环境</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                Magix.
-                                                <b class="name"><a href="../symbols/Magix.html#.libRequire">libRequire</a></b>
-                                                <span class="param">(name, fn)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">利用底层类库的包机制加载js文件，仅Magix内部使用，不推荐在app中使用</span>                                                
+                                                <span class="desc">把列表转化成hash对象</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -489,7 +465,7 @@ dl.data .dd{
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">获取或设置Magix.locals，您可以把整个app需要共享的数据，通过该方法进行全局存储，方便您在任意view中访问这份数据</span>                                                
+                                                <span class="desc">获取或设置本地数据，您可以把整个app需要共享的数据，通过该方法进行全局存储，方便您在任意view中访问这份数据</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -514,12 +490,22 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 Magix.
-                                                <b class="name"><a href="../symbols/Magix.html#.objectKeys">objectKeys</a></b>
-                                                <span class="param">(obj)</span>
+                                                <b class="name"><a href="../symbols/Magix.html#.objectToPath">objectToPath</a></b>
+                                                <span class="param">(obj, encode)</span>
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">获取对象的keys</span>                                                
+                                                <span class="desc">把对象内容转换成字符串路径</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                Magix.
+                                                <b class="name"><a href="../symbols/Magix.html#.pathToObject">pathToObject</a></b>
+                                                <span class="param">(path)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">把路径字符串转换成对象</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -540,6 +526,16 @@ dl.data .dd{
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
                                                 <span class="desc">magix开始工作</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                Magix.
+                                                <b class="name"><a href="../symbols/Magix.html#.tmpl">tmpl</a></b>
+                                                <span class="param">(key, value)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">读取或设置view的模板</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -609,59 +605,15 @@ dl.data .dd{
 					Property Detail
 				</h3>
 				
-					<a name=".cfg"> </a>
+					<a name=".keys"> </a>
 					<div class="fixedFont">
 
-					
-					<span class="light">Magix.</span><b class="name">cfg</b>
+					<span class="light">{Array}</span>
+					<span class="light">Magix.</span><b class="name">keys</b>
                      &lt;static&gt; 
 					</div>
 					<div class="desc">
-						配置信息对象
-						
-						
-					</div>
-
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".locals"> </a>
-					<div class="fixedFont">
-
-					
-					<span class="light">Magix.</span><b class="name">locals</b>
-                     &lt;static&gt; 
-					</div>
-					<div class="desc">
-						全局缓存对象
-						
-						
-					</div>
-
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".templates"> </a>
-					<div class="fixedFont">
-
-					
-					<span class="light">Magix.</span><b class="name">templates</b>
-                     &lt;static&gt; 
-					</div>
-					<div class="desc">
-						供打包上线用的模板缓存对象
+						获取对象的keys
 						
 						
 					</div>
@@ -752,7 +704,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">Magix.config({     useHistoryState:true,     appHome:'./test/app'});var config=Magix.config();S.log(config.appHome);</pre>
+                                                            <pre class="brush: js; ">Magix.config({     naviveHistory:true,     appHome:'./test/app'});var config=Magix.config();S.log(config.appHome);</pre>
                                                         
                                                 </dd>
                                                 
@@ -761,10 +713,64 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name=".hasProp"> </a>
+                                            <a name=".createCache"> </a>
                                             <div class="title" >
                                                 <span>Magix.</span>
-                                                <b class="name">hasProp</b>
+                                                <b class="name">createCache</b>
+                                                <span class="param">(max)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                创建缓存对象
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">max</b>
+                                                            
+                                                            
+                                                            <span class="type">{Integer}</span> 
+                                                            <span class="desc">最大缓存数</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".has"> </a>
+                                            <div class="title" >
+                                                <span>Magix.</span>
+                                                <b class="name">has</b>
                                                 <span class="param">(owner, prop)</span>
                                                 
                                                 
@@ -820,72 +826,6 @@ dl.data .dd{
                                                         <li class="li">
                                                             <span class="type">{Boolean}</span> 
                                                             <span>是否拥有prop属性</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name=".include"> </a>
-                                            <div class="title" >
-                                                <span>Magix.</span>
-                                                <b class="name">include</b>
-                                                <span class="param">(path)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                通过xhr同步获取文件的内容，仅开发magix时使用
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">path</b>
-                                                            
-                                                            
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">文件路径</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{String}</span> 
-                                                            <span>文件内容</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1046,6 +986,72 @@ dl.data .dd{
 
                                             <div class="desc">
                                                 判断o是否为数字
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">o</b>
+                                                            
+                                                            
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">待检测的对象</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    
+                                                        <li class="li">
+                                                            <span class="type">{Boolean}</span> 
+                                                            <span></span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".isNumeric"> </a>
+                                            <div class="title" >
+                                                <span>Magix.</span>
+                                                <b class="name">isNumeric</b>
+                                                <span class="param">(o)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                判断是否可转为数字
                                                 
                                                 
                                             </div>
@@ -1298,56 +1304,18 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name=".libEnv"> </a>
+                                            <a name=".listToMap"> </a>
                                             <div class="title" >
                                                 <span>Magix.</span>
-                                                <b class="name">libEnv</b>
-                                                <span class="param">()</span>
+                                                <b class="name">listToMap</b>
+                                                <span class="param">(list, key)</span>
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
                                             </div>
 
                                             <div class="desc">
-                                                设置底层类库的环境
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name=".libRequire"> </a>
-                                            <div class="title" >
-                                                <span>Magix.</span>
-                                                <b class="name">libRequire</b>
-                                                <span class="param">(name, fn)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                利用底层类库的包机制加载js文件，仅Magix内部使用，不推荐在app中使用
+                                                把列表转化成hash对象
                                                 
                                                 
                                             </div>
@@ -1361,20 +1329,20 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">name</b>
+                                                            <b class="name">list</b>
                                                             
                                                             
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">形如app/views/home这样的字符串</span>
+                                                            <span class="type">{Array}</span> 
+                                                            <span class="desc">源数组</span>
                                                         </li>
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">fn</b>
+                                                            <b class="name">key</b>
                                                             
                                                             
-                                                            <span class="type">{Function}</span> 
-                                                            <span class="desc">加载完成后的回调方法</span>
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">以数组中对象的哪个key的value做为hahs的key</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1388,11 +1356,30 @@ dl.data .dd{
                                                 
                                                 
                                                 
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    
+                                                        <li class="li">
+                                                            <span class="type">{Object}</span> 
+                                                            <span></span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
                                                 
                                                 
                                                 
                                                                                                 
                                                 
+                                                
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">var map=Magix.listToMap([1,2,3,5,6]);//=> {1:1,2:1,3:1,4:1,5:1,6:1}var map=Magix.listToMap([{id:20},{id:30},{id:40}],'id');//=>{20:{id:20},30:{id:30},40:{id:40}}var map=Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');//=>{submit:1,focusin:1,focusout:1,mouseenter:1,mouseleave:1,mousewheel:1,change:1}</pre>
+                                                        
+                                                </dd>
                                                 
                                                 
                                             </dl>                                            
@@ -1410,7 +1397,7 @@ dl.data .dd{
                                             </div>
 
                                             <div class="desc">
-                                                获取或设置Magix.locals，您可以把整个app需要共享的数据，通过该方法进行全局存储，方便您在任意view中访问这份数据
+                                                获取或设置本地数据，您可以把整个app需要共享的数据，通过该方法进行全局存储，方便您在任意view中访问这份数据
                                                 
                                                 
                                             </div>
@@ -1603,18 +1590,18 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name=".objectKeys"> </a>
+                                            <a name=".objectToPath"> </a>
                                             <div class="title" >
                                                 <span>Magix.</span>
-                                                <b class="name">objectKeys</b>
-                                                <span class="param">(obj)</span>
+                                                <b class="name">objectToPath</b>
+                                                <span class="param">(obj, encode)</span>
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
                                             </div>
 
                                             <div class="desc">
-                                                获取对象的keys
+                                                把对象内容转换成字符串路径
                                                 
                                                 
                                             </div>
@@ -1632,7 +1619,16 @@ dl.data .dd{
                                                             
                                                             
                                                             <span class="type">{Object}</span> 
-                                                            <span class="desc">要获取key的对象</span>
+                                                            <span class="desc">对象</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">encode</b>
+                                                            
+                                                            
+                                                            
+                                                            <span class="desc"></span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1651,8 +1647,74 @@ dl.data .dd{
                                                     <ul class="list">
                                                     
                                                         <li class="li">
-                                                            <span class="type">{Array}</span> 
-                                                            <span></span>
+                                                            <span class="type">{String}</span> 
+                                                            <span>字符串路径</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".pathToObject"> </a>
+                                            <div class="title" >
+                                                <span>Magix.</span>
+                                                <b class="name">pathToObject</b>
+                                                <span class="param">(path)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                把路径字符串转换成对象
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">path</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">路径字符串</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    
+                                                        <li class="li">
+                                                            <span class="type">{Object}</span> 
+                                                            <span>解析后的对象</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1803,7 +1865,7 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">cfg.release</b>
+                                                            <b class="name">cfg.debug</b>
                                                             
                                                             
                                                             <span class="type">{Boolean}</span> 
@@ -1812,20 +1874,56 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">cfg.useHistoryState</b>
+                                                            <b class="name">cfg.nativeHistory</b>
                                                             
                                                             
                                                             <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否使用history state,当为true，并且浏览器支持的情况下会用history.pushState修改url，您应该确保服务器能给予支持。如果useHistoryState为false将使用hash修改url</span>
+                                                            <span class="desc">是否使用history state,当为true，并且浏览器支持的情况下会用history.pushState修改url，您应该确保服务器能给予支持。如果nativeHistory为false将使用hash修改url</span>
                                                         </li>
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">cfg.pathCfg</b>
+                                                            <b class="name">cfg.defaultView</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">默认加载的view</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">cfg.defaultPathname</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">默认view对应的pathname</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">cfg.appName</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">应用的包名，默认app</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">cfg.notFoundView</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">404时加载的view</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">cfg.routes</b>
                                                             
                                                             
                                                             <span class="type">{Object}</span> 
-                                                            <span class="desc">前端view与地址栏中的pathname对应关系</span>
+                                                            <span class="desc">pathname与view映射关系表</span>
                                                         </li>
                                                     
                                                         <li class="li">
@@ -1839,11 +1937,38 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">cfg.originalHREF</b>
+                                                            <b class="name">cfg.iniFile</b>
                                                             
                                                             
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否使用原始的location.href,默认会对location.href解码</span>
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">ini文件位置</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">cfg.rootId</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">根view的id</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">cfg.ready</b>
+                                                            
+                                                            
+                                                            <span class="type">{Function}</span> 
+                                                            <span class="desc">Magix完成配置后触发</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">cfg.extensions</b>
+                                                            
+                                                            
+                                                            <span class="type">{Array}</span> 
+                                                            <span class="desc">需要加载的扩展</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1866,9 +1991,84 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">Magix.start({     useHistoryState:true,     appHome:'http://etao.com/srp/app/',     release:false,     appTag:'20121205',     originalHREF:true,     pathCfg:{         defaultView:'app/views/layouts/default',//默认加载的view         map:{             'app/views/layouts/default':['/list','/home',/^\/list\/\d+/i],//前端的app/views/layouts/default可对应哪些pathname,可以是正则             'app/views/layouts/modules':['/module']         }     }});// 为什么在map中是真实的映射到虚拟的？// 原来是虚拟的映射真实的，如：// {//    '/home':'app/views/layouts/default',//    '/modules':'app/views/layouts/default'// }// 虚拟的个数>=真实的个数// 所以如果是虚拟的对应真实的，映射列表将非常长// 而且无法用正则来表示虚拟的pathname</pre>
+                                                            <pre class="brush: js; ">Magix.start({     useHistoryState:true,     appHome:'http://etao.com/srp/app/',     debug:true,     appTag:'20121205',     iniFile:'',//是否有ini配置文件     defaultView:'app/views/layouts/default',//默认加载的view     defaultPathname:'/home',     routes:{         "/home":"app/views/layouts/default"     }});</pre>
                                                         
                                                 </dd>
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".tmpl"> </a>
+                                            <div class="title" >
+                                                <span>Magix.</span>
+                                                <b class="name">tmpl</b>
+                                                <span class="param">(key, value)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                读取或设置view的模板
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">key</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">形如~seed/app/common/footer的字符串</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            [ 
+                                                            <b class="name">value</b>
+                                                            
+                                                             ]
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">模板字符串</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    
+                                                        <li class="li">
+                                                            <span class="type">{String}</span> 
+                                                            <span></span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
                                                 
                                                 
                                             </dl>                                            
@@ -1946,7 +2146,8 @@ dl.data .dd{
         <ul class="list class-list">
             <li><a href="../symbols/Model.html">Model</a></li>
             <li><a href="../symbols/MxView.html">MxView</a></li>
-            <li><a href="../symbols/ModelFactory.html">ModelFactory</a></li>
+            <li><a href="../symbols/MManager.html">MManager</a></li>
+            <li><a href="../symbols/MRequest.html">MRequest</a></li>
             <li><a href="../symbols/VfAnim.html">VfAnim</a></li>
         </ul>
     </div>

@@ -1,0 +1,145 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * @fileOverview view转场动画
+<span class='line'>  3</span>  * @author 行列
+<span class='line'>  4</span>  * @version 1.0
+<span class='line'>  5</span>  */</span><span class="WHIT">
+<span class='line'>  6</span> </span><span class="NAME">KISSY.add</span><span class="PUNC">(</span><span class="STRN">'mxext/vfanim'</span><span class="PUNC">,</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">S</span><span class="PUNC">,</span><span class="NAME">Vf</span><span class="PUNC">,</span><span class="NAME">Magix</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>  8</span>      * view转场动画实现
+<span class='line'>  9</span>      * @name VfAnim
+<span class='line'> 10</span>      * @namespace
+<span class='line'> 11</span>      * @example
+<span class='line'> 12</span>      * //当使用此插件时，您应该增加一项effect的配置来定制动画效果
+<span class='line'> 13</span>      * //如：
+<span class='line'> 14</span>      * 
+<span class='line'> 15</span>      * Magix.start({
+<span class='line'> 16</span>      *  //...其它配置项
+<span class='line'> 17</span>      *  effect:function(e){
+<span class='line'> 18</span>      *          var S=KISSY;
+<span class='line'> 19</span>      *      var offset=S.one(e.oldViewNode).offset();
+<span class='line'> 20</span>      *      S.one(e.oldViewNode).css({backgroundColor:'#fff'});
+<span class='line'> 21</span>      *      var distance=offset.top+S.one(e.oldViewNode).height();
+<span class='line'> 22</span>      *      new S.Anim(e.oldViewNode,{top:-distance,opacity:0.2},1.2,'backIn',e.collectGarbage).run();
+<span class='line'> 23</span>      *      S.one(e.newViewNode).css({opacity:0});
+<span class='line'> 24</span>      *      new S.Anim(e.newViewNode,{opacity:1},2).run();
+<span class='line'> 25</span>      *  }
+<span class='line'> 26</span>      * });
+<span class='line'> 27</span>      * 
+<span class='line'> 28</span>      * //参数说明：
+<span class='line'> 29</span>      * //e.vframeId {Strig} 在哪个vframe内发生的转场动画
+<span class='line'> 30</span>      * //e.oldViewNode {HTMLElement} 原来的view DOM节点
+<span class='line'> 31</span>      * //e.newViewNode {HTMLElement} 新创建的view DOM节点
+<span class='line'> 32</span>      * //e.action {String} 指示是哪种场景改变：viewChange view发生改变 viewRefresh view刷新
+<span class='line'> 33</span>      * //e.collectGarbage {Function} 当您在外部结束动画时，调用该方法清理不需要的垃圾DOM节点，请优先考虑该方法进行垃圾收集
+<span class='line'> 34</span>      *
+<span class='line'> 35</span>      *
+<span class='line'> 36</span>      * //关于转场动画说明：
+<span class='line'> 37</span>      * //转场动画仅适用对于同一个vframe渲染不同view时较安全，因为转场时页面上会同时存在
+<span class='line'> 38</span>      * //这2个view的html内容，而在view内部DOM操作时选择器通常不会意外的选择到其它节点上
+<span class='line'> 39</span>      * //
+<span class='line'> 40</span>      * //对于view的刷新不建议使用动画，因为2个view的html内容一样，DOM选择很容易发生失误
+<span class='line'> 41</span>      * //如果您需要view在刷新时使用动画，最好在代码中DOM选择器都加上id
+<span class='line'> 42</span>      * //类似：
+<span class='line'> 43</span>      *
+<span class='line'> 44</span>      * render:function(){
+<span class='line'> 45</span>      *      var inputs=S.all('#'+this.id+' input');//加上id限定
+<span class='line'> 46</span>      * }
+<span class='line'> 47</span>      *
+<span class='line'> 48</span>      * 
+<span class='line'> 49</span>      */</span><span class="WHIT">
+<span class='line'> 50</span> 
+<span class='line'> 51</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">EMPTY</span><span class="PUNC">=</span><span class="STRN">''</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">mxConfig</span><span class="PUNC">=</span><span class="NAME">Magix.config</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">D</span><span class="PUNC">=</span><span class="NAME">document</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 54</span> 
+<span class='line'> 55</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">cfgSceneChange</span><span class="PUNC">=</span><span class="NAME">mxConfig.effect</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">cfgSceneChangeIsFn</span><span class="PUNC">=</span><span class="NAME">Magix.isFunction</span><span class="PUNC">(</span><span class="NAME">cfgSceneChange</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 57</span> 
+<span class='line'> 58</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">$</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 59</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">typeof</span><span class="WHIT"> </span><span class="NAME">id</span><span class="PUNC">==</span><span class="STRN">'object'</span><span class="PUNC">?</span><span class="NAME">id</span><span class="PUNC">:</span><span class="NAME">D.getElementById</span><span class="PUNC">(</span><span class="NAME">id</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 60</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 61</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Magix.mix</span><span class="PUNC">(</span><span class="NAME">Vf.prototype</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">        </span><span class="NAME">useAnimUpdate</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">            </span><span class="NAME">console.log</span><span class="PUNC">(</span><span class="NAME">mxConfig</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">cfgSceneChange</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="WHIT">            </span><span class="COMM">/*var anim=me.$currentSupportAmin=(Math.random()&lt;0.5)
+<span class='line'> 67</span>             return anim;*/</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="WHIT">        </span><span class="NAME">oldViewDestroy</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ownerNode</span><span class="PUNC">=</span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">me.id</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">oldViewNode</span><span class="PUNC">=</span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">me.vId</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">view</span><span class="PUNC">=</span><span class="NAME">me.view</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">oldViewNode</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="WHIT">                </span><span class="NAME">oldViewNode</span><span class="PUNC">=</span><span class="NAME">D.createElement</span><span class="PUNC">(</span><span class="STRN">'div'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">                </span><span class="KEYW">while</span><span class="PUNC">(</span><span class="NAME">ownerNode.firstChild</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">                    </span><span class="NAME">oldViewNode.appendChild</span><span class="PUNC">(</span><span class="NAME">ownerNode.firstChild</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="WHIT">                </span><span class="NAME">ownerNode.appendChild</span><span class="PUNC">(</span><span class="NAME">oldViewNode</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 81</span> </span><span class="WHIT">            </span><span class="NAME">oldViewNode.id</span><span class="PUNC">=</span><span class="NAME">EMPTY</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 82</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">events</span><span class="PUNC">=</span><span class="NAME">view.events</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 83</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">events</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 84</span> </span><span class="WHIT">                </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">p</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">events</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">Magix.has</span><span class="PUNC">(</span><span class="NAME">events</span><span class="PUNC">,</span><span class="NAME">p</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">                        </span><span class="NAME">S.all</span><span class="PUNC">(</span><span class="STRN">'*[mx-'</span><span class="PUNC">+</span><span class="NAME">p</span><span class="PUNC">+</span><span class="STRN">']'</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">removeAttr</span><span class="PUNC">(</span><span class="STRN">'mx-'</span><span class="PUNC">+</span><span class="NAME">p</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 88</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="WHIT">            </span><span class="COMM">//destroy[1,2,4,5,6]</span><span class="WHIT">
+<span class='line'> 91</span> </span><span class="WHIT">            </span><span class="COMM">//new[2,4]</span><span class="WHIT">
+<span class='line'> 92</span> </span><span class="WHIT">            </span><span class="COMM">//created[4]</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$tempNodes</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="WHIT">                </span><span class="NAME">me.$tempNodes</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">            </span><span class="NAME">me.$tempNodes.push</span><span class="PUNC">(</span><span class="NAME">oldViewNode</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">        </span><span class="NAME">prepareNextView</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ownerNode</span><span class="PUNC">=</span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">me.id</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">div</span><span class="PUNC">=</span><span class="NAME">D.createElement</span><span class="PUNC">(</span><span class="STRN">'div'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">            </span><span class="NAME">div.id</span><span class="PUNC">=</span><span class="NAME">me.vId</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">ownerNode._bak</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="WHIT">                </span><span class="NAME">div.innerHTML</span><span class="PUNC">=</span><span class="NAME">ownerNode._tmpl</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="WHIT">            </span><span class="NAME">ownerNode.insertBefore</span><span class="PUNC">(</span><span class="NAME">div</span><span class="PUNC">,</span><span class="NAME">ownerNode.firstChild</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>107</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="WHIT">        </span><span class="NAME">newViewCreated</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">isViewChange</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">oldViewNode</span><span class="PUNC">=</span><span class="NAME">me.$oldViewNode</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">newViewNode</span><span class="PUNC">=</span><span class="NAME">$</span><span class="PUNC">(</span><span class="NAME">me.vId</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$anim</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="WHIT">                </span><span class="NAME">me.$anim</span><span class="PUNC">=</span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="WHIT">            </span><span class="NAME">me.$anim</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>116</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cfgSceneChangeIsFn</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>117</span> </span><span class="WHIT">                </span><span class="NAME">Magix.safeExec</span><span class="PUNC">(</span><span class="NAME">cfgSceneChange</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>118</span> </span><span class="WHIT">                    </span><span class="NAME">vframeId</span><span class="PUNC">:</span><span class="NAME">me.vfId</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="WHIT">                    </span><span class="NAME">action</span><span class="PUNC">:</span><span class="NAME">isViewChange</span><span class="PUNC">?</span><span class="STRN">'viewChange'</span><span class="PUNC">:</span><span class="STRN">'viewRefresh'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>120</span> </span><span class="WHIT">                    </span><span class="NAME">oldViewNode</span><span class="PUNC">:</span><span class="NAME">oldViewNode</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="WHIT">                    </span><span class="NAME">newViewNode</span><span class="PUNC">:</span><span class="NAME">newViewNode</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">                    </span><span class="NAME">collectGarbage</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="WHIT">                        </span><span class="NAME">me.$anim</span><span class="PUNC">--</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>124</span> </span><span class="WHIT">                        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">me.$anim</span><span class="PUNC">==</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>125</span> </span><span class="WHIT">                            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">list</span><span class="PUNC">=</span><span class="NAME">me.$tempNodes</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>126</span> </span><span class="WHIT">                            </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">,</span><span class="NAME">e</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">list.length</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">                                </span><span class="NAME">e</span><span class="PUNC">=</span><span class="NAME">list</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="WHIT">                                </span><span class="NAME">e.parentNode.removeChild</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="WHIT">                            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">me</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>135</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/vframe"</span><span class="PUNC">,</span><span class="STRN">"magix/magix"</span><span class="PUNC">,</span><span class="STRN">"sizzle"</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

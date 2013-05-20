@@ -3,75 +3,73 @@
  * @author 行列
  * @version 1.0
  */
-KISSY.add("magix/impl/view",function(S,io,Sizzle,Magix){
+KISSY.add("magix/impl/view",function(S,io,Magix){
     var IView=function(){
 
     };
+    var Mods=S.Env.mods;
     var StaticWhiteList={
-        idIt:1,
-        wrapAsyncUpdate:1,
-        registerAsyncUpdateName:1,
-        extend:1,
-        prepare:1
+        wrapAsyn:1,
+        extend:1
     };
 
-    IView.extend=function(props,ctor){
-        var me=this;
-        var fn=function(){
-            fn.superclass.constructor.apply(this,arguments);
-            if(ctor){
-                Magix.safeExec(ctor,[],this);
+    var processObject=function(props,proto,enterObject){
+        for(var p in proto){
+            if(S.isObject(proto[p])){
+                if(!Magix.has(props,p))props[p]={};
+                processObject(props[p],proto[p],true);
+            }else if(enterObject){
+                props[p]=proto[p];
             }
         }
-        fn.extend=IView.extend;
-        return S.extend(fn,me,props);
+    };
+    IView.extend=function(props,ctor){
+        var me=this;
+        var BaseView=function(){
+            BaseView.superclass.constructor.apply(this,arguments);
+            if(ctor){
+                Magix.safeExec(ctor,arguments,this);
+            }
+        }
+        BaseView.extend=IView.extend;
+        return S.extend(BaseView,me,props);
     };
 
-    IView.prepare=function(oView){
+    IView.prepare=function(oView,toProto){
         var me=this;
-        if(!oView.prepare){
+        if(!oView.wrapAsyn){
             for(var p in me){
-                if(Magix.hasProp(StaticWhiteList,p)){
+                if(Magix.has(StaticWhiteList,p)){
                     oView[p]=me[p];
                 }
             }
+            var aimObject=oView.prototype;
+            var start=oView;
+            var temp;
+            while(start.superclass){
+                temp=start.superclass.constructor;
+                processObject(aimObject,temp.prototype);
+                start=temp;
+            }
+            toProto.home=Mods[toProto.path].packageInfo.getBase();
+            Magix.mix(aimObject,toProto);
         }
+        oView.wrapAsyn();
     };
 
     Magix.mix(IView.prototype,{
-        getTmplByXHR:function(path,fn){
+        fetchTmpl:function(path,fn,d){
             io({
-                url:path,
-                dataType:'html',
-                success:function(tmpl){
-                    fn(tmpl);
-                },
-                error:function(e,msg){
-                    fn(msg);
+                url:path+(d?'?_='+S.now():''),
+                success:fn,
+                error:function(e,m){
+                    fn(m)
                 }
             });
-        },
-        delegateUnbubble:function(node,event){
-            var me=this;
-            if(!me.$cacheEvents)me.$cacheEvents={};
-            node=S.one(node);
-            node.delegate(event,'*[mx'+event+']',me.$cacheEvents[event]=function(e){
-                me.processEvent(e);
-            });
-        },
-        undelegateUnbubble:function(node,event){
-            var me=this;
-            var cache=me.$cacheEvents;
-            if(cache){
-                node=S.one(node);
-                //
-                node.undelegate(event,'*[mx'+event+']',cache[event]);
-                delete cache[event];
-            }
         }
     });
 
     return IView;
 },{
-    requires:["ajax","sizzle","magix/magix"]
+    requires:["ajax","magix/magix"]
 });

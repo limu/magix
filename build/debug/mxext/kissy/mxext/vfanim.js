@@ -9,13 +9,12 @@ KISSY.add('mxext/vfanim',function(S,Vf,Magix){
      * @name VfAnim
      * @namespace
      * @example
-     * //当使用此插件时，您应该在Magix.start中增加一项viewChange的配置项来定制动画效果
+     * //当使用此插件时，您应该增加一项effect的配置来定制动画效果
      * //如：
      * 
      * Magix.start({
      *  //...其它配置项
-     *  viewChangeAnim:true,//是否使用动画
-     *  viewChange:function(e){
+     *  effect:function(e){
      *          var S=KISSY;
      *      var offset=S.one(e.oldViewNode).offset();
      *      S.one(e.oldViewNode).css({backgroundColor:'#fff'});
@@ -53,24 +52,24 @@ KISSY.add('mxext/vfanim',function(S,Vf,Magix){
     var mxConfig=Magix.config();
     var D=document;
 
-    var cfgSceneChange=mxConfig.viewChange;
+    var cfgSceneChange=mxConfig.effect;
     var cfgSceneChangeIsFn=Magix.isFunction(cfgSceneChange);
 
     var $=function(id){
         return typeof id=='object'?id:D.getElementById(id);
     };
     return Magix.mix(Vf.prototype,{
-        viewChangeUseAnim:function(){
+        useAnimUpdate:function(){
             var me=this;
-            
-            return mxConfig.viewChangeAnim;
+            console.log(mxConfig);
+            return cfgSceneChange;
             /*var anim=me.$currentSupportAmin=(Math.random()<0.5)
             return anim;*/
         },
         oldViewDestroy:function(){
             var me=this;
             var ownerNode=$(me.id);
-            var oldViewNode=$(me.viewId);
+            var oldViewNode=$(me.vId);
             var view=me.view;
             if(!oldViewNode){
                 oldViewNode=D.createElement('div');
@@ -83,46 +82,51 @@ KISSY.add('mxext/vfanim',function(S,Vf,Magix){
             var events=view.events;
             if(events){
                 for(var p in events){
-                    if(Magix.hasProp(events,p)){
-                        S.all('*[mx'+p+']').removeAttr('mx'+p);
+                    if(Magix.has(events,p)){
+                        S.all('*[mx-'+p+']').removeAttr('mx-'+p);
                     }
                 }
             }
-            if(!Magix.hasProp(me,'$animCounter')){
-                me.$animCounter=0;
+            //destroy[1,2,4,5,6]
+            //new[2,4]
+            //created[4]
+            if(!me.$tempNodes){
+                me.$tempNodes=[];
             }
-            me.$animCounter++;
-            me.$oldViewNode=oldViewNode;
+            me.$tempNodes.push(oldViewNode);
         },
         prepareNextView:function(){
             var me=this;
             var ownerNode=$(me.id);
             var div=D.createElement('div');
-            div.id=me.viewId;
-            if(ownerNode._dataBak){
-                div.innerHTML=ownerNode._dataTmpl;
+            div.id=me.vId;
+            if(ownerNode._bak){
+                div.innerHTML=ownerNode._tmpl;
             }
             ownerNode.insertBefore(div,ownerNode.firstChild);
         },
         newViewCreated:function(isViewChange){
             var me=this;
             var oldViewNode=me.$oldViewNode;
-            var newViewNode=$(me.viewId);
+            var newViewNode=$(me.vId);
+            if(!me.$anim){
+                me.$anim=1;
+            }
+            me.$anim++;
             if(cfgSceneChangeIsFn){
                 Magix.safeExec(cfgSceneChange,{
-                    vframeId:me.id,
+                    vframeId:me.vfId,
                     action:isViewChange?'viewChange':'viewRefresh',
                     oldViewNode:oldViewNode,
                     newViewNode:newViewNode,
                     collectGarbage:function(){
-                        me.$animCounter--;
-                        if(!me.$animCounter){
-                            delete me.$oldViewNode;
-                        }
-                        try{
-                            oldViewNode.parentNode.removeChild(oldViewNode);
-                        }catch(e){
-
+                        me.$anim--;
+                        if(me.$anim==1){
+                            var list=me.$tempNodes;
+                            for(var i=0,e;i<list.length;i++){
+                                e=list[i];
+                                e.parentNode.removeChild(e);
+                            }
                         }
                     }
                 },me);

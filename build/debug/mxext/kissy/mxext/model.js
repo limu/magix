@@ -12,7 +12,6 @@ KISSY.add("mxext/model",function(S,Magix){
      * @constructor
      * @param {Object} ops 初始化Model时传递的其它参数对象
      * @property {String} uri 与后台接口对应的前端url key
-     * @property {String} id model的唯一标识
      * @example
      * 项目中对Model的引用及配置：
      * KISSY.add("app/base/model",function(S,Model,io){
@@ -57,23 +56,32 @@ KISSY.add("mxext/model",function(S,Magix){
             })
         }
      */
+    var processObject=function(props,proto,enterObject){
+        for(var p in proto){
+            if(S.isObject(proto[p])){
+                if(!Magix.has(props,p))props[p]={};
+                processObject(props[p],proto[p],true);
+            }else if(enterObject){
+                props[p]=proto[p];
+            }
+        }
+    };
     var Model=function(ops){
         if(ops){
             this.set(ops);
         }
         this.id=S.guid('m');
-        this.locker=false;
-        this.hasLocker=false;
     };
     var ex=function(props,ctor){
-        var fn=function(){
-            fn.superclass.constructor.apply(this,arguments);
+        var BaseModel=function(){
+            BaseModel.superclass.constructor.apply(this,arguments);
             if(ctor){
                 Magix.safeExec(ctor,[],this);
             }
         }
-        Magix.mix(fn,this,{prototype:true});
-        return S.extend(fn,this,props);
+        Magix.mix(BaseModel,this,{prototype:true});
+        processObject(props,this.prototype);
+        return S.extend(BaseModel,this,props);
     };
     Magix.mix(Model,{
         /**
@@ -124,22 +132,31 @@ KISSY.add("mxext/model",function(S,Magix){
          * @param {Object|String} resp 返回的数据
          * @return {Object}
          */
-        parse:Magix.noop,
+        parse:function(r){
+            return r;
+        },
         /**
          * 获取参数对象
-         * @param  {String} [key] 参数分组的key[Model.GET,Model.POST]，默认为Model.GET
+         * @param  {String} [type] 参数分组的key[Model.GET,Model.POST]，默认为Model.GET
          * @return {Object}
          */
-        getParamsObject:function(key){
-            if(!key)key=Model.GET;
-            return this['$'+key]||null;
+        getParamsObject:function(type){
+            if(!type)type=Model.GET;
+            return this['$'+type]||null;
+        },
+        /**
+         * 获取参数对象
+         * @return {Object}
+         */
+        getUrlParamsObject:function(){
+            return this.getParamsObject(Model.GET);
         },
         /**
          * 获取Post参数对象
          * @return {Object}
          */
         getPostParamsObject:function(){
-            return this.getPostParamsObject(Model.POST);
+            return this.getParamsObject(Model.POST);
         },
         /**
          * 获取通过setPostParams放入的参数
@@ -149,18 +166,25 @@ KISSY.add("mxext/model",function(S,Magix){
             return this.getParams(Model.POST);
         },
         /**
-         * 获取参数
-         * @param {String} [key] 参数分组的key[Model.GET,Model.POST]，默认为Model.GET
+         * 获取通过setUrlParams放入的参数
          * @return {String}
          */
-        getParams:function (key) {
+        getUrlParams:function(){
+            return this.getParams(Model.GET);
+        },
+        /**
+         * 获取参数
+         * @param {String} [type] 参数分组的key[Model.GET,Model.POST]，默认为Model.GET
+         * @return {String}
+         */
+        getParams:function (type) {
             var me=this;
-            if(!key){
-                key=Model.GET;
+            if(!type){
+                type=Model.GET;
             }else{
-                key=key.toUpperCase();
+                type=type.toUpperCase();
             }
-            var k='$'+key;
+            var k='$'+type;
             var params=me[k];
             var arr=[];
             var v;
@@ -179,32 +203,41 @@ KISSY.add("mxext/model",function(S,Magix){
             return arr.join('&');
         },
         /**
-         * 设置get参数，只有未设置过的参数才进行设置
+         * 设置url参数，只有未设置过的参数才进行设置
          * @param {Object|String} obj1 参数对象或者参数key
          * @param {String} [obj2] 参数内容
          */
-        setParamsIf:function (obj1, obj2) {
+        setUrlParamsIf:function (obj1, obj2) {
             this.setParams(obj1, obj2, Model.GET,true);
         },
         /**
-         * 设置参数
-         * @param {String}   key      参数分组的key
+         * 设置post参数，只有未设置过的参数才进行设置
          * @param {Object|String} obj1 参数对象或者参数key
          * @param {String} [obj2] 参数内容
+         */
+        setPostParamsIf:function(obj1,obj2){
+            var me=this;
+            me.setParams(obj1,obj2,Model.POST,true);
+        },
+        /**
+         * 设置参数
+         * @param {Object|String} obj1 参数对象或者参数key
+         * @param {String} [obj2] 参数内容
+         * @param {String}   type      参数分组的key
          * @param {Boolean}   ignoreIfExist   如果存在同名的参数则不覆盖，忽略掉这次传递的参数
          * @param {Function} callback 对每一项参数设置时的回调
          */
-        setParams:function (obj1,obj2,key,ignoreIfExist) {
-            if(!key){
-                key=Model.GET;
+        setParams:function (obj1,obj2,type,ignoreIfExist) {
+            if(!type){
+                type=Model.GET;
             }else{
-                key=key.toUpperCase();
+                type=type.toUpperCase();
             }
             var me=this;
             if(!me.$keysCache)me.$keysCache={};
-            me.$keysCache[key]=true;
+            me.$keysCache[type]=true;
 
-            var k = '$' + key;
+            var k = '$' + type;
             if (!me[k])me[k] = {};
             if (S.isObject(obj1)) {
                 for (var p in obj1) {
@@ -212,7 +245,7 @@ KISSY.add("mxext/model",function(S,Magix){
                         me[k][p] = obj1[p];
                     }
                 }
-            } else if(obj1&&obj2){
+            } else if(obj1){
                 if (!ignoreIfExist || !me[k][obj1]) {
                     me[k][obj1] = obj2;
                 }
@@ -228,20 +261,31 @@ KISSY.add("mxext/model",function(S,Magix){
             me.setParams(obj1, obj2,Model.POST);
         },
         /**
-         * 设置post参数，只有未设置过的参数才进行设置
+         * 设置url参数
          * @param {Object|String} obj1 参数对象或者参数key
          * @param {String} [obj2] 参数内容
          */
-        setPostParamsIf:function(obj1,obj2){
-            var me=this;
-            me.setParams(obj1,obj2,Model.POST,true);
+        setUrlParams:function(obj1,obj2){
+            this.setParams(obj1,obj2,Model.GET);
         },
-        removeParamsObject:function(key){
-            if(!key)key=Model.GET;
-            delete this['$'+key];
+        /**
+         * @private
+         */
+        removeParamsObject:function(type){
+            if(!type)type=Model.GET;
+            delete this['$'+type];
         },
+        /**
+         * @private
+         */
         removePostParamsObject:function(){
             this.removeParamsObject(Model.POST);
+        },
+        /**
+         * @private
+         */
+        removeUrlParamsObject:function(){
+            this.removeParamsObject(Model.GET);
         },
         /**
          * 重置缓存的参数对象，对于同一个model反复使用前，最好能reset一下，防止把上次请求的参数也带上
@@ -251,7 +295,7 @@ KISSY.add("mxext/model",function(S,Magix){
             var keysCache=me.$keysCache;
             if(keysCache){
                 for(var p in keysCache){
-                    if(Magix.hasProp(keysCache,p)){
+                    if(Magix.has(keysCache,p)){
                         delete me['$'+p];
                     }
                 }
@@ -270,19 +314,19 @@ KISSY.add("mxext/model",function(S,Magix){
          * 获取model对象请求时的后台地址
          * @return {String}
          */
-        url:function () {
+        url:function (url) {
             var self = this,
-                uri = self.get('uri'),
+                uri = url||self.get('uri'),
                 uris;
             if (uri) {
                 uris = uri.split(':');
                 var maps=self.urlMap;
                 if(maps){
-                    for (var i = 0, parent = maps; i < uris.length; i++) {
+                    for (var i = 0, parent = maps,j=uris.length; i < j; i++) {
                         parent = parent[uris[i]];
                         if (parent === undefined) {
                             break;
-                        } else if (i == uris.length - 1) {
+                        } else if (i == j - 1) {
                             uri=parent;
                         }
                     }
@@ -295,14 +339,14 @@ KISSY.add("mxext/model",function(S,Magix){
         },
         /**
          * 获取属性
-         * @param {String} key key
+         * @param {String} type type
          * @return {Object}
          */
-        get:function(key){
+        get:function(type){
             var me=this;
             var attrs=me.$attrs;
             if(attrs){
-                return attrs[key];
+                return attrs[type];
             }
             return null;
         },
@@ -348,42 +392,39 @@ KISSY.add("mxext/model",function(S,Magix){
         /**
          * 向服务器请求，加载或保存数据
          * @param {Object} ops 请求选项
+         * @param {Function} ops.success 成功后的回调
+         * @param {Function} ops.error 失败后的回调
          */
         request:function(ops){
             if(!ops)ops={};
             var success=ops.success;
             var error=ops.error;
             var me=this;
-            if(!me.hasLocker||!me.locker){
-                me.$abort=false;
-                me.locker=me.hasLocker;
-                ops.success=function(resp){
-                    me.locker=false;
-                    if(!me.$abort){
-                        if(resp){
-                            var val=me.parse(resp);
-                            if(val){
-                                if(S.isArray(val)){
-                                    val={
-                                        list:val
-                                    };
-                                }
-                                me.set(val,null,true);
+            me.$abort=false;
+            ops.success=function(resp){
+                if(!me.$abort){
+                    if(resp){
+                        var val=me.parse(resp);
+                        if(val){
+                            if(S.isArray(val)){
+                                val={
+                                    list:val
+                                };
                             }
-                        }
-                        if(success){
-                            success.apply(this,arguments);
+                            me.set(val,null,true);
                         }
                     }
-                };
-                ops.error=function(){
-                    me.locker=false;
-                    if(!me.$abort){
-                        if(error)error.apply(this,arguments);
+                    if(success){
+                        success.apply(this,arguments);
                     }
-                };
-                me.$trans=me.sync(me,ops);
-            }
+                }
+            };
+            ops.error=function(){
+                if(!me.$abort){
+                    if(error)error.apply(this,arguments);
+                }
+            };
+            me.$trans=me.sync(ops);
         },
         /**
          * 中止请求
@@ -397,12 +438,19 @@ KISSY.add("mxext/model",function(S,Magix){
             me.$abort=true;
         },
         /**
+         * 获取当前model是否已经取消了请求
+         * @return {Boolean}
+         */
+        isAborted:function(){
+            return this.$abort;
+        },
+        /**
          * 开始事务
          * @example
          * //...
          * var userList=m.get('userList');//从model中取出userList数据
          * m.beginTransaction();//开始更改的事务
-         * userList.push({userId:'123',userName:'xinglie'});//添加一个新用户
+         * userList.push({userId:'58782',userName:'xinglie.lkf'});//添加一个新用户
          * m.save({
          *     //...
          *     success:function(){
@@ -443,13 +491,6 @@ KISSY.add("mxext/model",function(S,Magix){
          */
         endTransaction:function(){
             delete this.$bakAttrs;
-        },
-        /**
-         * 给请求加锁，上个请求未完成时，不发起新的请求
-         * @param {Boolean} locker 是否加锁
-         */
-        lock:function(locker){
-            this.hasLocker=!!locker;
         }
     });
     return Model;

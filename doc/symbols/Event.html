@@ -282,7 +282,7 @@ dl.data .dd{
 
                                     
                                         <p>源码：
-                                            <a href="../symbols/src/D__wamp_www_magix_git_build_debug__magix_kissy_magix_event.js.html">event.js</a></p>
+                                            <a href="../symbols/src/D__wamp_www_br_luna_subway_20130314_gaiban_2_subway-webapp2_src_main_webapp_src_libs_magix_docsrc__magix_kissy_magix_event.js.html">event.js</a></p>
 
                                     
 
@@ -309,17 +309,7 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 Event.
-                                                <b class="name"><a href="../symbols/Event.html#.bind">bind</a></b>
-                                                <span class="param">(name, fn)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">绑定事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                Event.
-                                                <b class="name"><a href="../symbols/Event.html#.trigger">trigger</a></b>
+                                                <b class="name"><a href="../symbols/Event.html#.fire">fire</a></b>
                                                 <span class="param">(name, data, remove, lastToFirst)</span>
                                                 
                                                 
@@ -329,7 +319,17 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 Event.
-                                                <b class="name"><a href="../symbols/Event.html#.unbind">unbind</a></b>
+                                                <b class="name"><a href="../symbols/Event.html#.on">on</a></b>
+                                                <span class="param">(name, fn, insertOrRemove)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">绑定事件</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                Event.
+                                                <b class="name"><a href="../symbols/Event.html#.un">un</a></b>
                                                 <span class="param">(name, fn)</span>
                                                 
                                                 
@@ -402,73 +402,10 @@ dl.data .dd{
                                     <ul class="list detail-list">
                                         
                                         <li class="li">
-                                            <a name=".bind"> </a>
+                                            <a name=".fire"> </a>
                                             <div class="title" >
                                                 <span>Event.</span>
-                                                <b class="name">bind</b>
-                                                <span class="param">(name, fn)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                绑定事件
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">name</b>
-                                                            
-                                                            
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">事件名称</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">fn</b>
-                                                            
-                                                            
-                                                            <span class="type">{Function}</span> 
-                                                            <span class="desc">事件回调</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name=".trigger"> </a>
-                                            <div class="title" >
-                                                <span>Event.</span>
-                                                <b class="name">trigger</b>
+                                                <b class="name">fire</b>
                                                 <span class="param">(name, data, remove, lastToFirst)</span>
                                                 
                                                 
@@ -546,10 +483,82 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name=".unbind"> </a>
+                                            <a name=".on"> </a>
                                             <div class="title" >
                                                 <span>Event.</span>
-                                                <b class="name">unbind</b>
+                                                <b class="name">on</b>
+                                                <span class="param">(name, fn, insertOrRemove)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                绑定事件
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">name</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">事件名称</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">fn</b>
+                                                            
+                                                            
+                                                            <span class="type">{Function}</span> 
+                                                            <span class="desc">事件回调</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">insertOrRemove</b>
+                                                            
+                                                            
+                                                            <span class="type">{Interger|Boolean}</span> 
+                                                            <span class="desc">事件监听插入的位置或触发后是否移除监听</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name=".un"> </a>
+                                            <div class="title" >
+                                                <span>Event.</span>
+                                                <b class="name">un</b>
                                                 <span class="param">(name, fn)</span>
                                                 
                                                 
@@ -642,7 +651,8 @@ dl.data .dd{
         <ul class="list class-list">
             <li><a href="../symbols/Model.html">Model</a></li>
             <li><a href="../symbols/MxView.html">MxView</a></li>
-            <li><a href="../symbols/ModelFactory.html">ModelFactory</a></li>
+            <li><a href="../symbols/MManager.html">MManager</a></li>
+            <li><a href="../symbols/MRequest.html">MRequest</a></li>
             <li><a href="../symbols/VfAnim.html">VfAnim</a></li>
         </ul>
     </div>

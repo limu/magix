@@ -5,24 +5,37 @@
  */
 KISSY.add('magix/router',function(S,IRouter,Magix,Event){
     
-var HAS=Magix.hasProp;
+var HAS=Magix.has;
 var MIX=Magix.mix;
+var D=document;
+var isUtf8=/^UTF-8$/i.test(D.charset||D.characterSet||'UTF-8');
+var mxConfig=Magix.config();
+var HrefCache=Magix.createCache();
+var ChgdCache=Magix.createCache();
 
-var isParam=function(params){
-    var r;
-    var ps=this.params;
-    if(!Magix.isArray(params))params=String(params).split(',');
-    for(var i=0;i<params.length;i++){
-        r=HAS(ps,params[i]);
-        if(r)break;
+var TLoc,LLoc,Pnr;
+var TitleC=1<<16;
+var TrimHashReg=/#.*$/,TrimQueryReg=/^[^#]*#?!?/;
+var Ps='params';
+var UseNativeHistory=mxConfig.nativeHistory;
+var SupportState,HashAsNativeHistory;
+
+var isParam=function(params,r,ps){
+    if(params){
+        ps=this[Ps];
+        if(!Magix.isArray(params))params=params.split(',');
+        for(var i=0;i<params.length;i++){
+            r=HAS(ps,params[i]);
+            if(r)break;
+        }
     }
     return r;
 };
 var isPathname=function(){
     return HAS(this,PATHNAME);  
 };
-var isViewPath=function(){
-    return HAS(this,'viewPath');
+var isView=function(){
+    return HAS(this,'view');
 };
 /*var isParamChangedExcept=function(args){
     if(Magix.isString(args)){
@@ -34,7 +47,7 @@ var isViewPath=function(){
     for(var i=0;i<args.length;i++){
         temp[args[i]]=true;
     }
-    var keys=Magix.objectKeys(this.params);
+    var keys=Magix.keys(this[Ps]);
     for(i=0;i<keys.length;i++){
         if(!HAS(temp,keys[i])){
             return true;
@@ -42,189 +55,107 @@ var isViewPath=function(){
     }
     return false;
 };*/
-var isPathnameDiff=function(){
+var pathnameDiff=function(){
     var me=this;
     var hash=me.hash;
     var query=me.query;
     return hash[PATHNAME]!=query[PATHNAME];
 };
-var isParamDiff=function(param){
+var paramDiff=function(param){
     var me=this;
     var hash=me.hash;
     var query=me.query;
-    return hash.params[param]!=query.params[param];
+    return hash[Ps][param]!=query[Ps][param];
 };
-var hashParamsOwn=function(key){
+var hashOwn=function(key){
     var me=this;
     var hash=me.hash;
-    return HAS(hash.params,key);
+    return HAS(hash[Ps],key);
 };
-var queryParamsOwn=function(key){
+var queryOwn=function(key){
     var me=this;
     var query=me.query;
-    return HAS(query.params,key);
+    return HAS(query[Ps],key);
 };
 
 var getParam=function(key){
     var me=this;
-    var params=me.params;
+    var params=me[Ps];
     return params[key];
 };
 
 var safeExec=Magix.safeExec;
 
 var WIN=window;
-var ENCODE=encodeURIComponent;
 var DECODE=decodeURIComponent;
 
-var PathRelativeReg=/\/[^\/]+?\/\.{2}\/|([^:\/])\/\/+/;
-var PathTrimFileReg=/[^\/]*$/;
-var PathTrimParamsReg=/([#?]).*$/;
-var ParamsReg=/([^=&?\/#]+)=([^&=#?]*)/g;
+
 var EMPTY='';
 var PATHNAME='pathname';
+
 //var PathTrimFileParamsReg=/(\/)?[^\/]*[=#]$/;//).replace(,'$1').replace(,EMPTY);
 //var PathTrimSearch=/\?.*$/;
 /**
  * @name Router
  * @namespace
- * @borrows Event.bind as bind
- * @borrows Event.trigger as trigger
- * @borrows Event.unbind as unbind
+ * @borrows Event.on as on
+ * @borrows Event.fire as fire
+ * @borrows Event.un as un
  */
 var Router=MIX({
     /**
      * @lends Router
      */
-    iQ:[],
-    iC:0,
-    qH:{},
     /**
      * 使用history state做为改变url的方式来保存当前页面的状态
      * @function
      */
-    useHistoryState:Magix.unimpl,
+    
     /**
      * 使用hash做为改变url的方式来保存当前页面的状态
      * @function
      */
-    useLocationHash:Magix.unimpl,
+    
     /**
-     * 比较2个参数对象值是否一样，浅比较
-     * @param  {Object} p1 给定的第一个对象
-     * @param  {Object} p2 给定的第二个对象
-     * @return {Boolean} 2个对象的内容是否一样
-     */
-    compareObject:function(p1,p2){
-        var keys=[];
-        keys=keys.concat(Magix.objectKeys(p1));
-        keys=keys.concat(Magix.objectKeys(p2));
-        for(var i=0;i<keys.length;i++){
-            var key=keys[i];
-            if(p1[key]!=p2[key]){
-                return false;
-            }
-        }
-        return true;
-    },
-    /**
-     * 获取pathname前端真实路径跟虚拟路径之间的映射关系
-     * @return {Object}
-     */
-    getPathnameRelations:function(){//获取pathname关系，真实与虚拟之间的映射
-        var me=this;
-        if(me.$pnr)return me.$pnr;
-        var temp={
-            //realPathname:{},//真实存在的pathname表
-            virtualToReal:{},//虚拟到真实的映射关系表
-            virtualRegExpToReal:{}//带正则的虚拟到真实映射关系表
-        };
-        var mxConfig=Magix.config();
-        var pathCfg=mxConfig.pathCfg;
-        //var pathnameHome=pathCfg.path||EMPTY;
-        var map=pathCfg.map;
-        var home=pathCfg.defaultView;//处理默认加载的viewPath
-        var dPathname=pathCfg.defaultPathname||EMPTY;
-
-        
-        if(Magix.isObject(map)){//我们无法获知当前项目硬盘上存在多少个layouts（不借助其它工具）,但我们可以通过对代码的分析得到，因为有用到的都应该配置出来，所以我们对虚拟配置进行分析
-            for(var p in map){
-                if(HAS(map,p)){
-                    var pn=/*pathnameHome+*/p;
-                    /*if(pn.charAt(pn.length-1)=='/'){//保持与kissy的一致处理
-                        pn+='index';
-                    }*/
-                    //temp.realPathname[pn]=true;
-                    var pv=map[p];
-                    var pvs=[];
-                    if(Magix.isArray(pv)){
-                        pvs=pv;
-                    }else if(Magix.isString(pv)){
-                        pvs=pv.split(',');
-                    }else{
-                        pvs=[pv];
-                    }
-                    for(var i=0;i<pvs.length;i++){
-                        if(Magix.isRegExp(pvs[i])){//我们来解决url重写后需要使用正则处理的问题
-                            temp.virtualRegExpToReal[pn]=pvs[i]
-                        }else{
-                            if(!dPathname&&pn==home){
-                                dPathname=pvs[i];
-                            }
-                            temp.virtualToReal[pvs[i]]=pn;
-                        }
-                    }
-                }
-            }
-            /*if(home){
-                //home=pathnameHome+home;
-                if(home.charAt(home.length-1)=='/'){
-                    home+='index';
-                }
-                //temp.realPathname[home]=true;
-                //temp.virtualToReal[EMPTY]=home;
-            }*/
-        }
-        
-        if(!home){
-            throw new Error('unset defaultView');
-        }
-        temp.virtualToReal[EMPTY]=home;
-        temp.home=home;//||temp.virtualToReal[EMPTY];
-        temp[PATHNAME]=dPathname;
-
-        //关于notFound
-        //当用户配置了notFound则认为找不到相应的前端view时显示notFound的view
-        //如果没有配置，则在找不到相应的view时，显示默认的首页view
-        //temp.hasNotFound=HAS(pathCfg,'notFound');
-        temp.notFound=pathCfg.notFound;
-        
-        return me.$pnr=temp;
-    },
-    /**
-     * 根据地址栏中的pathname获取对应的前端viewPath
+     * 根据地址栏中的pathname获取对应的前端view
      * @param  {String} pathname 形如/list/index这样的pathname
      * @return {String} 返回形如app/views/layouts/index这样的字符串
      */
-    getViewPath:function(pathname){//虚拟转换真实的pathname
+    getView:function(pathname){
         var me=this;
-        var pnr=me.getPathnameRelations();
-
-        if(!pathname)pathname=pnr[PATHNAME];
-
-        var result=pnr.virtualToReal[pathname];//简单的在映射表中找
-        if(!result){//未找到，在正则表达式中查找
-            for(var p in pnr.virtualRegExpToReal){
-                if(pnr.virtualRegExpToReal[p].test(pathname)){
-                    result=p;
-                    break;
-                }
+        
+        if(!Pnr){
+            Pnr={
+                routes:mxConfig.routes||{},
+                e404:mxConfig.notFoundView
             }
+            //var home=pathCfg.defaultView;//处理默认加载的view
+            //var dPathname=pathCfg.defaultPathname||EMPTY;
+            var defaultView=mxConfig.defaultView;
+            if(!defaultView){
+                throw new Error('unset defaultView');
+            }
+            Pnr.home=defaultView;
+            var defaultPathname=mxConfig.defaultPathname||EMPTY;
+            //if(!Magix.isFunction(temp.routes)){
+            Pnr.routes[defaultPathname]=defaultView;
+            Pnr[PATHNAME]=defaultPathname;
+        }
+
+        var result;
+
+        if(!pathname)pathname=Pnr[PATHNAME];
+        //
+        var r=Pnr.routes;
+        if(Magix.isFunction(r)){
+            result=r.call(mxConfig,pathname);
+        }else{
+            result=r[pathname];//简单的在映射表中找
         }
 
         return {
-            viewPath:result?result:pnr.notFound||pnr.home,
-            pathname:result?pathname:(pnr.notFound?pathname:pnr[PATHNAME])
+            view:result?result:Pnr.e404||Pnr.home,
+            pathname:result?pathname:(Pnr.e404?pathname:Pnr[PATHNAME])
         }
     },
     /**
@@ -232,190 +163,140 @@ var Router=MIX({
      */
     start:function(){
         var me=this;
-        if(me.supportHistoryState()){
-            me.useHistoryState();
+        var H=WIN.history;
+
+        SupportState=UseNativeHistory&&H.pushState;
+        HashAsNativeHistory=UseNativeHistory&&!SupportState;
+
+        if(SupportState){
+            me.useState();
         }else{
-            me.useLocationHash();
+            me.useHash();
         }
         me.route();//页面首次加载，初始化整个页面
     },
     /**
-     * 检测当前环境是否允许使用history state
+     * 解析path
+     * @param  {String} path /a/b/c?a=b&c=d的字符串
+     * @return {Object}
      */
-    supportHistoryState:function(){
-        var H=WIN.history;
-        var cfg=Magix.config();
-        return cfg.useHistoryState&&H.pushState&&H.replaceState;
-    },
-    /**
-     * 把路径字符串转换成对象
-     * @param  {String} path 路径字符串
-     * @return {Object} 解析后的对象
-     */
-    pathToObject:function(path){
-        //把形如 /xxx/a=b&c=d 转换成对象 {pathname:'/xxx/',params:{a:'b',c:'d'}}
-        //1. /xxx/a.b.c.html?a=b&c=d  pathname /xxx/a.b.c.html 
-        //2. /xxx/?a=b&c=d  pathname /xxx/
-        //3. /xxx/#?a=b => pathname /xxx/
-        //4. /xxx/index.html# => pathname /xxx/index.html
-        //5. /xxx/index.html  => pathname /xxx/index.html
-        //6. /xxx/#           => pathname /xxx/
-        //7. a=b&c=d          => pathname ''
-        //8. /s?src=b#        => pathname /s params:{src:'b'}
+    parsePath:function(path){
+        var o=Magix.pathToObject(path);
+        var pn=o[PATHNAME];
         var me=this;
-        var obj={};
-        var params={};
-        var protocol=WIN.location.protocol;
-        var pathname=EMPTY;
-        if(PathTrimParamsReg.test(path)){//有#?号，表示有pathname
-            pathname=path.replace(PathTrimParamsReg,EMPTY)
-        }else if(!~path.indexOf('=')){//没有=号，路径可能是 xxx 相对路径 
-            pathname=path;
-        }
-        
-        if(pathname){
-            if(pathname.indexOf(protocol)==0){//解析以https?:开头的网址
-                var first=pathname.indexOf('/',protocol.length+2);//找最近的 / 
-                if(first==-1){//未找到，比如 http://etao.com
-                    pathname='/';//则pathname为  /
-                }else{
-                    pathname=pathname.substring(first); //截取
-                }
-            }else if(pathname.charAt(0)!='/'&&Magix.config().useHistoryState&&!me.supportHistoryState()){//如果不是以/开头的并且要使用history state,当前浏览器又不支持history state则放hash中的pathname要进行处理
-                var pn=WIN.location[PATHNAME].replace(PathTrimFileReg,EMPTY);
-                pn=pn+pathname;//地址栏中的pathname加上相对的
-                while(PathRelativeReg.test(pn)){
-                    pn=pn.replace(PathRelativeReg,'$1/');
-                }
-                pathname=pn;
-            }
-        }
-        path.replace(ParamsReg,function(match,name,value){
-            params[name]=value;
-        });
-        obj[PATHNAME]=pathname;
-        obj.params=params;
-        return obj;
+        if(pn&&pn.charAt(0)!='/'&&HashAsNativeHistory){//如果不是以/开头的并且要使用history state,当前浏览器又不支持history state则放hash中的pathname要进行处理
+            o[PATHNAME]=Magix.path(WIN.location[PATHNAME],pn);
+        }        
+        return o;
     },
     /**
-     * 把对象内容转换成字符串路径
-     * @param  {Object} obj 对象
-     * @return {String} 字符串路径
-     */
-    objectToPath:function(obj){//上个方法的逆向
-        var pn=obj[PATHNAME];
-        var params=[];
-        for(var p in obj.params){
-            if(HAS(obj.params,p)){
-                //if(obj.params[p]){//我们在此过滤掉了空字符串这样的参数
-                    params.push(p+'='+obj.params[p]);
-                //}
-            }
-        }
-        return pn+(params.length?'?':EMPTY)+params.join('&');
-    },
-    /**
-     * 解析query和hash
+     * 解析href的query和hash，默认href为window.location.href
+     * @param {String} [href] href
      * @return {Object} 解析的对象
      */
-    parseQueryAndHash:function(){
+    parseQH:function(href){
+        href=href||WIN.location.href;
+
         var me=this;
-        var href=WIN.location.href;
-        var cache=me.qH;
-        var cfg=Magix.config();
+        if(isUtf8){
+            try{
+                href=DECODE(href);
+            }catch(ignore){
+
+            }
+        }
+        /*var cfg=Magix.config();
         if(!cfg.originalHREF){
             try{
                 href=DECODE(href);//解码有问题 http://fashion.s.etao.com/search?q=%CF%CA%BB%A8&initiative_id=setao_20120529&tbpm=t => error:URIError: malformed URI sequence
             }catch(ignore){
 
             }
+        }*/
+        var result=HrefCache.get(href);
+        if(!result){
+            var query=href.replace(TrimHashReg,EMPTY);
+            //
+            //var query=tPathname+params.replace(/^([^#]+).*$/g,'$1');
+            var hash=href.replace(TrimQueryReg,EMPTY);//原始hash
+            //
+            var queryObj=me.parsePath(query);
+            //
+            var hashObj=me.parsePath(hash);//去掉可能的！开始符号
+            //
+            var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
+            MIX(comObj,queryObj[Ps]);
+            MIX(comObj,hashObj[Ps]);
+            result={
+                pathnameDiff:pathnameDiff,
+                paramDiff:paramDiff,
+                hashOwn:hashOwn,
+                queryOwn:queryOwn,
+                get:getParam,
+                href:href,
+                srcQuery:query,
+                srcHash:hash,
+                query:queryObj,
+                hash:hashObj,
+                params:comObj
+            }
+            HrefCache.set(href,result);
         }
-        if(HAS(cache,href)){
-            return cache[href];
-        }
-        
-        var params=href.replace(/^[^?#]+/g,EMPTY);
-        var query=WIN.location[PATHNAME]+params.replace(/^([^#]+).*$/g,'$1');
-        var hash=params.replace(/^[^#]*#?/g,EMPTY);//原始hash
-
-        var queryObj=me.pathToObject(query);
-        //
-        var hashObj=me.pathToObject(hash.replace(/^!?/,EMPTY));//去掉可能的！开始符号
-        //
-        var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
-        MIX(comObj,queryObj.params);
-        MIX(comObj,hashObj.params);
-        return cache[href]={
-            isPathnameDiff:isPathnameDiff,
-            isParamDiff:isParamDiff,
-            hashParamsOwn:hashParamsOwn,
-            queryParamsOwn:queryParamsOwn,
-            get:getParam,
-            originalQuery:query,
-            originalHash:hash,
-            query:queryObj,
-            hash:hashObj,
-            params:comObj
-        };
+        return result;
     },
     /**
-     * 解析window.location.href字符串为对象
+     * 解析href字符串为对象,默认为window.location.href
+     * @param {String} [href] href
      * @return {Object}
      */
-    parseLocation:function(){
+    parseLoc:function(href){
         var me=this;
-        var queryHash=me.parseQueryAndHash();
+        var queryHash=me.parseQH(href);
 
-        //
-
-        var tempPathname;
-        /*
-            1.在选择pathname时，不能简单的把hash中的覆盖query中的。有可能是从不支持history state浏览器上拷贝链接到支持的浏览器上，分情况而定：
-            如果hash中存在pathname则使用hash中的，否则用query中的
-
-            2.如果指定不用history state则直接使用hash中的pathname
+        
+        if(!queryHash.view){
             
-            以下是对第1条带hash的讨论
-            // http://etao.com/list/?a=b#!/home?page=2&rows=20
-            //  /list/index
-            //  /home 
-            //   http://etao.com/list?page=3#!/home?page=2;
-            // 情形A. pathname不变 http://etao.com/list?page=3#!/list?page=2 到支持history state的浏览器上 参数合并;
-            // 情形B .pathname有变化 http://etao.com/list?page=3#!/home?page=2 到支持history state的浏览器上 参数合并,pathname以hash中的为准;
-        */
-        var mxConfig=Magix.config();
-        if(mxConfig.useHistoryState){//指定使用history state
+            var tempPathname;
             /*
-            if(me.supportHistoryState()){//当前浏览器也支持
-                if(hashObj[PATHNAME]){//优先使用hash中的，理由见上1
-                    tempPathname=hashObj[PATHNAME];
-                }else{
-                    tempPathname=queryObj[PATHNAME];
-                }
-            }else{//指定使用history 但浏览器不支持 说明服务器支持这个路径，规则同上
-                if(hashObj[PATHNAME]){//优先使用hash中的，理由见上1
-                    tempPathname=hashObj[PATHNAME];
-                }else{
-                    tempPathname=queryObj[PATHNAME];
-                }
-            }
-            合并后如下：
+                1.在选择pathname时，不能简单的把hash中的覆盖query中的。有可能是从不支持history state浏览器上拷贝链接到支持的浏览器上，分情况而定：
+                如果hash中存在pathname则使用hash中的，否则用query中的
+
+                2.如果指定不用history state则直接使用hash中的pathname
+                
+                以下是对第1条带hash的讨论
+                // http://etao.com/list/?a=b#!/home?page=2&rows=20
+                //  /list/index
+                //  /home 
+                //   http://etao.com/list?page=3#!/home?page=2;
+                // 情形A. pathname不变 http://etao.com/list?page=3#!/list?page=2 到支持history state的浏览器上 参数合并;
+                // 情形B .pathname有变化 http://etao.com/list?page=3#!/home?page=2 到支持history state的浏览器上 参数合并,pathname以hash中的为准;
             */
-            //
-            if(queryHash.hash[PATHNAME]){
+            if(UseNativeHistory){//指定使用history state
+                /*
+                if(me.supportState()){//当前浏览器也支持
+                    if(hashObj[PATHNAME]){//优先使用hash中的，理由见上1
+                        tempPathname=hashObj[PATHNAME];
+                    }else{
+                        tempPathname=queryObj[PATHNAME];
+                    }
+                }else{//指定使用history 但浏览器不支持 说明服务器支持这个路径，规则同上
+                    if(hashObj[PATHNAME]){//优先使用hash中的，理由见上1
+                        tempPathname=hashObj[PATHNAME];
+                    }else{
+                        tempPathname=queryObj[PATHNAME];
+                    }
+                }
+                合并后如下：
+                */
+                //
+                tempPathname=queryHash.hash[PATHNAME]||queryHash.query[PATHNAME];
+            }else{//指定不用history state ，那咱还能说什么呢，直接用hash
                 tempPathname=queryHash.hash[PATHNAME];
-            }else{
-                tempPathname=queryHash.query[PATHNAME];
             }
-        }else{//指定不用history state ，那咱还能说什么呢，直接用hash
-            tempPathname=queryHash.hash[PATHNAME];
+            var view=me.getView(tempPathname);
+            MIX(queryHash,view);
         }
-        var viewPath=me.getViewPath(tempPathname);
-        return MIX(queryHash,viewPath);
-        /*return MIX(queryHash,{ //先不加referrer 
-            referrer:me.$referrer||EMPTY,
-            referrerLocation:me.$location||null
-        });*/
+        return queryHash
     },
     /**
      * 获取2个location对象之间的差异部分
@@ -423,69 +304,70 @@ var Router=MIX({
      * @param  {Object} newLocation 当前的location对象
      * @return {Object} 返回包含差异信息的对象
      */
-    getChangedLocation:function(oldLocation,newLocation){
-        var temp={params:{}};
-        if(oldLocation[PATHNAME]!=newLocation[PATHNAME]){
-            temp[PATHNAME]=true;
+    getChged:function(oldLocation,newLocation){
+        var oKey=oldLocation.href;
+        var nKey=newLocation.href;
+        var tKey=oKey+'\n'+nKey;
+        var result=ChgdCache.get(tKey);
+        if(!result){
+            tKey=nKey+'\n'+tKey;
+            result=ChgdCache.get(tKey);
         }
-        if(oldLocation.viewPath!=newLocation.viewPath){
-            temp.viewPath=true;
-        }
-        var keys=Magix.objectKeys(oldLocation.params);
-        keys=keys.concat(Magix.objectKeys(newLocation.params));
-        for(var i=0;i<keys.length;i++){
-            var key=keys[i];
-            if(oldLocation.params[key]!==newLocation.params[key]){
-                temp.params[key]=true;
+        if(!result){
+            var hasChanged;
+            result={params:{}};
+            if(oldLocation[PATHNAME]!=newLocation[PATHNAME]){
+                result[PATHNAME]=1;
+                hasChanged=1;
             }
+            if(oldLocation.view!=newLocation.view){
+                result.view=1;
+                hasChanged=1;
+            }
+            var oldParams=oldLocation[Ps],newParams=newLocation[Ps];
+            var p;
+            for(p in oldParams){
+                if(oldParams[p]!=newParams[p]){
+                    hasChanged=1;
+                    result[Ps][p]=1;
+                }
+            }
+
+            for(p in newParams){
+                if(oldParams[p]!=newParams[p]){
+                    hasChanged=1;
+                    result[Ps][p]=1;
+                }
+            }
+            result.occur=hasChanged;
+            result.isParam=isParam;
+            result.isPathname=isPathname;
+            result.isView=isView;
+            ChgdCache.set(tKey,result);
         }
-        temp.isParam=isParam;
-        temp.isPathname=isPathname;
-        temp.isViewPath=isViewPath;
-        //temp.isParamChangedExcept=isParamChangedExcept;
-        return temp;
+        return result;
     },
     /**
      * 根据window.location.href路由并派发相应的事件
      */
     route:function(){
         var me=this;
-        var location=me.parseLocation();
-        var oldLocation=me.$location||{params:{}};
-        var firstFire=!me.$location;//是否强制触发的locationChange，对于首次加载会强制触发一次
-        var oldViewPath=oldLocation.viewPath||EMPTY;
-        var needFire;
-        if(location.viewPath==oldViewPath){//要加载的根view路径没变化
-            if(!me.compareLocation(oldLocation,location)){//比较参数是否有变化
-                needFire=true;
-            }
-        }else{
-            needFire=true;
-        }
-        if(needFire){
-            var changed=me.getChangedLocation(oldLocation,location);
-            me.trigger('locationChanged',{
+        var location=me.parseLoc();
+        var oldLocation=LLoc||{params:{},href:'~'};
+        var firstFire=!LLoc;//是否强制触发的changed，对于首次加载会强制触发一次
+
+        LLoc=location;
+
+        var fire;
+        var changed=me.getChged(oldLocation,location);
+        if(changed.occur){
+            TLoc=location;
+            me.fire('changed',{
                 location:location,
                 changed:changed,
                 firstFire:firstFire
             });
         }
-        me.$location=location;
-        //me.$referrer=DECODE(WIN.location.href);
-        
-        me.resume();
-    },
-    /**
-     * 比较2个location值内容是否一样
-     * @param {Object} oldLocation 原有的location对象
-     * @param {Object} newLocation 现在的location对象
-     * @return {Object} 是否一样
-     */
-    compareLocation:function(oldLocation,newLocation){
-        if(oldLocation[PATHNAME]!=newLocation[PATHNAME]){
-            return false;
-        }
-        return this.compareObject(oldLocation.params,newLocation.params);
     },
     /**
      * 导航到当前的路径 
@@ -493,64 +375,78 @@ var Router=MIX({
      */
     navigate2:function(path){
         var me=this;
-        if(path&&Magix.isString(path)){
-            me.idle(function(){
-                /*
-                    busy的触发与idle要成对出现，原来并没有加if(!me.iC)进行判断，导致busy触发的次数与idle的次数不一致，导致vom那边不能正常响应locationChange
-                 */
-                ///if(!me.$busy){
-                    //me.$busy=true;
-                    me.trigger('busy');
-                //}
-                me.suspend();
-                //分析出pathname params
-                //与当前的比较是否有变化
-                //如果没变化什么也不做
-                var pathObj=me.pathToObject(path);
-                var tempParams=MIX({},me.$location.params);
-                tempParams=MIX(tempParams,pathObj.params);
+        
+        //TLoc引用
+        //pathObj引用
+        //
+        //temp={params:{},pathname:{}}
+        //
+        //MIX(temp,TLoc,temp);
+        //
+        //
 
-                if(pathObj[PATHNAME]){
-                    var mxConfig=Magix.config();
-                    if(mxConfig.useHistoryState&&!me.supportHistoryState()){//指定使用history state但浏览器不支持，需要把query中的存在的参数以空格替换掉
-                        var query=me.$location.query;
-                        if(query&&(query=query.params)){
-                            for(var p in query){
-                                if(HAS(query,p)&&!HAS(pathObj.params,p)){
-                                    pathObj.params[p]=EMPTY;
-                                }
+        if(path&&Magix.isString(path)){
+
+            var pathObj=me.parsePath(path);
+            var temp={};
+            temp[Ps]=MIX({},pathObj[Ps]);
+            temp[PATHNAME]=pathObj[PATHNAME];
+
+            if(temp[PATHNAME]){
+                if(HashAsNativeHistory){//指定使用history state但浏览器不支持，需要把query中的存在的参数以空格替换掉
+                    var query=TLoc.query;
+                    if(query&&(query=query[Ps])){
+                        for(var p in query){
+                            if(HAS(query,p)&&!HAS(temp[Ps],p)){
+                                temp[Ps][p]=EMPTY;
                             }
                         }
                     }
-                }else{//如果解析出来的不包含pathname则表示只传递的参数
-                    //
-                    pathObj.params=tempParams;
-                    pathObj[PATHNAME]=me.$location[PATHNAME];//使用原始的pathname
                 }
-                //
-                if(!me.compareLocation(pathObj,me.$location)){
-                    var tempPath=me.objectToPath(pathObj);
-                    if(me.supportHistoryState()){//如果使用pushState
-                        /*var hash=me.$location.hash;
-                        for(var p in pathObj.params){
-                            if(HAS(hash.params,p)){
-                                hash.params[p]=pathObj.params[p];
-                            }
-                        }
-                        hash=me.objectToPath(hash);
-                        if(hash){
-                            tempPath+='#!'+hash;//要保留原来的hash哦
-                        }*/
-                        me.$canFirePopState=true;
-                        history.pushState(new Date(),document.title,tempPath);//new Date属于yy出来的
-                        me.route();
-                    }else{
-                        location.hash='#!'+tempPath;
-                    }
+            }else{
+                var ps=MIX({},TLoc[Ps]);
+                temp[Ps]=MIX(ps,temp[Ps]);
+                temp[PATHNAME]=TLoc[PATHNAME];
+            }
+            var tempPath=Magix.objectToPath(temp);
+
+            var navigate;
+
+            if(SupportState){
+                navigate=tempPath!=TLoc.srcQuery;
+            }else{
+                navigate=tempPath!=TLoc.srcHash;
+            }
+
+            if(navigate){
+                
+                if(SupportState){//如果使用pushState
+                    me.$firedPop=1;
+                    history.pushState(TitleC--,D.title,tempPath);
+                    me.route();
                 }else{
-                    me.resume();
+                    MIX(temp,TLoc,temp);
+                    temp.srcHash=tempPath;
+                    temp.hash={
+                        params:temp[Ps],
+                        pathname:temp[PATHNAME]
+                    };
+                    /*
+                        window.onhashchange=function(e){
+                            
+                        };
+                        (function(){
+                            location.hash='a';
+                            location.hash='b';
+                            location.hash='c';
+                        }());
+                        
+
+                     */
+                    me.fire('changed',{loc:TLoc=temp});
+                    location.hash='#!'+tempPath;
                 }
-            });
+            }
         }
     },
     /**
@@ -565,101 +461,61 @@ var Router=MIX({
      *          page:2,
      *          rows:20
      *      });
-     *
-     *      R.navigate({
+     *      R.navigate('/list',{
      *          page:2,
      *          rows:20
-     *      },'/list');//导航到 /list?page=2&rows=20 
+     *      })
      * });
      */
-    navigate:function(params,pathname){
-        if(Magix.isObject(params)){
-            var arr=[];
-            var cfg=Magix.config();
-            var oHREF=cfg.originalHREF;
-            for(var p in params){
-                arr.push(p+'='+(oHREF?params[p]:ENCODE(params[p])));
-            }
-            params=arr.join('&');
-            if(pathname){
-                params=pathname+'?'+params;
-            }
-        }
-        this.navigate2(params);
-    },
-    /**
-     * 主要解决：
-    location.hash='a';
-    location.hash='b';运行这2行代码
-    触发2次hashchange事件，但在这2次事件中通过location.hash拿到的值都是b，所以Router引入idle，当处于闲置状态时，才进行下一个操作，否则就等待上次的完成
-     * @param  {Function} fn 闲置时回调的函数
-     */
-    idle:function(fn){
-        var me=this;
-        if(me.iC){
-            me.iQ.push(fn);
-        }else{
-            safeExec(fn);
-        }
-    },
-    /**
-     * 挂起Router，更新地址并不是同步的（hash部分），对于后续依赖window.location.href的，需要挂起等待
-     */
-    suspend:function(){
-        var me=this;
-        me.iC++;
-    },
-    /**
-     * 恢复并执行挂起的操作
-     * @return {[type]} [description]
-     */
-    resume:function(){
-        var me=this;
-        if(me.iC>0){
-            me.iC--;
-        
-            if(!me.iC){
-                me.trigger('idle');
-                if(me.iQ.length){
-                    me.idle(me.iQ.shift());
+    /*
+        1.
+            render:function(){
+                
+            },
+            events:{
+                click:{
+                    changeHash:function(e){
+                        Router.navigate('a='+S.now());
+                        Router.navigate('b='+S.now());
+                        e.view.render();
+                    }
                 }
-                //var list=me.iQ;
-                //if(list.length){
-                    /*var tasks=[].slice.call(me.iQ);
-                    me.iQ=[];
-                    while(tasks.length){
-                        me.idle(tasks.shift());
-                    }*/
-                //}else{
-                    //me.trigger('idle');
-                    //delete me.$busy;
-                //}
             }
+     */
+    navigate:function(pn,params){
+        if(!params&&Magix.isObject(pn)){
+            params=pn;
+            pn=EMPTY;
         }
+        if(params){
+            pn=Magix.objectToPath({
+                params:params,
+                pathname:pn
+            },isUtf8)
+        }
+        
+        this.navigate2(pn);
     }
+    
     /**
      * 当window.location.href有改变化时触发
-     * @name Router.locationChanged 
+     * @name Router.changed 
      * @event 
      * @param {Object} e 事件对象
      * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
      * @param {Object} e.changed 有哪些值发生改变的对象
-     * @param {Boolean} e.firstFire 标识是否是第一次强制触发的locationChanged，对于首次加载完Magix，会强制触发一次locationChanged
+     * @param {Boolean} e.firstFire 标识是否是第一次强制触发的changed，对于首次加载完Magix，会强制触发一次changed
      */
-
+    
     /**
-     * 当router忙于更改window.location时触发
-     * @name Router.busy 
+     * 当window.location.href有改变化时触发（该事件在扩展中实现）
+     * @name Router.change 
      * @event 
      * @param {Object} e 事件对象
+     * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
+     * @param {Function} e.back 回退到变化前的地址上，阻止跳转
      */
 
-    /**
-     * 当router更改完window.location，处于闲置状态时触发
-     * @name Router.idle 
-     * @event 
-     * @param {Object} e 事件对象
-     */
 },Event);
     return Magix.mix(Router,IRouter);
 },{

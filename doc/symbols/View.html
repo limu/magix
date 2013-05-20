@@ -282,7 +282,7 @@ dl.data .dd{
 
                                     
                                         <p>源码：
-                                            <a href="../symbols/src/D__wamp_www_magix_git_build_debug__magix_kissy_magix_view.js.html">view.js</a></p>
+                                            <a href="../symbols/src/D__wamp_www_br_luna_subway_20130314_gaiban_2_subway-webapp2_src_main_webapp_src_libs_magix_docsrc__magix_kissy_magix_view.js.html">view.js</a></p>
 
                                     
 
@@ -304,25 +304,25 @@ dl.data .dd{
                                             
                                                 
                                                     <li class="li">
-                                                        <b class="name"><a href="../symbols/View.html#enableEvent">enableEvent</a></b>
-                                                        
-                                                        
-                                                        
-                                                        
-                                                        
-                                                        <span class="desc">是否启用DOM事件(events对象指定的事件是否生效)，注意：如果初始化时就为false则不注册代理事件，后续无法通过enableEvent=true启用事件。</span>
-                                                    </li>
-                                                
-                                            
-                                                
-                                                    <li class="li">
-                                                        <b class="name"><a href="../symbols/View.html#enableRefreshAnim">enableRefreshAnim</a></b>
+                                                        <b class="name"><a href="../symbols/View.html#enableAnim">enableAnim</a></b>
                                                         
                                                         
                                                         
                                                         
                                                         
                                                         <span class="desc">view刷新时是否采用动画</span>
+                                                    </li>
+                                                
+                                            
+                                                
+                                                    <li class="li">
+                                                        <b class="name"><a href="../symbols/View.html#enableEvent">enableEvent</a></b>
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        <span class="desc">是否启用DOM事件(events对象指定的事件是否生效)</span>
                                                     </li>
                                                 
                                             
@@ -340,19 +340,7 @@ dl.data .dd{
                                             
                                                 
                                                     <li class="li">
-                                                        <b class="name"><a href="../symbols/View.html#exist">exist</a></b>
-                                                        <span class="type">{Boolean}</span>
-                                                        
-                                                        
-                                                        
-                                                        
-                                                        <span class="desc">标识当前view是否存在，有没有被销毁</span>
-                                                    </li>
-                                                
-                                            
-                                                
-                                                    <li class="li">
-                                                        <b class="name"><a href="../symbols/View.html#hasTemplate">hasTemplate</a></b>
+                                                        <b class="name"><a href="../symbols/View.html#hasTmpl">hasTmpl</a></b>
                                                         
                                                         
                                                         
@@ -376,6 +364,18 @@ dl.data .dd{
                                             
                                                 
                                                     <li class="li">
+                                                        <b class="name"><a href="../symbols/View.html#location">location</a></b>
+                                                        <span class="type">{Object}</span>
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        <span class="desc">window.locaiton.href解析出来的对象</span>
+                                                    </li>
+                                                
+                                            
+                                                
+                                                    <li class="li">
                                                         <b class="name"><a href="../symbols/View.html#owner">owner</a></b>
                                                         <span class="type">{Vframe}</span>
                                                         
@@ -394,7 +394,19 @@ dl.data .dd{
                                                         
                                                         
                                                         
-                                                        <span class="desc">标识当前view有没有渲染过，即created事件有没有触发过</span>
+                                                        <span class="desc">标识当前view有没有渲染过，即primed事件有没有触发过</span>
+                                                    </li>
+                                                
+                                            
+                                                
+                                                    <li class="li">
+                                                        <b class="name"><a href="../symbols/View.html#sign">sign</a></b>
+                                                        <span class="type">{Integer}</span>
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        <span class="desc">view的签名，用于刷新，销毁等的异步标识判断</span>
                                                     </li>
                                                 
                                             
@@ -406,7 +418,19 @@ dl.data .dd{
                                                         
                                                         
                                                         
-                                                        <span class="desc">当前view对应的模板字符串(当hasTemplate为true时)，该属性在created事件触发后才存在</span>
+                                                        <span class="desc">当前view对应的模板字符串(当hasTmpl为true时)，该属性在primed事件触发后才存在</span>
+                                                    </li>
+                                                
+                                            
+                                                
+                                                    <li class="li">
+                                                        <b class="name"><a href="../symbols/View.html#vom">vom</a></b>
+                                                        <span class="type">{Object}</span>
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        <span class="desc">vom对象</span>
                                                     </li>
                                                 
                                             
@@ -425,6 +449,12 @@ dl.data .dd{
                                         </div>
                                         <div class="box-bd">
                                             <ul class="static-list">
+                                            
+                                                
+
+                                            
+                                                
+
                                             
                                                 
 
@@ -473,67 +503,7 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#beginAsyncUpdate">beginAsyncUpdate</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">当您采用setViewHTML方法异步更新html时，通知view做好异步更新的准备，<b>注意:该方法最好和manage，setViewHTML一起使用。当您采用其它方式异步更新整个view的html时，仍需调用该方法</b>，建议对所有的异步更新回调使用manage方法托管，对更新整个view html前，调用beginAsyncUpdate进行更新通知</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#bind">bind</a></b>
-                                                <span class="param">(name, fn)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">绑定事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#endAsyncUpdate">endAsyncUpdate</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">通知view结束异步更新html</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#getLocation">getLocation</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">获取window.location.href解析后的对象</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#getManaged">getManaged</a></b>
-                                                <span class="param">(key)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">获取托管的资源</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#getTemplate">getTemplate</a></b>
-                                                <span class="param">(fn)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">获取当前view对应的模板</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#getTmplByXHR">getTmplByXHR</a></b>
+                                                <b class="name"><a href="../symbols/View.html#fetchTmpl">fetchTmpl</a></b>
                                                 <span class="param">(path, fn)</span>
                                                 
                                                 
@@ -543,12 +513,12 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#idle">idle</a></b>
-                                                <span class="param">(fn, args, context, anchor)</span>
+                                                <b class="name"><a href="../symbols/View.html#fire">fire</a></b>
+                                                <span class="param">(name, data, remove, lastToFirst)</span>
                                                 
                                                 
                                                 
-                                                <span class="desc">当view处于闲置状态时回调传入的fn</span>                                                
+                                                <span class="desc">触发事件</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -558,7 +528,7 @@ dl.data .dd{
                                                 
                                                 
                                                 
-                                                <span class="desc">初始化方法，供最终的view开发人员进行覆盖，注意：不要在该方法内进行异步数据获取，init仅适用于事件绑定等(init何时被调用？init在view进行一系列的初始化后，在view的created事件后被调用，此时已完成界面的创建。为什么要设计的这么靠后？view没被创建出来前，是不能做其它动作的，如果在此之前调用了init，而用户可以在init中做其它的动作，假设view还未创建完成就销毁，会给销毁带来一定的麻烦)</span>                                                
+                                                <span class="desc">初始化方法，供最终的view开发人员进行覆盖</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -573,62 +543,42 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#manage">manage</a></b>
-                                                <span class="param">(key, res)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">让view帮你管理资源，对于异步回调函数更应该调用该方法进行托管当调用该方法后，您不需要在异步回调方法内判断当前view是否已经销毁同时对于view刷新后，上个异步请求返回刷新界面的问题也得到很好的解决。<b>强烈建议对异步回调函数，组件等进行托管</b></span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/View.html#observeLocation">observeLocation</a></b>
-                                                <span class="param">(keys, observePathname)</span>
+                                                <span class="param">(args)</span>
                                                 
                                                 
                                                 
-                                                <span class="desc">指定要监视地址栏中的哪些值有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数</span>                                                
+                                                <span class="desc">指定要监视地址栏中的哪些值有变化时，或pathname有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#postMessageTo">postMessageTo</a></b>
-                                                <span class="param">(aims, args)</span>
+                                                <b class="name"><a href="../symbols/View.html#on">on</a></b>
+                                                <span class="param">(name, fn, insertOrRemove)</span>
                                                 
                                                 
                                                 
-                                                <span class="desc">向某个view发送消息</span>                                                
+                                                <span class="desc">绑定事件</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#receiveMessage">receiveMessage</a></b>
-                                                <span class="param">(e)</span>
+                                                <b class="name"><a href="../symbols/View.html#parentView">parentView</a></b>
+                                                <span class="param">()</span>
                                                 
                                                 
                                                 
-                                                <span class="desc">用于接受其它view通过postMessageTo方法发来的消息，供最终的view开发人员进行覆盖</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                View.
-                                                <b class="name"><a href="../symbols/View.html#.registerAsyncUpdateName">registerAsyncUpdateName</a></b>
-                                                <span class="param">(names)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">注册view类中哪些方法是异步更新的方法，默认已注册render renderUI updateUI三个方法</span>                                                
+                                                <span class="desc">获取渲染当前view的父view</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#removeManaged">removeManaged</a></b>
-                                                <span class="param">(param)</span>
+                                                <b class="name"><a href="../symbols/View.html#planTmpl">planTmpl</a></b>
+                                                <span class="param">(fn)</span>
                                                 
                                                 
                                                 
-                                                <span class="desc">移除托管的资源</span>                                                
+                                                <span class="desc">获取当前view对应的模板</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -643,26 +593,6 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#resume">resume</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">恢复并执行挂起的操作</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#setNodeHTML">setNodeHTML</a></b>
-                                                <span class="param">(html)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">设置view节点的html内容，供子类重写</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/View.html#setViewHTML">setViewHTML</a></b>
                                                 <span class="param">(html)</span>
                                                 
@@ -673,37 +603,7 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#signature">signature</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">获取view在当前状态下的签名，view在刷新或销毁时，均会更新签名。(通过签名可识别view有没有搞过什么动作)</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#suspend">suspend</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">挂起，对于初始化时，需要访问外部资源（vframe）等，需要等待外部执行完才可以访问</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#trigger">trigger</a></b>
-                                                <span class="param">(name, data, remove, lastToFirst)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">触发事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/View.html#unbind">unbind</a></b>
+                                                <b class="name"><a href="../symbols/View.html#un">un</a></b>
                                                 <span class="param">(name, fn)</span>
                                                 
                                                 
@@ -732,22 +632,12 @@ dl.data .dd{
                                             
                                             <li class="li">
                                                 
-                                                <b class="name"><a href="../symbols/View.html#event:childrenAlter">childrenAlter</a></b>
+                                                <b class="name"><a href="../symbols/View.html#event:alter">alter</a></b>
                                                 <span class="param">(e)</span>
                                                 
                                                 
                                                 
-                                                <span class="desc">view自身和所有子孙view有改动时触发，改动包括刷新和重新mountView，与childrenCreated一起使用，当view自身和所有子孙view创建完成会触发childrenCreated，当其中的一个view刷新或重新mountView，会触发childrenAlter，当是刷新时，刷新完成会再次触发childrenCreated事件，因此这2个事件不只触发一次！！</span>
-                                            </li>
-                                            
-                                            <li class="li">
-                                                
-                                                <b class="name"><a href="../symbols/View.html#event:childrenCreated">childrenCreated</a></b>
-                                                <span class="param">(e)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">view自身和所有子孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子孙view组成的，通过监听该事件可知道子孙view什么时间创建完成（注意：当view中有子view，且该子view是通过程序动态mountView而不是通过data-view指定时，该事件会也会等待到view创建完成触发，而对于您在某个view中有如下代码：<div><vframe></vframe></div>，有一个空的vframe且未指定data-view属性，同时您在这个view中没有动态渲染vframe对应的view，则该事件不会触发，magix无法识别出您留空vframe的意图，到底是需要动态mount还是手误，不过在具体应用中，出现空vframe且没有动态mount几乎是不存在的^_^）</span>
+                                                <span class="desc">view自身和所有子孙view有改动时触发，改动包括刷新和重新mountView，与created一起使用，当view自身和所有子孙view创建完成会触发created，当其中的一个view刷新或重新mountView，会触发childrenAlter，当是刷新时，刷新完成会再次触发created事件，因此这2个事件不只触发一次！！但这2个事件会成对触发，比如触发几次childrenAlter就会触发几次created</span>
                                             </li>
                                             
                                             <li class="li">
@@ -757,7 +647,7 @@ dl.data .dd{
                                                 
                                                 
                                                 
-                                                <span class="desc">当view首次完成界面的html设置后触发，view有没有模板均会触发该事件，对于有模板的view，会等到模板取回，第一次调用setViewHTML更新界面后才触发，总之该事件触发后，您就可以访问view的HTML DOM节点对象（该事件仅代表自身的html创建完成，如果需要对整个子view也要监控，请使用childrenCreated事件）</span>
+                                                <span class="desc">view自身和所有子孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子孙view组成的，通过监听该事件可知道子孙view什么时间创建完成（注意：当view中有子view，且该子view是通过程序动态mountView而不是通过mx-view指定时，该事件会也会等待到view创建完成触发，而对于您在某个view中有如下代码：<div><vframe></vframe></div>，有一个空的vframe且未指定mx-view属性，同时您在这个view中没有动态渲染vframe对应的view，则该事件不会触发，magix无法识别出您留空vframe的意图，到底是需要动态mount还是手误，不过在具体应用中，出现空vframe且没有动态mount几乎是不存在的^_^）</span>
                                             </li>
                                             
                                             <li class="li">
@@ -772,16 +662,6 @@ dl.data .dd{
                                             
                                             <li class="li">
                                                 
-                                                <b class="name"><a href="../symbols/View.html#event:destroyResource">destroyResource</a></b>
-                                                <span class="param">(e)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">view销毁托管资源时发生</span>
-                                            </li>
-                                            
-                                            <li class="li">
-                                                
                                                 <b class="name"><a href="../symbols/View.html#event:prerender">prerender</a></b>
                                                 <span class="param">(e)</span>
                                                 
@@ -792,12 +672,32 @@ dl.data .dd{
                                             
                                             <li class="li">
                                                 
+                                                <b class="name"><a href="../symbols/View.html#event:primed">primed</a></b>
+                                                <span class="param">(e)</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">当view首次完成界面的html设置后触发，view有没有模板均会触发该事件，对于有模板的view，会等到模板取回，第一次调用setViewHTML更新界面后才触发，总之该事件触发后，您就可以访问view的HTML DOM节点对象（该事件仅代表自身的html创建完成，如果需要对整个子view也要监控，请使用created事件）</span>
+                                            </li>
+                                            
+                                            <li class="li">
+                                                
                                                 <b class="name"><a href="../symbols/View.html#event:refresh">refresh</a></b>
                                                 <span class="param">(e)</span>
                                                 
                                                 
                                                 
-                                                <span class="desc">每次调用setViewHTML更新view内容前触发，触发完该事件后即删除监听列表，如果您不需要删除监听列表，请考虑使用prerender事件，为什么设计refresh?见示例</span>
+                                                <span class="desc">每次调用beginUpdateHTML更新view内容前触发</span>
+                                            </li>
+                                            
+                                            <li class="li">
+                                                
+                                                <b class="name"><a href="../symbols/View.html#event:rendercall">rendercall</a></b>
+                                                <span class="param">(e)</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">异步更新ui的方法(render,renderUI)被调用前触发</span>
                                             </li>
                                             
                                             <li class="li">
@@ -868,7 +768,7 @@ dl.data .dd{
                                                 <dt>示例：</dt>
                                                 <dd>
                                                     
-                                                    <pre class='brush: js;'>关于View.prototype.events:示例：  html写法：    &lt;input type="button" mxclick="test:100@id:xinglie@name" value="test" /&gt;  &lt;a href="http://etao.com" mxclick="test:etao.com:_prevent_"&gt;http://etao.com&lt;/a&gt;  view写法：    events:{     click:{         test:function(e){             //e.view  当前view对象             //e.currentId 处理事件的dom节点id             //e.targetId 触发事件的dom节点id             //e.events  view.events对象，可访问其它事件对象，如：e.events.mousedown.test             //e.params  传递的参数             //如果在html上写：mxclick="test:etao.com:_prevent_"，用冒号分割的一个字符串，第1个冒号前的表示要调用的方法。当最后一个是_prevent_（调用e.preventDefault）,_stop_（调用e.stopPropagation）,_halt_（阻止默认行为和冒泡）时，丢弃最后一个，把etao.com做为参数传入，可以用e.params[0]获取             //如果是mxclick="test:100@id:xinglie@name"时，可以用e.params.id e.params.name取得相应的值，这样更直观些         }     },     mousedown:{         test:function(e){                      }     }  }</pre>
+                                                    <pre class='brush: js;'>关于View.prototype.events:示例：  html写法：    &lt;input type="button" mx-click="test{id:100,name:xinglie}" value="test" /&gt;  &lt;a href="http://etao.com" mx-click="test&lt;prevent&gt;{com:etao.com}"&gt;http://etao.com&lt;/a&gt;  view写法：    events:{     click:{         test:function(e){             //e.view  当前view对象             //e.currentId 处理事件的dom节点id             //e.targetId 触发事件的dom节点id             //e.events  view.events对象，可访问其它事件对象，如：e.events.mousedown.test             //e.params  传递的参数             //e.params.com,e.params.id,e.params.name         }     },     mousedown:{         test:function(e){                      }     }  }</pre>
                                                     
                                                 </dd>                                                
                                                 
@@ -886,6 +786,28 @@ dl.data .dd{
 					Property Detail
 				</h3>
 				
+					<a name="enableAnim"> </a>
+					<div class="fixedFont">
+
+					
+					<b class="name">enableAnim</b>
+                     
+					</div>
+					<div class="desc">
+						view刷新时是否采用动画
+						
+						
+					</div>
+
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="enableEvent"> </a>
 					<div class="fixedFont">
 
@@ -894,7 +816,7 @@ dl.data .dd{
                      
 					</div>
 					<div class="desc">
-						是否启用DOM事件(events对象指定的事件是否生效)，注意：如果初始化时就为false则不注册代理事件，后续无法通过enableEvent=true启用事件。
+						是否启用DOM事件(events对象指定的事件是否生效)
 						
 						
 					</div>
@@ -915,28 +837,6 @@ dl.data .dd{
 								true
 							</dd>
 							</dl>
-						
-
-					<hr />
-				
-					<a name="enableRefreshAnim"> </a>
-					<div class="fixedFont">
-
-					
-					<b class="name">enableRefreshAnim</b>
-                     
-					</div>
-					<div class="desc">
-						view刷新时是否采用动画
-						
-						
-					</div>
-
-					
-
-						
-						
-						
 						
 
 					<hr />
@@ -963,33 +863,11 @@ dl.data .dd{
 
 					<hr />
 				
-					<a name="exist"> </a>
-					<div class="fixedFont">
-
-					<span class="light">{Boolean}</span>
-					<b class="name">exist</b>
-                     
-					</div>
-					<div class="desc">
-						标识当前view是否存在，有没有被销毁
-						
-						
-					</div>
-
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="hasTemplate"> </a>
+					<a name="hasTmpl"> </a>
 					<div class="fixedFont">
 
 					
-					<b class="name">hasTemplate</b>
+					<b class="name">hasTmpl</b>
                      
 					</div>
 					<div class="desc">
@@ -1036,6 +914,28 @@ dl.data .dd{
 
 					<hr />
 				
+					<a name="location"> </a>
+					<div class="fixedFont">
+
+					<span class="light">{Object}</span>
+					<b class="name">location</b>
+                     
+					</div>
+					<div class="desc">
+						window.locaiton.href解析出来的对象
+						
+						
+					</div>
+
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="owner"> </a>
 					<div class="fixedFont">
 
@@ -1066,7 +966,29 @@ dl.data .dd{
                      
 					</div>
 					<div class="desc">
-						标识当前view有没有渲染过，即created事件有没有触发过
+						标识当前view有没有渲染过，即primed事件有没有触发过
+						
+						
+					</div>
+
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="sign"> </a>
+					<div class="fixedFont">
+
+					<span class="light">{Integer}</span>
+					<b class="name">sign</b>
+                     
+					</div>
+					<div class="desc">
+						view的签名，用于刷新，销毁等的异步标识判断
 						
 						
 					</div>
@@ -1088,7 +1010,29 @@ dl.data .dd{
                      
 					</div>
 					<div class="desc">
-						当前view对应的模板字符串(当hasTemplate为true时)，该属性在created事件触发后才存在
+						当前view对应的模板字符串(当hasTmpl为true时)，该属性在primed事件触发后才存在
+						
+						
+					</div>
+
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="vom"> </a>
+					<div class="fixedFont">
+
+					<span class="light">{Object}</span>
+					<b class="name">vom</b>
+                     
+					</div>
+					<div class="desc">
+						vom对象
 						
 						
 					</div>
@@ -1115,337 +1059,10 @@ dl.data .dd{
                                     <ul class="list detail-list">
                                         
                                         <li class="li">
-                                            <a name="beginAsyncUpdate"> </a>
+                                            <a name="fetchTmpl"> </a>
                                             <div class="title" >
                                                 
-                                                <b class="name">beginAsyncUpdate</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                当您采用setViewHTML方法异步更新html时，通知view做好异步更新的准备，<b>注意:该方法最好和manage，setViewHTML一起使用。当您采用其它方式异步更新整个view的html时，仍需调用该方法</b>，建议对所有的异步更新回调使用manage方法托管，对更新整个view html前，调用beginAsyncUpdate进行更新通知
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                <dt>Example</dt>
-                                                <dd>
-                                                        
-                                                            <pre class="brush: js; ">// 什么是异步更新html？render:function(){     var _self=this;     var m=new Model({uri:'user:list'});     m.load({         success:_self.manage(function(data){             var html=Mu.to_html(_self.template,data);             _self.setViewHTML(html);         }),         error:_self.manage(function(msg){             _self.setViewHTML(msg);         })     })}//如上所示，当调用render方法时，render方法内部使用model异步获取数据后才完成html的更新则这个render就是采用异步更新html的//异步更新带来的问题：//view对象监听地址栏中的某个参数，当这个参数发生变化时，view调用render方法进行刷新，因为是异步的，所以并不能立即更新界面，//当监控的这个参数连续变化时，view会多次调用render方法进行刷新，由于异步，你并不能保证最后刷新时发出的异步请求最后返回，//有可能先发出的请求后返回，这样就会出现界面与url并不符合的情况，比如tabs的切换和tabPanel的更新，连续点击tab1 tab2 tab3 //会引起tabPanel这个view刷新，但是异步返回有可能3先回来2最后回来，会导致明明选中的是tab3，却显示着tab2的内容//所以要么你自已在回调中做判断，要么把上面的示例改写成下面这样的： render:function(){     var _self=this;     _self.beginAsyncUpdate();//开始异步更新     var m=new Model({uri:'user:list'});     m.load({         success:_self.manage(function(data){             var html=Mu.to_html(_self.template,data);             _self.setViewHTML(html);         }),         error:_self.manage(function(msg){             _self.setViewHTML(msg);         })     });     _self.endAsyncUpdate();//结束异步更新}//其中endAsyncUpdate是备用的，把你的异步更新的代码放begin end之间即可//当然如果在每个异步更新的都需要这样写的话来带来差劲的编码体验，所以View会对render,renderUI,updateUI三个方法自动进行异步更新包装//您在使用这三个方法异步更新html时无须调用beginAsyncUpdate和endAsyncUpdate方法//如果除了这三个方法外你还要添加其它的异步更新方法，可调用View静态方法View.registerAsyncUpdateName来注册自已的方法//请优先考虑使用render renderUI updateUI 这三个方法来实现view的html更新，其中render方法magix会自动调用，您就考虑后2个方法吧//比如这样：renderUI:function(){//当方法名为 render renderUI updateUI时您不需要考虑异步更新带来的问题     var _self=this;     setTimeout(this.manage(function(){         _self.setViewHTML(_self.template);     }),5000);},receiveMessage:function(e){     if(e.action=='render'){         this.renderUI();     }}//当您需要自定义异步更新方法时，可以这样：KISSY.add("app/views/list",function(S,MxView){     var ListView=MxView.extend({         updateHTMLByXHR:function(){             var _self=this;             S.io({                 success:_self.manage(function(html){                     //TODO                     _self.setViewHTML(html);                 })             });         },         receiveMessage:function(e){             if(e.action=='update'){                 this.updateHTMLByXHR();             }         }     });     ListView.registerAsyncUpdateName('updateHTMLByXHR');//注册异步更新html的方法名     return ListView;},{     requires:["magix/view"]})//当您不想托管回调方法，又想消除异步更新带来的隐患时，可以这样：updateHTML:function(){     var _self=this;     var begin=_self.beginAsyncUpdate();//记录异步更新标识     S.io({         success:function(html){             //if(_self.exist){//不托管方法时，您需要自已判断view有没有销毁(使用异步更新标识时，不需要判断exist)                 var end=_self.endAsyncUpdate();//结束异步更新                 if(begin==end){//开始和结束时的标识一样，表示view没有更新过                     _self.setViewHTML(html);                 }             //}         }     });}//顺带说一下signature//并不是所有的异步更新都需要托管，考虑这样的情况：render:function(){     ModelFactory.fetchAll({         type:'User_List',         cacheKey:'User_List'     },function(m){         //render     });},//...click:{     addUser:function(e){         var m=ModelFactory.getIf('User_List');         var userList=m.get("userList");         m.beginTransaction();         userList.push({             id:'xinglie',             name:'xl'         });         m.save({             success:function(){//该回调不太适合托管                 m.endTransaction();                 Helper.tipMsg('添加成功')             },             error:function(msg){//该方法同样不适合托管，当数据保存失败时，需要回滚数据，而如果此时view有刷新或销毁，会导致该方法不被调用，无法达到数据的回滚                 m.rollbackTransaction();                 Helper.tipMsg('添加失败')             }         })          }}//以上click中的方法这样写较合适：click:{     addUser:function(e){         var m=ModelFactory.getIf('User_List');         var userList=m.get("userList");         m.beginTransaction();         userList.push({             id:'xinglie',             name:'xl'         });         var sign=e.view.signature();//获取签名         m.save({             success:function(){//该回调不太适合托管                 m.endTransaction();                 if(sign==e.view.signature()){//相等时表示view即没刷新也没销毁，此时才提示                     Helper.tipMsg('添加成功')                 }                    },             error:function(msg){//该方法同样不适合托管，当数据保存失败时，需要回滚数据，而如果此时view有刷新或销毁，会导致该方法不被调用，无法达到数据的回滚                 m.rollbackTransaction();                 if(sign==e.view.signature()){//view即没刷新也没销毁                     Helper.tipMsg('添加失败')                 }             }         })          }}//如果您无法识别哪些需要托管，哪些需要签名，统一使用托管方法就好了</pre>
-                                                        
-                                                </dd>
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="bind"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">bind</b>
-                                                <span class="param">(name, fn)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                绑定事件
-                                                
-                                                    <br />Defined in:<a href="../symbols/src/D__wamp_www_magix_git_build_debug__magix_kissy_magix_event.js.html">event.js</a>.
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">name</b>
-                                                            
-                                                            
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">事件名称</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">fn</b>
-                                                            
-                                                            
-                                                            <span class="type">{Function}</span> 
-                                                            <span class="desc">事件回调</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="endAsyncUpdate"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">endAsyncUpdate</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                通知view结束异步更新html
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>See</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li"><a href="../symbols/View.html#beginAsyncUpdate">View#beginAsyncUpdate</a></li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="getLocation"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">getLocation</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                获取window.location.href解析后的对象
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{Object}</span> 
-                                                            <span></span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="getManaged"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">getManaged</b>
-                                                <span class="param">(key)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                获取托管的资源
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">key</b>
-                                                            
-                                                            
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">托管资源时传入的标识key</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{[type]}</span> 
-                                                            <span>[description]</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="getTemplate"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">getTemplate</b>
-                                                <span class="param">(fn)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                获取当前view对应的模板
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">fn</b>
-                                                            
-                                                            
-                                                            <span class="type">{Function}</span> 
-                                                            <span class="desc">取得模板后的回调方法</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="getTmplByXHR"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">getTmplByXHR</b>
+                                                <b class="name">fetchTmpl</b>
                                                 <span class="param">(path, fn)</span>
                                                 
                                                 
@@ -1505,18 +1122,20 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="idle"> </a>
+                                            <a name="fire"> </a>
                                             <div class="title" >
                                                 
-                                                <b class="name">idle</b>
-                                                <span class="param">(fn, args, context, anchor)</span>
+                                                <b class="name">fire</b>
+                                                <span class="param">(name, data, remove, lastToFirst)</span>
                                                 
                                                 
                                                 
                                             </div>
 
                                             <div class="desc">
-                                                当view处于闲置状态时回调传入的fn
+                                                触发事件
+                                                
+                                                    <br />Defined in:<a href="../symbols/src/D__wamp_www_br_luna_subway_20130314_gaiban_2_subway-webapp2_src_main_webapp_src_libs_magix_docsrc__magix_kissy_magix_event.js.html">event.js</a>.
                                                 
                                                 
                                             </div>
@@ -1530,38 +1149,38 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">fn</b>
+                                                            <b class="name">name</b>
                                                             
                                                             
-                                                            <span class="type">{Function}</span> 
-                                                            <span class="desc">闲置时的回调函数</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            [ 
-                                                            <b class="name">args</b>
-                                                            
-                                                             ]
-                                                            <span class="type">{Array}</span> 
-                                                            <span class="desc">参数</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            [ 
-                                                            <b class="name">context</b>
-                                                            
-                                                             ]
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">fn内this指向</span>
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">事件名称</span>
                                                         </li>
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">anchor</b>
+                                                            <b class="name">data</b>
                                                             
                                                             
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">事件对象</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">remove</b>
                                                             
-                                                            <span class="desc"></span>
+                                                            
+                                                            <span class="type">{Boolean}</span> 
+                                                            <span class="desc">事件触发完成后是否移除这个事件的所有监听</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">lastToFirst</b>
+                                                            
+                                                            
+                                                            <span class="type">{Boolean}</span> 
+                                                            <span class="desc">是否从后向前触发事件的监听列表</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1581,13 +1200,6 @@ dl.data .dd{
                                                                                                 
                                                 
                                                 
-                                                <dt>Example</dt>
-                                                <dd>
-                                                        
-                                                            <pre class="brush: js; ">//idle的应用场景：update:function(){     var loc=this.getLocation();     }//...click:{     create:function(e){         Router.navigate({a:'b',c:'d'});//此处的更改是异步的         e.view.update();//在0.3版的magix中，这样写在update方法内无法立即得到a的值     }}//上面create中安全的使用方式是这样的：Router.navigate({a:'b',c:'d'});e.view.idle(function(){     e.view.update();});//但是这样的书写明显会带来不方便，需要开发者明白哪些地方是异步的，哪些地方是同步的//所以view会对原型链上的方法进行一次处理，magix 1.0版自动帮你包装一下相关的方法，包装后：Router.navigate({a:'b',c:'d'});e.view.update();//此update是包装后的方法，会等到Router修改完成url后才调用//view在包装原型链上的方法时，对明确有返回值的方法不进行包装//因此下面的情景并不能自动处理，您需要手动判断：getParams:function(){     var loc=this.getLocation();     //...     return newLocParams;//该方法有返回值，无法异步调用}//...click:{     create:function(e){         Router.navigate({a:'b',c:'d'});//此处的更改是异步的         var params=e.view.getParams();//无法在getParams方法内部拿到最新的a和c的值         //对于上面这一行需要修改成：         e.view.idle(function(){             var params=e.view.getParams();         });         //对于getParams方法如果内部没有访问location也是不需要在idle回调中执行的              }}//magix已经尽最大可能解决掉了异步问题，而在项目中一般很少出现上面的情景//因此您不需要考虑每个动作都放在idle里面，出现问题了再考虑//在方法内如果没有访问location也是不需要在idle回调中执行的//忘掉这个方法的存在吧~~//</pre>
-                                                        
-                                                </dd>
-                                                
                                                 
                                             </dl>                                            
                                         </li>
@@ -1604,7 +1216,7 @@ dl.data .dd{
                                             </div>
 
                                             <div class="desc">
-                                                初始化方法，供最终的view开发人员进行覆盖，注意：不要在该方法内进行异步数据获取，init仅适用于事件绑定等(init何时被调用？init在view进行一系列的初始化后，在view的created事件后被调用，此时已完成界面的创建。为什么要设计的这么靠后？view没被创建出来前，是不能做其它动作的，如果在此之前调用了init，而用户可以在init中做其它的动作，假设view还未创建完成就销毁，会给销毁带来一定的麻烦)
+                                                初始化方法，供最终的view开发人员进行覆盖
                                                 
                                                 
                                             </div>
@@ -1681,67 +1293,22 @@ dl.data .dd{
                                                             <span class="desc">包含有哪些变化的对象</span>
                                                         </li>
                                                     
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="manage"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">manage</b>
-                                                <span class="param">(key, res)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                让view帮你管理资源，对于异步回调函数更应该调用该方法进行托管当调用该方法后，您不需要在异步回调方法内判断当前view是否已经销毁同时对于view刷新后，上个异步请求返回刷新界面的问题也得到很好的解决。<b>强烈建议对异步回调函数，组件等进行托管</b>
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">e.prevent</b>
+                                                            
+                                                            
+                                                            <span class="type">{Function}</span> 
+                                                            <span class="desc">阻止向所有子view传递locationChange的消息</span>
+                                                        </li>
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">key</b>
+                                                            <b class="name">e.toChildren</b>
                                                             
                                                             
-                                                            <span class="type">{String|Object}</span> 
-                                                            <span class="desc">托管的资源或要共享的资源标识key</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            [ 
-                                                            <b class="name">res</b>
-                                                            
-                                                             ]
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">要托管的资源</span>
+                                                            <span class="type">{Function}</span> 
+                                                            <span class="desc">向特定的子view传递locationChange的消息</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1754,18 +1321,6 @@ dl.data .dd{
                                                 
                                                 
                                                 
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{Object}</span> 
-                                                            <span>返回传入的资源，对于函数会自动进行一次包装</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
                                                 
                                                 
                                                 
@@ -1776,7 +1331,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">init:function(){     this.manage('user_list',[//管理对象资源         {id:1,name:'a'},         {id:2,name:'b'}     ]);},render:function(){     var _self=this;     var m=new Model();     m.load({         success:_self.manage(function(resp){//管理匿名函数             //TODO             var brix=new BrixDropdownList();             _self.manage(brix);//管理组件             var pagination=_self.manage(new BrixPagination());//也可以这样             var timer=_self.manage(setTimeout(function(){                 S.log('timer');             },2000));//也可以管理定时器                          var userList=_self.getManaged('user_list');//通过key取托管的资源             S.log(userList);         }),         error:_self.manage(function(msg){             //TODO         })     })}</pre>
+                                                            <pre class="brush: js; ">//example1locationChange:function(e){    if(e.changed.isPathname()){//pathname的改变        //...        e.prevent();//阻止向所有子view传递改变的消息    }}//example2locationChange:function(e){    if(e.changed.isParam('menu')){//menu参数发生改变        e.toChildren('magix_vf_menus');//只向id为 magix_vf_menus的view传递这个消息    }}//example3//当不调用e的阻止或指定子view时，默认向所有子view传递消息locationChange:function(e){    //...}</pre>
                                                         
                                                 </dd>
                                                 
@@ -1789,14 +1344,14 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">observeLocation</b>
-                                                <span class="param">(keys, observePathname)</span>
+                                                <span class="param">(args)</span>
                                                 
                                                 
                                                 
                                             </div>
 
                                             <div class="desc">
-                                                指定要监视地址栏中的哪些值有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
+                                                指定要监视地址栏中的哪些值有变化时，或pathname有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
                                                 
                                                 
                                             </div>
@@ -1810,20 +1365,11 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">keys</b>
+                                                            <b class="name">args</b>
                                                             
                                                             
-                                                            <span class="type">{Array|String}</span> 
-                                                            <span class="desc">key数组或字符串</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">observePathname</b>
-                                                            
-                                                            
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否监视pathname</span>
+                                                            <span class="type">{Array|String|Object}</span> 
+                                                            <span class="desc">数组字符串或对象</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1846,7 +1392,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">return View.extend({     init:function(){         this.observeLocation('page,rows',true);//关注地址栏中的page rows2个参数的变化，并且关注pathname的改变，当其中的任意一个改变时，才引起当前view的locationChange被调用     },     locationChange:function(e){         if(e.changed.isParam('page')){};//检测是否是page发生的改变         if(e.changed.isParam('rows')){};//检测是否是rows发生的改变         if(e.changed.isPathname()){};//是否是pathname发生的改变     }});</pre>
+                                                            <pre class="brush: js; ">return View.extend({     init:function(){         this.observeLocation('page,rows');//关注地址栏中的page rows2个参数的变化，当其中的任意一个改变时，才引起当前view的locationChange被调用         this.observeLocation({             pathname:true//关注pathname的变化         });         //也可以写成下面的形式         //this.observeLocation({         //    keys:['page','rows'],         //    pathname:true         //})     },     locationChange:function(e){         if(e.changed.isParam('page')){};//检测是否是page发生的改变         if(e.changed.isParam('rows')){};//检测是否是rows发生的改变     }});</pre>
                                                         
                                                 </dd>
                                                 
@@ -1855,18 +1401,20 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="postMessageTo"> </a>
+                                            <a name="on"> </a>
                                             <div class="title" >
                                                 
-                                                <b class="name">postMessageTo</b>
-                                                <span class="param">(aims, args)</span>
+                                                <b class="name">on</b>
+                                                <span class="param">(name, fn, insertOrRemove)</span>
                                                 
                                                 
                                                 
                                             </div>
 
                                             <div class="desc">
-                                                向某个view发送消息
+                                                绑定事件
+                                                
+                                                    <br />Defined in:<a href="../symbols/src/D__wamp_www_br_luna_subway_20130314_gaiban_2_subway-webapp2_src_main_webapp_src_libs_magix_docsrc__magix_kissy_magix_event.js.html">event.js</a>.
                                                 
                                                 
                                             </div>
@@ -1880,20 +1428,29 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">aims</b>
+                                                            <b class="name">name</b>
                                                             
                                                             
-                                                            <span class="type">{Array|String}</span> 
-                                                            <span class="desc">发送的目标id或id数组</span>
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">事件名称</span>
                                                         </li>
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">args</b>
+                                                            <b class="name">fn</b>
                                                             
                                                             
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">消息对象</span>
+                                                            <span class="type">{Function}</span> 
+                                                            <span class="desc">事件回调</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">insertOrRemove</b>
+                                                            
+                                                            
+                                                            <span class="type">{Interger|Boolean}</span> 
+                                                            <span class="desc">事件监听插入的位置或触发后是否移除监听</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1918,157 +1475,24 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="receiveMessage"> </a>
+                                            <a name="parentView"> </a>
                                             <div class="title" >
                                                 
-                                                <b class="name">receiveMessage</b>
-                                                <span class="param">(e)</span>
+                                                <b class="name">parentView</b>
+                                                <span class="param">()</span>
                                                 
                                                 
                                                 
                                             </div>
 
                                             <div class="desc">
-                                                用于接受其它view通过postMessageTo方法发来的消息，供最终的view开发人员进行覆盖
+                                                获取渲染当前view的父view
                                                 
                                                 
                                             </div>
                                             
                                             <dl>                                            
                                                 
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">e</b>
-                                                            
-                                                            
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">通过postMessageTo传递的第二个参数</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name=".registerAsyncUpdateName"> </a>
-                                            <div class="title" >
-                                                <span>View.</span>
-                                                <b class="name">registerAsyncUpdateName</b>
-                                                <span class="param">(names)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                注册view类中哪些方法是异步更新的方法，默认已注册render renderUI updateUI三个方法
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">names</b>
-                                                            
-                                                            
-                                                            <span class="type">{Array|String}</span> 
-                                                            <span class="desc">方法名字符串或字符串数组</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>See</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li"><a href="../symbols/View.html#beginAsyncUpdate">View#beginAsyncUpdate</a></li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="removeManaged"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">removeManaged</b>
-                                                <span class="param">(param)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                移除托管的资源
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">param</b>
-                                                            
-                                                            
-                                                            <span class="type">{String|Object}</span> 
-                                                            <span class="desc">托管时标识key或托管的对象</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
                                                 
                                                 
                                                 
@@ -2083,12 +1507,66 @@ dl.data .dd{
                                                     <ul class="list">
                                                     
                                                         <li class="li">
-                                                            <span class="type">{Object}</span> 
-                                                            <span>返回移除的资源</span>
+                                                            <span class="type">{<a href="../symbols/View.html">View</a>}</span> 
+                                                            <span></span>
                                                         </li>
                                                     
                                                     </ul>
                                                 </dd>
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name="planTmpl"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">planTmpl</b>
+                                                <span class="param">(fn)</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                获取当前view对应的模板
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">fn</b>
+                                                            
+                                                            
+                                                            <span class="type">{Function}</span> 
+                                                            <span class="desc">取得模板后的回调方法</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
                                                 
                                                 
                                                 
@@ -2119,98 +1597,6 @@ dl.data .dd{
                                             
                                             <dl>                                            
                                                 
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="resume"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">resume</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                恢复并执行挂起的操作
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="setNodeHTML"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">setNodeHTML</b>
-                                                <span class="param">(html)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                设置view节点的html内容，供子类重写
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">html</b>
-                                                            
-                                                            
-                                                            <span class="type">{Strig}</span> 
-                                                            <span class="desc">html字符串</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
                                                 
                                                 
                                                 
@@ -2285,178 +1671,10 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="signature"> </a>
+                                            <a name="un"> </a>
                                             <div class="title" >
                                                 
-                                                <b class="name">signature</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                获取view在当前状态下的签名，view在刷新或销毁时，均会更新签名。(通过签名可识别view有没有搞过什么动作)
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>See</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li"><a href="../symbols/View.html#beginAsyncUpdate">View#beginAsyncUpdate</a></li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="suspend"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">suspend</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                挂起，对于初始化时，需要访问外部资源（vframe）等，需要等待外部执行完才可以访问
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="trigger"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">trigger</b>
-                                                <span class="param">(name, data, remove, lastToFirst)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                触发事件
-                                                
-                                                    <br />Defined in:<a href="../symbols/src/D__wamp_www_magix_git_build_debug__magix_kissy_magix_event.js.html">event.js</a>.
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">name</b>
-                                                            
-                                                            
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">事件名称</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">data</b>
-                                                            
-                                                            
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">事件对象</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">remove</b>
-                                                            
-                                                            
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">事件触发完成后是否移除这个事件的所有监听</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">lastToFirst</b>
-                                                            
-                                                            
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否从后向前触发事件的监听列表</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="unbind"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">unbind</b>
+                                                <b class="name">un</b>
                                                 <span class="param">(name, fn)</span>
                                                 
                                                 
@@ -2466,7 +1684,7 @@ dl.data .dd{
                                             <div class="desc">
                                                 解除事件绑定
                                                 
-                                                    <br />Defined in:<a href="../symbols/src/D__wamp_www_magix_git_build_debug__magix_kissy_magix_event.js.html">event.js</a>.
+                                                    <br />Defined in:<a href="../symbols/src/D__wamp_www_br_luna_subway_20130314_gaiban_2_subway-webapp2_src_main_webapp_src_libs_magix_docsrc__magix_kissy_magix_event.js.html">event.js</a>.
                                                 
                                                 
                                             </div>
@@ -2533,12 +1751,12 @@ dl.data .dd{
                                 <ul class="detail-list">
                                     
                                     <li>
-                                        <a name="event:childrenAlter"> </a>
+                                        <a name="event:alter"> </a>
                                         <div class="title">
-                                            <a  name="event:childrenAlter"></a>
+                                            <a  name="event:alter"></a>
                                             
                                             
-                                            <b class="name">childrenAlter</b>
+                                            <b class="name">alter</b>
                                             <span class="param">(e)</span>
                                             
                                             
@@ -2546,7 +1764,7 @@ dl.data .dd{
                                         </div>
                                         
                                         <div class="desc">
-                                            view自身和所有子孙view有改动时触发，改动包括刷新和重新mountView，与childrenCreated一起使用，当view自身和所有子孙view创建完成会触发childrenCreated，当其中的一个view刷新或重新mountView，会触发childrenAlter，当是刷新时，刷新完成会再次触发childrenCreated事件，因此这2个事件不只触发一次！！
+                                            view自身和所有子孙view有改动时触发，改动包括刷新和重新mountView，与created一起使用，当view自身和所有子孙view创建完成会触发created，当其中的一个view刷新或重新mountView，会触发childrenAlter，当是刷新时，刷新完成会再次触发created事件，因此这2个事件不只触发一次！！但这2个事件会成对触发，比如触发几次childrenAlter就会触发几次created
                                             
                                             
                                         </div>
@@ -2588,12 +1806,12 @@ dl.data .dd{
                                     </li>
                                     
                                     <li>
-                                        <a name="event:childrenCreated"> </a>
+                                        <a name="event:created"> </a>
                                         <div class="title">
-                                            <a  name="event:childrenCreated"></a>
+                                            <a  name="event:created"></a>
                                             
                                             
-                                            <b class="name">childrenCreated</b>
+                                            <b class="name">created</b>
                                             <span class="param">(e)</span>
                                             
                                             
@@ -2601,7 +1819,7 @@ dl.data .dd{
                                         </div>
                                         
                                         <div class="desc">
-                                            view自身和所有子孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子孙view组成的，通过监听该事件可知道子孙view什么时间创建完成（注意：当view中有子view，且该子view是通过程序动态mountView而不是通过data-view指定时，该事件会也会等待到view创建完成触发，而对于您在某个view中有如下代码：<div><vframe></vframe></div>，有一个空的vframe且未指定data-view属性，同时您在这个view中没有动态渲染vframe对应的view，则该事件不会触发，magix无法识别出您留空vframe的意图，到底是需要动态mount还是手误，不过在具体应用中，出现空vframe且没有动态mount几乎是不存在的^_^）
+                                            view自身和所有子孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子孙view组成的，通过监听该事件可知道子孙view什么时间创建完成（注意：当view中有子view，且该子view是通过程序动态mountView而不是通过mx-view指定时，该事件会也会等待到view创建完成触发，而对于您在某个view中有如下代码：<div><vframe></vframe></div>，有一个空的vframe且未指定mx-view属性，同时您在这个view中没有动态渲染vframe对应的view，则该事件不会触发，magix无法识别出您留空vframe的意图，到底是需要动态mount还是手误，不过在具体应用中，出现空vframe且没有动态mount几乎是不存在的^_^）
                                             
                                             
                                         </div>
@@ -2643,66 +1861,11 @@ dl.data .dd{
                                                 <ul class="list">
                                                     
                                                     <li class="li">
-                                                        <pre class="code">init:function(){     this.bind('childrenCreated',function(){         //     })}</pre>
+                                                        <pre class="code">init:function(){     this.on('created',function(){         //     })}</pre>
                                                     </li>
                                                     
                                                 </ul>
                                             </dd>
-                                            
-                                            
-                                        </dl>
-                                    </li>
-                                    
-                                    <li>
-                                        <a name="event:created"> </a>
-                                        <div class="title">
-                                            <a  name="event:created"></a>
-                                            
-                                            
-                                            <b class="name">created</b>
-                                            <span class="param">(e)</span>
-                                            
-                                            
-                                            
-                                        </div>
-                                        
-                                        <div class="desc">
-                                            当view首次完成界面的html设置后触发，view有没有模板均会触发该事件，对于有模板的view，会等到模板取回，第一次调用setViewHTML更新界面后才触发，总之该事件触发后，您就可以访问view的HTML DOM节点对象（该事件仅代表自身的html创建完成，如果需要对整个子view也要监控，请使用childrenCreated事件）
-                                            
-                                            
-                                        </div>
-                                        
-                                        <dl>
-                                            
-                                            <dt>参数：</dt>
-                                            <dd>
-                                                <ul class="list param-list">
-                                                
-                                                    <li class="li">
-                                                        &nbsp;
-                                                        <b class="name">e</b>
-                                                        
-                                                        
-                                                        <span class="type">{Object}</span> 
-                                                        <span class="desc">view首次调用render完成界面的创建后触发</span>
-                                                    </li>
-                                                
-                                                </ul>
-                                            </dd>
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            <dt>
-
                                             
                                             
                                         </dl>
@@ -2740,79 +1903,6 @@ dl.data .dd{
                                                         
                                                         <span class="type">{Object}</span> 
                                                         <span class="desc"></span>
-                                                    </li>
-                                                
-                                                </ul>
-                                            </dd>
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            <dt>
-
-                                            
-                                            
-                                        </dl>
-                                    </li>
-                                    
-                                    <li>
-                                        <a name="event:destroyResource"> </a>
-                                        <div class="title">
-                                            <a  name="event:destroyResource"></a>
-                                            
-                                            
-                                            <b class="name">destroyResource</b>
-                                            <span class="param">(e)</span>
-                                            
-                                            
-                                            
-                                        </div>
-                                        
-                                        <div class="desc">
-                                            view销毁托管资源时发生
-                                            
-                                            
-                                        </div>
-                                        
-                                        <dl>
-                                            
-                                            <dt>参数：</dt>
-                                            <dd>
-                                                <ul class="list param-list">
-                                                
-                                                    <li class="li">
-                                                        &nbsp;
-                                                        <b class="name">e</b>
-                                                        
-                                                        
-                                                        <span class="type">{Object}</span> 
-                                                        <span class="desc"></span>
-                                                    </li>
-                                                
-                                                    <li class="li">
-                                                        &nbsp;
-                                                        <b class="name">e.resource</b>
-                                                        
-                                                        
-                                                        <span class="type">{Object}</span> 
-                                                        <span class="desc">托管的资源</span>
-                                                    </li>
-                                                
-                                                    <li class="li">
-                                                        &nbsp;
-                                                        <b class="name">e.processed</b>
-                                                        
-                                                        
-                                                        <span class="type">{Boolean}</span> 
-                                                        <span class="desc">表示view是否对这个资源做过销毁处理，目前view仅对带 abort destroy dispose方法的资源进行自动处理，其它资源需要您响应该事件自已处理</span>
                                                     </li>
                                                 
                                                 </ul>
@@ -2892,12 +1982,12 @@ dl.data .dd{
                                     </li>
                                     
                                     <li>
-                                        <a name="event:refresh"> </a>
+                                        <a name="event:primed"> </a>
                                         <div class="title">
-                                            <a  name="event:refresh"></a>
+                                            <a  name="event:primed"></a>
                                             
                                             
-                                            <b class="name">refresh</b>
+                                            <b class="name">primed</b>
                                             <span class="param">(e)</span>
                                             
                                             
@@ -2905,7 +1995,7 @@ dl.data .dd{
                                         </div>
                                         
                                         <div class="desc">
-                                            每次调用setViewHTML更新view内容前触发，触发完该事件后即删除监听列表，如果您不需要删除监听列表，请考虑使用prerender事件，为什么设计refresh?见示例
+                                            当view首次完成界面的html设置后触发，view有没有模板均会触发该事件，对于有模板的view，会等到模板取回，第一次调用setViewHTML更新界面后才触发，总之该事件触发后，您就可以访问view的HTML DOM节点对象（该事件仅代表自身的html创建完成，如果需要对整个子view也要监控，请使用created事件）
                                             
                                             
                                         </div>
@@ -2922,7 +2012,7 @@ dl.data .dd{
                                                         
                                                         
                                                         <span class="type">{Object}</span> 
-                                                        <span class="desc">view刷新前触发</span>
+                                                        <span class="desc">view首次调用render完成界面的创建后触发</span>
                                                     </li>
                                                 
                                                 </ul>
@@ -2942,16 +2032,115 @@ dl.data .dd{
                                             <dt>
 
                                             
-                                            <dt>Example</dt>
+                                            
+                                        </dl>
+                                    </li>
+                                    
+                                    <li>
+                                        <a name="event:refresh"> </a>
+                                        <div class="title">
+                                            <a  name="event:refresh"></a>
+                                            
+                                            
+                                            <b class="name">refresh</b>
+                                            <span class="param">(e)</span>
+                                            
+                                            
+                                            
+                                        </div>
+                                        
+                                        <div class="desc">
+                                            每次调用beginUpdateHTML更新view内容前触发
+                                            
+                                            
+                                        </div>
+                                        
+                                        <dl>
+                                            
+                                            <dt>参数：</dt>
                                             <dd>
-                                                <ul class="list">
-                                                    
+                                                <ul class="list param-list">
+                                                
                                                     <li class="li">
-                                                        <pre class="code">render:function(){     var fn=function(){};     S.one(document).on('click',fn);     this.bind('refresh',function(){//当使用refresh事件时，您不需要考虑移除监听         S.one(document).detach('click',fn);     });     //如果您使用prerender事件     this.bind('prerender',function(){         this.unbind('prerender',arguments.callee);//您需要移除监听，要不然会越积累越多         S.one(document).detach('click',fn);     })     }</pre>
+                                                        &nbsp;
+                                                        <b class="name">e</b>
+                                                        
+                                                        
+                                                        <span class="type">{Object}</span> 
+                                                        <span class="desc">与prerender不同的是：refresh触发后即删除监听列表</span>
                                                     </li>
-                                                    
+                                                
                                                 </ul>
                                             </dd>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            <dt>
+
+                                            
+                                            
+                                        </dl>
+                                    </li>
+                                    
+                                    <li>
+                                        <a name="event:rendercall"> </a>
+                                        <div class="title">
+                                            <a  name="event:rendercall"></a>
+                                            
+                                            
+                                            <b class="name">rendercall</b>
+                                            <span class="param">(e)</span>
+                                            
+                                            
+                                            
+                                        </div>
+                                        
+                                        <div class="desc">
+                                            异步更新ui的方法(render,renderUI)被调用前触发
+                                            
+                                            
+                                        </div>
+                                        
+                                        <dl>
+                                            
+                                            <dt>参数：</dt>
+                                            <dd>
+                                                <ul class="list param-list">
+                                                
+                                                    <li class="li">
+                                                        &nbsp;
+                                                        <b class="name">e</b>
+                                                        
+                                                        
+                                                        <span class="type">{Object}</span> 
+                                                        <span class="desc"></span>
+                                                    </li>
+                                                
+                                                </ul>
+                                            </dd>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            <dt>
+
                                             
                                             
                                         </dl>
@@ -2988,7 +2177,7 @@ dl.data .dd{
                                                         
                                                         
                                                         <span class="type">{Object}</span> 
-                                                        <span class="desc">view每次调用setViewHTML完成后触发，当hasTemplate属性为false时，并不会触发该事 件，但会触发created首次完成创建界面的事件</span>
+                                                        <span class="desc">view每次调用setViewHTML完成后触发，当hasTmpl属性为false时，并不会触发该事 件，但会触发primed首次完成创建界面的事件</span>
                                                     </li>
                                                 
                                                 </ul>
@@ -3042,7 +2231,8 @@ dl.data .dd{
         <ul class="list class-list">
             <li><a href="../symbols/Model.html">Model</a></li>
             <li><a href="../symbols/MxView.html">MxView</a></li>
-            <li><a href="../symbols/ModelFactory.html">ModelFactory</a></li>
+            <li><a href="../symbols/MManager.html">MManager</a></li>
+            <li><a href="../symbols/MRequest.html">MRequest</a></li>
             <li><a href="../symbols/VfAnim.html">VfAnim</a></li>
         </ul>
     </div>

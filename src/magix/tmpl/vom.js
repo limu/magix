@@ -1,5 +1,14 @@
 var D=document;
 var safeExec=Magix.safeExec;
+
+var has=Magix.has;
+var vframesCount=0;
+var firstVframesLoaded=0;
+var lastPercent=0;
+var firstReady=0;
+var Vframes={};
+var Loc;
+
 /**
  * VOM对象
  * @name VOM
@@ -9,63 +18,70 @@ var VOM=Magix.mix({
     /**
      * @lends VOM
      */
-    iC:0,
-    iQ:[],
     /**
-     * 根vframe对象
-     * @type {Vframe}
+     * 获取所有的vframe对象
+     * @return {Object}
      */
-    rootVframe:null,
-    /**
-     * 注册的vframes集合
-     * @type {Object}
-     */
-    vframes:{},
-    /**
-     * 根vframe的id
-     * @default magix_vf_root
-     * @type {String}
-     */
-    rootVframeId:'magix_vf_root',
+    all:function(){
+        return Vframes;
+    },
     /**
      * 注册vframe对象
      * @param {Vframe} vf Vframe对象
      */
-    registerVframe:function(vf){
-        var me=this;
-        me.vframes[vf.id]=vf;
-        me.trigger(vf.id,{vframe:vf},true);
+    add:function(vf){
+        if(!has(Vframes,vf.id)){
+            vframesCount++;
+            Vframes[vf.id]=vf;
+            vf.owner=VOM;
+            VOM.fire('add',{vframe:vf});
+        }
     },
     /**
      * 根据vframe的id获取vframe对象
      * @param {String} id vframe的id
      * @return {Vframe} vframe对象
      */
-    getVframe:function(id){
-        return this.vframes[id];
+    get:function(id){
+        return Vframes[id];
     },
     /**
      * 删除已注册的vframe对象
-     * @param {Vframe|String} vf vframe对象或对象的id
+     * @param {String} id vframe对象的id
      */
-    unregisterVframe:function(vf){
-        var id=Magix.isString(vf)?vf:vf.id;
-        delete this.vframes[id];
-        this.unbind(id);
+    remove:function(id){
+        //var id=Magix.isString(vf)?vf:vf.id;
+        var vf=Vframes[id];
+        if(vf){
+            vframesCount--;
+            if(vf.fcc)firstVframesLoaded--;
+            delete Vframes[id];
+            VOM.fire('remove',{vframe:vf});
+        }        
     },
     /**
-     * 构建根vframe对象
+     * 通知其中的一个view创建完成
      */
-    buildRootVframe:function(){
-        var me=this;
-        if(!me.rootVframe){
-            var rootVframeNode=D.getElementById(me.rootVframeId);
-            if(!rootVframeNode){//当发现不存在的节点时，由Vframe对象负责创建
-                Vframe.createVframeNode(me.rootVframeId,D.body.firstChild);
+    childCreated:function(){
+        if(!firstReady){
+            firstVframesLoaded++;
+            var np=firstVframesLoaded/vframesCount;
+            if(lastPercent<np){
+                VOM.fire('progress',{
+                    percent:lastPercent=np
+                });
+                if(np==1){
+                    firstReady=1;
+                    VOM.un('progress');
+                }
             }
-            me.rootVframe=Vframe.createVframe(me.rootVframeId,{owner:me});
-            me.registerVframe(me.rootVframe);
         }
+    },
+    /**
+     * 获取根vframe对象
+     */
+    root:function(){
+        return Vframe.root(VOM);
     },
     /**
      * 重新渲染根vframe
@@ -73,13 +89,13 @@ var VOM=Magix.mix({
      * @param {Object} e.location window.location.href解析出来的对象
      * @param {Object} e.changed 包含有哪些变化的对象
      */
-    remountRootVframe:function(e){
+    remountRoot:function(e){
         //console.log('mount rootVframe view',location);
-        var me=this;
-        me.$location=e.location;
-        me.buildRootVframe();
-        //console.log('rootView',location.viewPath);
-        me.rootVframe.mountView(e.location.viewPath);
+        var vf=VOM.root();
+        //me.$loc=e.location;
+        //console.log('rootView',e.location.view);
+        Loc=e.location;
+        vf.mountView(Loc.view);
     },
     /**
      * 向vframe通知地址栏发生变化
@@ -87,77 +103,46 @@ var VOM=Magix.mix({
      * @param {Object} e.location window.location.href解析出来的对象
      * @param {Object} e.changed 包含有哪些变化的对象
      */
-    notifyLocationChange:function(e){
-        var me=this;
-        me.$location=e.location;
-        if(me.rootVframe){
-            me.rootVframe.notifyLocationChange(e);
-        }
+    locationChanged:function(e){
+        Loc=e.location;
+        var vf=VOM.root();
+        vf.locationChanged(Loc,e.changed);
     },
     /**
-     * 当VOM处于闲置状态时回调传入的fn，当VOM忙碌时则把fn添加到等待队列
-     * @param {Function} fn 闲置时的回调函数
-     * @param {Array} [args] 参数
-     * @param {Object} [context] fn内this指向
+     * 更新view的location对象
+     * @param  {Object} loc location
      */
-    idle:function(fn,args,context){
-        var me=this;
-        //console.log('VOM.idle',fn,args,context,me.iC);
-        if(me.iC){
-            me.iQ.push([fn,args,context]);
-        }else{
-            Magix.safeExec(fn,args,context);
-        }
+    locationUpdated:function(loc){
+        Loc=loc;
+        var vf=VOM.root();
+        vf.locationUpdated(loc);
     },
     /**
-     * 挂起VOM，等待外部的操作完成
+     * 获取window.location.href解析后的对象
+     * @return {Object}
      */
-    suspend:function(){
-        var me=this;
-        me.iC++;
-    },
-    /**
-     * 恢复挂起的VOM
-     */
-    resume:function(){
-        var me=this;
-        if(me.iC>0){
-            me.iC--;
-        }
-        if(!me.iC){
-            var list=me.iQ;
-            if(list.length){
-                var tasks=[].slice.call(list);
-                me.iQ=[];
-                while(tasks.length){
-                    var o=tasks.shift();
-                    me.idle.apply(me,o);
-                }
-            }
-        }
-    },
-    /**
-     * 向某个vframe发送消息
-     * @param {Array|String} aims  目标vframe id数组
-     * @param {Object} args 消息对象
-     */
-    postMessage:function(aims,args){
-        var me=this;
-        if(!Magix.isArray(aims)){
-            aims=[aims];
-        }
-        if(!args)args={};
-        for(var i=0;i<aims.length;i++){
-            var vframe=me.getVframe(aims[i]);
-            //console.log('-----------------------',vframe);
-            if(vframe){
-                vframe.message(args);
-            }else{
-                me.bind(aims[i],function(e){
-                    console.log(e.vframe);
-                    e.vframe.message(args);
-                });
-            }
-        }
+    getLocation:function(){
+        return Loc;
     }
+    /**
+     * view加载完成进度
+     * @name VOM.progress
+     * @event
+     * @param {Object} e
+     * @param {Object} e.precent 百分比
+     */
+    /**
+     * 注册vframe对象时触发
+     * @name VOM.add
+     * @event
+     * @param {Object} e
+     * @param {Vframe} e.vframe
+     */
+    /**
+     * 删除vframe对象时触发
+     * @name VOM.remove
+     * @event
+     * @param {Object} e
+     * @param {Vframe} e.vframe
+     */
 },Event);
