@@ -60,7 +60,7 @@ var Body=MIX({
                     var begin=current;
                     var vfs=me.VOM.all();
                     while(begin&&begin!=RootNode){
-                        if(Has(vfs,begin.id)){
+                        if(HAS(vfs,begin.id)){
                             GetSetAttribute(current,MxOwner,handler=begin.id);
                             //current.setAttribute(MxOwner,handler=begin.id);
                             break;
