@@ -224,5 +224,8 @@
         </replaceregexp>
         <copyfile src="${raw.dir}/kissy-magix-mxext.js" dest="${seed.dir}/libs/kissy-magix-mxext.js"></copyfile>
         <copyfile src="${raw.dir}/kissy-magix-mxext-min.js" dest="${seed.dir}/libs/kissy-magix-mxext-min.js"></copyfile>
+        <delete dir="${debug.dir}/"></delete>
+        <delete dir="${raw.dir}" includes="kissy-mxext.js"></delete>
+        <delete dir="${raw.dir}" includes="kissy-mxext-min.js"></delete>
     </target>
 </project>

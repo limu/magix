@@ -1,11 +1,8 @@
-var D=document;
-var safeExec=Magix.safeExec;
-
-var has=Magix.has;
-var vframesCount=0;
-var firstVframesLoaded=0;
-var lastPercent=0;
-var firstReady=0;
+var Has=Magix.has;
+var VframesCount=0;
+var FirstVframesLoaded=0;
+var LastPercent=0;
+var FirstReady=0;
 var Vframes={};
 var Loc;
 
@@ -30,8 +27,8 @@ var VOM=Magix.mix({
      * @param {Vframe} vf Vframe对象
      */
     add:function(vf){
-        if(!has(Vframes,vf.id)){
-            vframesCount++;
+        if(!Has(Vframes,vf.id)){
+            VframesCount++;
             Vframes[vf.id]=vf;
             vf.owner=VOM;
             VOM.fire('add',{vframe:vf});
@@ -53,8 +50,8 @@ var VOM=Magix.mix({
         //var id=Magix.isString(vf)?vf:vf.id;
         var vf=Vframes[id];
         if(vf){
-            vframesCount--;
-            if(vf.fcc)firstVframesLoaded--;
+            VframesCount--;
+            if(vf.fcc)FirstVframesLoaded--;
             delete Vframes[id];
             VOM.fire('remove',{vframe:vf});
         }        
@@ -63,15 +60,15 @@ var VOM=Magix.mix({
      * 通知其中的一个view创建完成
      */
     childCreated:function(){
-        if(!firstReady){
-            firstVframesLoaded++;
-            var np=firstVframesLoaded/vframesCount;
-            if(lastPercent<np){
+        if(!FirstReady){
+            FirstVframesLoaded++;
+            var np=FirstVframesLoaded/VframesCount;
+            if(LastPercent<np){
                 VOM.fire('progress',{
-                    percent:lastPercent=np
+                    percent:LastPercent=np
                 });
                 if(np==1){
-                    firstReady=1;
+                    FirstReady=1;
                     VOM.un('progress');
                 }
             }

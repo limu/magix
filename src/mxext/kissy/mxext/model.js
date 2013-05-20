@@ -56,11 +56,11 @@ KISSY.add("mxext/model",function(S,Magix){
             })
         }
      */
-    var processObject=function(props,proto,enterObject){
+    var ProcessObject=function(props,proto,enterObject){
         for(var p in proto){
             if(S.isObject(proto[p])){
                 if(!Magix.has(props,p))props[p]={};
-                processObject(props[p],proto[p],true);
+                ProcessObject(props[p],proto[p],true);
             }else if(enterObject){
                 props[p]=proto[p];
             }
@@ -72,7 +72,7 @@ KISSY.add("mxext/model",function(S,Magix){
         }
         this.id=S.guid('m');
     };
-    var ex=function(props,ctor){
+    var Extend=function(props,ctor){
         var BaseModel=function(){
             BaseModel.superclass.constructor.apply(this,arguments);
             if(ctor){
@@ -80,7 +80,7 @@ KISSY.add("mxext/model",function(S,Magix){
             }
         }
         Magix.mix(BaseModel,this,{prototype:true});
-        processObject(props,this.prototype);
+        ProcessObject(props,this.prototype);
         return S.extend(BaseModel,this,props);
     };
     Magix.mix(Model,{
@@ -103,7 +103,7 @@ KISSY.add("mxext/model",function(S,Magix){
          * @param {Object} props 方法对象
          * @param {Function} ctor 继承类的构造方法
          */
-        extend:ex
+        extend:Extend
     });
 
 

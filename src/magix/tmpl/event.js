@@ -7,7 +7,7 @@ var genKey=function(name){
     return '~'+name;
 };
 
-var safeExec=Magix.safeExec;
+var SafeExec=Magix.safeExec;
 /**
  * 多播事件对象
  * @name Event
@@ -39,7 +39,7 @@ var Event={
                     list.splice(idx,1);
                     len--;
                 }
-                safeExec(fn,data,me);
+                SafeExec(fn,data,me);
             }
         }
         if(remove){

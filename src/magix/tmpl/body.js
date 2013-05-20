@@ -1,5 +1,5 @@
-var HAS=Magix.has;
-var MIX=Magix.mix;
+var Has=Magix.has;
+var Mix=Magix.mix;
 //不支持冒泡的事件
 var UnsupportBubble=Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
 var RootNode=document.body;
@@ -22,7 +22,7 @@ var GetSetAttribute=function(dom,attrKey,attrVal){
     }
     return attrVal;
 };
-var Body=MIX({
+var Body=Mix({
     onUnbubble:Magix.unimpl,
     offUnbubble:Magix.unimpl,
 
@@ -59,7 +59,7 @@ var Body=MIX({
                     var begin=current;
                     var vfs=me.VOM.all();
                     while(begin&&begin!=RootNode){
-                        if(HAS(vfs,begin.id)){
+                        if(Has(vfs,begin.id)){
                             GetSetAttribute(current,MxOwner,handler=begin.id);
                             //current.setAttribute(MxOwner,handler=begin.id);
                             break;

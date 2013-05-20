@@ -49,11 +49,11 @@ KISSY.add('mxext/vfanim',function(S,Vf,Magix){
      */
 
     var EMPTY='';
-    var mxConfig=Magix.config();
+    var MxConfig=Magix.config();
     var D=document;
 
-    var cfgSceneChange=mxConfig.effect;
-    var cfgSceneChangeIsFn=Magix.isFunction(cfgSceneChange);
+    var CfgSceneChange=MxConfig.effect;
+    var CfgSceneChangeIsFn=Magix.isFunction(CfgSceneChange);
 
     var $=function(id){
         return typeof id=='object'?id:D.getElementById(id);
@@ -61,8 +61,8 @@ KISSY.add('mxext/vfanim',function(S,Vf,Magix){
     return Magix.mix(Vf.prototype,{
         useAnimUpdate:function(){
             var me=this;
-            console.log(mxConfig);
-            return cfgSceneChange;
+            console.log(MxConfig);
+            return CfgSceneChange;
             /*var anim=me.$currentSupportAmin=(Math.random()<0.5)
             return anim;*/
         },
@@ -113,8 +113,8 @@ KISSY.add('mxext/vfanim',function(S,Vf,Magix){
                 me.$anim=1;
             }
             me.$anim++;
-            if(cfgSceneChangeIsFn){
-                Magix.safeExec(cfgSceneChange,{
+            if(CfgSceneChangeIsFn){
+                Magix.safeExec(CfgSceneChange,{
                     vframeId:me.vfId,
                     action:isViewChange?'viewChange':'viewRefresh',
                     oldViewNode:oldViewNode,

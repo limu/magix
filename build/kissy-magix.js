@@ -1,6 +1,6 @@
 KISSY.add("magix/body",function(S,IBody,Magix,Event){
-    var HAS=Magix.has;
-var MIX=Magix.mix;
+    var Has=Magix.has;
+var Mix=Magix.mix;
 //不支持冒泡的事件
 var UnsupportBubble=Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
 var RootNode=document.body;
@@ -23,7 +23,7 @@ var GetSetAttribute=function(dom,attrKey,attrVal){
     }
     return attrVal;
 };
-var Body=MIX({
+var Body=Mix({
     
     
 
@@ -60,7 +60,7 @@ var Body=MIX({
                     var begin=current;
                     var vfs=me.VOM.all();
                     while(begin&&begin!=RootNode){
-                        if(HAS(vfs,begin.id)){
+                        if(Has(vfs,begin.id)){
                             GetSetAttribute(current,MxOwner,handler=begin.id);
                             //current.setAttribute(MxOwner,handler=begin.id);
                             break;
@@ -148,7 +148,7 @@ var genKey=function(name){
     return '~'+name;
 };
 
-var safeExec=Magix.safeExec;
+var SafeExec=Magix.safeExec;
 /**
  * 多播事件对象
  * @name Event
@@ -180,7 +180,7 @@ var Event={
                     list.splice(idx,1);
                     len--;
                 }
-                safeExec(fn,data,me);
+                SafeExec(fn,data,me);
             }
         }
         if(remove){
@@ -368,11 +368,11 @@ KISSY.add("magix/impl/view",function(S,io,Magix){
         extend:1
     };
 
-    var processObject=function(props,proto,enterObject){
+    var ProcessObject=function(props,proto,enterObject){
         for(var p in proto){
             if(S.isObject(proto[p])){
                 if(!Magix.has(props,p))props[p]={};
-                processObject(props[p],proto[p],true);
+                ProcessObject(props[p],proto[p],true);
             }else if(enterObject){
                 props[p]=proto[p];
             }
@@ -403,7 +403,7 @@ KISSY.add("magix/impl/view",function(S,io,Magix){
             var temp;
             while(start.superclass){
                 temp=start.superclass.constructor;
-                processObject(aimObject,temp.prototype);
+                ProcessObject(aimObject,temp.prototype);
                 start=temp;
             }
             toProto.home=Mods[toProto.path].packageInfo.getBase();
@@ -1015,11 +1015,11 @@ var Magix={
  */
 KISSY.add('magix/router',function(S,IRouter,Magix,Event){
     
-var HAS=Magix.has;
-var MIX=Magix.mix;
+var Has=Magix.has;
+var Mix=Magix.mix;
 var D=document;
 var isUtf8=/^UTF-8$/i.test(D.charset||D.characterSet||'UTF-8');
-var mxConfig=Magix.config();
+var MxConfig=Magix.config();
 var HrefCache=Magix.createCache();
 var ChgdCache=Magix.createCache();
 
@@ -1027,7 +1027,7 @@ var TLoc,LLoc,Pnr;
 var TitleC=1<<16;
 var TrimHashReg=/#.*$/,TrimQueryReg=/^[^#]*#?!?/;
 var Ps='params';
-var UseNativeHistory=mxConfig.nativeHistory;
+var UseNativeHistory=MxConfig.nativeHistory;
 var SupportState,HashAsNativeHistory;
 
 var isParam=function(params,r,ps){
@@ -1035,17 +1035,17 @@ var isParam=function(params,r,ps){
         ps=this[Ps];
         if(!Magix.isArray(params))params=params.split(',');
         for(var i=0;i<params.length;i++){
-            r=HAS(ps,params[i]);
+            r=Has(ps,params[i]);
             if(r)break;
         }
     }
     return r;
 };
 var isPathname=function(){
-    return HAS(this,PATHNAME);  
+    return Has(this,PATHNAME);  
 };
 var isView=function(){
-    return HAS(this,'view');
+    return Has(this,'view');
 };
 /*var isParamChangedExcept=function(args){
     if(Magix.isString(args)){
@@ -1059,7 +1059,7 @@ var isView=function(){
     }
     var keys=Magix.keys(this[Ps]);
     for(i=0;i<keys.length;i++){
-        if(!HAS(temp,keys[i])){
+        if(!Has(temp,keys[i])){
             return true;
         }
     }
@@ -1080,12 +1080,12 @@ var paramDiff=function(param){
 var hashOwn=function(key){
     var me=this;
     var hash=me.hash;
-    return HAS(hash[Ps],key);
+    return Has(hash[Ps],key);
 };
 var queryOwn=function(key){
     var me=this;
     var query=me.query;
-    return HAS(query[Ps],key);
+    return Has(query[Ps],key);
 };
 
 var getParam=function(key){
@@ -1112,7 +1112,7 @@ var PATHNAME='pathname';
  * @borrows Event.fire as fire
  * @borrows Event.un as un
  */
-var Router=MIX({
+var Router=Mix({
     /**
      * @lends Router
      */
@@ -1136,17 +1136,17 @@ var Router=MIX({
         
         if(!Pnr){
             Pnr={
-                routes:mxConfig.routes||{},
-                e404:mxConfig.notFoundView
+                routes:MxConfig.routes||{},
+                e404:MxConfig.notFoundView
             }
             //var home=pathCfg.defaultView;//处理默认加载的view
             //var dPathname=pathCfg.defaultPathname||EMPTY;
-            var defaultView=mxConfig.defaultView;
+            var defaultView=MxConfig.defaultView;
             if(!defaultView){
                 throw new Error('unset defaultView');
             }
             Pnr.home=defaultView;
-            var defaultPathname=mxConfig.defaultPathname||EMPTY;
+            var defaultPathname=MxConfig.defaultPathname||EMPTY;
             //if(!Magix.isFunction(temp.routes)){
             Pnr.routes[defaultPathname]=defaultView;
             Pnr[PATHNAME]=defaultPathname;
@@ -1158,7 +1158,7 @@ var Router=MIX({
         //
         var r=Pnr.routes;
         if(Magix.isFunction(r)){
-            result=r.call(mxConfig,pathname);
+            result=r.call(MxConfig,pathname);
         }else{
             result=r[pathname];//简单的在映射表中找
         }
@@ -1235,8 +1235,8 @@ var Router=MIX({
             var hashObj=me.parsePath(hash);//去掉可能的！开始符号
             //
             var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
-            MIX(comObj,queryObj[Ps]);
-            MIX(comObj,hashObj[Ps]);
+            Mix(comObj,queryObj[Ps]);
+            Mix(comObj,hashObj[Ps]);
             result={
                 pathnameDiff:pathnameDiff,
                 paramDiff:paramDiff,
@@ -1304,7 +1304,7 @@ var Router=MIX({
                 tempPathname=queryHash.hash[PATHNAME];
             }
             var view=me.getView(tempPathname);
-            MIX(queryHash,view);
+            Mix(queryHash,view);
         }
         return queryHash
     },
@@ -1391,7 +1391,7 @@ var Router=MIX({
         //
         //temp={params:{},pathname:{}}
         //
-        //MIX(temp,TLoc,temp);
+        //Mix(temp,TLoc,temp);
         //
         //
 
@@ -1399,7 +1399,7 @@ var Router=MIX({
 
             var pathObj=me.parsePath(path);
             var temp={};
-            temp[Ps]=MIX({},pathObj[Ps]);
+            temp[Ps]=Mix({},pathObj[Ps]);
             temp[PATHNAME]=pathObj[PATHNAME];
 
             if(temp[PATHNAME]){
@@ -1407,15 +1407,15 @@ var Router=MIX({
                     var query=TLoc.query;
                     if(query&&(query=query[Ps])){
                         for(var p in query){
-                            if(HAS(query,p)&&!HAS(temp[Ps],p)){
+                            if(Has(query,p)&&!Has(temp[Ps],p)){
                                 temp[Ps][p]=EMPTY;
                             }
                         }
                     }
                 }
             }else{
-                var ps=MIX({},TLoc[Ps]);
-                temp[Ps]=MIX(ps,temp[Ps]);
+                var ps=Mix({},TLoc[Ps]);
+                temp[Ps]=Mix(ps,temp[Ps]);
                 temp[PATHNAME]=TLoc[PATHNAME];
             }
             var tempPath=Magix.objectToPath(temp);
@@ -1435,7 +1435,7 @@ var Router=MIX({
                     history.pushState(TitleC--,D.title,tempPath);
                     me.route();
                 }else{
-                    MIX(temp,TLoc,temp);
+                    Mix(temp,TLoc,temp);
                     temp.srcHash=tempPath;
                     temp.hash={
                         params:temp[Ps],
@@ -2124,8 +2124,8 @@ Mix(Mix(Vframe.prototype,Event),{
  */
 KISSY.add('magix/view',function(S,IView,Magix,Event,Body){
     
-var safeExec=Magix.safeExec;
-var HAS=Magix.has;
+var SafeExec=Magix.safeExec;
+var Has=Magix.has;
 var COMMA=',';
 var EMPTY_ARRAY=[];
 var MxConfig=Magix.config();
@@ -2219,7 +2219,7 @@ Mix(View,{
                 if(Magix.isFunction(old)&&
                     old!=Magix.noop&&
                     !old[WrapKey]&&
-                    HAS(WrapAsynUpdateNames,p)
+                    Has(WrapAsynUpdateNames,p)
                 ){
                     wrap=WrapFn(old);
                     wrap[WrapKey]=old;
@@ -2350,8 +2350,8 @@ Mix(VProto,{
 
              */
             me.fire('interact',{tmpl:hasTmpl},1);//可交互
-            safeExec(me.init,args,me);
-            safeExec(me.render,EMPTY_ARRAY,me);
+            SafeExec(me.init,args,me);
+            SafeExec(me.render,EMPTY_ARRAY,me);
             //
             var noTemplateAndNoRendered=!hasTmpl&&!me.rendered;//没模板，调用render后，render里面也没调用setViewHTML
 
@@ -2397,8 +2397,8 @@ Mix(VProto,{
                 me.fire('prerender',{anim:enableAnim});
                 var owner=me.owner;
                 if(enableAnim){
-                    safeExec(owner.oldViewDestroy,EMPTY_ARRAY,owner);
-                    safeExec(owner.prepareNextView,EMPTY_ARRAY,owner);
+                    SafeExec(owner.oldViewDestroy,EMPTY_ARRAY,owner);
+                    SafeExec(owner.prepareNextView,EMPTY_ARRAY,owner);
                     me.updateViewId();
                 }
             }
@@ -2411,7 +2411,7 @@ Mix(VProto,{
         var me=this;
         if(me.sign){
             if(me.rendered&&me.enableAnim){
-                safeExec(owner.newViewCreated,EMPTY_ARRAY,owner);
+                SafeExec(owner.newViewCreated,EMPTY_ARRAY,owner);
             }
             if(!me.rendered){//触发一次primed事件
                 me.fire('primed',null,1);
@@ -2651,7 +2651,7 @@ Mix(VProto,{
                             params[a]=b;
                         });
                     }
-                    safeExec(eventsType[evtName],Mix({
+                    SafeExec(eventsType[evtName],Mix({
                         view:me,
                         currentId:e.cId,
                         targetId:e.tId,
@@ -2939,14 +2939,11 @@ Mix(VProto,{
  * @version 1.0
  */
 KISSY.add("magix/vom",function(S,Vframe,Magix,Event,Body){
-    var D=document;
-var safeExec=Magix.safeExec;
-
-var has=Magix.has;
-var vframesCount=0;
-var firstVframesLoaded=0;
-var lastPercent=0;
-var firstReady=0;
+    var Has=Magix.has;
+var VframesCount=0;
+var FirstVframesLoaded=0;
+var LastPercent=0;
+var FirstReady=0;
 var Vframes={};
 var Loc;
 
@@ -2971,8 +2968,8 @@ var VOM=Magix.mix({
      * @param {Vframe} vf Vframe对象
      */
     add:function(vf){
-        if(!has(Vframes,vf.id)){
-            vframesCount++;
+        if(!Has(Vframes,vf.id)){
+            VframesCount++;
             Vframes[vf.id]=vf;
             vf.owner=VOM;
             VOM.fire('add',{vframe:vf});
@@ -2994,8 +2991,8 @@ var VOM=Magix.mix({
         //var id=Magix.isString(vf)?vf:vf.id;
         var vf=Vframes[id];
         if(vf){
-            vframesCount--;
-            if(vf.fcc)firstVframesLoaded--;
+            VframesCount--;
+            if(vf.fcc)FirstVframesLoaded--;
             delete Vframes[id];
             VOM.fire('remove',{vframe:vf});
         }        
@@ -3004,15 +3001,15 @@ var VOM=Magix.mix({
      * 通知其中的一个view创建完成
      */
     childCreated:function(){
-        if(!firstReady){
-            firstVframesLoaded++;
-            var np=firstVframesLoaded/vframesCount;
-            if(lastPercent<np){
+        if(!FirstReady){
+            FirstVframesLoaded++;
+            var np=FirstVframesLoaded/VframesCount;
+            if(LastPercent<np){
                 VOM.fire('progress',{
-                    percent:lastPercent=np
+                    percent:LastPercent=np
                 });
                 if(np==1){
-                    firstReady=1;
+                    FirstReady=1;
                     VOM.un('progress');
                 }
             }

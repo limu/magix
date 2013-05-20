@@ -4,9 +4,9 @@
  * @version 1.0
  **/
 KISSY.add("mxext/mmanager",function(S,Magix){
-    var HAS=Magix.has;
-    var safeExec=Magix.safeExec;
-    var deleteCacheKey=function(models){
+    var Has=Magix.has;
+    var SafeExec=Magix.safeExec;
+    var DeleteCacheKey=function(models){
         if(!Magix.isArray(models)){
             models=[models];
         }
@@ -153,14 +153,14 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                     model._doneAt=S.now();
                     var context=model._context;
                     if(context){//有after
-                        safeExec(context.after,[model].concat(metaParams),context);
+                        SafeExec(context.after,[model].concat(metaParams),context);
                     }
                 }               
 
                 if(flag==FetchFlags.ONE){//如果是其中一个成功，则每次成功回调一次
                     var m=doneIsArray?done[idx]:done;
                     if(m){
-                        doneArgs[idx]=safeExec(m,[model,isFail?{msg:args}:null,hasError?errorArgs:null],me);
+                        doneArgs[idx]=SafeExec(m,[model,isFail?{msg:args}:null,hasError?errorArgs:null],me);
                     }
                 }else if(flag==FetchFlags.ORDER){
                     //var m=doneIsArray?done[idx]:done;
@@ -168,7 +168,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                     //console.log(S.clone(orderlyArr),idx);
                     for(var i=orderlyArr.i||0,t,d;t=orderlyArr[i];i++){
                         d=doneIsArray?done[i]:done;
-                        doneArgs[i]=safeExec(d,[t.m,t.e?{msg:t.s}:null,orderlyArr.e?errorArgs:null,doneArgs],me);
+                        doneArgs[i]=SafeExec(d,[t.m,t.e?{msg:t.s}:null,orderlyArr.e?errorArgs:null,doneArgs],me);
                         if(t.e){
                             errorArgs[i]=t.s;
                             orderlyArr.e=1;
@@ -177,10 +177,10 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                     orderlyArr.i=i;
                 }
 
-                if(cacheKey&&HAS(modelsCacheKeys,cacheKey)){
+                if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
                     var fns=modelsCacheKeys[cacheKey];
                     delete modelsCacheKeys[cacheKey];
-                    safeExec(fns,[isFail,model,args],model);
+                    SafeExec(fns,[isFail,model,args],model);
                 }
 
                 if(current>=total){
@@ -188,7 +188,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                     var last=hasError?errorArgs:null;
                     if(flag==FetchFlags.ALL){                           
                         doneArr.push(last);
-                        doneArgs[0]=safeExec(done,doneArr,me);
+                        doneArgs[0]=SafeExec(done,doneArr,me);
                         doneArgs[1]=last;
                     }else{
                         doneArgs.push(last);
@@ -209,7 +209,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                     var modelInfo=host.getModel(model);
                     var cacheKey=modelInfo.cacheKey;
                     
-                    if(cacheKey&&HAS(modelsCacheKeys,cacheKey)){
+                    if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
                         modelsCacheKeys[cacheKey].push(wrapDone(doneFn,me,i));
                     }else{                        
                         modelEntity=modelInfo.entity;
@@ -248,7 +248,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
          * @return {MRequest}
          */
         saveAll:function(models,done){
-            models=deleteCacheKey(models);
+            models=DeleteCacheKey(models);
             return this.fetchModels(models,done,FetchFlags.ALL);
         },
         /**
@@ -268,7 +268,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
          * @return {MRequest}
          */
         saveOrder:function(models,done){
-            models=deleteCacheKey(models);
+            models=DeleteCacheKey(models);
             var cbs=Slice.call(arguments,1);
             return this.fetchModels(models,cbs.length>1?cbs:done,FetchFlags.ORDER);
         },
@@ -281,7 +281,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
          * @return {MRequest}
          */
         saveOne:function(models,callback){
-            models=deleteCacheKey(models);
+            models=DeleteCacheKey(models);
             var cbs=Slice.call(arguments,1);
             return this.reqModels(models,cbs.length>1?cbs:callback,FetchFlags.ONE);
         },
@@ -312,10 +312,10 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                 for(var p in reqModels){
                     var m=reqModels[p];
                     var cacheKey=m._cacheKey;
-                    if(cacheKey&&HAS(modelsCacheKeys,cacheKey)){
+                    if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
                         var fns=modelsCacheKeys[cacheKey];
                         delete modelsCacheKeys[cacheKey];
-                        safeExec(fns,[true,m,'aborted'],m);
+                        SafeExec(fns,[true,m,'aborted'],m);
                     }
                     m.abort();
                 }
@@ -353,7 +353,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                 var one=queue.shift();
                 if(one){
                     console.log(one,preArgs);
-                    safeExec(one,[me].concat(preArgs),me);
+                    SafeExec(one,[me].concat(preArgs),me);
                 }
             }
             me.$latest=preArgs;
@@ -471,7 +471,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
         registerMethods:function(methods){
             var me=this;
             for(var p in methods){
-                if(HAS(methods,p)){
+                if(Has(methods,p)){
                     me[p]=(function(fn){
                         return function(){
                             var aborted;
@@ -494,7 +494,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                             return {
                                 abort:function(){
                                     if(result&&result.abort){
-                                        safeExec(result.abort,['aborted'],result);
+                                        SafeExec(result.abort,['aborted'],result);
                                     }
                                     aborted=true;
                                 }
@@ -625,7 +625,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
             var metaParams=modelAttrs.metaParams||[];
 
             if(S.isFunction(context.before)){
-                safeExec(context.before,[entity].concat(metaParams),context);
+                SafeExec(context.before,[entity].concat(metaParams),context);
             }
             entity.metaParams=metaParams;
             return entity;

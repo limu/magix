@@ -13,11 +13,11 @@ KISSY.add("magix/impl/view",function(S,io,Magix){
         extend:1
     };
 
-    var processObject=function(props,proto,enterObject){
+    var ProcessObject=function(props,proto,enterObject){
         for(var p in proto){
             if(S.isObject(proto[p])){
                 if(!Magix.has(props,p))props[p]={};
-                processObject(props[p],proto[p],true);
+                ProcessObject(props[p],proto[p],true);
             }else if(enterObject){
                 props[p]=proto[p];
             }
@@ -48,7 +48,7 @@ KISSY.add("magix/impl/view",function(S,io,Magix){
             var temp;
             while(start.superclass){
                 temp=start.superclass.constructor;
-                processObject(aimObject,temp.prototype);
+                ProcessObject(aimObject,temp.prototype);
                 start=temp;
             }
             toProto.home=Mods[toProto.path].packageInfo.getBase();

@@ -8,8 +8,8 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
     var COMMA=',';
     var DestroyManagedTryList='destroy,abort,stop,cancel,remove'.split(COMMA);
     var ResCounter=0;
-    var safeExec=Magix.safeExec;
-    var HAS=Magix.has;
+    var SafeExec=Magix.safeExec;
+    var Has=Magix.has;
     var VOMEventsObject={};
     var PrepareVOMMessage=function(vom){
         if(!PrepareVOMMessage.d){
@@ -36,11 +36,11 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
     var PostMessage=function(vframe,args){
         var view=vframe.view;
         if(view&&vframe.viewUsable){
-            safeExec(view.receiveMessage,args,view);
+            SafeExec(view.receiveMessage,args,view);
         }else{
             var interact=function(e){
                 vframe.un('viewInteract',interact);
-                safeExec(e.view.receiveMessage,args,e.view);
+                SafeExec(e.view.receiveMessage,args,e.view);
             };
             vframe.on('viewInteract',interact);
         }
@@ -127,7 +127,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
             var me=this;
             var cache=me.$resCache;
             var sign=me.sign;
-            if(cache&&HAS(cache,key)){
+            if(cache&&Has(cache,key)){
                 var wrapObj=cache[key];
                 var resource=wrapObj.res;
                 return resource;
@@ -143,7 +143,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
             var me=this,res=null;
             var cache=me.$resCache;
             if(cache){
-                if(HAS(cache,param)){
+                if(Has(cache,param)){
                     res=cache[param].res;
                     delete cache[param];
                 }else{
@@ -183,7 +183,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                         }else{
                             for(var i=0;i<DestroyManagedTryList.length;i++){
                                 if(Magix.isFunction(res[DestroyManagedTryList[i]])){
-                                    safeExec(res[DestroyManagedTryList[i]],[],res);
+                                    SafeExec(res[DestroyManagedTryList[i]],[],res);
                                     //processed=true;
                                     //不进行break,比如有时候可能存在abort 和  destroy
                                 }
@@ -302,7 +302,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                                 if(me.enableEvent){
                                     var targetId=View.idIt(e.target);
                                     var currentId=View.idIt(e.currentTarget);
-                                    Magix.safeExec(fn,{
+                                    Magix.SafeExec(fn,{
                                         view:me,
                                         targetId:targetId,
                                         currentId:currentId,

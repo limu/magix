@@ -1,9 +1,9 @@
 
-var HAS=Magix.has;
-var MIX=Magix.mix;
+var Has=Magix.has;
+var Mix=Magix.mix;
 var D=document;
 var isUtf8=/^UTF-8$/i.test(D.charset||D.characterSet||'UTF-8');
-var mxConfig=Magix.config();
+var MxConfig=Magix.config();
 var HrefCache=Magix.createCache();
 var ChgdCache=Magix.createCache();
 
@@ -11,7 +11,7 @@ var TLoc,LLoc,Pnr;
 var TitleC=1<<16;
 var TrimHashReg=/#.*$/,TrimQueryReg=/^[^#]*#?!?/;
 var Ps='params';
-var UseNativeHistory=mxConfig.nativeHistory;
+var UseNativeHistory=MxConfig.nativeHistory;
 var SupportState,HashAsNativeHistory;
 
 var isParam=function(params,r,ps){
@@ -19,17 +19,17 @@ var isParam=function(params,r,ps){
         ps=this[Ps];
         if(!Magix.isArray(params))params=params.split(',');
         for(var i=0;i<params.length;i++){
-            r=HAS(ps,params[i]);
+            r=Has(ps,params[i]);
             if(r)break;
         }
     }
     return r;
 };
 var isPathname=function(){
-    return HAS(this,PATHNAME);  
+    return Has(this,PATHNAME);  
 };
 var isView=function(){
-    return HAS(this,'view');
+    return Has(this,'view');
 };
 /*var isParamChangedExcept=function(args){
     if(Magix.isString(args)){
@@ -43,7 +43,7 @@ var isView=function(){
     }
     var keys=Magix.keys(this[Ps]);
     for(i=0;i<keys.length;i++){
-        if(!HAS(temp,keys[i])){
+        if(!Has(temp,keys[i])){
             return true;
         }
     }
@@ -64,12 +64,12 @@ var paramDiff=function(param){
 var hashOwn=function(key){
     var me=this;
     var hash=me.hash;
-    return HAS(hash[Ps],key);
+    return Has(hash[Ps],key);
 };
 var queryOwn=function(key){
     var me=this;
     var query=me.query;
-    return HAS(query[Ps],key);
+    return Has(query[Ps],key);
 };
 
 var getParam=function(key){
@@ -96,7 +96,7 @@ var PATHNAME='pathname';
  * @borrows Event.fire as fire
  * @borrows Event.un as un
  */
-var Router=MIX({
+var Router=Mix({
     /**
      * @lends Router
      */
@@ -120,17 +120,17 @@ var Router=MIX({
         
         if(!Pnr){
             Pnr={
-                routes:mxConfig.routes||{},
-                e404:mxConfig.notFoundView
+                routes:MxConfig.routes||{},
+                e404:MxConfig.notFoundView
             }
             //var home=pathCfg.defaultView;//处理默认加载的view
             //var dPathname=pathCfg.defaultPathname||EMPTY;
-            var defaultView=mxConfig.defaultView;
+            var defaultView=MxConfig.defaultView;
             if(!defaultView){
                 throw new Error('unset defaultView');
             }
             Pnr.home=defaultView;
-            var defaultPathname=mxConfig.defaultPathname||EMPTY;
+            var defaultPathname=MxConfig.defaultPathname||EMPTY;
             //if(!Magix.isFunction(temp.routes)){
             Pnr.routes[defaultPathname]=defaultView;
             Pnr[PATHNAME]=defaultPathname;
@@ -142,7 +142,7 @@ var Router=MIX({
         //console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',pathname);
         var r=Pnr.routes;
         if(Magix.isFunction(r)){
-            result=r.call(mxConfig,pathname);
+            result=r.call(MxConfig,pathname);
         }else{
             result=r[pathname];//简单的在映射表中找
         }
@@ -219,8 +219,8 @@ var Router=MIX({
             var hashObj=me.parsePath(hash);//去掉可能的！开始符号
             //console.log(hashObj.pathname,'hhhhhhhhhhhhhhhhhhhhhhhhh');
             var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
-            MIX(comObj,queryObj[Ps]);
-            MIX(comObj,hashObj[Ps]);
+            Mix(comObj,queryObj[Ps]);
+            Mix(comObj,hashObj[Ps]);
             result={
                 pathnameDiff:pathnameDiff,
                 paramDiff:paramDiff,
@@ -288,7 +288,7 @@ var Router=MIX({
                 tempPathname=queryHash.hash[PATHNAME];
             }
             var view=me.getView(tempPathname);
-            MIX(queryHash,view);
+            Mix(queryHash,view);
         }
         return queryHash
     },
@@ -375,7 +375,7 @@ var Router=MIX({
         //
         //temp={params:{},pathname:{}}
         //
-        //MIX(temp,TLoc,temp);
+        //Mix(temp,TLoc,temp);
         //
         //
 
@@ -383,7 +383,7 @@ var Router=MIX({
 
             var pathObj=me.parsePath(path);
             var temp={};
-            temp[Ps]=MIX({},pathObj[Ps]);
+            temp[Ps]=Mix({},pathObj[Ps]);
             temp[PATHNAME]=pathObj[PATHNAME];
 
             if(temp[PATHNAME]){
@@ -391,15 +391,15 @@ var Router=MIX({
                     var query=TLoc.query;
                     if(query&&(query=query[Ps])){
                         for(var p in query){
-                            if(HAS(query,p)&&!HAS(temp[Ps],p)){
+                            if(Has(query,p)&&!Has(temp[Ps],p)){
                                 temp[Ps][p]=EMPTY;
                             }
                         }
                     }
                 }
             }else{
-                var ps=MIX({},TLoc[Ps]);
-                temp[Ps]=MIX(ps,temp[Ps]);
+                var ps=Mix({},TLoc[Ps]);
+                temp[Ps]=Mix(ps,temp[Ps]);
                 temp[PATHNAME]=TLoc[PATHNAME];
             }
             var tempPath=Magix.objectToPath(temp);
@@ -419,7 +419,7 @@ var Router=MIX({
                     history.pushState(TitleC--,D.title,tempPath);
                     me.route();
                 }else{
-                    MIX(temp,TLoc,temp);
+                    Mix(temp,TLoc,temp);
                     temp.srcHash=tempPath;
                     temp.hash={
                         params:temp[Ps],

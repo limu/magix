@@ -1,6 +1,6 @@
 
-var safeExec=Magix.safeExec;
-var HAS=Magix.has;
+var SafeExec=Magix.safeExec;
+var Has=Magix.has;
 var COMMA=',';
 var EMPTY_ARRAY=[];
 var MxConfig=Magix.config();
@@ -94,7 +94,7 @@ Mix(View,{
                 if(Magix.isFunction(old)&&
                     old!=Magix.noop&&
                     !old[WrapKey]&&
-                    HAS(WrapAsynUpdateNames,p)
+                    Has(WrapAsynUpdateNames,p)
                 ){
                     wrap=WrapFn(old);
                     wrap[WrapKey]=old;
@@ -225,8 +225,8 @@ Mix(VProto,{
 
              */
             me.fire('interact',{tmpl:hasTmpl},1);//可交互
-            safeExec(me.init,args,me);
-            safeExec(me.render,EMPTY_ARRAY,me);
+            SafeExec(me.init,args,me);
+            SafeExec(me.render,EMPTY_ARRAY,me);
             //console.log('render',me.render);
             var noTemplateAndNoRendered=!hasTmpl&&!me.rendered;//没模板，调用render后，render里面也没调用setViewHTML
 
@@ -272,8 +272,8 @@ Mix(VProto,{
                 me.fire('prerender',{anim:enableAnim});
                 var owner=me.owner;
                 if(enableAnim){
-                    safeExec(owner.oldViewDestroy,EMPTY_ARRAY,owner);
-                    safeExec(owner.prepareNextView,EMPTY_ARRAY,owner);
+                    SafeExec(owner.oldViewDestroy,EMPTY_ARRAY,owner);
+                    SafeExec(owner.prepareNextView,EMPTY_ARRAY,owner);
                     me.updateViewId();
                 }
             }
@@ -286,7 +286,7 @@ Mix(VProto,{
         var me=this;
         if(me.sign){
             if(me.rendered&&me.enableAnim){
-                safeExec(owner.newViewCreated,EMPTY_ARRAY,owner);
+                SafeExec(owner.newViewCreated,EMPTY_ARRAY,owner);
             }
             if(!me.rendered){//触发一次primed事件
                 me.fire('primed',null,1);
@@ -526,7 +526,7 @@ Mix(VProto,{
                             params[a]=b;
                         });
                     }
-                    safeExec(eventsType[evtName],Mix({
+                    SafeExec(eventsType[evtName],Mix({
                         view:me,
                         currentId:e.cId,
                         targetId:e.tId,
