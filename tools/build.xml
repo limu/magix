@@ -10,7 +10,7 @@
     <property name="mxext.dir" location="${root.dir}/src/mxext"></property>
     <!--dir that out put product -->
     <property name="debug.dir" location="${build.dir}/debug"></property>
-    <property name="raw.dir" location="${build.dir}/"></property>
+    <property name="raw.dir" location="${build.dir}/1.0"></property>
     <property name="seed.dir" location="${root.dir}/seed"></property>
     <property name="docsrc.dir" location="${root.dir}/docsrc"></property>
 
