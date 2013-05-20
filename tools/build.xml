@@ -4,7 +4,7 @@
     <property name="module.name" value="magix"></property>
     <dirname property="current.dir" file="${ant.file}"></dirname>
     <property name="root.dir" location="${current.dir}/../"></property>
-    <property name="build.dir" location="${root.dir}/build"></property>
+    <property name="build.dir" location="${root.dir}/dist"></property>
     <property name="src.dir" location="${root.dir}/src"></property>
     <property name="magix.dir" location="${root.dir}/src/magix"></property>
     <property name="mxext.dir" location="${root.dir}/src/mxext"></property>
