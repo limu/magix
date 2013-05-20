@@ -477,7 +477,7 @@
 <span class='line'>470</span>      * @param  {String} path 路径字符串
 <span class='line'>471</span>      * @return {Object} 解析后的对象
 <span class='line'>472</span>      */</span><span class="WHIT">
-<span class='line'>473</span> </span><span class="WHIT">    </span><span class="NAME">pathToObject</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">path</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>473</span> </span><span class="WHIT">    </span><span class="NAME">pathToObject</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">path</span><span class="PUNC">,</span><span class="NAME">decode</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>474</span> </span><span class="WHIT">        </span><span class="COMM">//把形如 /xxx/a=b&c=d 转换成对象 {pathname:'/xxx/',params:{a:'b',c:'d'}}</span><span class="WHIT">
 <span class='line'>475</span> </span><span class="WHIT">        </span><span class="COMM">//1. /xxx/a.b.c.html?a=b&c=d  pathname /xxx/a.b.c.html </span><span class="WHIT">
 <span class='line'>476</span> </span><span class="WHIT">        </span><span class="COMM">//2. /xxx/?a=b&c=d  pathname /xxx/</span><span class="WHIT">
@@ -511,79 +511,91 @@
 <span class='line'>504</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'>505</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'>506</span> </span><span class="WHIT">            </span><span class="NAME">path.replace</span><span class="PUNC">(</span><span class="NAME">ParamsReg</span><span class="PUNC">,</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">match</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>507</span> </span><span class="WHIT">                </span><span class="NAME">params</span><span class="PUNC">[</span><span class="NAME">name</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">value</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>508</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>509</span> </span><span class="WHIT">            </span><span class="NAME">r</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">pathname</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>510</span> </span><span class="WHIT">            </span><span class="NAME">r.params</span><span class="PUNC">=</span><span class="NAME">params</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>511</span> </span><span class="WHIT">            </span><span class="NAME">PathToObjCache.set</span><span class="PUNC">(</span><span class="NAME">path</span><span class="PUNC">,</span><span class="NAME">r</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>512</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>513</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">r</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>514</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>515</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>516</span>      * 把对象内容转换成字符串路径
-<span class='line'>517</span>      * @param  {Object} obj 对象
-<span class='line'>518</span>      * @return {String} 字符串路径
-<span class='line'>519</span>      */</span><span class="WHIT">
-<span class='line'>520</span> </span><span class="WHIT">    </span><span class="NAME">objectToPath</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">obj</span><span class="PUNC">,</span><span class="NAME">encode</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//上个方法的逆向</span><span class="WHIT">
-<span class='line'>521</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">pn</span><span class="PUNC">=</span><span class="NAME">obj</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>522</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">params</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>523</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">oPs</span><span class="PUNC">=</span><span class="NAME">obj.params</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>524</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">p</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">oPs</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>525</span> </span><span class="WHIT">            </span><span class="NAME">params.push</span><span class="PUNC">(</span><span class="NAME">p</span><span class="PUNC">+</span><span class="STRN">'='</span><span class="PUNC">+</span><span class="PUNC">(</span><span class="NAME">encode</span><span class="PUNC">?</span><span class="NAME">encodeURIComponent</span><span class="PUNC">(</span><span class="NAME">oPs</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">:</span><span class="NAME">oPs</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>526</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>527</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">pn</span><span class="PUNC">+</span><span class="PUNC">(</span><span class="NAME">pn</span><span class="PUNC">&&</span><span class="NAME">params.length</span><span class="PUNC">?</span><span class="STRN">'?'</span><span class="PUNC">:</span><span class="NAME">EMPTY</span><span class="PUNC">)</span><span class="PUNC">+</span><span class="NAME">params.join</span><span class="PUNC">(</span><span class="STRN">'&'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>528</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>529</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>530</span>      * 读取或设置view的模板
-<span class='line'>531</span>      * @param  {String} key   形如~seed/app/common/footer的字符串
-<span class='line'>532</span>      * @param  {String} [value] 模板字符串
-<span class='line'>533</span>      * @return {String}
-<span class='line'>534</span>      */</span><span class="WHIT">
-<span class='line'>535</span> </span><span class="WHIT">    </span><span class="NAME">tmpl</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">,</span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>536</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">arguments.length</span><span class="PUNC">==</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>537</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Templates</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>507</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">decode</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>508</span> </span><span class="WHIT">                    </span><span class="KEYW">try</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>509</span> </span><span class="WHIT">                        </span><span class="NAME">value</span><span class="PUNC">=</span><span class="NAME">decodeURIComponent</span><span class="PUNC">(</span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>510</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="KEYW">catch</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>511</span> 
+<span class='line'>512</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>513</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>514</span> </span><span class="WHIT">                </span><span class="NAME">params</span><span class="PUNC">[</span><span class="NAME">name</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">value</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>515</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>516</span> </span><span class="WHIT">            </span><span class="NAME">r</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">pathname</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>517</span> </span><span class="WHIT">            </span><span class="NAME">r.params</span><span class="PUNC">=</span><span class="NAME">params</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>518</span> </span><span class="WHIT">            </span><span class="NAME">PathToObjCache.set</span><span class="PUNC">(</span><span class="NAME">path</span><span class="PUNC">,</span><span class="NAME">r</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>519</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>520</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">r</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>521</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>522</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>523</span>      * 把对象内容转换成字符串路径
+<span class='line'>524</span>      * @param  {Object} obj 对象
+<span class='line'>525</span>      * @return {String} 字符串路径
+<span class='line'>526</span>      */</span><span class="WHIT">
+<span class='line'>527</span> </span><span class="WHIT">    </span><span class="NAME">objectToPath</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">obj</span><span class="PUNC">,</span><span class="NAME">encode</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//上个方法的逆向</span><span class="WHIT">
+<span class='line'>528</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">pn</span><span class="PUNC">=</span><span class="NAME">obj</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>529</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">params</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>530</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">oPs</span><span class="PUNC">=</span><span class="NAME">obj.params</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>531</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">v</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>532</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">p</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">oPs</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>533</span> </span><span class="WHIT">            </span><span class="NAME">v</span><span class="PUNC">=</span><span class="NAME">oPs</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>534</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">encode</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>535</span> </span><span class="WHIT">                </span><span class="NAME">encodeURIComponent</span><span class="PUNC">(</span><span class="NAME">v</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>536</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>537</span> </span><span class="WHIT">            </span><span class="NAME">params.push</span><span class="PUNC">(</span><span class="NAME">p</span><span class="PUNC">+</span><span class="STRN">'='</span><span class="PUNC">+</span><span class="NAME">v</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>538</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>539</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Templates</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">value</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>539</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">pn</span><span class="PUNC">+</span><span class="PUNC">(</span><span class="NAME">pn</span><span class="PUNC">&&</span><span class="NAME">params.length</span><span class="PUNC">?</span><span class="STRN">'?'</span><span class="PUNC">:</span><span class="NAME">EMPTY</span><span class="PUNC">)</span><span class="PUNC">+</span><span class="NAME">params.join</span><span class="PUNC">(</span><span class="STRN">'&'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>540</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'>541</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>542</span>      * 把列表转化成hash对象
-<span class='line'>543</span>      * @param  {Array} list 源数组
-<span class='line'>544</span>      * @param  {String} key  以数组中对象的哪个key的value做为hahs的key
-<span class='line'>545</span>      * @return {Object}
-<span class='line'>546</span>      * @example
-<span class='line'>547</span>      * var map=Magix.listToMap([1,2,3,5,6]);
-<span class='line'>548</span>      * //=> {1:1,2:1,3:1,4:1,5:1,6:1}
-<span class='line'>549</span>      *
-<span class='line'>550</span>      * var map=Magix.listToMap([{id:20},{id:30},{id:40}],'id');
-<span class='line'>551</span>      * //=>{20:{id:20},30:{id:30},40:{id:40}}
-<span class='line'>552</span>      *
-<span class='line'>553</span>      * var map=Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
-<span class='line'>554</span>      *
-<span class='line'>555</span>      * //=>{submit:1,focusin:1,focusout:1,mouseenter:1,mouseleave:1,mousewheel:1,change:1}
-<span class='line'>556</span>      * 
-<span class='line'>557</span>      */</span><span class="WHIT">
-<span class='line'>558</span> </span><span class="WHIT">    </span><span class="NAME">listToMap</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">list</span><span class="PUNC">,</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>559</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">i</span><span class="PUNC">,</span><span class="NAME">e</span><span class="PUNC">,</span><span class="NAME">map</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">l</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>560</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">me.isString</span><span class="PUNC">(</span><span class="NAME">list</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>561</span> </span><span class="WHIT">            </span><span class="NAME">list</span><span class="PUNC">=</span><span class="NAME">list.split</span><span class="PUNC">(</span><span class="STRN">','</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>562</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>563</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">list</span><span class="PUNC">&&</span><span class="PUNC">(</span><span class="NAME">l</span><span class="PUNC">=</span><span class="NAME">list.length</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>564</span> </span><span class="WHIT">            </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">l</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>565</span> </span><span class="WHIT">                </span><span class="NAME">e</span><span class="PUNC">=</span><span class="NAME">list</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>566</span> </span><span class="WHIT">                </span><span class="NAME">map</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">?</span><span class="NAME">e</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">:</span><span class="NAME">e</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">key</span><span class="PUNC">?</span><span class="NAME">e</span><span class="PUNC">:</span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>567</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>568</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>569</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">map</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>570</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>571</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>572</span>      * 创建缓存对象
-<span class='line'>573</span>      * @function
-<span class='line'>574</span>      * @param {Integer} max 最大缓存数
-<span class='line'>575</span>      */</span><span class="WHIT">
-<span class='line'>576</span> </span><span class="WHIT">    </span><span class="NAME">createCache</span><span class="PUNC">:</span><span class="NAME">CreateCache</span><span class="WHIT">
-<span class='line'>577</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>578</span> 
-<span class='line'>579</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Magix.mix</span><span class="PUNC">(</span><span class="NAME">Magix</span><span class="PUNC">,</span><span class="NAME">IMagix</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>580</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>581</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/impl/magix"</span><span class="PUNC">]</span><span class="WHIT">
-<span class='line'>582</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>542</span>      * 读取或设置view的模板
+<span class='line'>543</span>      * @param  {String} key   形如~seed/app/common/footer的字符串
+<span class='line'>544</span>      * @param  {String} [value] 模板字符串
+<span class='line'>545</span>      * @return {String}
+<span class='line'>546</span>      */</span><span class="WHIT">
+<span class='line'>547</span> </span><span class="WHIT">    </span><span class="NAME">tmpl</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">,</span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>548</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">arguments.length</span><span class="PUNC">==</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>549</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Templates</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>550</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>551</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Templates</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">value</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>552</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>553</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>554</span>      * 把列表转化成hash对象
+<span class='line'>555</span>      * @param  {Array} list 源数组
+<span class='line'>556</span>      * @param  {String} key  以数组中对象的哪个key的value做为hahs的key
+<span class='line'>557</span>      * @return {Object}
+<span class='line'>558</span>      * @example
+<span class='line'>559</span>      * var map=Magix.listToMap([1,2,3,5,6]);
+<span class='line'>560</span>      * //=> {1:1,2:1,3:1,4:1,5:1,6:1}
+<span class='line'>561</span>      *
+<span class='line'>562</span>      * var map=Magix.listToMap([{id:20},{id:30},{id:40}],'id');
+<span class='line'>563</span>      * //=>{20:{id:20},30:{id:30},40:{id:40}}
+<span class='line'>564</span>      *
+<span class='line'>565</span>      * var map=Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
+<span class='line'>566</span>      *
+<span class='line'>567</span>      * //=>{submit:1,focusin:1,focusout:1,mouseenter:1,mouseleave:1,mousewheel:1,change:1}
+<span class='line'>568</span>      * 
+<span class='line'>569</span>      */</span><span class="WHIT">
+<span class='line'>570</span> </span><span class="WHIT">    </span><span class="NAME">listToMap</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">list</span><span class="PUNC">,</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>571</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">i</span><span class="PUNC">,</span><span class="NAME">e</span><span class="PUNC">,</span><span class="NAME">map</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">l</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>572</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">me.isString</span><span class="PUNC">(</span><span class="NAME">list</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>573</span> </span><span class="WHIT">            </span><span class="NAME">list</span><span class="PUNC">=</span><span class="NAME">list.split</span><span class="PUNC">(</span><span class="STRN">','</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>574</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>575</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">list</span><span class="PUNC">&&</span><span class="PUNC">(</span><span class="NAME">l</span><span class="PUNC">=</span><span class="NAME">list.length</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>576</span> </span><span class="WHIT">            </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">&lt;</span><span class="NAME">l</span><span class="PUNC">;</span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>577</span> </span><span class="WHIT">                </span><span class="NAME">e</span><span class="PUNC">=</span><span class="NAME">list</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>578</span> </span><span class="WHIT">                </span><span class="NAME">map</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">?</span><span class="NAME">e</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">:</span><span class="NAME">e</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">key</span><span class="PUNC">?</span><span class="NAME">e</span><span class="PUNC">:</span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>579</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>580</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>581</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">map</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>582</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>583</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>584</span>      * 创建缓存对象
+<span class='line'>585</span>      * @function
+<span class='line'>586</span>      * @param {Integer} max 最大缓存数
+<span class='line'>587</span>      */</span><span class="WHIT">
+<span class='line'>588</span> </span><span class="WHIT">    </span><span class="NAME">createCache</span><span class="PUNC">:</span><span class="NAME">CreateCache</span><span class="WHIT">
+<span class='line'>589</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>590</span> 
+<span class='line'>591</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Magix.mix</span><span class="PUNC">(</span><span class="NAME">Magix</span><span class="PUNC">,</span><span class="NAME">IMagix</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>592</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>593</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/impl/magix"</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>594</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

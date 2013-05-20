@@ -464,7 +464,7 @@ var Magix={
      * @param  {String} path 路径字符串
      * @return {Object} 解析后的对象
      */
-    pathToObject:function(path){
+    pathToObject:function(path,decode){
         //把形如 /xxx/a=b&c=d 转换成对象 {pathname:'/xxx/',params:{a:'b',c:'d'}}
         //1. /xxx/a.b.c.html?a=b&c=d  pathname /xxx/a.b.c.html 
         //2. /xxx/?a=b&c=d  pathname /xxx/
@@ -498,6 +498,13 @@ var Magix={
                 }
             }
             path.replace(ParamsReg,function(match,name,value){
+                if(decode){
+                    try{
+                        value=decodeURIComponent(value);
+                    }catch(e){
+
+                    }
+                }
                 params[name]=value;
             });
             r[PATHNAME]=pathname;
@@ -515,8 +522,13 @@ var Magix={
         var pn=obj[PATHNAME];
         var params=[];
         var oPs=obj.params;
+        var v;
         for(var p in oPs){
-            params.push(p+'='+(encode?encodeURIComponent(oPs[p]):oPs[p]));
+            v=oPs[p];
+            if(encode){
+                encodeURIComponent(v);
+            }
+            params.push(p+'='+v);
         }
         return pn+(pn&&params.length?'?':EMPTY)+params.join('&');
     },

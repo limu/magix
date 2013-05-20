@@ -1,8 +1,11 @@
+var WIN=window;
+var EMPTY='';
+var PATHNAME='pathname';
 
 var Has=Magix.has;
 var Mix=Magix.mix;
 var D=document;
-var isUtf8=/^UTF-8$/i.test(D.charset||D.characterSet||'UTF-8');
+var IsUtf8=/^UTF-8$/i.test(D.charset||D.characterSet||'UTF-8');
 var MxConfig=Magix.config();
 var HrefCache=Magix.createCache();
 var ChgdCache=Magix.createCache();
@@ -78,14 +81,6 @@ var getParam=function(key){
     return params[key];
 };
 
-var safeExec=Magix.safeExec;
-
-var WIN=window;
-var DECODE=decodeURIComponent;
-
-
-var EMPTY='';
-var PATHNAME='pathname';
 
 //var PathTrimFileParamsReg=/(\/)?[^\/]*[=#]$/;//).replace(,'$1').replace(,EMPTY);
 //var PathTrimSearch=/\?.*$/;
@@ -175,7 +170,7 @@ var Router=Mix({
      * @return {Object}
      */
     parsePath:function(path){
-        var o=Magix.pathToObject(path);
+        var o=Magix.pathToObject(path,IsUtf8);
         var pn=o[PATHNAME];
         var me=this;
         if(pn&&pn.charAt(0)!='/'&&HashAsNativeHistory){//如果不是以/开头的并且要使用history state,当前浏览器又不支持history state则放hash中的pathname要进行处理
@@ -192,13 +187,6 @@ var Router=Mix({
         href=href||WIN.location.href;
 
         var me=this;
-        if(isUtf8){
-            try{
-                href=DECODE(href);
-            }catch(ignore){
-
-            }
-        }
         /*var cfg=Magix.config();
         if(!cfg.originalHREF){
             try{
@@ -485,7 +473,7 @@ var Router=Mix({
             pn=Magix.objectToPath({
                 params:params,
                 pathname:pn
-            },isUtf8)
+            },IsUtf8)
         }
         console.log('eeeeeeeeeeeeeee',pn);
         this.navigate2(pn);
