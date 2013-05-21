@@ -169,7 +169,6 @@ Mix(Mix(Vframe.prototype,Event),{
             var path=Magix.pathToObject(viewPath);
             var vn=path.pathname;
             var sign=--me.sign;
-            
             Magix.libRequire(vn,function(View){
                 if(sign==me.sign){//有可能在view载入后，vframe已经卸载了
                     var vom=me.owner;

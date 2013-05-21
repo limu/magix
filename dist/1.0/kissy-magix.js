@@ -442,15 +442,15 @@ var PATHNAME='pathname';
 var ProtocalReg=/^https?:\/\//i;
 var Templates={};
 var CacheLatest=0;
-var Locals={},Cfg={
-        debug:'%DEV%',
-        iniFile:'~/ini',
-        appName:'app',
-        appHome:'./',
-        tagName:'vframe',
-        rootId:'magix_vf_root'
-    };
-var Has=Locals.hasOwnProperty;
+var Cfg={
+    debug:'%DEV%',
+    iniFile:'~/ini',
+    appName:'app',
+    appHome:'./',
+    tagName:'vframe',
+    rootId:'magix_vf_root'
+};
+var Has=Templates.hasOwnProperty;
 
 var GSObj=function(o){
     return function(k,v,r){
@@ -853,7 +853,7 @@ var Magix={
      *
      * S.log(locals);
      */
-    local:GSObj(Locals),
+    local:GSObj({}),
     /**
      * 路径
      * @private
@@ -1707,7 +1707,6 @@ Mix(Mix(Vframe.prototype,Event),{
             var path=Magix.pathToObject(viewPath);
             var vn=path.pathname;
             var sign=--me.sign;
-            
             Magix.libRequire(vn,function(View){
                 if(sign==me.sign){//有可能在view载入后，vframe已经卸载了
                     var vom=me.owner;
@@ -2339,33 +2338,31 @@ Mix(VProto,{
         var me=this;
         var hasTmpl=me.hasTmpl;
         var args=arguments;
+        var sign=me.sign;
         var ready=function(){
-            me.delegateEvents();
-            /*
-                关于interact事件的设计 ：
-                首先这个事件是对内的，当然外部也可以用，API文档上就不再体现了
+            if(sign==me.sign){
+                me.delegateEvents();
+                /*
+                    关于interact事件的设计 ：
+                    首先这个事件是对内的，当然外部也可以用，API文档上就不再体现了
 
-                interact : view准备好，让外部尽早介入，进行其它事件的监听 ，当这个事件触发时，view有可能已经有html了(无模板的情况)，所以此时外部可以去加载相应的子view了，同时要考虑在调用render方法后，有可能在该方法内通过setViewHTML更新html，所以在使用setViewHTML更新界面前，一定要先监听prerender rendered事件，因此设计了该  interact事件
+                    interact : view准备好，让外部尽早介入，进行其它事件的监听 ，当这个事件触发时，view有可能已经有html了(无模板的情况)，所以此时外部可以去加载相应的子view了，同时要考虑在调用render方法后，有可能在该方法内通过setViewHTML更新html，所以在使用setViewHTML更新界面前，一定要先监听prerender rendered事件，因此设计了该  interact事件
 
-             */
-            me.fire('interact',{tmpl:hasTmpl},1);//可交互
-            SafeExec(me.init,args,me);
-            SafeExec(me.render,EMPTY_ARRAY,me);
-            //
-            var noTemplateAndNoRendered=!hasTmpl&&!me.rendered;//没模板，调用render后，render里面也没调用setViewHTML
+                 */
+                me.fire('interact',{tmpl:hasTmpl},1);//可交互
+                SafeExec(me.init,args,me);
+                SafeExec(me.render,EMPTY_ARRAY,me);
+                //
+                var noTemplateAndNoRendered=!hasTmpl&&!me.rendered;//没模板，调用render后，render里面也没调用setViewHTML
 
-            if(noTemplateAndNoRendered){//监视有没有在调用render方法内使用setViewHTML更新view，对于没有模板的view，是不需要调用的，此时我们需要添加不冒泡的事件处理，如果调用了，则在setViewHTML中处理，首次就不再处理了，只有冒泡的事件才适合在首次处理
-                me.rendered=true;
-                me.fire('primed',null,1);//primed事件只触发一次
+                if(noTemplateAndNoRendered){//监视有没有在调用render方法内更新view，对于没有模板的view，需要派发一次事件
+                    me.rendered=true;
+                    me.fire('primed',null,1);//primed事件只触发一次
+                }
             }
         };
         if(hasTmpl&&!me.template){
-            var sign=me.sign;
-            me.planTmpl(function(){//模板获取也是异步的，防止模板没取回来时，view已经销毁
-                if(sign==me.sign){
-                    ready();
-                }
-            });
+            me.planTmpl(ready);
         }else{
             ready();
         }
@@ -2410,6 +2407,7 @@ Mix(VProto,{
         var me=this;
         if(me.sign){
             if(me.rendered&&me.enableAnim){
+                var owner=me.owner;
                 SafeExec(owner.newViewCreated,EMPTY_ARRAY,owner);
             }
             if(!me.rendered){//触发一次primed事件

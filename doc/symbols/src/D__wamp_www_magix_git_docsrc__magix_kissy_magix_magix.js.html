@@ -20,15 +20,15 @@
 <span class='line'> 13</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ProtocalReg</span><span class="PUNC">=</span><span class="REGX">/^https?:\/\//i</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 14</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Templates</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 15</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">CacheLatest</span><span class="PUNC">=</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 16</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Locals</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">Cfg</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'> 17</span> </span><span class="WHIT">        </span><span class="NAME">debug</span><span class="PUNC">:</span><span class="STRN">'%DEV%'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 18</span> </span><span class="WHIT">        </span><span class="NAME">iniFile</span><span class="PUNC">:</span><span class="STRN">'~/ini'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 19</span> </span><span class="WHIT">        </span><span class="NAME">appName</span><span class="PUNC">:</span><span class="STRN">'app'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 20</span> </span><span class="WHIT">        </span><span class="NAME">appHome</span><span class="PUNC">:</span><span class="STRN">'./'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 21</span> </span><span class="WHIT">        </span><span class="NAME">tagName</span><span class="PUNC">:</span><span class="STRN">'vframe'</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'> 22</span> </span><span class="WHIT">        </span><span class="NAME">rootId</span><span class="PUNC">:</span><span class="STRN">'magix_vf_root'</span><span class="WHIT">
-<span class='line'> 23</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'> 24</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Has</span><span class="PUNC">=</span><span class="NAME">Locals.hasOwnProperty</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Cfg</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="WHIT">    </span><span class="NAME">debug</span><span class="PUNC">:</span><span class="STRN">'%DEV%'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="WHIT">    </span><span class="NAME">iniFile</span><span class="PUNC">:</span><span class="STRN">'~/ini'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="WHIT">    </span><span class="NAME">appName</span><span class="PUNC">:</span><span class="STRN">'app'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="WHIT">    </span><span class="NAME">appHome</span><span class="PUNC">:</span><span class="STRN">'./'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="WHIT">    </span><span class="NAME">tagName</span><span class="PUNC">:</span><span class="STRN">'vframe'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="WHIT">    </span><span class="NAME">rootId</span><span class="PUNC">:</span><span class="STRN">'magix_vf_root'</span><span class="WHIT">
+<span class='line'> 23</span> </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 24</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Has</span><span class="PUNC">=</span><span class="NAME">Templates.hasOwnProperty</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 25</span> 
 <span class='line'> 26</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">GSObj</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">o</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 27</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">k</span><span class="PUNC">,</span><span class="NAME">v</span><span class="PUNC">,</span><span class="NAME">r</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
@@ -431,7 +431,7 @@
 <span class='line'>424</span>      *
 <span class='line'>425</span>      * S.log(locals);
 <span class='line'>426</span>      */</span><span class="WHIT">
-<span class='line'>427</span> </span><span class="WHIT">    </span><span class="NAME">local</span><span class="PUNC">:</span><span class="NAME">GSObj</span><span class="PUNC">(</span><span class="NAME">Locals</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>427</span> </span><span class="WHIT">    </span><span class="NAME">local</span><span class="PUNC">:</span><span class="NAME">GSObj</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'>428</span> </span><span class="WHIT">    </span><span class="COMM">/**
 <span class='line'>429</span>      * 路径
 <span class='line'>430</span>      * @private

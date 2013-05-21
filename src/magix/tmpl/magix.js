@@ -7,15 +7,15 @@ var PATHNAME='pathname';
 var ProtocalReg=/^https?:\/\//i;
 var Templates={};
 var CacheLatest=0;
-var Locals={},Cfg={
-        debug:'%DEV%',
-        iniFile:'~/ini',
-        appName:'app',
-        appHome:'./',
-        tagName:'vframe',
-        rootId:'magix_vf_root'
-    };
-var Has=Locals.hasOwnProperty;
+var Cfg={
+    debug:'%DEV%',
+    iniFile:'~/ini',
+    appName:'app',
+    appHome:'./',
+    tagName:'vframe',
+    rootId:'magix_vf_root'
+};
+var Has=Templates.hasOwnProperty;
 
 var GSObj=function(o){
     return function(k,v,r){
@@ -418,7 +418,7 @@ var Magix={
      *
      * S.log(locals);
      */
-    local:GSObj(Locals),
+    local:GSObj({}),
     /**
      * 路径
      * @private

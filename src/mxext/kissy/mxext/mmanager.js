@@ -599,7 +599,19 @@ KISSY.add("mxext/mmanager",function(S,Magix){
             var meta=me.getModelMeta(modelAttrs);            
 
             var entity=new me.$modelClass(getOptions(meta));
+
             var context=modelAttrs;
+            if(!context.before){
+                context=meta;
+            }
+
+            var metaParams=modelAttrs.metaParams||[];
+
+            if(S.isFunction(context.before)){
+                SafeExec(context.before,[entity].concat(metaParams),context);
+            }
+
+            context=modelAttrs;
             if(!context.after){
                 context=meta;
             }
@@ -618,15 +630,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
             //临时传递的
             entity.setUrlParams(modelAttrs.urlParams);
             entity.setPostParams(modelAttrs.postParams);
-            var context=modelAttrs;
-            if(!context.before){
-                context=meta;
-            }
-            var metaParams=modelAttrs.metaParams||[];
-
-            if(S.isFunction(context.before)){
-                SafeExec(context.before,[entity].concat(metaParams),context);
-            }
+            
             entity.metaParams=metaParams;
             return entity;
         },
