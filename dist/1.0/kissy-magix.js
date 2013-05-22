@@ -1860,8 +1860,9 @@ Mix(Mix(Vframe.prototype,Event),{
         var vom=me.owner;
         var vf=vom.get(id);
         if(vf){
+            var cc=vf.fcc;
             vf.unmountView(useAnim);
-            vom.remove(id);
+            vom.remove(id,cc);
             delete me.cS[id];
             me.cC--;
         }
@@ -2985,12 +2986,13 @@ var VOM=Magix.mix({
      * 删除已注册的vframe对象
      * @param {String} id vframe对象的id
      */
-    remove:function(id){
+    remove:function(id,cc){
         //var id=Magix.isString(vf)?vf:vf.id;
         var vf=Vframes[id];
         if(vf){
             VframesCount--;
-            if(vf.fcc)FirstVframesLoaded--;
+            
+            if(cc)FirstVframesLoaded--;
             delete Vframes[id];
             VOM.fire('remove',{vframe:vf});
         }        

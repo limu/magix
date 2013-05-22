@@ -322,8 +322,9 @@ Mix(Mix(Vframe.prototype,Event),{
         var vom=me.owner;
         var vf=vom.get(id);
         if(vf){
+            var cc=vf.fcc;
             vf.unmountView(useAnim);
-            vom.remove(id);
+            vom.remove(id,cc);
             delete me.cS[id];
             me.cC--;
         }
