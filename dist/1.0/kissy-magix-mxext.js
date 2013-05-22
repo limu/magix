@@ -1769,8 +1769,9 @@ Mix(Mix(Vframe.prototype,Event),{
     unmountView:function(useAnim,isOutermostView){
         var me=this;
         if(me.view){
-            me.childrenAlter();
             me.unmountZoneVframes(0,useAnim);
+            
+            me.childrenAlter({});
             me.fire('viewUnmount');
             me.view.destroy();
             var node=$(me.id);
@@ -1846,7 +1847,7 @@ Mix(Mix(Vframe.prototype,Event),{
                 }
             }
         }else{
-            me.childrenCreated();
+            me.childrenCreated({});
         }
     },
     /**
@@ -1897,14 +1898,14 @@ Mix(Mix(Vframe.prototype,Event),{
     /**
      * 通知所有的子view创建完成
      */
-    childrenCreated:function(){
+    childrenCreated:function(e){
         var me=this;
         var view=me.view;
         if(view&&!me.fcc){
             me.fcc=1;
             delete me.fca;
-            view.fire(Created);
-            me.fire(Created);
+            view.fire(Created,e);
+            me.fire(Created,e);
         }
         var vom=me.owner;
         vom.childCreated();
@@ -1917,7 +1918,7 @@ Mix(Mix(Vframe.prototype,Event),{
                 pRM[mId]=parent.cS[mId];
                 parent.rC++;
                 if(parent.rC==parent.cC){
-                    parent.childrenCreated();
+                    parent.childrenCreated(e);
                 }
             }
         }
@@ -1925,15 +1926,15 @@ Mix(Mix(Vframe.prototype,Event),{
     /**
      * 通知子vframe有变化
      */
-    childrenAlter:function(){
+    childrenAlter:function(e){
         var me=this;
         delete me.fcc;
         var view=me.view;
         var mId=me.id;
         if(view&&!me.fca){
             me.fca=1;
-            view.fire(Alter);
-            me.fire(Alter);
+            view.fire(Alter,e);
+            me.fire(Alter,e);
         }
         var vom=me.owner;
         var pId=me.pId;
@@ -1946,7 +1947,7 @@ Mix(Mix(Vframe.prototype,Event),{
                 parent.rC--;
                 delete pRM[mId];
                 if(autoMount){
-                    parent.childrenAlter();
+                    parent.childrenAlter(e);
                 }                
             }
         }
