@@ -133,7 +133,7 @@ mix(Cache.prototype,{
             delete c[k];
         }
     },
-    has:function(id){
+    has:function(k){
         k=PATHNAME+k;
         return has(this.c,k);
     }
