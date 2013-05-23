@@ -146,7 +146,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                     errorArgs[idx]=args;
                 }else{
                     console.log(cacheKey,modelsCache.get(cacheKey));
-                    if(cacheKey&&!modelsCache.get(cacheKey)){
+                    if(cacheKey&&!modelsCache.has(cacheKey)){
                         modelsCache.set(cacheKey,model);
                     }
                     var metaParams=model.metaParams;

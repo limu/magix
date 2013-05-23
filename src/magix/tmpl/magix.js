@@ -132,6 +132,10 @@ mix(Cache.prototype,{
             r.f=-1E5;
             delete c[k];
         }
+    },
+    has:function(id){
+        k=PATHNAME+k;
+        return has(this.c,k);
     }
 })
 

@@ -51,11 +51,10 @@ var VOM=Magix.mix({
         var vf=Vframes[id];
         if(vf){
             VframesCount--;
-            console.log('vf.fcc',cc,FirstVframesLoaded,VframesCount);
             if(cc)FirstVframesLoaded--;
             delete Vframes[id];
             VOM.fire('remove',{vframe:vf});
-        }        
+        }
     },
     /**
      * 通知其中的一个view创建完成

@@ -46,7 +46,7 @@ var Vframe=function(id){
     var me=this;
     me.id=id;
     me.vId=id+'_v';
-    me.cS={};
+    me.cM={};
     me.cC=0;
     me.rC=0;
     me.sign=1<<31;
@@ -232,9 +232,7 @@ Mix(Mix(Vframe.prototype,Event),{
         var me=this;
         if(me.view){
             me.unmountZoneVframes(0,useAnim);
-            console.log('unmountView:',me.id);
             me.childrenAlter({});
-            me.fire('viewUnmount');
             me.view.destroy();
             var node=$(me.id);
             if(!useAnim&&node._bak){
@@ -245,6 +243,7 @@ Mix(Mix(Vframe.prototype,Event),{
             }
             delete me.view;
             delete me.viewUsable;
+            me.fire('viewUnmounted');
             CollectGarbage();
         }
         me.un('viewInteract');
@@ -264,11 +263,13 @@ Mix(Mix(Vframe.prototype,Event),{
         var vf=vom.get(id);
         if(!vf){
             vf=new Vframe(id);
+
             vf.pId=me.id;
-            if(!Has(me.cS,id)){
+
+            if(!Has(me.cM,id)){
                 me.cC++;
             }
-            me.cS[id]=autoMount;
+            me.cM[id]=autoMount;
             vom.add(vf);
         }
         vf.mountView(viewPath,viewInitParams);
@@ -308,7 +309,7 @@ Mix(Mix(Vframe.prototype,Event),{
                     subs[IdIt(svs[j])]=1;
                 }
             }
-        }else{
+        }else if(me.cC==me.rC){//有可能在渲染某个vframe时，里面有n个vframes，但立即调用了mountZoneVframes，这个下面没有vframes，所以要等待
             me.childrenCreated({});
         }
     },
@@ -319,14 +320,19 @@ Mix(Mix(Vframe.prototype,Event),{
      */
     unmountVframe:function(id,useAnim){
         var me=this;
+        id=id||me.id;
         var vom=me.owner;
         var vf=vom.get(id);
         if(vf){
             var cc=vf.fcc;
             vf.unmountView(useAnim);
             vom.remove(id,cc);
-            delete me.cS[id];
-            me.cC--;
+
+            var p=vom.get(vf.pId);
+            if(p&&Has(p.cM,id)){
+                delete p.cM[id];
+                p.cC--;
+            }
         }
     },
     /**
@@ -339,7 +345,7 @@ Mix(Mix(Vframe.prototype,Event),{
         var children;
         if(zoneId){
             children=$$(zoneId,TagName);
-            var ids={},cs=me.cS;
+            var ids={},cs=me.cM;
             for(var i=children.length-1,o;i>=0;i--){
                 o=children[i].id;
                 if(Has(cs,o)){
@@ -348,15 +354,15 @@ Mix(Mix(Vframe.prototype,Event),{
             }
             children=ids;
         }else{
-            children=me.cS;
+            children=me.cM;
         }
         for(var p in children){
             me.unmountVframe(p);
         }
-        if(!zoneId){
-            me.cS={};
+        /*if(!zoneId){
+            me.cM={};
             me.cC=0;
-        }
+        }*/
     },
     /**
      * 通知所有的子view创建完成
@@ -372,17 +378,16 @@ Mix(Mix(Vframe.prototype,Event),{
         }
         var vom=me.owner;
         vom.childCreated();
-        var pId=me.pId;
-        var parent=vom.get(pId);
-        if(parent){
-            var mId=me.id;
-            var pRM=parent.rM;
-            if(!Has(pRM,mId)){
-                pRM[mId]=parent.cS[mId];
-                parent.rC++;
-                if(parent.rC==parent.cC){
-                    parent.childrenCreated(e);
-                }
+
+        var mId=me.id;
+        var p=vom.get(me.pId);
+        if(p&&!Has(p.rM,mId)){
+
+            p.rM[mId]=p.cM[mId];
+            p.rC++
+
+            if(p.rC==p.cC){
+                p.childrenCreated(e);
             }
         }
     },
@@ -392,28 +397,27 @@ Mix(Mix(Vframe.prototype,Event),{
     childrenAlter:function(e){
         var me=this;
         delete me.fcc;
-        var view=me.view;
-        var mId=me.id;
-        if(view&&!me.fca){
-            me.fca=1;
-            view.fire(Alter,e);
-            me.fire(Alter,e);
-        }
-        var vom=me.owner;
-        var pId=me.pId;
-        var parent=vom.get(pId);
-        if(parent){
+        if(!me.fca){
+            var view=me.view;
             var mId=me.id;
-            var pRM=parent.rM;
-            var autoMount=pRM[mId];
-            if(Has(pRM,mId)){
-                parent.rC--;
-                delete pRM[mId];
-                if(autoMount){
-                    parent.childrenAlter(e);
-                }                
+            if(view){
+                me.fca=1;
+                view.fire(Alter,e);
+                me.fire(Alter,e);
             }
-        }
+            var vom=me.owner;
+            var p=vom.get(me.pId);
+
+
+            if(p&&Has(p.rM,mId)){
+                var autoMount=p.rM[mId];
+                p.rC--;
+                delete p.rM[mId];
+                if(autoMount){
+                    p.childrenAlter(e);
+                }
+            }
+        }        
     },
     /**
      * 通知当前vframe，地址栏发生变化
@@ -481,7 +485,7 @@ Mix(Mix(Vframe.prototype,Event),{
                     //否定了这个想法，有时关注的参数有变化，不一定需要调用render方法
                     Magix.safeExec(view.locationChange,args,view);
                 }
-                var cs=args.cs||Magix.keys(me.cS);
+                var cs=args.cs||Magix.keys(me.cM);
                 //console.log(me.id,cs);
                 for(var i=0,j=cs.length,vom=me.owner,vf;i<j;i++){
                     vf=vom.get(cs[i]);
@@ -501,7 +505,7 @@ Mix(Mix(Vframe.prototype,Event),{
         var view=me.view;
         if(view&&view.sign){
             view.location=loc;
-            var children=me.cS;
+            var children=me.cM;
             var vf;
             var vom=me.owner;
             for(var p in children){
@@ -558,7 +562,7 @@ Mix(Mix(Vframe.prototype,Event),{
     
     /**
      * view卸载时触发
-     * @name Vframe#viewUnmount
+     * @name Vframe#viewUnmounted
      * @event
      */
     
@@ -576,3 +580,16 @@ Mix(Mix(Vframe.prototype,Event),{
      * @param {Object} e
      */
 });
+
+/**
+ * Vframe 中的2条线
+ * 一：
+ *     渲染
+ *     每个Vframe有cC(childrenCount)属性和cM(childrenItems)属性
+ *
+ * 二：
+ *     修改与创建完成
+ *     每个Vframe有rC(readyCount)属性和rM(readyMap)属性
+ *
+ *      fca firstChildrenAlter  fcc firstChildrenCreated
+ */
