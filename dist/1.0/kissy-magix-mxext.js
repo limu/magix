@@ -505,9 +505,7 @@ var has=function(owner,prop){
  */
 var mix=function(aim,src,ignore){
     for(var p in src){
-        if(ignore===true){
-            aim[p]=src[p];
-        }else if(has(src,p)&&(!ignore||!has(ignore,p))){
+        if(!ignore||!has(ignore,p)){
             aim[p]=src[p];
         }
     }
@@ -1550,7 +1548,8 @@ var MxConfig=Magix.config();
 var TagName=MxConfig.tagName;
 var RootId=MxConfig.rootId;
 var Has=Magix.has;
-var DataView='mx-view';
+var MxView='mx-view';
+var MxDefer='mx-defer';
 var Alter='alter';
 var Created='created';
 var RootVframe;
@@ -1643,7 +1642,7 @@ Mix(Vframe,{
         while(pv){
             if(pv.tagName&&pv.tagName.toLowerCase()==Vframe.tagName){
                 vframeId=pv.id;
-                vframeViewName=pv.getAttribute(DataView);
+                vframeViewName=pv.getAttribute(MxView);
                 pNode.removeChild(pv);
                 break;
             }else{
@@ -1659,7 +1658,7 @@ Mix(Vframe,{
             rVf.id=vframeId;
         }
         if(vframeViewName){
-            rVf.setAttribute(DataView,vframeViewName);
+            rVf.setAttribute(MxView,vframeViewName);
         }
     }
 }());*/
@@ -1705,7 +1704,7 @@ Mix(Mix(Vframe.prototype,Event),{
         }else{
             node._chgd=1;
         }
-        var useTurnaround=me.vN&&me.useAnimUpdate();
+        var useTurnaround=me.viewUsable&&me.useAnimUpdate();
         me.unmountView(useTurnaround,1);
         if(viewPath){
             var path=Magix.pathToObject(viewPath);
@@ -1760,7 +1759,8 @@ Mix(Mix(Vframe.prototype,Event),{
                             me.unmountZoneVframes(0,e.anim);
                         });
                     },0);
-                    view.load(Mix(path.params,viewInitParams,true));
+                    viewInitParams=viewInitParams||{};
+                    view.load(Mix(viewInitParams,path.params,viewInitParams));
                 }
             });
         }
@@ -1835,23 +1835,30 @@ Mix(Mix(Vframe.prototype,Event),{
         var count=vframes.length;
         var subs={};
         if(count){
-            for(var i=0,vframe,key;i<count;i++){
+            for(var i=0,vframe,key,mView,mDefer;i<count;i++){
                 vframe=vframes[i];
+                
                 key=IdIt(vframe);
                 if(!Has(subs,key)){
-                    me.mountVframe(
-                        key,
-                        vframe.getAttribute(DataView),
-                        viewInitParams,
-                        autoMount
-                    );
+                    mView=vframe.getAttribute(MxView);
+                    mDefer=vframe.getAttribute(MxDefer);
+                    if(!mDefer||mView){
+                        me.mountVframe(
+                            key,
+                            mView,
+                            viewInitParams,
+                            autoMount
+                        );
+                    }
                 }
                 var svs=$$(vframe,TagName);
                 for(var j=0,c=svs.length;j<c;j++){
                     subs[IdIt(svs[j])]=1;
                 }
             }
-        }else if(me.cC==me.rC){//有可能在渲染某个vframe时，里面有n个vframes，但立即调用了mountZoneVframes，这个下面没有vframes，所以要等待
+        }
+
+        if(me.cC==me.rC){//有可能在渲染某个vframe时，里面有n个vframes，但立即调用了mountZoneVframes，这个下面没有vframes，所以要等待
             me.childrenCreated({});
         }
     },

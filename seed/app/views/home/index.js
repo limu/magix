@@ -28,6 +28,8 @@ KISSY.add("~seed/app/views/home/index", function(S, View, MM) {
             }], function(MesModel,err) {
                 console.log(arguments);
                 me.setViewPagelet({xx:MesModel.get("xx")});
+                            me.owner.mountVframe('T1','~seed/app/views/404?a=2',{a:'1'});
+            me.owner.mountVframe('T2','~seed/app/views/404?a=2',{a:'2'})
                 if(err){
                     console.log(err.msg);
                 }
@@ -51,6 +53,7 @@ KISSY.add("~seed/app/views/home/index", function(S, View, MM) {
             request.next(function(r,a1,a2,error){
                 console.log(arguments);
             });
+
         },
         locationChange: function(e) {
         	this.render();

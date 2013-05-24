@@ -70,9 +70,7 @@ var has=function(owner,prop){
  */
 var mix=function(aim,src,ignore){
     for(var p in src){
-        if(ignore===true){
-            aim[p]=src[p];
-        }else if(has(src,p)&&(!ignore||!has(ignore,p))){
+        if(!ignore||!has(ignore,p)){
             aim[p]=src[p];
         }
     }
