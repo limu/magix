@@ -59,13 +59,22 @@ KISSY.add("magix/impl/view",function(S,io,Magix){
 
     Magix.mix(IView.prototype,{
         fetchTmpl:function(path,fn,d){
-            io({
-                url:path+(d?'?_='+S.now():''),
-                success:fn,
-                error:function(e,m){
-                    fn(m)
-                }
-            });
+            var l=ProcessObject[path];
+            if(l){
+                l.push(fn);
+            }else{
+                l=ProcessObject[path]=[fn];
+                io({
+                    url:path+(d?'?_='+S.now():''),
+                    success:function(x){
+                        Magix.safeExec(l,x);
+                        delete ProcessObject[path];
+                    },
+                    error:function(e,m){
+                        fn(m)
+                    }
+                });
+            }
         }
     });
 

@@ -5,7 +5,6 @@ var COMMA=',';
 var EMPTY_ARRAY=[];
 var MxConfig=Magix.config();
 var VName=/^~[^\/]*/;
-var Ud;
 var Mix=Magix.mix;
 /**
  * View类
@@ -238,7 +237,7 @@ Mix(VProto,{
                 }
             }
         };
-        if(hasTmpl&&!me.template){
+        if(hasTmpl&&!Has(me,'template')){
             me.planTmpl(ready);
         }else{
             ready();
@@ -482,18 +481,16 @@ Mix(VProto,{
      */
     planTmpl:function(fn){
         var me=this;
-        var tmpl=Magix.tmpl(me.path);
-        if(tmpl===Ud){
-            var isDebug=MxConfig.debug;
-            var suffix='.html';
-            var path=me.home+me.path.replace(VName,'')+suffix;
+        var i=Magix.tmpl(me.path);
+        if(i.h){
+            me.template=i.v;
+            fn();
+        }else{
+            var path=me.home+me.path.replace(VName,'')+'.html';
             me.fetchTmpl(path,function(t){
                 me.template=Magix.tmpl(me.path,t);
                 fn();
-            },isDebug);
-        }else{
-            me.template=tmpl;
-            fn();
+            },MxConfig.debug);
         }
     },
     /**

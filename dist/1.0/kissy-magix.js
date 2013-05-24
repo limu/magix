@@ -414,13 +414,22 @@ KISSY.add("magix/impl/view",function(S,io,Magix){
 
     Magix.mix(IView.prototype,{
         fetchTmpl:function(path,fn,d){
-            io({
-                url:path+(d?'?_='+S.now():''),
-                success:fn,
-                error:function(e,m){
-                    fn(m)
-                }
-            });
+            var l=ProcessObject[path];
+            if(l){
+                l.push(fn);
+            }else{
+                l=ProcessObject[path]=[fn];
+                io({
+                    url:path+(d?'?_='+S.now():''),
+                    success:function(x){
+                        Magix.safeExec(l,x);
+                        delete ProcessObject[path];
+                    },
+                    error:function(e,m){
+                        fn(m)
+                    }
+                });
+            }
         }
     });
 
@@ -977,7 +986,10 @@ var Magix={
      */
     tmpl:function(key,value){
         if(arguments.length==1){
-            return Templates[key];
+            return {
+                v:Templates[key],
+                h:has(Templates,key)
+            }
         }
         return Templates[key]=value;
     },
@@ -2158,7 +2170,6 @@ var COMMA=',';
 var EMPTY_ARRAY=[];
 var MxConfig=Magix.config();
 var VName=/^~[^\/]*/;
-var Ud;
 var Mix=Magix.mix;
 /**
  * View类
@@ -2391,7 +2402,7 @@ Mix(VProto,{
                 }
             }
         };
-        if(hasTmpl&&!me.template){
+        if(hasTmpl&&!Has(me,'template')){
             me.planTmpl(ready);
         }else{
             ready();
@@ -2635,18 +2646,16 @@ Mix(VProto,{
      */
     planTmpl:function(fn){
         var me=this;
-        var tmpl=Magix.tmpl(me.path);
-        if(tmpl===Ud){
-            var isDebug=MxConfig.debug;
-            var suffix='.html';
-            var path=me.home+me.path.replace(VName,'')+suffix;
+        var i=Magix.tmpl(me.path);
+        if(i.h){
+            me.template=i.v;
+            fn();
+        }else{
+            var path=me.home+me.path.replace(VName,'')+'.html';
             me.fetchTmpl(path,function(t){
                 me.template=Magix.tmpl(me.path,t);
                 fn();
-            },isDebug);
-        }else{
-            me.template=tmpl;
-            fn();
+            },MxConfig.debug);
         }
     },
     /**

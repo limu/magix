@@ -542,7 +542,10 @@ var Magix={
      */
     tmpl:function(key,value){
         if(arguments.length==1){
-            return Templates[key];
+            return {
+                v:Templates[key],
+                h:has(Templates,key)
+            }
         }
         return Templates[key]=value;
     },
