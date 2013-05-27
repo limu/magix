@@ -3254,13 +3254,16 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                     if(cacheKey&&!modelsCache.has(cacheKey)){
                         modelsCache.set(cacheKey,model);
                     }
-                    var metaParams=model.metaParams;
+
                     model._doneAt=S.now();
-                    var context=model._context;
-                    if(context){//有after
-                        SafeExec(context.after,[model].concat(metaParams),context);
-                    }
+                    var after=model._after;
                     var meta=model._meta;
+
+
+                    if(after){//有after
+                        SafeExec(after,[model,meta]);
+                    }
+                    
                     host.fireAfter(meta.name,[model]);
                 }               
 
@@ -3383,8 +3386,6 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          * 保存models，其中任意一个成功均立即回调，回调会被调用多次
          * @param {String|Array} models 保存models时的描述信息，如:{name:'Home',urlParams:{a:'12'},postParams:{b:2}}
          * @param {Function} callback   完成时的回调
-         * @param {Model} callback@model 回调时传入的model对象
-         * @param {Object} callback@error 错误对象
          * @return {MRequest}
          */
         saveOne:function(models,callback){
@@ -3396,8 +3397,6 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          * 获取models，其中任意一个成功均立即回调，回调会被调用多次
          * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
          * @param {Function} callback   完成时的回调
-         * @param {Model} callback@model 回调时传入的model对象
-         * @param {Object} callback@error 错误对象
          * @return {MRequest}
          */
         fetchOne:function(models,callback){
@@ -3434,9 +3433,6 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
         /**
          * 前一个fetchX或saveX任务做完后的下一个任务
          * @param  {Function} fn 回调
-         * @param {MRequest} fn@request MRequest对象，用于发起下一个请求
-         * @param {Object} fn@preArgs 前一个任务成功或失败回调的返回值
-         * @param {Object} fn@preError 前一个任务执行后是否有错误
          * @return {MRequest}
          */
         next:function(fn){
@@ -3705,26 +3701,18 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
 
             var entity=new me.$modelClass(getOptions(meta));
 
-            var context=modelAttrs;
-            if(!context.before){
-                context=meta;
-            }
-
-            var metaParams=modelAttrs.metaParams||[];
+            var before=modelAttrs.before||meta.before;
 
             me.fireBefore(meta.name,[entity]);
 
-            if(S.isFunction(context.before)){
-                SafeExec(context.before,[entity].concat(metaParams),context);
+            if(S.isFunction(before)){
+                SafeExec(before,[entity,meta,modelAttrs]);
             }
 
-            context=modelAttrs;
-            if(!context.after){
-                context=meta;
-            }
-            if(context.after){
-                entity._context=context;
-            }
+            var after=modelAttrs.after||meta.after;
+
+            entity._after=after;
+
             var cacheKey=modelAttrs.cacheKey||meta.cacheKey;
 
             entity._cacheKey=cacheKey;
@@ -3737,8 +3725,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             //临时传递的
             entity.setUrlParams(modelAttrs.urlParams);
             entity.setPostParams(modelAttrs.postParams);
-            
-            entity.metaParams=metaParams;
+
             return entity;
         },
         /**
@@ -3817,8 +3804,6 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          * 保存models，其中任意一个成功均立即回调，回调会被调用多次
          * @param {String|Array} models 保存models时的描述信息，如:{name:'Home',urlParams:{a:'12'},postParams:{b:2}}
          * @param {Function} callback   完成时的回调
-         * @param {Model} callback@model 回调时传入的model对象
-         * @param {Object} callback@error 错误对象
          * @return {MRequest}
          */
         saveOne:function(models,callback){
@@ -3829,8 +3814,6 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          * 获取models，其中任意一个成功均立即回调，回调会被调用多次
          * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
          * @param {Function} callback   完成时的回调
-         * @param {Model} callback@model 回调时传入的model对象
-         * @param {Object} callback@error 错误对象
          * @return {MRequest}
          */
         fetchOne:function(models,callback){
