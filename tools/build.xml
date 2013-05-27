@@ -22,7 +22,7 @@
     <!--dir that output document-->
     <property name="output.dir" location="${root.dir}/doc" />
    <!--templates token need to be replace-->
-    <property name="tmpl.magix" value="eval(IMagix.include('../tmpl/magix'));"></property>
+    <property name="tmpl.magix" value="eval(Include('../tmpl/magix'));"></property>
     <property name="tmpl.router" value="eval(Magix.include('../tmpl/router'));"></property>
     <property name="tmpl.vframe" value="eval(Magix.include('../tmpl/vframe'));"></property>
     <property name="tmpl.view" value="eval(Magix.include('../tmpl/view'));"></property>
@@ -83,7 +83,7 @@
 
     <target name="removeInclude">
         <replaceregexp flags="gm">
-            <regexp pattern="include\s*:\s*(?:unimpl|function\([\s\w]*\)\s*\{[\s\S]*?\}),"/>
+            <regexp pattern="include\s*:\s*(?:unimpl|Include),"/>
             <substitution expression=""/>
             <fileset dir="${debug.dir}">
                 <include name="**/*.js"/>

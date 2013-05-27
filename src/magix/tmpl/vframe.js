@@ -191,7 +191,7 @@ Mix(Mix(Vframe.prototype,Event),{
                         id:vId,
                         vId:me.vId,
                         vfId:me.id,
-                        location:vom.getLocation()
+                        location:vom.getLoc()
                     });
                     me.view=view;
                     view.on('interact',function(e){//view准备好后触发

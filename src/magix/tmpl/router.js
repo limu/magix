@@ -347,7 +347,7 @@ var Router=Mix({
             me.fire('changed',{
                 location:location,
                 changed:changed,
-                firstFire:firstFire
+                force:firstFire
             });
         }
     },
@@ -486,7 +486,7 @@ var Router=Mix({
      * @param {Object} e 事件对象
      * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
      * @param {Object} e.changed 有哪些值发生改变的对象
-     * @param {Boolean} e.firstFire 标识是否是第一次强制触发的changed，对于首次加载完Magix，会强制触发一次changed
+     * @param {Boolean} e.force 标识是否是第一次强制触发的changed，对于首次加载完Magix，会强制触发一次changed
      */
     
     /**

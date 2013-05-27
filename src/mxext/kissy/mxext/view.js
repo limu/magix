@@ -55,9 +55,8 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
         mxViewCtor:Magix.noop,//供扩展用
         /**
          * 调用magix/router的navigate方法
-         * @param {Object|String} params 参数字符串或参数对象
          */
-        navigate:function(params){
+        navigate:function(){
             Router.navigate.apply(Router,arguments);
         },
         /**
@@ -110,12 +109,12 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                 key='res_'+(ResCounter++);
                 hasKey=false;
             }
-            if(!me.$resCache)me.$resCache={};
+            if(!me.$res)me.$res={};
             var wrapObj={
                 hasKey:hasKey,
                 res:res
             };
-            me.$resCache[key]=wrapObj;
+            me.$res[key]=wrapObj;
             return res;
         },
         /**
@@ -125,7 +124,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
          */
         getManaged:function(key){
             var me=this;
-            var cache=me.$resCache;
+            var cache=me.$res;
             var sign=me.sign;
             if(cache&&Has(cache,key)){
                 var wrapObj=cache[key];
@@ -141,7 +140,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
          */
         removeManaged:function(param){
             var me=this,res=null;
-            var cache=me.$resCache;
+            var cache=me.$res;
             if(cache){
                 if(Has(cache,param)){
                     res=cache[param].res;
@@ -165,7 +164,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
          */
         destroyManaged:function(byRefresh){
             var me=this;
-            var cache=me.$resCache;
+            var cache=me.$res;
             //console.log('vvvvvvvvvvvvvv',cache);
             if(cache){
                 for(var p in cache){
@@ -200,7 +199,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                 }
                 if(!byRefresh){//如果不是刷新，则是view的销毁
                     //me.un('destroyResource');
-                    delete me.$resCache;
+                    delete me.$res;
                 }
             }
         },
@@ -241,7 +240,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
          */
         destroyMRequest:function(){
             var me=this;
-            var cache=me.$resCache;
+            var cache=me.$res;
             if(cache){
                 for(var p in cache){
                     var o=cache[p];

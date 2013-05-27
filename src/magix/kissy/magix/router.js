@@ -3,9 +3,25 @@
  * @author 行列
  * @version 1.0
  */
-KISSY.add('magix/router',function(S,IRouter,Magix,Event){
+KISSY.add('magix/router',function(S,Magix,Event,SE){
     eval(Magix.include('../tmpl/router'));
-    return Magix.mix(Router,IRouter);
+    Router.useState=function(){
+        var me=this,initialURL=location.href;
+        SE.on(WIN,'popstate',function(e){
+            var equal=location.href==initialURL;
+            if(!me.$firedPop&&equal)return;
+            me.$firedPop=true;
+            console.log('push?',e.type,e.state);
+            me.route();
+        });
+    };
+    Router.useHash=function(){//extension impl change event
+        var me=this;
+        SE.on(WIN,'hashchange',function(e){
+            me.route();
+        });
+    };
+    return Router;
 },{
-    requires:["magix/impl/router","magix/magix","magix/event"]
+    requires:["magix/magix","magix/event","event"]
 });

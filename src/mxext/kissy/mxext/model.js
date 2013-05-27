@@ -234,8 +234,8 @@ KISSY.add("mxext/model",function(S,Magix){
                 type=type.toUpperCase();
             }
             var me=this;
-            if(!me.$keysCache)me.$keysCache={};
-            me.$keysCache[type]=true;
+            if(!me.$types)me.$types={};
+            me.$types[type]=true;
 
             var k = '$' + type;
             if (!me[k])me[k] = {};
@@ -292,14 +292,14 @@ KISSY.add("mxext/model",function(S,Magix){
          */
         reset:function () {
             var me=this;
-            var keysCache=me.$keysCache;
+            var keysCache=me.$types;
             if(keysCache){
                 for(var p in keysCache){
                     if(Magix.has(keysCache,p)){
                         delete me['$'+p];
                     }
                 }
-                delete me.$keysCache;
+                delete me.$types;
             }
             var keys=me.$keys;
             var attrs=me.$attrs;
@@ -324,12 +324,11 @@ KISSY.add("mxext/model",function(S,Magix){
                 if(maps){
                     for (var i = 0, parent = maps,j=uris.length; i < j; i++) {
                         parent = parent[uris[i]];
-                        if (parent === undefined) {
+                        if(!parent){
                             break;
-                        } else if (i == j - 1) {
-                            uri=parent;
                         }
                     }
+                    uri=parent||uri;
                 }
             }else{
                 console.log(self);
@@ -405,14 +404,12 @@ KISSY.add("mxext/model",function(S,Magix){
                 if(!me.$abort){
                     if(resp){
                         var val=me.parse(resp);
-                        if(val){
-                            if(S.isArray(val)){
-                                val={
-                                    list:val
-                                };
-                            }
-                            me.set(val,null,true);
+                        if(!S.isObject(val)){
+                            val={
+                                data:val
+                            };
                         }
+                        me.set(val,null,true);
                     }
                     if(success){
                         success.apply(this,arguments);

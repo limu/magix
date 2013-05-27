@@ -94,12 +94,12 @@
 <span class='line'> 87</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Vframe.root</span><span class="PUNC">(</span><span class="NAME">VOM</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 88</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
 <span class='line'> 89</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'> 90</span>      * 重新渲染根vframe
+<span class='line'> 90</span>      * 渲染根vframe
 <span class='line'> 91</span>      * @param {Object} e Router.locationChanged事件对象
 <span class='line'> 92</span>      * @param {Object} e.location window.location.href解析出来的对象
 <span class='line'> 93</span>      * @param {Object} e.changed 包含有哪些变化的对象
 <span class='line'> 94</span>      */</span><span class="WHIT">
-<span class='line'> 95</span> </span><span class="WHIT">    </span><span class="NAME">remountRoot</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="WHIT">    </span><span class="NAME">mountRoot</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'> 96</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
 <span class='line'> 97</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">vf</span><span class="PUNC">=</span><span class="NAME">VOM.root</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'> 98</span> </span><span class="WHIT">        </span><span class="COMM">//me.$loc=e.location;</span><span class="WHIT">
@@ -113,7 +113,7 @@
 <span class='line'>106</span>      * @param {Object} e.location window.location.href解析出来的对象
 <span class='line'>107</span>      * @param {Object} e.changed 包含有哪些变化的对象
 <span class='line'>108</span>      */</span><span class="WHIT">
-<span class='line'>109</span> </span><span class="WHIT">    </span><span class="NAME">locationChanged</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="WHIT">    </span><span class="NAME">locChanged</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>110</span> </span><span class="WHIT">        </span><span class="NAME">Loc</span><span class="PUNC">=</span><span class="NAME">e.location</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>111</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">vf</span><span class="PUNC">=</span><span class="NAME">VOM.root</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>112</span> </span><span class="WHIT">        </span><span class="NAME">vf.locationChanged</span><span class="PUNC">(</span><span class="NAME">Loc</span><span class="PUNC">,</span><span class="NAME">e.changed</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
@@ -122,7 +122,7 @@
 <span class='line'>115</span>      * 更新view的location对象
 <span class='line'>116</span>      * @param  {Object} loc location
 <span class='line'>117</span>      */</span><span class="WHIT">
-<span class='line'>118</span> </span><span class="WHIT">    </span><span class="NAME">locationUpdated</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">loc</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>118</span> </span><span class="WHIT">    </span><span class="NAME">locUpdated</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">loc</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>119</span> </span><span class="WHIT">        </span><span class="NAME">Loc</span><span class="PUNC">=</span><span class="NAME">loc</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>120</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">vf</span><span class="PUNC">=</span><span class="NAME">VOM.root</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>121</span> </span><span class="WHIT">        </span><span class="NAME">vf.locationUpdated</span><span class="PUNC">(</span><span class="NAME">loc</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
@@ -131,7 +131,7 @@
 <span class='line'>124</span>      * 获取window.location.href解析后的对象
 <span class='line'>125</span>      * @return {Object}
 <span class='line'>126</span>      */</span><span class="WHIT">
-<span class='line'>127</span> </span><span class="WHIT">    </span><span class="NAME">getLocation</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">    </span><span class="NAME">getLoc</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>128</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Loc</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>129</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'>130</span> </span><span class="WHIT">    </span><span class="COMM">/**

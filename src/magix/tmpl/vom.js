@@ -81,12 +81,12 @@ var VOM=Magix.mix({
         return Vframe.root(VOM);
     },
     /**
-     * 重新渲染根vframe
+     * 渲染根vframe
      * @param {Object} e Router.locationChanged事件对象
      * @param {Object} e.location window.location.href解析出来的对象
      * @param {Object} e.changed 包含有哪些变化的对象
      */
-    remountRoot:function(e){
+    mountRoot:function(e){
         //console.log('mount rootVframe view',location);
         var vf=VOM.root();
         //me.$loc=e.location;
@@ -100,7 +100,7 @@ var VOM=Magix.mix({
      * @param {Object} e.location window.location.href解析出来的对象
      * @param {Object} e.changed 包含有哪些变化的对象
      */
-    locationChanged:function(e){
+    locChanged:function(e){
         Loc=e.location;
         var vf=VOM.root();
         vf.locationChanged(Loc,e.changed);
@@ -109,7 +109,7 @@ var VOM=Magix.mix({
      * 更新view的location对象
      * @param  {Object} loc location
      */
-    locationUpdated:function(loc){
+    locUpdated:function(loc){
         Loc=loc;
         var vf=VOM.root();
         vf.locationUpdated(loc);
@@ -118,7 +118,7 @@ var VOM=Magix.mix({
      * 获取window.location.href解析后的对象
      * @return {Object}
      */
-    getLocation:function(){
+    getLoc:function(){
         return Loc;
     }
     /**

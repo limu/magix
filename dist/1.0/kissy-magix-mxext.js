@@ -1,4 +1,5 @@
-KISSY.add("magix/body",function(S,IBody,Magix,Event){
+KISSY.add("magix/body",function(S,Magix,Event,SE){
+    var C={};
     var Has=Magix.has;
 var Mix=Magix.mix;
 //不支持冒泡的事件
@@ -130,9 +131,19 @@ var Body=Mix({
         }
     }
 },Event);
-    return Magix.mix(Body,IBody);
+    Body.onUnbubble=function(node,type){
+        var me=this;
+        SE.delegate(node,type,'*[mx-'+type+']',C[type]=function(e){
+            me.processEvent(e);
+        });
+    };
+    Body.offUnbubble=function(node,type){
+        SE.undelegate(node,type,'*[mx-'+type+']',C[type]);
+        delete C[type];
+    };
+    return Body;
 },{
-    requires:["magix/impl/body","magix/magix","magix/event"]
+    requires:["magix/magix","magix/event","event"]
 });/**
  * @fileOverview 多播事件对象
  * @author 行列<xinglie.lkf@taobao.com>
@@ -233,215 +244,24 @@ var Event={
     return Event;
 },{
     requires:["magix/magix"]
-});KISSY.add("magix/impl/body",function(S,E){
-    var C={};
-    return {
-        onUnbubble:function(node,type){
-            var me=this;
-            E.delegate(node,type,'*[mx-'+type+']',C[type]=function(e){
-                me.processEvent(e);
-            });
-        },
-        offUnbubble:function(node,type){
-            E.undelegate(node,type,'*[mx-'+type+']',C[type]);
-            delete C[type];
-        }
-    } 
-},{
-    requires:["event"]
-});/**
- * @fileOverview magix中根据底层类库需要重写的方法
- * @author 行列
- * @version 1.0
- */
-KISSY.add('magix/impl/magix',function(S,Slice){
-    Slice=[].slice;
-    return {
-        
-        libRequire:function(name,fn){
-            var me=this;
-            if(name){
-                var isFn=me.isFunction(fn);
-                var isArr=me.isArray(name);
-
-                S.use(isArr?name.join(','):name,isFn?function(S){
-                    fn.apply(S,Slice.call(arguments,1));
-                }:me.noop);
-            }else{
-                fn();
-            }
-        },
-        libEnv:function(cfg){
-            var me=this;
-            var appHome=cfg.appHome;
-            var loc=location;
-            var protocol=loc.protocol;
-            var appName=cfg.appName;
-
-            if(!~appHome.indexOf(protocol)){
-                appHome=me.path(loc.href,appHome);
-            }
-
-            if(!S.endsWith(appHome,'/')){
-                appHome+='/';
-            }
-            cfg.appHome=appHome;
-            var debug=cfg.debug;
-            if(debug){
-                debug=appHome.indexOf(protocol+'//'+loc.host)==0;
-            }
-            if(appName.charAt(0)=='~'){
-                var reg=new RegExp('/'+appName+'/');
-                S.config({
-                    map:[[reg,'/']]
-                });
-            }
-            var appTag='';
-            if(debug){
-                appTag=S.now();
-            }else{
-                appTag=cfg.appTag;
-            }
-            if(appTag){
-                appTag+='.js';
-            }
-            var appCombine=cfg.appCombine;
-            if(S.isUndefined(appCombine)){
-                appCombine=S.config('combine');
-            }
-            S.config({
-                packages:[{
-                    name:appName,
-                    path:appHome,
-                    debug:cfg.debug=debug,
-                    combine:appCombine,
-                    tag:appTag
-                }]
-            });
-        },
-        isArray:S.isArray,
-        isFunction:S.isFunction,
-        isObject:S.isObject,
-        isRegExp:S.isRegExp,
-        isString:S.isString,
-        isNumber:S.isNumber
-    }
-});/**
- * @fileOverview router中根据底层类库需要重写的方法
- * @author 行列
- * @version 1.0
- */
-KISSY.add("magix/impl/router",function(S,E){
-    var W=window;
-    return {
-        useState:function(){
-            var me=this,initialURL=location.href;
-            E.on(W,'popstate',function(e){
-                var equal=location.href==initialURL;
-                if(!me.$firedPop&&equal)return;
-                me.$firedPop=true;
-                
-                me.route();
-            });
-        },
-        useHash:function(){//extension impl change event
-            var me=this;
-            E.on(W,'hashchange',function(e){
-                me.route();
-            });
-        }
-    }
-},{
-    requires:["event"]
-});/**
- * @fileOverview view中根据底层类库需要重写的方法
- * @author 行列
- * @version 1.0
- */
-KISSY.add("magix/impl/view",function(S,io,Magix){
-    var IView=function(){
-
-    };
-    var Mods=S.Env.mods;
-    var StaticWhiteList={
-        wrapAsyn:1,
-        extend:1
-    };
-
-    var ProcessObject=function(props,proto,enterObject){
-        for(var p in proto){
-            if(S.isObject(proto[p])){
-                if(!Magix.has(props,p))props[p]={};
-                ProcessObject(props[p],proto[p],true);
-            }else if(enterObject){
-                props[p]=proto[p];
-            }
-        }
-    };
-    IView.extend=function(props,ctor){
-        var me=this;
-        var BaseView=function(){
-            BaseView.superclass.constructor.apply(this,arguments);
-            if(ctor){
-                Magix.safeExec(ctor,arguments,this);
-            }
-        }
-        BaseView.extend=IView.extend;
-        return S.extend(BaseView,me,props);
-    };
-
-    IView.prepare=function(oView,toProto){
-        var me=this;
-        if(!oView.wrapAsyn){
-            for(var p in me){
-                if(Magix.has(StaticWhiteList,p)){
-                    oView[p]=me[p];
-                }
-            }
-            var aimObject=oView.prototype;
-            var start=oView;
-            var temp;
-            while(start.superclass){
-                temp=start.superclass.constructor;
-                ProcessObject(aimObject,temp.prototype);
-                start=temp;
-            }
-            toProto.home=Mods[toProto.path].packageInfo.getBase();
-            Magix.mix(aimObject,toProto);
-        }
-        oView.wrapAsyn();
-    };
-
-    Magix.mix(IView.prototype,{
-        fetchTmpl:function(path,fn,d){
-            var l=ProcessObject[path];
-            if(l){
-                l.push(fn);
-            }else{
-                l=ProcessObject[path]=[fn];
-                io({
-                    url:path+(d?'?_='+S.now():''),
-                    success:function(x){
-                        Magix.safeExec(l,x);
-                        delete ProcessObject[path];
-                    },
-                    error:function(e,m){
-                        fn(m)
-                    }
-                });
-            }
-        }
-    });
-
-    return IView;
-},{
-    requires:["ajax","magix/magix"]
 });/**
  * @fileOverview Magix全局对象
  * @author 行列<xinglie.lkf@taobao.com>
  * @version 1.0
  **/
-KISSY.add('magix/magix',function(S,IMagix){
+KISSY.add('magix/magix',function(S){
+	var Slice=[].slice;
+	var Include=function(path){
+		var magixPackages=S.Config.packages.magix;
+        var mPath=magixPackages.base||magixPackages.path;
+
+        var url = mPath+path + ".js?r=" + Math.random()+'.js';
+        var xhr = window.ActiveXObject || window.XMLHttpRequest;
+        var r = new xhr('Microsoft.XMLHTTP');
+        r.open('GET', url, false);
+        r.send(null);
+        return r.responseText;
+	};
     var PathRelativeReg=/\/\.\/|\/[^\/]+?\/\.{2}\/|([^:\/])\/\/+/;
 var PathTrimFileReg=/[^\/]*$/;
 var PathTrimParamsReg=/[#?].*$/;
@@ -572,6 +392,7 @@ mix(Cache.prototype,{
         var r=c[k];
         if(r){
             r.f=-1E5;
+            r.v=EMPTY;
             delete c[k];
         }
     },
@@ -811,12 +632,12 @@ var Magix={
             me.libRequire(['magix/router','magix/vom'],function(R,V){
                 R.on('changed',function(e){
                     if(e.loc){
-                        V.locationUpdated(e.loc);
+                        V.locUpdated(e.loc);
                     }else{
                         if(e.changed.isView()){
-                            V.remountRoot(e);
+                            V.mountRoot(e);
                         }else{
-                            V.locationChanged(e);
+                            V.locChanged(e);
                         }
                     }
                 });
@@ -1031,15 +852,82 @@ var Magix={
     createCache:CreateCache
 };
 
-    return Magix.mix(Magix,IMagix);
-},{
-    requires:["magix/impl/magix"]
+    return mix(Magix,{
+        
+        libRequire:function(name,fn){
+            var me=this;
+            if(name){
+                var isFn=me.isFunction(fn);
+                var isArr=me.isArray(name);
+
+                S.use(isArr?name.join(','):name,isFn?function(S){
+                    fn.apply(S,Slice.call(arguments,1));
+                }:me.noop);
+            }else{
+                fn();
+            }
+        },
+        libEnv:function(cfg){
+            var me=this;
+            var appHome=cfg.appHome;
+            var loc=location;
+            var protocol=loc.protocol;
+            var appName=cfg.appName;
+
+            if(!~appHome.indexOf(protocol)){
+                appHome=me.path(loc.href,appHome);
+            }
+
+            if(!S.endsWith(appHome,'/')){
+                appHome+='/';
+            }
+            cfg.appHome=appHome;
+            var debug=cfg.debug;
+            if(debug){
+                debug=appHome.indexOf(protocol+'//'+loc.host)==0;
+            }
+            if(appName.charAt(0)=='~'){
+                var reg=new RegExp('/'+appName+'/');
+                S.config({
+                    map:[[reg,'/']]
+                });
+            }
+            var appTag='';
+            if(debug){
+                appTag=S.now();
+            }else{
+                appTag=cfg.appTag;
+            }
+            if(appTag){
+                appTag+='.js';
+            }
+            var appCombine=cfg.appCombine;
+            if(S.isUndefined(appCombine)){
+                appCombine=S.config('combine');
+            }
+            S.config({
+                packages:[{
+                    name:appName,
+                    path:appHome,
+                    debug:cfg.debug=debug,
+                    combine:appCombine,
+                    tag:appTag
+                }]
+            });
+        },
+        isArray:S.isArray,
+        isFunction:S.isFunction,
+        isObject:S.isObject,
+        isRegExp:S.isRegExp,
+        isString:S.isString,
+        isNumber:S.isNumber
+    });
 });/**
  * @fileOverview 路由
  * @author 行列
  * @version 1.0
  */
-KISSY.add('magix/router',function(S,IRouter,Magix,Event){
+KISSY.add('magix/router',function(S,Magix,Event,SE){
     var WIN=window;
 var EMPTY='';
 var PATHNAME='pathname';
@@ -1389,7 +1277,7 @@ var Router=Mix({
             me.fire('changed',{
                 location:location,
                 changed:changed,
-                firstFire:firstFire
+                force:firstFire
             });
         }
     },
@@ -1528,7 +1416,7 @@ var Router=Mix({
      * @param {Object} e 事件对象
      * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
      * @param {Object} e.changed 有哪些值发生改变的对象
-     * @param {Boolean} e.firstFire 标识是否是第一次强制触发的changed，对于首次加载完Magix，会强制触发一次changed
+     * @param {Boolean} e.force 标识是否是第一次强制触发的changed，对于首次加载完Magix，会强制触发一次changed
      */
     
     /**
@@ -1541,9 +1429,25 @@ var Router=Mix({
      */
 
 },Event);
-    return Magix.mix(Router,IRouter);
+    Router.useState=function(){
+        var me=this,initialURL=location.href;
+        SE.on(WIN,'popstate',function(e){
+            var equal=location.href==initialURL;
+            if(!me.$firedPop&&equal)return;
+            me.$firedPop=true;
+            
+            me.route();
+        });
+    };
+    Router.useHash=function(){//extension impl change event
+        var me=this;
+        SE.on(WIN,'hashchange',function(e){
+            me.route();
+        });
+    };
+    return Router;
 },{
-    requires:["magix/impl/router","magix/magix","magix/event"]
+    requires:["magix/magix","magix/event","event"]
 });/**
  * @fileOverview Vframe类
  * @author 行列
@@ -1743,7 +1647,7 @@ Mix(Mix(Vframe.prototype,Event),{
                         id:vId,
                         vId:me.vId,
                         vfId:me.id,
-                        location:vom.getLocation()
+                        location:vom.getLoc()
                     });
                     me.view=view;
                     view.on('interact',function(e){//view准备好后触发
@@ -2162,7 +2066,23 @@ Mix(Mix(Vframe.prototype,Event),{
  * @author 行列
  * @version 1.0
  */
-KISSY.add('magix/view',function(S,IView,Magix,Event,Body){
+KISSY.add('magix/view',function(S,Magix,Event,Body,IO){
+    var Mods=S.Env.mods;
+    var StaticWhiteList={
+        wrapAsyn:1,
+        extend:1
+    };
+	
+	var ProcessObject=function(props,proto,enterObject){
+        for(var p in proto){
+            if(S.isObject(proto[p])){
+                if(!Magix.has(props,p))props[p]={};
+                ProcessObject(props[p],proto[p],true);
+            }else if(enterObject){
+                props[p]=proto[p];
+            }
+        }
+    };
     
 var SafeExec=Magix.safeExec;
 var Has=Magix.has;
@@ -2964,11 +2884,61 @@ Mix(VProto,{
      * 与prerender不同的是：refresh触发后即删除监听列表
      */
 });
-    Magix.mix(View,IView,{prototype:true});
-    Magix.mix(View.prototype,IView.prototype);
+
+    View.prototype.fetchTmpl=function(path,fn,d){
+        var l=ProcessObject[path];
+        if(l){
+            l.push(fn);
+        }else{
+            l=ProcessObject[path]=[fn];
+            IO({
+                url:path+(d?'?_='+S.now():''),
+                success:function(x){
+                    Magix.safeExec(l,x);
+                    delete ProcessObject[path];
+                },
+                error:function(e,m){
+                    fn(m)
+                }
+            });
+        }
+    };
+
+    View.extend=function(props,ctor){
+        var me=this;
+        var BaseView=function(){
+            BaseView.superclass.constructor.apply(this,arguments);
+            if(ctor){
+                Magix.safeExec(ctor,arguments,this);
+            }
+        }
+        BaseView.extend=me.extend;
+        return S.extend(BaseView,me,props);
+    };
+	View.prepare=function(oView,toProto){
+        var me=this;
+        if(!oView.wrapAsyn){
+            for(var p in me){
+                if(Magix.has(StaticWhiteList,p)){
+                    oView[p]=me[p];
+                }
+            }
+            var aimObject=oView.prototype;
+            var start=oView;
+            var temp;
+            while(start.superclass){
+                temp=start.superclass.constructor;
+                ProcessObject(aimObject,temp.prototype);
+                start=temp;
+            }
+            toProto.home=Mods[toProto.path].packageInfo.getBase();
+            Magix.mix(aimObject,toProto);
+        }
+        oView.wrapAsyn();
+    };
     return View;
 },{
-    requires:["magix/impl/view","magix/magix","magix/event","magix/body"]
+    requires:["magix/magix","magix/event","magix/body","ajax"]
 });/**
  * @fileOverview VOM
  * @author 行列
@@ -3058,12 +3028,12 @@ var VOM=Magix.mix({
         return Vframe.root(VOM);
     },
     /**
-     * 重新渲染根vframe
+     * 渲染根vframe
      * @param {Object} e Router.locationChanged事件对象
      * @param {Object} e.location window.location.href解析出来的对象
      * @param {Object} e.changed 包含有哪些变化的对象
      */
-    remountRoot:function(e){
+    mountRoot:function(e){
         //
         var vf=VOM.root();
         //me.$loc=e.location;
@@ -3077,7 +3047,7 @@ var VOM=Magix.mix({
      * @param {Object} e.location window.location.href解析出来的对象
      * @param {Object} e.changed 包含有哪些变化的对象
      */
-    locationChanged:function(e){
+    locChanged:function(e){
         Loc=e.location;
         var vf=VOM.root();
         vf.locationChanged(Loc,e.changed);
@@ -3086,7 +3056,7 @@ var VOM=Magix.mix({
      * 更新view的location对象
      * @param  {Object} loc location
      */
-    locationUpdated:function(loc){
+    locUpdated:function(loc){
         Loc=loc;
         var vf=VOM.root();
         vf.locationUpdated(loc);
@@ -3095,7 +3065,7 @@ var VOM=Magix.mix({
      * 获取window.location.href解析后的对象
      * @return {Object}
      */
-    getLocation:function(){
+    getLoc:function(){
         return Loc;
     }
     /**
@@ -3136,11 +3106,11 @@ var VOM=Magix.mix({
  * @author 行列
  * @version 1.0
  **/
-KISSY.add("mxext/mmanager",function(S,Magix){
+KISSY.add("mxext/mmanager",function(S,Magix,Event){
     var Has=Magix.has;
     var SafeExec=Magix.safeExec;
     var DeleteCacheKey=function(models){
-        if(!Magix.isArray(models)){
+        if(!S.isArray(models)){
             models=[models];
         }
         for(var i=0,m;i<models.length;i++){
@@ -3220,6 +3190,9 @@ KISSY.add("mxext/mmanager",function(S,Magix){
         this.$task=false;
     };
 
+    var BEFORE='_before';
+    var AFTER='_after';
+
     Magix.mix(MRequest.prototype,{
         /**
          * @lends MRequest#
@@ -3249,7 +3222,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
             var modelsCacheKeys=host.$modelsCacheKeys;
             var reqModels=me.$reqModels;
 
-            if(!Magix.isArray(models)){
+            if(!S.isArray(models)){
                 models=[models];
             }
             var total=models.length;
@@ -3278,7 +3251,6 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                     errorMsg=args||errorMsg;
                     errorArgs[idx]=args;
                 }else{
-                    
                     if(cacheKey&&!modelsCache.has(cacheKey)){
                         modelsCache.set(cacheKey,model);
                     }
@@ -3288,6 +3260,8 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                     if(context){//有after
                         SafeExec(context.after,[model].concat(metaParams),context);
                     }
+                    var meta=model._meta;
+                    host.fireAfter(meta.name,[model]);
                 }               
 
                 if(flag==FetchFlags.ONE){//如果是其中一个成功，则每次成功回调一次
@@ -3586,7 +3560,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                 }
              */
             var me=this;
-            if(!Magix.isArray(models)){
+            if(!S.isArray(models)){
                 models=[models];
             }
             for(var i=0,model;i<models.length;i++){
@@ -3604,37 +3578,35 @@ KISSY.add("mxext/mmanager",function(S,Magix){
         registerMethods:function(methods){
             var me=this;
             for(var p in methods){
-                if(Has(methods,p)){
-                    me[p]=(function(fn){
-                        return function(){
-                            var aborted;
-                            var args=arguments;
-                            var arr=[];
-                            for(var i=0,a;i<args.length;i++){
-                                a=args[i];
-                                if(Magix.isFunction(a)){
-                                    arr.push((function(f){
-                                        return function(){
-                                            if(aborted)return;
-                                            f.apply(f,arguments);
-                                        }
-                                    }(a)));
-                                }else{
-                                    arr.push(a);
-                                }
-                            }
-                            var result=fn.apply(me,arr);
-                            return {
-                                abort:function(){
-                                    if(result&&result.abort){
-                                        SafeExec(result.abort,['aborted'],result);
+                me[p]=(function(fn){
+                    return function(){
+                        var aborted;
+                        var args=arguments;
+                        var arr=[];
+                        for(var i=0,a;i<args.length;i++){
+                            a=args[i];
+                            if(S.isFunction(a)){
+                                arr.push((function(f){
+                                    return function(){
+                                        if(aborted)return;
+                                        f.apply(f,arguments);
                                     }
-                                    aborted=true;
+                                }(a)));
+                            }else{
+                                arr.push(a);
+                            }
+                        }
+                        var result=fn.apply(me,arr);
+                        return {
+                            destroy:function(){
+                                aborted=true;
+                                if(result&&result.destroy){
+                                    result.destroy();
                                 }
                             }
                         }
-                    }(methods[p]));
-                }
+                    }
+                }(methods[p]));
             }
         },
         /**
@@ -3739,6 +3711,8 @@ KISSY.add("mxext/mmanager",function(S,Magix){
             }
 
             var metaParams=modelAttrs.metaParams||[];
+
+            me.fireBefore(meta.name,[entity]);
 
             if(S.isFunction(context.before)){
                 SafeExec(context.before,[entity].concat(metaParams),context);
@@ -3885,8 +3859,10 @@ KISSY.add("mxext/mmanager",function(S,Magix){
             var list=modelsCache.c;
             for(var i=0;i<list.length;i++){
                 var one=list[i];
-                if(one.v&&one.v._meta.name==name){
-                    delete list[one.k];
+                var m=one.v;
+                var tName=m&&m._meta.name;
+                if(tName==name){
+                    modelsCache.del(m._cacheKey);
                 }
             }
         },
@@ -3904,6 +3880,54 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                 meta=name;
             }
             return me.$modelClass.prototype.url(meta.uri);
+        },
+        /**
+         * 监听某个model的before
+         * @param  {String}   name     注册时元信息中的名称
+         * @param  {Function} callback 回调
+         */
+        listenBefore:function(name,callback){
+            Event.on.call(this,name+BEFORE,callback);
+        },
+        /**
+         * 监听某个model的after
+         * @param  {String}   name     注册时元信息中的名称
+         * @param  {Function} callback 回调
+         */
+        listenAfter:function(name,callback){
+            Event.on.call(this,name+AFTER,callback);
+        },
+        /**
+         * 取消before监听
+         * @param  {String}   name     注册时元信息的名称
+         * @param  {Function} [callback] 回调
+         */
+        unlistenBefore:function(name,callback){
+            Event.un.call(this,name+BEFORE,callback);
+        },
+        /**
+         * 取消after监听
+         * @param  {String}   name     注册时元信息的名称
+         * @param  {Function} [callback] 回调
+         */
+        unlistenAfter:function(name,callback){
+            Event.un.call(this,name+AFTER,callback);
+        },
+        /**
+         * 触发某个model的before监听
+         * @param  {String} name 注册时元信息中的名称
+         * @param  {Object} [args] 数据
+         */
+        fireBefore:function(name,args){
+            Event.fire.call(this,name+BEFORE,args);
+        },
+        /**
+         * 触发某个model的after监听
+         * @param  {String} name 注册时元信息中的名称
+         * @param  {Object} [args] 数据
+         */
+        fireAfter:function(name,args){
+            Event.fire.call(this,name+AFTER,args);
         },
         /**
          * 从缓存中获取model对象
@@ -3939,7 +3963,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
     });
     return MManager;
 },{
-    requires:["magix/magix"]
+    requires:["magix/magix","magix/event"]
 });/**
  * @fileOverview Model
  * @version 1.0
@@ -4176,8 +4200,8 @@ KISSY.add("mxext/model",function(S,Magix){
                 type=type.toUpperCase();
             }
             var me=this;
-            if(!me.$keysCache)me.$keysCache={};
-            me.$keysCache[type]=true;
+            if(!me.$types)me.$types={};
+            me.$types[type]=true;
 
             var k = '$' + type;
             if (!me[k])me[k] = {};
@@ -4234,14 +4258,14 @@ KISSY.add("mxext/model",function(S,Magix){
          */
         reset:function () {
             var me=this;
-            var keysCache=me.$keysCache;
+            var keysCache=me.$types;
             if(keysCache){
                 for(var p in keysCache){
                     if(Magix.has(keysCache,p)){
                         delete me['$'+p];
                     }
                 }
-                delete me.$keysCache;
+                delete me.$types;
             }
             var keys=me.$keys;
             var attrs=me.$attrs;
@@ -4266,12 +4290,11 @@ KISSY.add("mxext/model",function(S,Magix){
                 if(maps){
                     for (var i = 0, parent = maps,j=uris.length; i < j; i++) {
                         parent = parent[uris[i]];
-                        if (parent === undefined) {
+                        if(!parent){
                             break;
-                        } else if (i == j - 1) {
-                            uri=parent;
                         }
                     }
+                    uri=parent||uri;
                 }
             }else{
                 
@@ -4347,14 +4370,12 @@ KISSY.add("mxext/model",function(S,Magix){
                 if(!me.$abort){
                     if(resp){
                         var val=me.parse(resp);
-                        if(val){
-                            if(S.isArray(val)){
-                                val={
-                                    list:val
-                                };
-                            }
-                            me.set(val,null,true);
+                        if(!S.isObject(val)){
+                            val={
+                                data:val
+                            };
                         }
+                        me.set(val,null,true);
                     }
                     if(success){
                         success.apply(this,arguments);
@@ -4495,9 +4516,8 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
         mxViewCtor:Magix.noop,//供扩展用
         /**
          * 调用magix/router的navigate方法
-         * @param {Object|String} params 参数字符串或参数对象
          */
-        navigate:function(params){
+        navigate:function(){
             Router.navigate.apply(Router,arguments);
         },
         /**
@@ -4550,12 +4570,12 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                 key='res_'+(ResCounter++);
                 hasKey=false;
             }
-            if(!me.$resCache)me.$resCache={};
+            if(!me.$res)me.$res={};
             var wrapObj={
                 hasKey:hasKey,
                 res:res
             };
-            me.$resCache[key]=wrapObj;
+            me.$res[key]=wrapObj;
             return res;
         },
         /**
@@ -4565,7 +4585,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
          */
         getManaged:function(key){
             var me=this;
-            var cache=me.$resCache;
+            var cache=me.$res;
             var sign=me.sign;
             if(cache&&Has(cache,key)){
                 var wrapObj=cache[key];
@@ -4581,7 +4601,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
          */
         removeManaged:function(param){
             var me=this,res=null;
-            var cache=me.$resCache;
+            var cache=me.$res;
             if(cache){
                 if(Has(cache,param)){
                     res=cache[param].res;
@@ -4605,7 +4625,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
          */
         destroyManaged:function(byRefresh){
             var me=this;
-            var cache=me.$resCache;
+            var cache=me.$res;
             //
             if(cache){
                 for(var p in cache){
@@ -4640,7 +4660,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                 }
                 if(!byRefresh){//如果不是刷新，则是view的销毁
                     //me.un('destroyResource');
-                    delete me.$resCache;
+                    delete me.$res;
                 }
             }
         },
@@ -4681,7 +4701,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
          */
         destroyMRequest:function(){
             var me=this;
-            var cache=me.$resCache;
+            var cache=me.$res;
             if(cache){
                 for(var p in cache){
                     var o=cache[p];

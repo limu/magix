@@ -3,11 +3,11 @@
  * @author 行列
  * @version 1.0
  **/
-KISSY.add("mxext/mmanager",function(S,Magix){
+KISSY.add("mxext/mmanager",function(S,Magix,Event){
     var Has=Magix.has;
     var SafeExec=Magix.safeExec;
     var DeleteCacheKey=function(models){
-        if(!Magix.isArray(models)){
+        if(!S.isArray(models)){
             models=[models];
         }
         for(var i=0,m;i<models.length;i++){
@@ -87,6 +87,9 @@ KISSY.add("mxext/mmanager",function(S,Magix){
         this.$task=false;
     };
 
+    var BEFORE='_before';
+    var AFTER='_after';
+
     Magix.mix(MRequest.prototype,{
         /**
          * @lends MRequest#
@@ -116,7 +119,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
             var modelsCacheKeys=host.$modelsCacheKeys;
             var reqModels=me.$reqModels;
 
-            if(!Magix.isArray(models)){
+            if(!S.isArray(models)){
                 models=[models];
             }
             var total=models.length;
@@ -145,7 +148,6 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                     errorMsg=args||errorMsg;
                     errorArgs[idx]=args;
                 }else{
-                    console.log(cacheKey,modelsCache.get(cacheKey));
                     if(cacheKey&&!modelsCache.has(cacheKey)){
                         modelsCache.set(cacheKey,model);
                     }
@@ -155,6 +157,8 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                     if(context){//有after
                         SafeExec(context.after,[model].concat(metaParams),context);
                     }
+                    var meta=model._meta;
+                    host.fireAfter(meta.name,[model]);
                 }               
 
                 if(flag==FetchFlags.ONE){//如果是其中一个成功，则每次成功回调一次
@@ -453,7 +457,7 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                 }
              */
             var me=this;
-            if(!Magix.isArray(models)){
+            if(!S.isArray(models)){
                 models=[models];
             }
             for(var i=0,model;i<models.length;i++){
@@ -471,37 +475,35 @@ KISSY.add("mxext/mmanager",function(S,Magix){
         registerMethods:function(methods){
             var me=this;
             for(var p in methods){
-                if(Has(methods,p)){
-                    me[p]=(function(fn){
-                        return function(){
-                            var aborted;
-                            var args=arguments;
-                            var arr=[];
-                            for(var i=0,a;i<args.length;i++){
-                                a=args[i];
-                                if(Magix.isFunction(a)){
-                                    arr.push((function(f){
-                                        return function(){
-                                            if(aborted)return;
-                                            f.apply(f,arguments);
-                                        }
-                                    }(a)));
-                                }else{
-                                    arr.push(a);
-                                }
-                            }
-                            var result=fn.apply(me,arr);
-                            return {
-                                abort:function(){
-                                    if(result&&result.abort){
-                                        SafeExec(result.abort,['aborted'],result);
+                me[p]=(function(fn){
+                    return function(){
+                        var aborted;
+                        var args=arguments;
+                        var arr=[];
+                        for(var i=0,a;i<args.length;i++){
+                            a=args[i];
+                            if(S.isFunction(a)){
+                                arr.push((function(f){
+                                    return function(){
+                                        if(aborted)return;
+                                        f.apply(f,arguments);
                                     }
-                                    aborted=true;
+                                }(a)));
+                            }else{
+                                arr.push(a);
+                            }
+                        }
+                        var result=fn.apply(me,arr);
+                        return {
+                            destroy:function(){
+                                aborted=true;
+                                if(result&&result.destroy){
+                                    result.destroy();
                                 }
                             }
                         }
-                    }(methods[p]));
-                }
+                    }
+                }(methods[p]));
             }
         },
         /**
@@ -606,6 +608,8 @@ KISSY.add("mxext/mmanager",function(S,Magix){
             }
 
             var metaParams=modelAttrs.metaParams||[];
+
+            me.fireBefore(meta.name,[entity]);
 
             if(S.isFunction(context.before)){
                 SafeExec(context.before,[entity].concat(metaParams),context);
@@ -752,8 +756,10 @@ KISSY.add("mxext/mmanager",function(S,Magix){
             var list=modelsCache.c;
             for(var i=0;i<list.length;i++){
                 var one=list[i];
-                if(one.v&&one.v._meta.name==name){
-                    delete list[one.k];
+                var m=one.v;
+                var tName=m&&m._meta.name;
+                if(tName==name){
+                    modelsCache.del(m._cacheKey);
                 }
             }
         },
@@ -771,6 +777,54 @@ KISSY.add("mxext/mmanager",function(S,Magix){
                 meta=name;
             }
             return me.$modelClass.prototype.url(meta.uri);
+        },
+        /**
+         * 监听某个model的before
+         * @param  {String}   name     注册时元信息中的名称
+         * @param  {Function} callback 回调
+         */
+        listenBefore:function(name,callback){
+            Event.on.call(this,name+BEFORE,callback);
+        },
+        /**
+         * 监听某个model的after
+         * @param  {String}   name     注册时元信息中的名称
+         * @param  {Function} callback 回调
+         */
+        listenAfter:function(name,callback){
+            Event.on.call(this,name+AFTER,callback);
+        },
+        /**
+         * 取消before监听
+         * @param  {String}   name     注册时元信息的名称
+         * @param  {Function} [callback] 回调
+         */
+        unlistenBefore:function(name,callback){
+            Event.un.call(this,name+BEFORE,callback);
+        },
+        /**
+         * 取消after监听
+         * @param  {String}   name     注册时元信息的名称
+         * @param  {Function} [callback] 回调
+         */
+        unlistenAfter:function(name,callback){
+            Event.un.call(this,name+AFTER,callback);
+        },
+        /**
+         * 触发某个model的before监听
+         * @param  {String} name 注册时元信息中的名称
+         * @param  {Object} [args] 数据
+         */
+        fireBefore:function(name,args){
+            Event.fire.call(this,name+BEFORE,args);
+        },
+        /**
+         * 触发某个model的after监听
+         * @param  {String} name 注册时元信息中的名称
+         * @param  {Object} [args] 数据
+         */
+        fireAfter:function(name,args){
+            Event.fire.call(this,name+AFTER,args);
         },
         /**
          * 从缓存中获取model对象
@@ -806,5 +860,5 @@ KISSY.add("mxext/mmanager",function(S,Magix){
     });
     return MManager;
 },{
-    requires:["magix/magix"]
+    requires:["magix/magix","magix/event"]
 });

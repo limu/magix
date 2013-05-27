@@ -128,6 +128,7 @@ mix(Cache.prototype,{
         var r=c[k];
         if(r){
             r.f=-1E5;
+            r.v=EMPTY;
             delete c[k];
         }
     },
@@ -367,12 +368,12 @@ var Magix={
             me.libRequire(['magix/router','magix/vom'],function(R,V){
                 R.on('changed',function(e){
                     if(e.loc){
-                        V.locationUpdated(e.loc);
+                        V.locUpdated(e.loc);
                     }else{
                         if(e.changed.isView()){
-                            V.remountRoot(e);
+                            V.mountRoot(e);
                         }else{
-                            V.locationChanged(e);
+                            V.locChanged(e);
                         }
                     }
                 });
