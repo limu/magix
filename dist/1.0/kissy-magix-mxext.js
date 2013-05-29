@@ -4449,8 +4449,16 @@ KISSY.add("mxext/model",function(S,Magix){
  */
 KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
     var WIN=window;
-    var COMMA=',';
-    var DestroyManagedTryList='destroy,abort,stop,cancel,remove'.split(COMMA);
+    
+    var DestroyTimer=function(id){
+        WIN.clearTimeout(id);
+        WIN.clearInterval(id);
+    };
+
+    var Destroy=function(res){
+        SafeExec(res.destroy,[],res);
+    };
+
     var ResCounter=0;
     var SafeExec=Magix.safeExec;
     var Has=Magix.has;
@@ -4554,9 +4562,16 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                 hasKey=false;
             }
             if(!me.$res)me.$res={};
+            var destroy;
+            if(S.isNumber(res)){
+                destroy=DestroyTimer;
+            }else if(res&&res.destroy){
+                destroy=Destroy;
+            }
             var wrapObj={
                 hasKey:hasKey,
-                res:res
+                res:res,
+                destroy:destroy
             };
             me.$res[key]=wrapObj;
             return res;
@@ -4615,31 +4630,19 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                     var o=cache[p];
                     //var processed=false;
                     var res=o.res;
-                    if(Magix.isNumber(res)){//数字，有可能是定时器
-                        WIN.clearTimeout(res);
-                        WIN.clearInterval(res);
-                        //processed=true;
-                    }else if(res){
-                        if(res.nodeType&&res.parentNode){
-                            S.one(res).remove();
-                            //processed=true;
-                        }else{
-                            for(var i=0;i<DestroyManagedTryList.length;i++){
-                                if(Magix.isFunction(res[DestroyManagedTryList[i]])){
-                                    SafeExec(res[DestroyManagedTryList[i]],[],res);
-                                    //processed=true;
-                                    //不进行break,比如有时候可能存在abort 和  destroy
-                                }
-                            }
-                        }
+                    var destroy=o.destroy;
+                    var processed=false;
+                    if(destroy){
+                        destroy(res);
+                        processed=true;
                     }
-                    /*me.fire('destroyResource',{
-                        resource:res,
-                        processed:processed
-                    });*/
                     if(byRefresh&&!o.hasKey){//如果是刷新且托管时没有给key值，则表示这是一个不会在其它方法内共享托管的资源，view刷新时可以删除掉
                         delete cache[p];
                     }
+                    me.fire('destroyManaged',{
+                        resource:res,
+                        processed:processed
+                    });
                 }
                 if(!byRefresh){//如果不是刷新，则是view的销毁
                     //me.un('destroyResource');
