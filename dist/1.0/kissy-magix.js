@@ -251,6 +251,7 @@ var Event={
  **/
 KISSY.add('magix/magix',function(S){
 	var Slice=[].slice;
+    var Slash='/';
 	var Include=function(path){
 		var magixPackages=S.Config.packages.magix;
         var mPath=magixPackages.base||magixPackages.path;
@@ -855,14 +856,13 @@ var Magix={
     return mix(Magix,{
         
         libRequire:function(name,fn){
-            var me=this;
             if(name){
-                var isFn=me.isFunction(fn);
-                var isArr=me.isArray(name);
+                var isFn=S.isFunction(fn);
+                var isArr=S.isArray(name);
 
                 S.use(isArr?name.join(','):name,isFn?function(S){
                     fn.apply(S,Slice.call(arguments,1));
-                }:me.noop);
+                }:S.noop);
             }else{
                 fn();
             }
@@ -878,8 +878,8 @@ var Magix={
                 appHome=me.path(loc.href,appHome);
             }
 
-            if(!S.endsWith(appHome,'/')){
-                appHome+='/';
+            if(!S.endsWith(appHome,Slash)){
+                appHome+=Slash;
             }
             cfg.appHome=appHome;
             var debug=cfg.debug;
@@ -887,9 +887,9 @@ var Magix={
                 debug=appHome.indexOf(protocol+'//'+loc.host)==0;
             }
             if(appName.charAt(0)=='~'){
-                var reg=new RegExp('/'+appName+'/');
+                var reg=new RegExp(Slash+appName+Slash);
                 S.config({
-                    map:[[reg,'/']]
+                    map:[[reg,Slash]]
                 });
             }
             var appTag='';
@@ -1333,7 +1333,7 @@ var Router=Mix({
             if(navigate){
                 
                 if(SupportState){//如果使用pushState
-                    me.$firedPop=1;
+                    me.popFired=1;
                     history.pushState(TitleC--,D.title,tempPath);
                     me.route();
                 }else{
@@ -1433,8 +1433,8 @@ var Router=Mix({
         var me=this,initialURL=location.href;
         SE.on(WIN,'popstate',function(e){
             var equal=location.href==initialURL;
-            if(!me.$firedPop&&equal)return;
-            me.$firedPop=true;
+            if(!me.popFired&&equal)return;
+            me.popFired=1;
             
             me.route();
         });
@@ -1469,6 +1469,7 @@ var MxDefer='mx-defer';
 var Alter='alter';
 var Created='created';
 var RootVframe;
+var GlobalAlter;
 
 var $=function(id){
     return typeof id=='object'?id:D.getElementById(id);
@@ -1689,8 +1690,9 @@ Mix(Mix(Vframe.prototype,Event),{
     unmountView:function(useAnim,isOutermostView){
         var me=this;
         if(me.view){
+            if(!GlobalAlter)GlobalAlter={caused:me.id};
             me.unmountZoneVframes(0,useAnim);
-            me.childrenAlter({});
+            me.childrenAlter(GlobalAlter);
             me.view.destroy();
             var node=$(me.id);
             if(!useAnim&&node._bak){
@@ -1701,6 +1703,7 @@ Mix(Mix(Vframe.prototype,Event),{
             }
             delete me.view;
             delete me.viewUsable;
+            GlobalAlter=0;
             me.fire('viewUnmounted');
             CollectGarbage();
         }
@@ -1773,7 +1776,6 @@ Mix(Mix(Vframe.prototype,Event),{
                 }
             }
         }
-
         if(me.cC==me.rC){//有可能在渲染某个vframe时，里面有n个vframes，但立即调用了mountZoneVframes，这个下面没有vframes，所以要等待
             me.childrenCreated({});
         }
@@ -1822,7 +1824,7 @@ Mix(Mix(Vframe.prototype,Event),{
             children=me.cM;
         }
         for(var p in children){
-            me.unmountVframe(p);
+            me.unmountVframe(p,useAnim);
         }
         /*if(!zoneId){
             me.cM={};
@@ -2898,7 +2900,8 @@ Mix(VProto,{
                     delete ProcessObject[path];
                 },
                 error:function(e,m){
-                    fn(m)
+                    Magix.safeExec(l,m);
+                    delete ProcessObject[path];
                 }
             });
         }

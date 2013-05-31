@@ -5,6 +5,7 @@
  **/
 KISSY.add('magix/magix',function(S){
 	var Slice=[].slice;
+    var Slash='/';
 	var Include=function(path){
 		var magixPackages=S.Config.packages.magix;
         var mPath=magixPackages.base||magixPackages.path;
@@ -20,14 +21,13 @@ KISSY.add('magix/magix',function(S){
     return mix(Magix,{
         include:Include,
         libRequire:function(name,fn){
-            var me=this;
             if(name){
-                var isFn=me.isFunction(fn);
-                var isArr=me.isArray(name);
+                var isFn=S.isFunction(fn);
+                var isArr=S.isArray(name);
 
                 S.use(isArr?name.join(','):name,isFn?function(S){
                     fn.apply(S,Slice.call(arguments,1));
-                }:me.noop);
+                }:S.noop);
             }else{
                 fn();
             }
@@ -43,8 +43,8 @@ KISSY.add('magix/magix',function(S){
                 appHome=me.path(loc.href,appHome);
             }
 
-            if(!S.endsWith(appHome,'/')){
-                appHome+='/';
+            if(!S.endsWith(appHome,Slash)){
+                appHome+=Slash;
             }
             cfg.appHome=appHome;
             var debug=cfg.debug;
@@ -52,9 +52,9 @@ KISSY.add('magix/magix',function(S){
                 debug=appHome.indexOf(protocol+'//'+loc.host)==0;
             }
             if(appName.charAt(0)=='~'){
-                var reg=new RegExp('/'+appName+'/');
+                var reg=new RegExp(Slash+appName+Slash);
                 S.config({
-                    map:[[reg,'/']]
+                    map:[[reg,Slash]]
                 });
             }
             var appTag='';

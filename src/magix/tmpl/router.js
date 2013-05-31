@@ -403,7 +403,7 @@ var Router=Mix({
             if(navigate){
                 
                 if(SupportState){//如果使用pushState
-                    me.$firedPop=1;
+                    me.popFired=1;
                     history.pushState(TitleC--,D.title,tempPath);
                     me.route();
                 }else{

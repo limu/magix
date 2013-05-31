@@ -13,6 +13,7 @@ var MxDefer='mx-defer';
 var Alter='alter';
 var Created='created';
 var RootVframe;
+var GlobalAlter;
 
 var $=function(id){
     return typeof id=='object'?id:D.getElementById(id);
@@ -233,8 +234,9 @@ Mix(Mix(Vframe.prototype,Event),{
     unmountView:function(useAnim,isOutermostView){
         var me=this;
         if(me.view){
+            if(!GlobalAlter)GlobalAlter={caused:me.id};
             me.unmountZoneVframes(0,useAnim);
-            me.childrenAlter({});
+            me.childrenAlter(GlobalAlter);
             me.view.destroy();
             var node=$(me.id);
             if(!useAnim&&node._bak){
@@ -245,6 +247,7 @@ Mix(Mix(Vframe.prototype,Event),{
             }
             delete me.view;
             delete me.viewUsable;
+            GlobalAlter=0;
             me.fire('viewUnmounted');
             CollectGarbage();
         }
@@ -317,7 +320,6 @@ Mix(Mix(Vframe.prototype,Event),{
                 }
             }
         }
-
         if(me.cC==me.rC){//有可能在渲染某个vframe时，里面有n个vframes，但立即调用了mountZoneVframes，这个下面没有vframes，所以要等待
             me.childrenCreated({});
         }
@@ -366,7 +368,7 @@ Mix(Mix(Vframe.prototype,Event),{
             children=me.cM;
         }
         for(var p in children){
-            me.unmountVframe(p);
+            me.unmountVframe(p,useAnim);
         }
         /*if(!zoneId){
             me.cM={};

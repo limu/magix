@@ -9,8 +9,8 @@ KISSY.add('magix/router',function(S,Magix,Event,SE){
         var me=this,initialURL=location.href;
         SE.on(WIN,'popstate',function(e){
             var equal=location.href==initialURL;
-            if(!me.$firedPop&&equal)return;
-            me.$firedPop=true;
+            if(!me.popFired&&equal)return;
+            me.popFired=1;
             console.log('push?',e.type,e.state);
             me.route();
         });

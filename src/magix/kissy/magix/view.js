@@ -35,7 +35,8 @@ KISSY.add('magix/view',function(S,Magix,Event,Body,IO){
                     delete ProcessObject[path];
                 },
                 error:function(e,m){
-                    fn(m)
+                    Magix.safeExec(l,m);
+                    delete ProcessObject[path];
                 }
             });
         }
