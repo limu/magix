@@ -27,7 +27,7 @@
                     pNode=null;
                     wNode=null;
                     tNode=null;
-                    Magix.config('progress',0,1);
+                    Magix.config('progress',null);
                 },100);
                 T.stopChecker();
             }
