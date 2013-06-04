@@ -1307,6 +1307,8 @@ var Router=Mix({
             }
      */
     navigate:function(pn,params){
+        var me=this;
+        
         if(!params&&Magix.isObject(pn)){
             params=pn;
             pn=EMPTY;
