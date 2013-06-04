@@ -1079,6 +1079,7 @@ var Router=Mix({
     },
     /**
      * 开始路由工作
+     * @private
      */
     start:function(){
         var me=this;
@@ -1098,12 +1099,13 @@ var Router=Mix({
      * 解析path
      * @param  {String} path /a/b/c?a=b&c=d的字符串
      * @return {Object}
+     * @private
      */
-    parsePath:function(path){
+    fixPath:function(path){
         var o=Magix.pathToObject(path,IsUtf8);
         var pn=o[PATHNAME];
         var me=this;
-        if(pn&&pn.charAt(0)!='/'&&HashAsNativeHistory){//如果不是以/开头的并且要使用history state,当前浏览器又不支持history state则放hash中的pathname要进行处理
+        if(pn&&HashAsNativeHistory){//如果不是以/开头的并且要使用history state,当前浏览器又不支持history state则放hash中的pathname要进行处理
             o[PATHNAME]=Magix.path(WIN.location[PATHNAME],pn);
         }        
         return o;
@@ -1111,9 +1113,10 @@ var Router=Mix({
     /**
      * 解析href的query和hash，默认href为window.location.href
      * @param {String} [href] href
+     * @param {Boolean} [attachViewInfo] 是否附加对应的前端view信息
      * @return {Object} 解析的对象
      */
-    parseQH:function(href){
+    parseQH:function(href,attachViewInfo){
         href=href||WIN.location.href;
 
         var me=this;
@@ -1132,9 +1135,9 @@ var Router=Mix({
             //var query=tPathname+params.replace(/^([^#]+).*$/g,'$1');
             var hash=href.replace(TrimQueryReg,EMPTY);//原始hash
             //
-            var queryObj=me.parsePath(query);
+            var queryObj=me.fixPath(query);
             //
-            var hashObj=me.parsePath(hash);//去掉可能的！开始符号
+            var hashObj=me.fixPath(hash);//去掉可能的！开始符号
             //
             var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
             Mix(comObj,queryObj[Ps]);
@@ -1154,20 +1157,8 @@ var Router=Mix({
             }
             HrefCache.set(href,result);
         }
-        return result;
-    },
-    /**
-     * 解析href字符串为对象,默认为window.location.href
-     * @param {String} [href] href
-     * @return {Object}
-     */
-    parseLoc:function(href){
-        var me=this;
-        var queryHash=me.parseQH(href);
-
-        
-        if(!queryHash.view){
-            
+        if(attachViewInfo&&!result.view){
+            //
             var tempPathname;
             /*
                 1.在选择pathname时，不能简单的把hash中的覆盖query中的。有可能是从不支持history state浏览器上拷贝链接到支持的浏览器上，分情况而定：
@@ -1201,20 +1192,21 @@ var Router=Mix({
                 合并后如下：
                 */
                 //
-                tempPathname=queryHash.hash[PATHNAME]||queryHash.query[PATHNAME];
+                tempPathname=result.hash[PATHNAME]||result.query[PATHNAME];
             }else{//指定不用history state ，那咱还能说什么呢，直接用hash
-                tempPathname=queryHash.hash[PATHNAME];
+                tempPathname=result.hash[PATHNAME];
             }
             var view=me.getView(tempPathname);
-            Mix(queryHash,view);
+            Mix(result,view);
         }
-        return queryHash
+        return result;
     },
     /**
      * 获取2个location对象之间的差异部分
      * @param  {Object} oldLocation 原始的location对象
      * @param  {Object} newLocation 当前的location对象
      * @return {Object} 返回包含差异信息的对象
+     * @private
      */
     getChged:function(oldLocation,newLocation){
         var oKey=oldLocation.href;
@@ -1264,7 +1256,7 @@ var Router=Mix({
      */
     route:function(){
         var me=this;
-        var location=me.parseLoc();
+        var location=me.parseQH(0,1);
         var oldLocation=LLoc||{params:{},href:'~'};
         var firstFire=!LLoc;//是否强制触发的changed，对于首次加载会强制触发一次
 
@@ -1282,12 +1274,49 @@ var Router=Mix({
         }
     },
     /**
-     * 导航到当前的路径 
-     * @param  {String} path 路径
+     * 根据参数进行有选择的导航
+     * @param  {Object|String} pn pathname或参数字符串或参数对象
+     * @param {String|Object} [params] 参数对象
+     * @example
+     * KISSY.use('magix/router',function(S,R){
+     *      R.navigate('/list?page=2&rows=20');//改变pathname和相关的参数，地址栏上的其它参数会进行丢弃，不会保留
+     *      R.navigate('page=2&rows=20');//只修改参数，地址栏上的其它参数会保留
+     *      R.navigate({//通过对象修改参数，地址栏上的其它参数会保留
+     *          page:2,
+     *          rows:20
+     *      });
+     *      R.navigate('/list',{
+     *          page:2,
+     *          rows:20
+     *      })
+     * });
      */
-    navigate2:function(path){
-        var me=this;
-        
+    /*
+        1.
+            render:function(){
+                
+            },
+            events:{
+                click:{
+                    changeHash:function(e){
+                        Router.navigate('a='+S.now());
+                        Router.navigate('b='+S.now());
+                        e.view.render();
+                    }
+                }
+            }
+     */
+    navigate:function(pn,params){
+        if(!params&&Magix.isObject(pn)){
+            params=pn;
+            pn=EMPTY;
+        }
+        if(params){
+            pn=Magix.objectToPath({
+                params:params,
+                pathname:pn
+            },IsUtf8)
+        }
         //TLoc引用
         //pathObj引用
         //
@@ -1297,9 +1326,9 @@ var Router=Mix({
         //
         //
 
-        if(path&&Magix.isString(path)){
+        if(pn){
 
-            var pathObj=me.parsePath(path);
+            var pathObj=me.fixPath(pn);
             var temp={};
             temp[Ps]=Mix({},pathObj[Ps]);
             temp[PATHNAME]=pathObj[PATHNAME];
@@ -1360,53 +1389,6 @@ var Router=Mix({
                 }
             }
         }
-    },
-    /**
-     * 根据参数进行有选择的导航
-     * @param  {Object|String} params 对象
-     * @param {String} [pathname] 可选的pathname
-     * @example
-     * KISSY.use('magix/router',function(S,R){
-     *      R.navigate('/list?page=2&rows=20');//改变pathname和相关的参数，地址栏上的其它参数会进行丢弃，不会保留
-     *      R.navigate('page=2&rows=20');//只修改参数，地址栏上的其它参数会保留
-     *      R.navigate({//通过对象修改参数，地址栏上的其它参数会保留
-     *          page:2,
-     *          rows:20
-     *      });
-     *      R.navigate('/list',{
-     *          page:2,
-     *          rows:20
-     *      })
-     * });
-     */
-    /*
-        1.
-            render:function(){
-                
-            },
-            events:{
-                click:{
-                    changeHash:function(e){
-                        Router.navigate('a='+S.now());
-                        Router.navigate('b='+S.now());
-                        e.view.render();
-                    }
-                }
-            }
-     */
-    navigate:function(pn,params){
-        if(!params&&Magix.isObject(pn)){
-            params=pn;
-            pn=EMPTY;
-        }
-        if(params){
-            pn=Magix.objectToPath({
-                params:params,
-                pathname:pn
-            },IsUtf8)
-        }
-        
-        this.navigate2(pn);
     }
     
     /**

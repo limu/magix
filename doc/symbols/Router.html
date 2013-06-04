@@ -319,16 +319,6 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 Router.
-                                                <b class="name"><a href="../symbols/Router.html#.getChged">getChged</a></b>
-                                                <span class="param">(oldLocation, newLocation)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">获取2个location对象之间的差异部分</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                Router.
                                                 <b class="name"><a href="../symbols/Router.html#.getView">getView</a></b>
                                                 <span class="param">(pathname)</span>
                                                 
@@ -340,21 +330,11 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 Router.
                                                 <b class="name"><a href="../symbols/Router.html#.navigate">navigate</a></b>
-                                                <span class="param">(params, pathname)</span>
+                                                <span class="param">(pn, params)</span>
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
                                                 <span class="desc">根据参数进行有选择的导航</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                Router.
-                                                <b class="name"><a href="../symbols/Router.html#.navigate2">navigate2</a></b>
-                                                <span class="param">(path)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">导航到当前的路径</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -369,28 +349,8 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 Router.
-                                                <b class="name"><a href="../symbols/Router.html#.parseLoc">parseLoc</a></b>
-                                                <span class="param">(href)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">解析href字符串为对象,默认为window.location.href</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                Router.
-                                                <b class="name"><a href="../symbols/Router.html#.parsePath">parsePath</a></b>
-                                                <span class="param">(path)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">解析path</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                Router.
                                                 <b class="name"><a href="../symbols/Router.html#.parseQH">parseQH</a></b>
-                                                <span class="param">(href)</span>
+                                                <span class="param">(href, attachViewInfo)</span>
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
@@ -405,16 +365,6 @@ dl.data .dd{
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
                                                 <span class="desc">根据window.location.href路由并派发相应的事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                Router.
-                                                <b class="name"><a href="../symbols/Router.html#.start">start</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">开始路由工作</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -630,81 +580,6 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name=".getChged"> </a>
-                                            <div class="title" >
-                                                <span>Router.</span>
-                                                <b class="name">getChged</b>
-                                                <span class="param">(oldLocation, newLocation)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                获取2个location对象之间的差异部分
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">oldLocation</b>
-                                                            
-                                                            
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">原始的location对象</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">newLocation</b>
-                                                            
-                                                            
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">当前的location对象</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{Object}</span> 
-                                                            <span>返回包含差异信息的对象</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
                                             <a name=".getView"> </a>
                                             <div class="title" >
                                                 <span>Router.</span>
@@ -775,7 +650,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 <span>Router.</span>
                                                 <b class="name">navigate</b>
-                                                <span class="param">(params, pathname)</span>
+                                                <span class="param">(pn, params)</span>
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
@@ -796,20 +671,20 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">params</b>
+                                                            <b class="name">pn</b>
                                                             
                                                             
                                                             <span class="type">{Object|String}</span> 
-                                                            <span class="desc">对象</span>
+                                                            <span class="desc">pathname或参数字符串或参数对象</span>
                                                         </li>
                                                     
                                                         <li class="li">
                                                             [ 
-                                                            <b class="name">pathname</b>
+                                                            <b class="name">params</b>
                                                             
                                                              ]
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">可选的pathname</span>
+                                                            <span class="type">{String|Object}</span> 
+                                                            <span class="desc">参数对象</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -835,60 +710,6 @@ dl.data .dd{
                                                             <pre class="brush: js; ">KISSY.use('magix/router',function(S,R){     R.navigate('/list?page=2&rows=20');//改变pathname和相关的参数，地址栏上的其它参数会进行丢弃，不会保留     R.navigate('page=2&rows=20');//只修改参数，地址栏上的其它参数会保留     R.navigate({//通过对象修改参数，地址栏上的其它参数会保留         page:2,         rows:20     });     R.navigate('/list',{         page:2,         rows:20     })});</pre>
                                                         
                                                 </dd>
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name=".navigate2"> </a>
-                                            <div class="title" >
-                                                <span>Router.</span>
-                                                <b class="name">navigate2</b>
-                                                <span class="param">(path)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                导航到当前的路径
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">path</b>
-                                                            
-                                                            
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">路径</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
                                                 
                                                 
                                             </dl>                                            
@@ -969,143 +790,11 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name=".parseLoc"> </a>
-                                            <div class="title" >
-                                                <span>Router.</span>
-                                                <b class="name">parseLoc</b>
-                                                <span class="param">(href)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                解析href字符串为对象,默认为window.location.href
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            [ 
-                                                            <b class="name">href</b>
-                                                            
-                                                             ]
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">href</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{Object}</span> 
-                                                            <span></span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name=".parsePath"> </a>
-                                            <div class="title" >
-                                                <span>Router.</span>
-                                                <b class="name">parsePath</b>
-                                                <span class="param">(path)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                解析path
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">path</b>
-                                                            
-                                                            
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">/a/b/c?a=b&c=d的字符串</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{Object}</span> 
-                                                            <span></span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
                                             <a name=".parseQH"> </a>
                                             <div class="title" >
                                                 <span>Router.</span>
                                                 <b class="name">parseQH</b>
-                                                <span class="param">(href)</span>
+                                                <span class="param">(href, attachViewInfo)</span>
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
@@ -1131,6 +820,15 @@ dl.data .dd{
                                                              ]
                                                             <span class="type">{String}</span> 
                                                             <span class="desc">href</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            [ 
+                                                            <b class="name">attachViewInfo</b>
+                                                            
+                                                             ]
+                                                            <span class="type">{Boolean}</span> 
+                                                            <span class="desc">是否附加对应的前端view信息</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1179,44 +877,6 @@ dl.data .dd{
 
                                             <div class="desc">
                                                 根据window.location.href路由并派发相应的事件
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name=".start"> </a>
-                                            <div class="title" >
-                                                <span>Router.</span>
-                                                <b class="name">start</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                开始路由工作
                                                 
                                                 
                                             </div>
