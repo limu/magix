@@ -14,6 +14,7 @@ KISSY.add("mxext/router",function(S,R,E){
                     backward:function(){
                         e.p=1;
                         history.replaceState(S.now(),document.title,lastHref);
+                        me.fire('change:backward');
                     },
                     forward:function(){
                         e.p=1;
@@ -22,6 +23,7 @@ KISSY.add("mxext/router",function(S,R,E){
                     },
                     prevent:function(){
                         e.p=1;
+                        me.fire('change:prevent');
                     },
                     location:me.parseQH(newHref)
                 };
@@ -43,6 +45,7 @@ KISSY.add("mxext/router",function(S,R,E){
                     backward:function(){
                         e.p=1;
                         location.hash='#!'+lastHash;
+                        me.fire('change:backward');
                     },
                     forward:function(){
                         e.p=1;
@@ -51,6 +54,7 @@ KISSY.add("mxext/router",function(S,R,E){
                     },
                     prevent:function(){
                         e.p=1;
+                        me.fire('change:prevent');
                     },
                     location:loc
                 };

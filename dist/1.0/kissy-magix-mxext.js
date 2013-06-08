@@ -1101,7 +1101,7 @@ var Router=Mix({
      * @return {Object}
      * @private
      */
-    fixPath:function(path){
+    path:function(path){
         var o=Magix.pathToObject(path,IsUtf8);
         var pn=o[PATHNAME];
         var me=this;
@@ -1135,9 +1135,9 @@ var Router=Mix({
             //var query=tPathname+params.replace(/^([^#]+).*$/g,'$1');
             var hash=href.replace(TrimQueryReg,EMPTY);//原始hash
             //
-            var queryObj=me.fixPath(query);
+            var queryObj=me.path(query);
             //
-            var hashObj=me.fixPath(hash);//去掉可能的！开始符号
+            var hashObj=me.path(hash);//去掉可能的！开始符号
             //
             var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
             Mix(comObj,queryObj[Ps]);
@@ -1330,7 +1330,7 @@ var Router=Mix({
 
         if(pn){
 
-            var pathObj=me.fixPath(pn);
+            var pathObj=me.path(pn);
             var temp={};
             temp[Ps]=Mix({},pathObj[Ps]);
             temp[PATHNAME]=pathObj[PATHNAME];
@@ -3702,6 +3702,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
 
             var cacheKey=modelAttrs.cacheKey||meta.cacheKey;
 
+            
             entity._cacheKey=cacheKey;
             entity._meta=meta;
             entity.set(getOptions(modelAttrs));
@@ -3737,7 +3738,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          */
         getModel:function(modelAttrs){
             var me=this;
-            var entity=me.getModelFromCache(modelAttrs);            
+            var entity=me.getModelFromCache(modelAttrs);
             var needUpdate;
             if(!entity){
                 needUpdate=true;
@@ -3909,18 +3910,27 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             var modelsCache=me.$modelsCache;
             var entity=null;
             var cacheKey;
+            var meta;
             if(S.isString(modelAttrs)){
                 cacheKey=modelAttrs;
             }else{
-                var meta=me.getModelMeta(modelAttrs);
+                meta=me.getModelMeta(modelAttrs);
                 cacheKey=modelAttrs.cacheKey||meta.cacheKey;
+                if(S.isFunction(cacheKey)){
+                    cacheKey=SafeExec(cacheKey,[meta,modelAttrs]);
+                }
             }
+
             if(cacheKey&&(entity=modelsCache.get(cacheKey))){//缓存
                 
                 if(!meta)meta=entity._meta;
 
                 var cacheTime=modelAttrs.cacheTime||meta.cacheTime||0;
 
+                if(S.isFunction(cacheTime)){
+                    cacheTime=SafeExec(cacheTime,[meta,modelAttrs]);
+                }
+                
                 if(cacheTime>0){
                     if(S.now()-entity._doneAt>cacheTime){
                         me.clearCacheByKey(cacheKey);

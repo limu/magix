@@ -612,6 +612,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
 
             var cacheKey=modelAttrs.cacheKey||meta.cacheKey;
 
+            console.log(cacheKey);
             entity._cacheKey=cacheKey;
             entity._meta=meta;
             entity.set(getOptions(modelAttrs));
@@ -647,7 +648,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          */
         getModel:function(modelAttrs){
             var me=this;
-            var entity=me.getModelFromCache(modelAttrs);            
+            var entity=me.getModelFromCache(modelAttrs);
             var needUpdate;
             if(!entity){
                 needUpdate=true;
@@ -819,18 +820,27 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             var modelsCache=me.$modelsCache;
             var entity=null;
             var cacheKey;
+            var meta;
             if(S.isString(modelAttrs)){
                 cacheKey=modelAttrs;
             }else{
-                var meta=me.getModelMeta(modelAttrs);
+                meta=me.getModelMeta(modelAttrs);
                 cacheKey=modelAttrs.cacheKey||meta.cacheKey;
+                if(S.isFunction(cacheKey)){
+                    cacheKey=SafeExec(cacheKey,[meta,modelAttrs]);
+                }
             }
+
             if(cacheKey&&(entity=modelsCache.get(cacheKey))){//缓存
                 
                 if(!meta)meta=entity._meta;
 
                 var cacheTime=modelAttrs.cacheTime||meta.cacheTime||0;
 
+                if(S.isFunction(cacheTime)){
+                    cacheTime=SafeExec(cacheTime,[meta,modelAttrs]);
+                }
+                
                 if(cacheTime>0){
                     if(S.now()-entity._doneAt>cacheTime){
                         me.clearCacheByKey(cacheKey);

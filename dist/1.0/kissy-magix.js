@@ -1101,7 +1101,7 @@ var Router=Mix({
      * @return {Object}
      * @private
      */
-    fixPath:function(path){
+    path:function(path){
         var o=Magix.pathToObject(path,IsUtf8);
         var pn=o[PATHNAME];
         var me=this;
@@ -1135,9 +1135,9 @@ var Router=Mix({
             //var query=tPathname+params.replace(/^([^#]+).*$/g,'$1');
             var hash=href.replace(TrimQueryReg,EMPTY);//原始hash
             //
-            var queryObj=me.fixPath(query);
+            var queryObj=me.path(query);
             //
-            var hashObj=me.fixPath(hash);//去掉可能的！开始符号
+            var hashObj=me.path(hash);//去掉可能的！开始符号
             //
             var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
             Mix(comObj,queryObj[Ps]);
@@ -1330,7 +1330,7 @@ var Router=Mix({
 
         if(pn){
 
-            var pathObj=me.fixPath(pn);
+            var pathObj=me.path(pn);
             var temp={};
             temp[Ps]=Mix({},pathObj[Ps]);
             temp[PATHNAME]=pathObj[PATHNAME];
