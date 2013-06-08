@@ -6,15 +6,15 @@
 KISSY.add("mxext/mmanager",function(S,Magix,Event){
     var Has=Magix.has;
     var SafeExec=Magix.safeExec;
-    var DeleteCacheKey=function(models){
-        if(!S.isArray(models)){
-            models=[models];
+    var DeleteCacheKey=function(modelsAttr){
+        if(!S.isArray(modelsAttr)){
+            modelsAttr=[modelsAttr];
         }
-        for(var i=0,m;i<models.length;i++){
-            m=models[i];
+        for(var i=0,m;i<modelsAttr.length;i++){
+            m=modelsAttr[i];
             delete m.cacheKey;
         }
-        return models;
+        return modelsAttr;
     };
     /**
      * Model管理对象，可方便的对Model进行缓存和更新
@@ -25,9 +25,10 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
      */
     var MManager=function(modelClass){
         var me=this;
-        me.$modelClass=modelClass;
-        me.$modelsCache=Magix.createCache();
-        me.$modelsCacheKeys={};
+        me.$mClass=modelClass;
+        me.$mCache=Magix.createCache();
+        me.$mCacheKeys={};
+        me.$mMetas={};
     };
 
     var Slice=[].slice;
@@ -39,7 +40,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
         before:1,
         after:1
     };
-    var getOptions=function(obj){
+    var GetOptions=function(obj){
         var r={};
         for(var p in obj){
             if(!WhiteList[p]){
@@ -48,7 +49,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
         }
         return r;
     };
-    var wrapDone=function(fn,context){
+    var WrapDone=function(fn,context){
         var a = Slice.call(arguments, 2);
         return function(){
             return fn.apply(context,a.concat(Slice.call(arguments)));
@@ -65,7 +66,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
         create:function(modelClass){
             var me=this;
             if(!modelClass){
-                throw new Error('MManager.create modelClass ungiven');
+                throw new Error('MManager.create:modelClass ungiven');
             }
             return new MManager(modelClass);
         }
@@ -84,7 +85,8 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
      */
     var MRequest=function(host){
         this.$host=host;
-        this.$task=false;
+        this.$doTask=false;
+        this.$reqModels={};
     };
 
     var BEFORE='_before';
@@ -104,19 +106,17 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          */
         fetchModels:function(models,done,flag){
             var me=this;
-            if(me.$task){
+            if(me.$doTask){
                 me.next(function(request){
-                    request.fetchModels(models,done,error,flag);
+                    request.fetchModels(models,done,flag);
                 });
                 return me;
             }
-            me.$task=true;
-            var host=me.$host;
-            
-            if(!me.$reqModels)me.$reqModels={};
+            me.$doTask=true;
 
-            var modelsCache=host.$modelsCache;
-            var modelsCacheKeys=host.$modelsCacheKeys;
+            var host=me.$host;
+            var modelsCache=host.$mCache;
+            var modelsCacheKeys=host.$mCacheKeys;
             var reqModels=me.$reqModels;
 
             if(!S.isArray(models)){
@@ -148,20 +148,18 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                     errorMsg=args||errorMsg;
                     errorArgs[idx]=args;
                 }else{
-                    if(cacheKey&&!modelsCache.has(cacheKey)){
-                        modelsCache.set(cacheKey,model);
-                    }
 
                     model._doneAt=S.now();
-                    var after=model._after;
-                    var meta=model._meta;
+                    if(cacheKey&&!modelsCache.has(cacheKey)){
+                        modelsCache.set(cacheKey,model);
+                        var after=model._after;
+                        var meta=model._meta;
 
-
-                    if(after){//有after
-                        SafeExec(after,[model,meta]);
+                        if(after){//有after
+                            SafeExec(after,[model,meta]);
+                        }
+                        host.fireAfter(meta.name,[model]);
                     }
-                    
-                    host.fireAfter(meta.name,[model]);
                 }               
 
                 if(flag==FetchFlags.ONE){//如果是其中一个成功，则每次成功回调一次
@@ -201,11 +199,11 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                         doneArgs.push(last);
                     }
                     me.$ntId=setTimeout(function(){//前面的任务可能从缓存中来，执行很快
-                        me.$task=false;
+                        me.$doTask=false;
                         console.log('doneArgsdoneArgs',doneArgs);
                         me.doNext(doneArgs);
                     },30);
-                }             
+                }
             };
             //console.log(me);
             
@@ -217,7 +215,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                     var cacheKey=modelInfo.cacheKey;
                     
                     if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
-                        modelsCacheKeys[cacheKey].push(wrapDone(doneFn,me,i));
+                        modelsCacheKeys[cacheKey].push(WrapDone(doneFn,me,i));
                     }else{                        
                         modelEntity=modelInfo.entity;
                         if(modelInfo.needUpdate){
@@ -226,8 +224,8 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                                 modelsCacheKeys[cacheKey]=[];
                             }
                             modelEntity.request({
-                                success:wrapDone(doneFn,modelEntity,i,false,modelEntity),
-                                error:wrapDone(doneFn,modelEntity,i,true,modelEntity)
+                                success:WrapDone(doneFn,modelEntity,i,false,modelEntity),
+                                error:WrapDone(doneFn,modelEntity,i,true,modelEntity)
                             });
                         }else{
                             doneFn(i,false,modelEntity);
@@ -309,7 +307,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             clearTimeout(me.$ntId);
             var host=me.$host;
             var reqModels=me.$reqModels;
-            var modelsCacheKeys=host.$modelsCacheKeys;
+            var modelsCacheKeys=host.$mCacheKeys;
 
             if(reqModels){
                 for(var p in reqModels){
@@ -325,7 +323,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             }
             me.$reqModels={};
             me.$queue=[];
-            me.$task=false;
+            me.$doTask=false;
         },
         /**
          * 前一个fetchX或saveX任务做完后的下一个任务
@@ -336,7 +334,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             var me=this;
             if(!me.$queue)me.$queue=[];
             me.$queue.push(fn);
-            if(!me.$task){
+            if(!me.$doTask){
                 var args=me.$latest||[];
                 me.doNext.apply(me,[me].concat(args));
             }
@@ -453,6 +451,8 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                 }
              */
             var me=this;
+            var metas=me.$mMetas;
+
             if(!S.isArray(models)){
                 models=[models];
             }
@@ -461,7 +461,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                 if(!model.name){
                     throw new Error('model must own a name attribute');
                 }
-                me[model.name]=model;
+                metas[model.name]=model;
             }
         },
         /**
@@ -596,7 +596,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             var me=this;
             var meta=me.getModelMeta(modelAttrs);            
 
-            var entity=new me.$modelClass(getOptions(meta));
+            var entity=new me.$mClass(GetOptions(meta));
 
             var before=modelAttrs.before||meta.before;
 
@@ -618,7 +618,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             
             entity._cacheKey=cacheKey;
             entity._meta=meta;
-            entity.set(getOptions(modelAttrs));
+            entity.set(GetOptions(modelAttrs));
             //默认设置的
             entity.setUrlParams(meta.urlParams);
             entity.setPostParams(meta.postParams);
@@ -637,7 +637,14 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          */
         getModelMeta:function(modelAttrs){
             var me=this;
-            var meta=me[modelAttrs.name];
+            var metas=me.$mMetas;
+            var name;
+            if(S.isString(modelAttrs)){
+                name=modelAttrs;
+            }else{
+                name=modelAttrs.name;
+            }
+            var meta=metas[name];
             if(!meta){
                 console.log(modelAttrs);
                 throw new Error('Not found:'+modelAttrs.name);
@@ -651,7 +658,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          */
         getModel:function(modelAttrs){
             var me=this;
-            var entity=me.getModelFromCache(modelAttrs);
+            var entity=me.getCachedModel(modelAttrs);
             var needUpdate;
             if(!entity){
                 needUpdate=true;
@@ -727,7 +734,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          */
         clearCacheByKey:function(key){
             var me=this;
-            var modelsCache=me.$modelsCache;
+            var modelsCache=me.$mCache;
             if(S.isString(key)){
                 modelsCache.del(key);
             }
@@ -738,7 +745,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          */
         clearCacheByName:function(name){
             var me=this;
-            var modelsCache=me.$modelsCache;
+            var modelsCache=me.$mCache;
             var test;
             var list=modelsCache.c;
             for(var i=0;i<list.length;i++){
@@ -757,13 +764,8 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          */
         getModelUrl:function(name){
             var me=this;
-            var meta;
-            if(S.isString(name)){
-                meta=me[name];
-            }else{
-                meta=name;
-            }
-            return me.$modelClass.prototype.url(meta.uri);
+            var meta=me.getModelMeta(name);
+            return me.$mClass.prototype.url(meta.uri);
         },
         /**
          * 监听某个model的before
@@ -818,9 +820,9 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          * @param  {String|Object} modelAttrs
          * @return {Model}
          */
-        getModelFromCache:function(modelAttrs){
+        getCachedModel:function(modelAttrs){
             var me=this;
-            var modelsCache=me.$modelsCache;
+            var modelsCache=me.$mCache;
             var entity=null;
             var cacheKey;
             var meta;
