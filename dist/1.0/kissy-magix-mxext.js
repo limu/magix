@@ -3702,6 +3702,9 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
 
             var cacheKey=modelAttrs.cacheKey||meta.cacheKey;
 
+            if(S.isFunction(cacheKey)){
+                cacheKey=SafeExec(cacheKey,[meta,modelAttrs]);
+            }
             
             entity._cacheKey=cacheKey;
             entity._meta=meta;
@@ -3930,7 +3933,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                 if(S.isFunction(cacheTime)){
                     cacheTime=SafeExec(cacheTime,[meta,modelAttrs]);
                 }
-                
+
                 if(cacheTime>0){
                     if(S.now()-entity._doneAt>cacheTime){
                         me.clearCacheByKey(cacheKey);
