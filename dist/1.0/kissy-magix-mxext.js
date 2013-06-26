@@ -1,5 +1,9 @@
-KISSY.add("magix/body",function(S,Magix,Event,SE){
-    var C={};
+/**
+ * @fileOverview body事件代理
+ * @author 行列<xinglie.lkf@taobao.com>
+ * @version 1.0
+ **/
+KISSY.add("magix/body",function(S,Magix,SE){
     var Has=Magix.has;
 var Mix=Magix.mix;
 //不支持冒泡的事件
@@ -24,12 +28,12 @@ var GetSetAttribute=function(dom,attrKey,attrVal){
     }
     return attrVal;
 };
-var Body=Mix({
-    
+var VOM;
+var Body={
     
 
-    processEvent:function(e){
-        var me=this;
+    process:function(e){
+        var me=Body;
         var target=e.target||e.srcElement;
         while(target&&target.nodeType!=1){
             target=target.parentNode;
@@ -59,7 +63,7 @@ var Body=Mix({
                 var handler=GetSetAttribute(current,MxOwner);//current.getAttribute(MxOwner);
                 if(!handler){//如果没有则找最近的vframe
                     var begin=current;
-                    var vfs=me.VOM.all();
+                    var vfs=VOM.all();
                     while(begin&&begin!=RootNode){
                         if(Has(vfs,begin.id)){
                             GetSetAttribute(current,MxOwner,handler=begin.id);
@@ -71,13 +75,17 @@ var Body=Mix({
                     }
                 }
                 if(handler){//有处理的vframe,派发事件，让对应的vframe进行处理
-                    me.fire('event',{
-                        info:info,
-                        se:e,
-                        tId:IdIt(target),
-                        cId:IdIt(current),
-                        hld:handler
-                    });
+                    
+                    var vframe=VOM.get(handler);
+                    var view=vframe&&vframe.view;
+                    if(view){
+                        view.processEvent({
+                            info:info,
+                            se:e,
+                            tId:IdIt(target),
+                            cId:IdIt(current)
+                        });
+                    }
                 }else{
                     throw Error('miss '+MxOwner+':'+info);
                 }
@@ -96,25 +104,26 @@ var Body=Mix({
             }
         }
     },
-    attachEvent:function(type){
+    on:function(type,vom){
         var me=this;
         if(!RootEvents[type]){
 
+            VOM=vom;
             RootEvents[type]=1;
             var unbubble=UnsupportBubble[type];
             if(unbubble){
-                me.onUnbubble(RootNode,type);
+                me.unbubble(0,RootNode,type);
             }else{
                 RootNode['on'+type]=function(e){
                     e=e||window.event;
-                    e&&me.processEvent(e);
+                    e&&me.process(e);
                 }
             }
         }else{
             RootEvents[type]++;
         }
     },
-    detachEvent:function(type){
+    un:function(type){
         var me=this;
         var counter=RootEvents[type];
         if(counter>0){
@@ -122,7 +131,7 @@ var Body=Mix({
             if(!counter){
                 var unbubble=UnsupportBubble[type];
                 if(unbubble){
-                    me.offUnbubble(RootNode,type);
+                    me.unbubble(1,RootNode,type);
                 }else{
                     RootNode['on'+type]=null;
                 }
@@ -130,20 +139,14 @@ var Body=Mix({
             RootEvents[type]=counter;
         }
     }
-},Event);
-    Body.onUnbubble=function(node,type){
-        var me=this;
-        SE.delegate(node,type,'*[mx-'+type+']',C[type]=function(e){
-            me.processEvent(e);
-        });
-    };
-    Body.offUnbubble=function(node,type){
-        SE.undelegate(node,type,'*[mx-'+type+']',C[type]);
-        delete C[type];
+};
+    Body.unbubble=function(remove,node,type){
+    	var fn=remove?SE.undelegate:SE.delegate;
+    	fn.call(SE,node,type,'[mx-'+type+']',Body.process);
     };
     return Body;
 },{
-    requires:["magix/magix","magix/event","event"]
+    requires:["magix/magix","event","sizzle"]
 });/**
  * @fileOverview 多播事件对象
  * @author 行列<xinglie.lkf@taobao.com>
@@ -151,47 +154,47 @@ var Body=Mix({
  **/
 KISSY.add("magix/event",function(S,Magix){
     /**
- * 根据名称生成事件数组的key
- * @param  {Strig} name 事件名称
- * @return {String} 包装后的key
- */
-var genKey=function(name){
+* 根据名称生成事件数组的key
+* @param {Strig} name 事件名称
+* @return {String} 包装后的key
+*/
+var GenKey=function(name){
     return '~'+name;
 };
 
 var SafeExec=Magix.safeExec;
 /**
- * 多播事件对象
- * @name Event
- * @namespace
- */
+* 多播事件对象
+* @name Event
+* @namespace
+*/
 var Event={
     /**
-     * @lends Event
-     */
-    /**
-     * 触发事件
-     * @param {String} name 事件名称
-     * @param {Object} data 事件对象
-     * @param {Boolean} remove 事件触发完成后是否移除这个事件的所有监听
-     * @param {Boolean} lastToFirst 是否从后向前触发事件的监听列表
-     */
+    * @lends Event
+    */
+        /**
+    * 触发事件
+    * @param {String} name 事件名称
+    * @param {Object} data 事件对象
+    * @param {Boolean} remove 事件触发完成后是否移除这个事件的所有监听
+    * @param {Boolean} lastToFirst 是否从后向前触发事件的监听列表
+    */
     fire:function(name,data,remove,lastToFirst){
-        var key=genKey(name),
+        var key=GenKey(name),
             me=this,
             list=me[key];
         if(list){
             if(!data)data={};
             if(!data.type)data.type=name;
-            var end=list.length,len=end-1,idx,fn;
+            var end=list.length,len=end-1,idx,t;
             while(end--){
                 idx=lastToFirst?end:len-end;
-                fn=list[idx];
-                if(fn.d){
+                t=list[idx];
+                if(t.d||t.r){
                     list.splice(idx,1);
                     len--;
                 }
-                SafeExec(fn,data,me);
+                if(!t.d)SafeExec(t.f,data,me);
             }
         }
         if(remove){
@@ -199,44 +202,44 @@ var Event={
         }
     },
     /**
-     * 绑定事件
-     * @param  {String}   name 事件名称
-     * @param  {Function} fn   事件回调
-     * @param {Interger|Boolean} insertOrRemove 事件监听插入的位置或触发后是否移除监听
-     */
+    * 绑定事件
+    * @param {String} name 事件名称
+    * @param {Function} fn 事件回调
+    * @param {Interger|Boolean} insertOrRemove 事件监听插入的位置或触发后是否移除监听
+    */
     on:function(name,fn,insertOrRemove){
-        var key=genKey(name);
-        if(!this[key])this[key]=[];
+        var key=GenKey(name);
+        var list=this[key]||(this[key]=[]);
         if(Magix.isNumeric(insertOrRemove)){
-            this[key].splice(insertOrRemove,0,fn);
+            list.splice(insertOrRemove,0,{
+                f:fn
+            });
         }else{
-            fn.d=insertOrRemove;
-            this[key].push(fn);
+            list.push({
+                f:fn,
+                r:insertOrRemove
+            });
         }
     },
     /**
-     * 解除事件绑定
-     * @param  {String}   name 事件名称
-     * @param  {Function} fn   事件回调
-     */
+    * 解除事件绑定
+    * @param {String} name 事件名称
+    * @param {Function} fn 事件回调
+    */
     un:function(name,fn){
-        if(!Magix.isArray(name)){
-            name=[name];
-        }
-        for(var x=0,u=name.length;x<u;x++){
-            var key=genKey(name[x]),
-                list=this[key];
-            if(list){
-                if(fn){
-                    for(var i=0,j=list.length;i<j;i++){
-                        if(list[i]==fn){
-                            list.splice(i,1);
-                            break;
-                        }
+        var key=GenKey(name),
+            list=this[key];
+        if(list){
+            if(fn){
+                for(var i=list.length-1,t;i>=0;i--){
+                    t=list[i];
+                    if(t.f==fn&&!t.d){
+                        t.d=1;
+                        break;
                     }
-                }else{
-                    delete this[key];
                 }
+            }else{
+                delete this[key];
             }
         }
     }
@@ -251,7 +254,7 @@ var Event={
  **/
 KISSY.add('magix/magix',function(S){
 	var Slice=[].slice;
-    var Slash='/';
+
 	var Include=function(path){
 		var magixPackages=S.Config.packages.magix;
         var mPath=magixPackages.base||magixPackages.path;
@@ -264,7 +267,7 @@ KISSY.add('magix/magix',function(S){
         return r.responseText;
 	};
     var PathRelativeReg=/\/\.\/|\/[^\/]+?\/\.{2}\/|([^:\/])\/\/+/;
-var PathTrimFileReg=/[^\/]*$/;
+var PathTrimFileReg=/\/[^\/]*$/;
 var PathTrimParamsReg=/[#?].*$/;
 var EMPTY='';
 var ParamsReg=/([^=&?\/#]+)=([^&=#?]*)/g;
@@ -272,9 +275,11 @@ var PATHNAME='pathname';
 var ProtocalReg=/^https?:\/\//i;
 var Templates={};
 var CacheLatest=0;
+var Slash='/';
+
 var Cfg={
     debug:'%DEV%',
-    iniFile:'~/ini',
+    iniFile:'app/ini',
     appName:'app',
     appHome:'./',
     tagName:'vframe',
@@ -626,26 +631,14 @@ var Magix={
         var me=this;
         cfg=mix(Cfg,cfg);
         me.libEnv(cfg);
-        var iniFile=cfg.iniFile.replace('~',cfg.appName);
-        me.libRequire(iniFile,function(I){
+        me.libRequire(cfg.iniFile,function(I){
             Cfg=mix(cfg,I,cfg);
             var progress=cfg.progress;
             me.libRequire(['magix/router','magix/vom'],function(R,V){
-                R.on('changed',function(e){
-                    if(e.loc){
-                        V.locUpdated(e.loc);
-                    }else{
-                        if(e.changed.isView()){
-                            V.mountRoot(e);
-                        }else{
-                            V.locChanged(e);
-                        }
-                    }
-                });
-                V.on('progress',progress||noop);
-                me.libRequire(cfg.extensions,function(){
-                    R.start();
-                });
+                R.on('!ul',V.locChged);
+                R.on('changed',V.locChged);
+                progress&&V.on('progress',progress);
+                me.libRequire(cfg.extensions,R.start);
             });
         });
         if(cfg.ready){
@@ -655,6 +648,7 @@ var Magix={
     },
     /**
      * 获取对象的keys
+     * @function
      * @param  {Object} obj 要获取key的对象
      * @return {Array}
      */
@@ -702,23 +696,26 @@ var Magix={
         var key=url+'\n'+part;
         var result=PathCache.get(key);
         if(!result){
-            url=url.replace(PathTrimParamsReg,EMPTY).replace(PathTrimFileReg,EMPTY);
-            if(part.charAt(0)=='/'){
-                var ds=url.indexOf('://');
-                if(ds==-1){
-                    result=part;
-                }else{
-                    var fs=url.indexOf('/',ds+3);
-                    if(fs==-1){
-                        result=url+part;
-                    }else{
-                        result=url.substring(0,fs)+part;
-                    }
-                }
+            if(ProtocalReg.test(part)){
+                result=part;
             }else{
-                result=url+part;
+                url=url.replace(PathTrimParamsReg,EMPTY).replace(PathTrimFileReg,EMPTY)+Slash;
+
+                if(part.charAt(0)==Slash){
+                    var ds=ProtocalReg.test(url)?8:0;
+                    var fs=url.indexOf(Slash,ds);
+
+                   /* if(fs==-1){
+                        result=url+part;
+                    }else{*/
+                        result=url.substring(0,fs)+part;
+                    //}
+
+                }else{
+                    result=url+part;
+                }
             }
-            //
+            
             while(PathRelativeReg.test(result)){
                 //
                 result=result.replace(PathRelativeReg,'$1/');
@@ -757,9 +754,9 @@ var Magix={
             
             if(pathname){
                 if(ProtocalReg.test(pathname)){//解析以https?:开头的网址
-                    var first=pathname.indexOf('/',8);//找最近的 / 
+                    var first=pathname.indexOf(Slash,8);//找最近的 / 
                     if(first==-1){//未找到，比如 http://etao.com
-                        pathname='/';//则pathname为  /
+                        pathname=Slash;//则pathname为  /
                     }else{
                         pathname=pathname.substring(first); //截取
                     }
@@ -857,13 +854,12 @@ var Magix={
         
         libRequire:function(name,fn){
             if(name){
-                var isFn=S.isFunction(fn);
-                var isArr=S.isArray(name);
-
-                S.use(isArr?name.join(','):name,isFn?function(S){
-                    fn.apply(S,Slice.call(arguments,1));
-                }:S.noop);
-            }else{
+                S.use(name.toString(),function(S){
+                    if(fn){
+                        fn.apply(S,Slice.call(arguments,1));
+                    }
+                });
+            }else if(fn){
                 fn();
             }
         },
@@ -873,26 +869,26 @@ var Magix={
             var loc=location;
             var protocol=loc.protocol;
             var appName=cfg.appName;
+                
+            appHome=me.path(loc.href,appHome+Slash);
 
-            if(!~appHome.indexOf(protocol)){
-                appHome=me.path(loc.href,appHome);
-            }
-
-            if(!S.endsWith(appHome,Slash)){
+           /* if(!S.endsWith(appHome,Slash)){
                 appHome+=Slash;
-            }
+            }*/
+
             cfg.appHome=appHome;
             var debug=cfg.debug;
+
             if(debug){
-                debug=appHome.indexOf(protocol+'//'+loc.host)==0;
+                debug=appHome.indexOf(loc.protocol+Slash+Slash+loc.host+Slash)==0;
             }
-            if(appName.charAt(0)=='~'){
+            /*if(appName.charAt(0)=='~'){
                 var reg=new RegExp(Slash+appName+Slash);
                 S.config({
                     map:[[reg,Slash]]
                 });
-            }
-            var appTag='';
+            }*/
+            var appTag=EMPTY;
             if(debug){
                 appTag=S.now();
             }else{
@@ -901,16 +897,16 @@ var Magix={
             if(appTag){
                 appTag+='.js';
             }
-            var appCombine=cfg.appCombine;
+           /* var appCombine=cfg.appCombine;
             if(S.isUndefined(appCombine)){
                 appCombine=S.config('combine');
-            }
+            }*/
             S.config({
                 packages:[{
                     name:appName,
                     path:appHome,
                     debug:cfg.debug=debug,
-                    combine:appCombine,
+                    combine:cfg.appCombine,
                     tag:appTag
                 }]
             });
@@ -1041,7 +1037,7 @@ var Router=Mix({
      * @return {String} 返回形如app/views/layouts/index这样的字符串
      */
     getView:function(pathname){
-        var me=this;
+        var me=Router;
         
         if(!Pnr){
             Pnr={
@@ -1082,7 +1078,7 @@ var Router=Mix({
      * @private
      */
     start:function(){
-        var me=this;
+        var me=Router;
         var H=WIN.history;
 
         SupportState=UseNativeHistory&&H.pushState;
@@ -1104,10 +1100,9 @@ var Router=Mix({
     path:function(path){
         var o=Magix.pathToObject(path,IsUtf8);
         var pn=o[PATHNAME];
-        var me=this;
         if(pn&&HashAsNativeHistory){//如果不是以/开头的并且要使用history state,当前浏览器又不支持history state则放hash中的pathname要进行处理
             o[PATHNAME]=Magix.path(WIN.location[PATHNAME],pn);
-        }        
+        }
         return o;
     },
     /**
@@ -1119,7 +1114,7 @@ var Router=Mix({
     parseQH:function(href,attachViewInfo){
         href=href||WIN.location.href;
 
-        var me=this;
+        var me=Router;
         /*var cfg=Magix.config();
         if(!cfg.originalHREF){
             try{
@@ -1255,7 +1250,7 @@ var Router=Mix({
      * 根据window.location.href路由并派发相应的事件
      */
     route:function(){
-        var me=this;
+        var me=Router;
         var location=me.parseQH(0,1);
         var oldLocation=LLoc||{params:{},href:'~'};
         var firstFire=!LLoc;//是否强制触发的changed，对于首次加载会强制触发一次
@@ -1274,7 +1269,7 @@ var Router=Mix({
         }
     },
     /**
-     * 根据参数进行有选择的导航
+     * 导航到新的地址
      * @param  {Object|String} pn pathname或参数字符串或参数对象
      * @param {String|Object} [params] 参数对象
      * @example
@@ -1307,7 +1302,7 @@ var Router=Mix({
             }
      */
     navigate:function(pn,params){
-        var me=this;
+        var me=Router;
         
         if(!params&&Magix.isObject(pn)){
             params=pn;
@@ -1364,7 +1359,7 @@ var Router=Mix({
             if(navigate){
                 
                 if(SupportState){//如果使用pushState
-                    me.popFired=1;
+                    me.poped=1;
                     history.pushState(TitleC--,D.title,tempPath);
                     me.route();
                 }else{
@@ -1386,7 +1381,7 @@ var Router=Mix({
                         
 
                      */
-                    me.fire('changed',{loc:TLoc=temp});
+                    me.fire('!ul',{loc:TLoc=temp});//hack 更新view的location属性
                     location.hash='#!'+tempPath;
                 }
             }
@@ -1414,20 +1409,17 @@ var Router=Mix({
 
 },Event);
     Router.useState=function(){
-        var me=this,initialURL=location.href;
+        var me=Router,initialURL=location.href;
         SE.on(WIN,'popstate',function(e){
             var equal=location.href==initialURL;
-            if(!me.popFired&&equal)return;
-            me.popFired=1;
+            if(!me.poped&&equal)return;
+            me.poped=1;
             
             me.route();
         });
     };
     Router.useHash=function(){//extension impl change event
-        var me=this;
-        SE.on(WIN,'hashchange',function(e){
-            me.route();
-        });
+        SE.on(WIN,'hashchange',Router.route);
     };
     return Router;
 },{
@@ -1469,7 +1461,8 @@ $C(TagName);
 var IdIt=function(dom){
     return dom.id||(dom.id='magix_vf_'+(VframeIdCounter--));
 };
-var ScriptsReg=/<script[^>]*>[\s\S]*?<\/script>/ig
+var ScriptsReg=/<script[^>]*>[\s\S]*?<\/script>/ig;
+var RefLoc;
 /**
  * Vframe类
  * @name Vframe
@@ -1487,7 +1480,7 @@ var ScriptsReg=/<script[^>]*>[\s\S]*?<\/script>/ig
 var Vframe=function(id){
     var me=this;
     me.id=id;
-    me.vId=id+'_v';
+    //me.vId=id+'_v';
     me.cM={};
     me.cC=0;
     me.rC=0;
@@ -1503,9 +1496,11 @@ Mix(Vframe,{
      * 获取根vframe
      * @param {VOM} vom vom对象
      * @return {Vframe}
+     * @private
      */
-    root:function(owner){
+    root:function(owner,refLoc){
         if(!RootVframe){
+            RefLoc=refLoc;
             var e=$(RootId);
             if(!e){
                 e=$C(TagName);
@@ -1575,22 +1570,22 @@ Mix(Mix(Vframe.prototype,Event),{
      * @default false
      * @function
      */
-    useAnimUpdate:Magix.noop,
+    //useAnimUpdate:Magix.noop,
     /**
      * 转场动画时或当view启用刷新动画时，旧的view销毁时调用
      * @function
      */
-    oldViewDestroy:Magix.noop,
+    //oldViewDestroy:Magix.noop,
     /**
      * 转场动画时或当view启用刷新动画时，为新view准备好填充的容器
      * @function
      */
-    prepareNextView:Magix.noop,
+    //prepareNextView:Magix.noop,
     /**
      * 转场动画时或当view启用刷新动画时，新的view创建完成时调用
      * @function
      */
-    newViewCreated:Magix.noop,
+    //newViewCreated:Magix.noop,
     /**
      * 加载对应的view
      * @param {String} viewPath 形如:app/views/home?type=1&page=2 这样的名称
@@ -1605,8 +1600,8 @@ Mix(Mix(Vframe.prototype,Event),{
         }else{
             node._chgd=1;
         }
-        var useTurnaround=me.viewUsable&&me.useAnimUpdate();
-        me.unmountView(useTurnaround,1);
+        //var useTurnaround=me.viewUsable&&me.useAnimUpdate();
+        me.unmountView();
         if(viewPath){
             var path=Magix.pathToObject(viewPath);
             var vn=path.pathname;
@@ -1614,25 +1609,24 @@ Mix(Mix(Vframe.prototype,Event),{
             Magix.libRequire(vn,function(View){
                 if(sign==me.sign){//有可能在view载入后，vframe已经卸载了
                     var vom=me.owner;
-                    BaseView.prepare(View,{
-                        $:$,
-                        path:vn,
-                        vom:vom
-                    });
+                    BaseView.prepare(View);
 
-                    var vId;
+                    /*var vId;
                     if(useTurnaround){
                         vId=me.vId;
                         me.prepareNextView();
                     }else{
                         vId=me.id;
-                    }
+                    }*/
                     var view=new View({
                         owner:me,
-                        id:vId,
-                        vId:me.vId,
-                        vfId:me.id,
-                        location:vom.getLoc()
+                        id:me.id,
+                        $:$,
+                        path:vn,
+                        vom:vom,
+                        //vId:me.vId,
+                        //vfId:me.id,
+                        location:RefLoc
                     });
                     me.view=view;
                     view.on('interact',function(e){//view准备好后触发
@@ -1642,22 +1636,24 @@ Mix(Mix(Vframe.prototype,Event),{
                             Q:为什么在interact中就进行动画，而不是在rendered之后？
                             A:可交互事件发生后，到渲染出来view的界面还是有些时间的，但这段时间可长可短，比如view所需要的数据都在内存中，则整个过程就是同步的，渲染会很快，也有可能每次数据都从服务器拉取（假设时间非常长），这时候渲染显示肯定会慢，如果到rendered后才进行动画，就会有相当长的一个时间停留在前一个view上，无法让用户感觉到程序在运行。通常这时候的另外一个解决办法是，切换到拉取时间较长的view时，这个view会整一个loading动画，也就是保证每个view及时的显示交互或状态内容，这样动画在做转场时，从上一个view转到下一个view时都会有内容，即使下一个view没内容也能及时的显示出白板页面，跟无动画时是一样的，所以这个点是最好的一个触发点
                          */
-                        if(useTurnaround){
+                        /*if(useTurnaround){
                             me.newViewCreated(1);
                         }
-                        
+                        */
                         if(!e.tmpl){
-                            if(!useTurnaround&&node._chgd){
+                            
+                            if(node._chgd){
                                 node.innerHTML=node._tmpl;
                             }
+
                             me.mountZoneVframes(0,0,1);
                         }
                         view.on('rendered',function(){//再绑定rendered
                             //
                             me.mountZoneVframes(0,0,1);
                         });
-                        view.on('prerender',function(e){
-                            me.unmountZoneVframes(0,e.anim);
+                        view.on('prerender',function(){
+                            me.unmountZoneVframes();
                         });
                     },0);
                     viewInitParams=viewInitParams||{};
@@ -1668,23 +1664,21 @@ Mix(Mix(Vframe.prototype,Event),{
     },
     /**
      * 销毁对应的view
-     * @param {Boolean} useAnim 是否启用动画，在启用动画的情况下，需要保持节点内容，不能删除
-     * @param {Boolean} isOutermostView 是否是最外层的view改变，不对内层的view处理
      */
-    unmountView:function(useAnim,isOutermostView){
+    unmountView:function(){
         var me=this;
         if(me.view){
             if(!GlobalAlter)GlobalAlter={caused:me.id};
-            me.unmountZoneVframes(0,useAnim);
-            me.childrenAlter(GlobalAlter);
+            me.unmountZoneVframes();
+            me.cAlter(GlobalAlter);
             me.view.destroy();
             var node=$(me.id);
-            if(!useAnim&&node._bak){
+            if(node&&node._bak){
                 node.innerHTML=node._tmpl;
             }
-            if(useAnim&&isOutermostView){//在动画启用的情况下才调用相关接口
+            /*if(useAnim&&isOutermostView){//在动画启用的情况下才调用相关接口
                 me.oldViewDestroy();
-            }
+            }*/
             delete me.view;
             delete me.viewUsable;
             GlobalAlter=0;
@@ -1727,13 +1721,13 @@ Mix(Mix(Vframe.prototype,Event),{
     mountZoneVframes:function(zoneId,viewInitParams,autoMount){
         var me=this;
         me.unmountZoneVframes(zoneId);
-        var owner=me.owner;
-        var node;
-        if(!zoneId){
-            node=$(me.vId)||$(me.id);
+        //var owner=me.owner;
+        var node=zoneId||me.id;
+       /* if(!zoneId){
+            node=me.id;
         }else{
             node=zoneId;
-        }
+        }*/
         var vframes=$$(node,TagName);
         var count=vframes.length;
         var subs={};
@@ -1761,22 +1755,21 @@ Mix(Mix(Vframe.prototype,Event),{
             }
         }
         if(me.cC==me.rC){//有可能在渲染某个vframe时，里面有n个vframes，但立即调用了mountZoneVframes，这个下面没有vframes，所以要等待
-            me.childrenCreated({});
+            me.cCreated({});
         }
     },
     /**
      * 销毁vframe
-     * @param  {String} id      节点id
-     * @param  {Boolean} useAnim 是否使用动画，使用动画时不销毁DOM节点
+     * @param  {String} [id]      节点id
      */
-    unmountVframe:function(id,useAnim){
+    unmountVframe:function(id){
         var me=this;
         id=id||me.id;
         var vom=me.owner;
         var vf=vom.get(id);
         if(vf){
             var cc=vf.fcc;
-            vf.unmountView(useAnim);
+            vf.unmountView();
             vom.remove(id,cc);
 
             var p=vom.get(vf.pId);
@@ -1788,10 +1781,9 @@ Mix(Mix(Vframe.prototype,Event),{
     },
     /**
      * 销毁某个区域下面的所有子vframes
-     * @param {zoneId} HTMLElement|String 节点对象或id
-     * @param {Boolean} useAnim 是否使用动画，使用动画时DOM节点不销毁
+     * @param {HTMLElement|String} [zoneId]节点对象或id
      */
-    unmountZoneVframes:function(zoneId,useAnim){
+    unmountZoneVframes:function(zoneId){
         var me=this;
         var children;
         if(zoneId){
@@ -1808,7 +1800,7 @@ Mix(Mix(Vframe.prototype,Event),{
             children=me.cM;
         }
         for(var p in children){
-            me.unmountVframe(p,useAnim);
+            me.unmountVframe(p);
         }
         /*if(!zoneId){
             me.cM={};
@@ -1817,8 +1809,9 @@ Mix(Mix(Vframe.prototype,Event),{
     },
     /**
      * 通知所有的子view创建完成
+     * @private
      */
-    childrenCreated:function(e){
+    cCreated:function(e){
         var me=this;
         var view=me.view;
         if(view&&!me.fcc){
@@ -1828,7 +1821,7 @@ Mix(Mix(Vframe.prototype,Event),{
             me.fire(Created,e);
         }
         var vom=me.owner;
-        vom.childCreated();
+        vom.vfCreated();
 
         var mId=me.id;
         var p=vom.get(me.pId);
@@ -1838,14 +1831,15 @@ Mix(Mix(Vframe.prototype,Event),{
             p.rC++
 
             if(p.rC==p.cC){
-                p.childrenCreated(e);
+                p.cCreated(e);
             }
         }
     },
     /**
      * 通知子vframe有变化
+     * @private
      */
-    childrenAlter:function(e){
+    cAlter:function(e){
         var me=this;
         delete me.fcc;
         if(!me.fca){
@@ -1865,7 +1859,7 @@ Mix(Mix(Vframe.prototype,Event),{
                 p.rC--;
                 delete p.rM[mId];
                 if(autoMount){
-                    p.childrenAlter(e);
+                    p.cAlter(e);
                 }
             }
         }        
@@ -1874,8 +1868,9 @@ Mix(Mix(Vframe.prototype,Event),{
      * 通知当前vframe，地址栏发生变化
      * @param {Object} loc window.location.href解析出来的对象
      * @param {Object} chged 包含有哪些变化的对象
+     * @private
      */
-    locationChanged:function(loc,chged){
+    locChged:function(loc,chged){
         var me=this;
         var view=me.view;
         /*
@@ -1914,15 +1909,26 @@ Mix(Mix(Vframe.prototype,Event),{
                 0.3把块放在view中了，在vom中取出vframe，但这块的职责应该在vframe中做才对，view只管显示，vframe负责父子关系
          */
         if(view&&view.sign){
-            view.location=loc;
+            //view.location=loc;
             if(view.rendered){//存在view时才进行广播，对于加载中的可在加载完成后通过调用view.location拿到对应的window.location.href对象，对于销毁的也不需要广播
                 var isChanged=view.olChanged(chged);
+                /**
+                 * 事件对象
+                 * @type {Object}
+                 */
                 var args={
                     location:loc,
                     changed:chged,
+                    /**
+                     * 阻止向所有的子view传递
+                     */
                     prevent:function(){
                         this.cs=[];
                     },
+                    /**
+                     * 向特定的子view传递
+                     * @param  {Array} c 子view数组
+                     */
                     toChildren:function(c){
                         c=c||[];
                         if(Magix.isString(c)){
@@ -1941,31 +1947,9 @@ Mix(Mix(Vframe.prototype,Event),{
                 for(var i=0,j=cs.length,vom=me.owner,vf;i<j;i++){
                     vf=vom.get(cs[i]);
                     if(vf){
-                        vf.locationChanged(loc,chged);
+                        vf.locChged(loc,chged);
                     }
                 }
-            }
-        }
-    },
-    /**
-     * 通知location更新
-     * @param  {Object} loc location
-     */
-    locationUpdated:function(loc){
-        var me=this;
-        var view=me.view;
-        if(view&&view.sign){
-            view.location=loc;
-            var children=me.cM;
-            var vf;
-            var vom=me.owner;
-            for(var p in children){
-                //if(Magix.has(children,p)){
-                    vf=vom.get(p);
-                    if(vf){
-                        vf.locationUpdated(loc);
-                    }
-                //}
             }
         }
     }
@@ -2053,30 +2037,30 @@ Mix(Mix(Vframe.prototype,Event),{
  * @version 1.0
  */
 KISSY.add('magix/view',function(S,Magix,Event,Body,IO){
-    var Mods=S.Env.mods;
-    var StaticWhiteList={
-        wrapAsyn:1,
-        extend:1
-    };
-	
-	var ProcessObject=function(props,proto,enterObject){
-        for(var p in proto){
-            if(S.isObject(proto[p])){
-                if(!Magix.has(props,p))props[p]={};
-                ProcessObject(props[p],proto[p],true);
-            }else if(enterObject){
-                props[p]=proto[p];
-            }
-        }
-    };
+
     
 var SafeExec=Magix.safeExec;
 var Has=Magix.has;
 var COMMA=',';
 var EMPTY_ARRAY=[];
 var MxConfig=Magix.config();
-var VName=/^~[^\/]*/;
+
 var Mix=Magix.mix;
+var WrapAsynUpdateNames=Magix.listToMap('render,renderUI');
+var WrapKey='~';
+var WrapFn=function(fn){
+    return function(){
+        var me=this;
+        var r;
+        if(me.sign){
+            me.sign++;
+            me.fire('rendercall');
+            r=fn.apply(me,arguments);
+        }
+        return r;
+    }
+};
+
 /**
  * View类
  * @name View
@@ -2122,20 +2106,6 @@ var Mix=Magix.mix;
  *      }
  *   }
  */
-var WrapAsynUpdateNames=Magix.listToMap('render,renderUI');
-var WrapKey='~~';
-var WrapFn=function(fn){
-    return function(){
-        var me=this;
-        var r;
-        if(me.sign){
-            me.sign++;
-            me.fire('rendercall');
-            r=fn.apply(me,arguments);
-        }
-        return r;
-    }
-};
 
 
 var View=function(ops){
@@ -2143,7 +2113,7 @@ var View=function(ops){
     Mix(me,ops);
     me.sign=1;//标识view是否刷新过，对于托管的函数资源，在回调这个函数时，不但要确保view没有销毁，而且要确保view没有刷新过，如果刷新过则不回调
 };
-var BaseViewProto=View.prototype;
+
 Mix(View,{
     /**
      * @lends View
@@ -2158,17 +2128,10 @@ Mix(View,{
             view[WrapKey]=1;
             var prop=view.prototype;
             var old;
-            for(var p in prop){
+            for(var p in WrapAsynUpdateNames){
                 old=prop[p];
-                var wrap=null;
-                if(Magix.isFunction(old)&&
-                    old!=Magix.noop&&
-                    !old[WrapKey]&&
-                    Has(WrapAsynUpdateNames,p)
-                ){
-                    wrap=WrapFn(old);
-                    wrap[WrapKey]=old;
-                    prop[p]=wrap;
+                if(Magix.isFunction(old)){
+                    prop[p]=WrapFn(old);
                 }
             }
         }
@@ -2178,7 +2141,13 @@ Mix(View,{
 
 var VProto=View.prototype;
 var CollectGarbage=window.CollectGarbage||Magix.noop;
-var MxEvent=/\smx-[^ohv][a-z]+\s*=/g;
+//var MxEvent=/<(\w+)([\s\S]+?mx-[^ohv][a-z]+\s*=\s*"[^"]")/g;
+var MxEvent=/<[a-z]+(?:[^">]|"[^"]*")+(?=>)/g;
+var MxOwner=/\smx-owner\s*=/;
+var MxEvt=/\smx-[^v][a-z]+\s*=/;
+var MxEFun=function(m){
+    return !MxOwner.test(m)&&MxEvt.test(m)?m+' mx-owner="'+MxEFun.t+'"':m;
+};
 var WEvent={
     prevent:function(e){
         e=e||this.domEvent;
@@ -2215,6 +2184,7 @@ Mix(VProto,{
      * @function
      * @param {String} path 路径
      * @param {Function} fn 获取完成后的回调
+     * @private
      */
     
     /**
@@ -2276,7 +2246,7 @@ Mix(VProto,{
      * view刷新时是否采用动画
      * @type {Boolean}
      */
-    enableAnim:false,
+    //enableAnim:false,
     /**
      * 加载view内容
      * @private
@@ -2286,8 +2256,12 @@ Mix(VProto,{
         var hasTmpl=me.hasTmpl;
         var args=arguments;
         var sign=me.sign;
-        var ready=function(){
+        var tmplReady=Has(me,'template');
+        var ready=function(tmpl){
             if(sign==me.sign){
+                if(!tmplReady){
+                    me.template=me.wrapMxEvent(tmpl);
+                }
                 me.delegateEvents();
                 /*
                     关于interact事件的设计 ：
@@ -2308,57 +2282,39 @@ Mix(VProto,{
                 }
             }
         };
-        if(hasTmpl&&!Has(me,'template')){
-            me.planTmpl(ready);
+        if(hasTmpl&&!tmplReady){
+            me.fetchTmpl(ready);
         }else{
             ready();
         }
     },
     /**
-     * 更新view的id，在启用动画的情况下，内部会做id转换
-     * @private
-     */
-    updateViewId:function(){
-        var me=this;
-        if(me.$(me.vId)){
-            me.id=me.vId;
-        }else{
-            me.id=me.vfId;
-        }
-    },
-    /**
-     * @private
+     * 通知当前view即将开始进行html的更新
      */
     beginUpdateHTML:function(){
         var me=this;
         if(me.sign){
             var isRendered=me.rendered;
             if(isRendered){//渲染过才使用动画
-                var enableAnim=me.enableAnim;//
+                //var enableAnim=me.enableAnim;//
                 //me.fire('refresh',null,true,true);//从最后注册的事件一直清到最先注册的事件
                 me.fire('refresh',0,1);
-                me.fire('prerender',{anim:enableAnim});
-                var owner=me.owner;
-                if(enableAnim){
-                    SafeExec(owner.oldViewDestroy,EMPTY_ARRAY,owner);
-                    SafeExec(owner.prepareNextView,EMPTY_ARRAY,owner);
-                    me.updateViewId();
-                }
+                me.fire('prerender');
             }
         }
     },
     /**
-     * @private
+     * 通知当前view结束html的更新
      */
     endUpdateHTML:function(){
         var me=this;
         if(me.sign){
-            if(me.rendered&&me.enableAnim){
+            /*if(me.rendered&&me.enableAnim){
                 var owner=me.owner;
                 SafeExec(owner.newViewCreated,EMPTY_ARRAY,owner);
-            }
+            }*/
             if(!me.rendered){//触发一次primed事件
-                me.fire('primed',null,1);
+                me.fire('primed',0,1);
             }
             me.rendered=true;
             me.fire('rendered');//可以在rendered事件中访问view.rendered属性
@@ -2366,10 +2322,12 @@ Mix(VProto,{
         }
     },
     /**
-     * @private
+     * 包装mx-event，自动添加mx-owner属性
+     * @param {String} html html字符串
      */
     wrapMxEvent:function(html){
-        return html?String(html).replace(MxEvent,' mx-owner="'+this.vfId+'"$&'):html;
+        MxEFun.t=this.id;
+        return String(html).replace(MxEvent,MxEFun);
     },
     /**
      * 设置view的html内容
@@ -2392,7 +2350,7 @@ Mix(VProto,{
         var me=this;
         me.beginUpdateHTML();
         if(me.sign){
-            me.$(me.id).innerHTML=me.wrapMxEvent(html);
+            me.$(me.id).innerHTML=html;
         }
         me.endUpdateHTML();
     },
@@ -2547,24 +2505,6 @@ Mix(VProto,{
         return r;
     },
     /**
-     * 获取当前view对应的模板
-     * @param {Function} fn 取得模板后的回调方法
-     */
-    planTmpl:function(fn){
-        var me=this;
-        var i=Magix.tmpl(me.path);
-        if(i.h){
-            me.template=i.v;
-            fn();
-        }else{
-            var path=me.home+me.path.replace(VName,'')+'.html';
-            me.fetchTmpl(path,function(t){
-                me.template=Magix.tmpl(me.path,t);
-                fn();
-            },MxConfig.debug);
-        }
-    },
-    /**
      * 处理dom事件
      * @param {Event} e dom事件对象
      * @private
@@ -2582,8 +2522,9 @@ Mix(VProto,{
             var events=me.events;
             if(events){
                 var eventsType=events[domEvent.type];
-                if(WEvent[flag]){
-                    WEvent[flag](domEvent);
+                var fn=WEvent[flag];
+                if(fn){
+                    fn(domEvent);
                 }
                 if(eventsType&&eventsType[evtName]){
                     
@@ -2614,9 +2555,10 @@ Mix(VProto,{
     delegateEvents:function(destroy){
         var me=this;
         var events=me.events;
-        var fn=destroy?Body.detachEvent:Body.attachEvent;
+        var fn=destroy?Body.un:Body.on;
+        var vom=me.vom;
         for(var p in events){
-            fn.call(Body,p);
+            fn.call(Body,p,vom);
         }
     }
     /**
@@ -2870,25 +2812,52 @@ Mix(VProto,{
      * 与prerender不同的是：refresh触发后即删除监听列表
      */
 });
-
-    View.prototype.fetchTmpl=function(path,fn,d){
-        var l=ProcessObject[path];
-        if(l){
-            l.push(fn);
-        }else{
-            l=ProcessObject[path]=[fn];
-            IO({
-                url:path+(d?'?_='+S.now():''),
-                success:function(x){
-                    Magix.safeExec(l,x);
-                    delete ProcessObject[path];
-                },
-                error:function(e,m){
-                    Magix.safeExec(l,m);
-                    delete ProcessObject[path];
-                }
-            });
+    
+    var ProcessObject=function(props,proto,enterObject){
+        for(var p in proto){
+            if(S.isObject(proto[p])){
+                if(!Has(props,p))props[p]={};
+                ProcessObject(props[p],proto[p],1);
+            }else if(enterObject){
+                props[p]=proto[p];
+            }
         }
+    };
+    
+
+    View.prototype.fetchTmpl=function(fn){
+        var me=this;
+        var tmpl=me.template;
+        if(S.isUndefined(tmpl)){
+            var i=Magix.tmpl(me.path);
+            if(i.h){
+                fn(i.v);
+            }else{
+                var file=MxConfig.appHome+me.path+'.html';
+                var l=ProcessObject[file];
+                var onload=function(tmpl){
+                    fn(Magix.tmpl(me.path,tmpl));
+                };
+                if(l){
+                    l.push(onload);
+                }else{
+                    l=ProcessObject[file]=[onload];
+                    IO({
+                        url:file+(MxConfig.debug?'?t='+S.now():''),
+                        success:function(x){
+                            SafeExec(l,x);
+                            delete ProcessObject[file];
+                        },
+                        error:function(e,m){
+                            SafeExec(l,m);
+                            delete ProcessObject[file];
+                        }
+                    });
+                }
+            }
+        }else{
+            fn(tmpl);
+        }        
     };
 
     View.extend=function(props,ctor){
@@ -2896,30 +2865,26 @@ Mix(VProto,{
         var BaseView=function(){
             BaseView.superclass.constructor.apply(this,arguments);
             if(ctor){
-                Magix.safeExec(ctor,arguments,this);
+                SafeExec(ctor,arguments,this);
             }
         }
         BaseView.extend=me.extend;
         return S.extend(BaseView,me,props);
     };
-	View.prepare=function(oView,toProto){
+	View.prepare=function(oView){
         var me=this;
         if(!oView.wrapAsyn){
-            for(var p in me){
-                if(Magix.has(StaticWhiteList,p)){
-                    oView[p]=me[p];
-                }
-            }
+            oView.wrapAsyn=me.wrapAsyn;
+            oView.extend=me.extend;
+
             var aimObject=oView.prototype;
-            var start=oView;
+            var start=oView.superclass;
             var temp;
-            while(start.superclass){
-                temp=start.superclass.constructor;
+            while(start){
+                temp=start.constructor;
                 ProcessObject(aimObject,temp.prototype);
-                start=temp;
+                start=temp.superclass;
             }
-            toProto.home=Mods[toProto.path].packageInfo.getBase();
-            Magix.mix(aimObject,toProto);
         }
         oView.wrapAsyn();
     };
@@ -2931,14 +2896,15 @@ Mix(VProto,{
  * @author 行列
  * @version 1.0
  */
-KISSY.add("magix/vom",function(S,Vframe,Magix,Event,Body){
+KISSY.add("magix/vom",function(S,Vframe,Magix,Event){
     var Has=Magix.has;
+var Mix=Magix.mix;
 var VframesCount=0;
 var FirstVframesLoaded=0;
 var LastPercent=0;
 var FirstReady=0;
 var Vframes={};
-var Loc;
+var Loc={};
 
 /**
  * VOM对象
@@ -2991,20 +2957,17 @@ var VOM=Magix.mix({
         }
     },
     /**
-     * 通知其中的一个view创建完成
+     * 通知其中的一个vframe创建完成
+     * @private
      */
-    childCreated:function(){
+    vfCreated:function(){
         if(!FirstReady){
             FirstVframesLoaded++;
             var np=FirstVframesLoaded/VframesCount;
             if(LastPercent<np){
                 VOM.fire('progress',{
                     percent:LastPercent=np
-                });
-                if(np==1){
-                    FirstReady=1;
-                    VOM.un('progress');
-                }
+                },FirstReady=(np==1));
             }
         }
     },
@@ -3012,48 +2975,33 @@ var VOM=Magix.mix({
      * 获取根vframe对象
      */
     root:function(){
-        return Vframe.root(VOM);
-    },
-    /**
-     * 渲染根vframe
-     * @param {Object} e Router.locationChanged事件对象
-     * @param {Object} e.location window.location.href解析出来的对象
-     * @param {Object} e.changed 包含有哪些变化的对象
-     */
-    mountRoot:function(e){
-        //
-        var vf=VOM.root();
-        //me.$loc=e.location;
-        //
-        Loc=e.location;
-        vf.mountView(Loc.view);
+        return Vframe.root(VOM,Loc);
     },
     /**
      * 向vframe通知地址栏发生变化
      * @param {Object} e 事件对象
      * @param {Object} e.location window.location.href解析出来的对象
      * @param {Object} e.changed 包含有哪些变化的对象
+     * @private
      */
-    locChanged:function(e){
-        Loc=e.location;
-        var vf=VOM.root();
-        vf.locationChanged(Loc,e.changed);
-    },
-    /**
-     * 更新view的location对象
-     * @param  {Object} loc location
-     */
-    locUpdated:function(loc){
-        Loc=loc;
-        var vf=VOM.root();
-        vf.locationUpdated(loc);
-    },
-    /**
-     * 获取window.location.href解析后的对象
-     * @return {Object}
-     */
-    getLoc:function(){
-        return Loc;
+    locChged:function(e){
+        var loc=e.loc;
+        var hack;
+        if(loc){
+            hack=1;
+        }else{
+            loc=e.location;
+        }
+        Mix(Loc,loc);
+        if(!hack){
+            var vf=VOM.root();
+            var chged=e.changed;
+            if(chged.isView()){
+                vf.mountView(loc.view);
+            }else{
+                vf.locChged(loc,chged);
+            }
+        }
     }
     /**
      * view加载完成进度
@@ -3077,17 +3025,9 @@ var VOM=Magix.mix({
      * @param {Vframe} e.vframe
      */
 },Event);
-    Body.VOM=VOM;
-    Body.on('event',function(e){
-        var vframe=VOM.get(e.hld);
-        var view=vframe&&vframe.view;
-        if(view){
-            view.processEvent(e);
-        }
-    });
     return VOM;
 },{
-    requires:["magix/vframe","magix/magix","magix/event","magix/body"]
+    requires:["magix/vframe","magix/magix","magix/event"]
 });/**
  * @fileOverview model管理工厂，可方便的对Model进行缓存和更新
  * @author 行列
@@ -3571,8 +3511,9 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                             if(S.isFunction(a)){
                                 arr.push((function(f){
                                     return function(){
-                                        if(aborted)return;
-                                        f.apply(f,arguments);
+                                        if(!aborted){
+                                            f.apply(f,arguments);
+                                        }
                                     }
                                 }(a)));
                             }else{
@@ -4449,7 +4390,7 @@ KISSY.add("mxext/model",function(S,Magix){
  * @version 1.0
  * @author 行列
  */
-KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
+KISSY.add('mxext/view',function(S,Magix,View,Router){
     var WIN=window;
     
     var DestroyTimer=function(id){
@@ -4482,7 +4423,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                 delete VOMEventsObject[e.vframe.id];
             });
             var vf=vom.root();
-            vf.on('childrenCreated',function(){
+            vf.on('created',function(){
                 VOMEventsObject={};
             });
         }
@@ -4506,6 +4447,13 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
      * @augments View
      */
     var MxView=View.extend({
+        /**
+         * @lends MxView#
+         */
+        /**
+         * 当前view实例化后调用，供子类重写
+         * @function
+         */
         mxViewCtor:Magix.noop,//供扩展用
         /**
          * 调用magix/router的navigate方法
@@ -4514,11 +4462,9 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
             Router.navigate.apply(Router,arguments);
         },
         /**
-         * 让view帮你管理资源，对于异步回调函数更应该调用该方法进行托管
-         * 当调用该方法后，您不需要在异步回调方法内判断当前view是否已经销毁
-         * 同时对于view刷新后，上个异步请求返回刷新界面的问题也得到很好的解决。<b>强烈建议对异步回调函数，组件等进行托管</b>
+         * 让view帮你管理资源，<b>强烈建议对组件等进行托管</b>
          * @param {String|Object} key 托管的资源或要共享的资源标识key
-         * @param {Object} [res] 要托管的资源
+         * @param {Object} res 要托管的资源
          * @return {Object} 返回传入的资源，对于函数会自动进行一次包装
          * @example
          * init:function(){
@@ -4531,7 +4477,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
          *      var _self=this;
          *      var m=new Model();
          *      m.load({
-         *          success:_self.manage(function(resp){//管理匿名函数
+         *          success:function(resp){
          *              //TODO
          *              var brix=new BrixDropdownList();
          *
@@ -4547,11 +4493,13 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
          *              var userList=_self.getManaged('user_list');//通过key取托管的资源
          *
          *              S.log(userList);
-         *          }),
-         *          error:_self.manage(function(msg){
+         *          },
+         *          error:function(msg){
          *              //TODO
-         *          })
-         *      })
+         *          }
+         *      });
+         *
+         *      _self.manage(m);
          * }
          */
         manage:function(key,res){
@@ -4581,7 +4529,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
         /**
          * 获取托管的资源
          * @param {String} key 托管资源时传入的标识key
-         * @return {[type]} [description]
+         * @return {Object}
          */
         getManaged:function(key){
             var me=this;
@@ -4620,10 +4568,9 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
         },
         /**
          * 销毁托管的资源
-         * @param {Boolean} [byRefresh] 是否是刷新时的销毁
          * @private
          */
-        destroyManaged:function(byRefresh){
+        destroyManaged:function(e){
             var me=this;
             var cache=me.$res;
             //
@@ -4638,7 +4585,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                         destroy(res);
                         processed=true;
                     }
-                    if(byRefresh&&!o.hasKey){//如果是刷新且托管时没有给key值，则表示这是一个不会在其它方法内共享托管的资源，view刷新时可以删除掉
+                    if(!o.hasKey){//如果托管时没有给key值，则表示这是一个不会在其它方法内共享托管的资源，view刷新时可以删除掉
                         delete cache[p];
                     }
                     me.fire('destroyManaged',{
@@ -4646,7 +4593,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                         processed:processed
                     });
                 }
-                if(!byRefresh){//如果不是刷新，则是view的销毁
+                if(e.type=='destroy'){//如果不是刷新，则是view的销毁
                     //me.un('destroyResource');
                     delete me.$res;
                 }
@@ -4704,15 +4651,9 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
     },function(){
         var me=this;
         me.on('interact',function(){
-            me.on('rendercall',function(){
-                me.destroyMRequest();
-            });
-            me.on('prerender',function(){
-                me.destroyManaged(true);
-            });
-            me.on('destroy',function(){
-                me.destroyManaged();
-            });
+            me.on('rendercall',me.destroyMRequest);
+            me.on('prerender',me.destroyManaged);
+            me.on('destroy',me.destroyManaged);
         });
         me.mxViewCtor();
     });

@@ -5,7 +5,7 @@
  **/
 KISSY.add('magix/magix',function(S){
 	var Slice=[].slice;
-    var Slash='/';
+
 	var Include=function(path){
 		var magixPackages=S.Config.packages.magix;
         var mPath=magixPackages.base||magixPackages.path;
@@ -22,13 +22,12 @@ KISSY.add('magix/magix',function(S){
         include:Include,
         libRequire:function(name,fn){
             if(name){
-                var isFn=S.isFunction(fn);
-                var isArr=S.isArray(name);
-
-                S.use(isArr?name.join(','):name,isFn?function(S){
-                    fn.apply(S,Slice.call(arguments,1));
-                }:S.noop);
-            }else{
+                S.use(name.toString(),function(S){
+                    if(fn){
+                        fn.apply(S,Slice.call(arguments,1));
+                    }
+                });
+            }else if(fn){
                 fn();
             }
         },
@@ -38,26 +37,26 @@ KISSY.add('magix/magix',function(S){
             var loc=location;
             var protocol=loc.protocol;
             var appName=cfg.appName;
+                
+            appHome=me.path(loc.href,appHome+Slash);
 
-            if(!~appHome.indexOf(protocol)){
-                appHome=me.path(loc.href,appHome);
-            }
-
-            if(!S.endsWith(appHome,Slash)){
+           /* if(!S.endsWith(appHome,Slash)){
                 appHome+=Slash;
-            }
+            }*/
+
             cfg.appHome=appHome;
             var debug=cfg.debug;
+
             if(debug){
-                debug=appHome.indexOf(protocol+'//'+loc.host)==0;
+                debug=appHome.indexOf(loc.protocol+Slash+Slash+loc.host+Slash)==0;
             }
-            if(appName.charAt(0)=='~'){
+            /*if(appName.charAt(0)=='~'){
                 var reg=new RegExp(Slash+appName+Slash);
                 S.config({
                     map:[[reg,Slash]]
                 });
-            }
-            var appTag='';
+            }*/
+            var appTag=EMPTY;
             if(debug){
                 appTag=S.now();
             }else{
@@ -66,16 +65,16 @@ KISSY.add('magix/magix',function(S){
             if(appTag){
                 appTag+='.js';
             }
-            var appCombine=cfg.appCombine;
+           /* var appCombine=cfg.appCombine;
             if(S.isUndefined(appCombine)){
                 appCombine=S.config('combine');
-            }
+            }*/
             S.config({
                 packages:[{
                     name:appName,
                     path:appHome,
                     debug:cfg.debug=debug,
-                    combine:appCombine,
+                    combine:cfg.appCombine,
                     tag:appTag
                 }]
             });

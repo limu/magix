@@ -304,18 +304,6 @@ dl.data .dd{
                                             
                                                 
                                                     <li class="li">
-                                                        <b class="name"><a href="../symbols/View.html#enableAnim">enableAnim</a></b>
-                                                        
-                                                        
-                                                        
-                                                        
-                                                        
-                                                        <span class="desc">view刷新时是否采用动画</span>
-                                                    </li>
-                                                
-                                            
-                                                
-                                                    <li class="li">
                                                         <b class="name"><a href="../symbols/View.html#enableEvent">enableEvent</a></b>
                                                         
                                                         
@@ -480,9 +468,6 @@ dl.data .dd{
                                                 
 
                                             
-                                                
-
-                                            
                                             </ul>
                                         </div>
                                      </div>
@@ -503,12 +488,22 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#fetchTmpl">fetchTmpl</a></b>
-                                                <span class="param">(path, fn)</span>
+                                                <b class="name"><a href="../symbols/View.html#beginUpdateHTML">beginUpdateHTML</a></b>
+                                                <span class="param">()</span>
                                                 
                                                 
                                                 
-                                                <span class="desc">使用xhr获取当前view对应的模板内容，仅在开发app阶段时使用，打包上线后html与js打包在一起，不会调用这个方法</span>                                                
+                                                <span class="desc">通知当前view即将开始进行html的更新</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                
+                                                <b class="name"><a href="../symbols/View.html#endUpdateHTML">endUpdateHTML</a></b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">通知当前view结束html的更新</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -573,16 +568,6 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#planTmpl">planTmpl</a></b>
-                                                <span class="param">(fn)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">获取当前view对应的模板</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/View.html#render">render</a></b>
                                                 <span class="param">()</span>
                                                 
@@ -609,6 +594,16 @@ dl.data .dd{
                                                 
                                                 
                                                 <span class="desc">解除事件绑定</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                
+                                                <b class="name"><a href="../symbols/View.html#wrapMxEvent">wrapMxEvent</a></b>
+                                                <span class="param">(html)</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">包装mx-event，自动添加mx-owner属性</span>                                                
                                             </li>
                                             
                                         </ul>
@@ -785,28 +780,6 @@ dl.data .dd{
 				<h3>
 					Property Detail
 				</h3>
-				
-					<a name="enableAnim"> </a>
-					<div class="fixedFont">
-
-					
-					<b class="name">enableAnim</b>
-                     
-					</div>
-					<div class="desc">
-						view刷新时是否采用动画
-						
-						
-					</div>
-
-					
-
-						
-						
-						
-						
-
-					<hr />
 				
 					<a name="enableEvent"> </a>
 					<div class="fixedFont">
@@ -1059,18 +1032,18 @@ dl.data .dd{
                                     <ul class="list detail-list">
                                         
                                         <li class="li">
-                                            <a name="fetchTmpl"> </a>
+                                            <a name="beginUpdateHTML"> </a>
                                             <div class="title" >
                                                 
-                                                <b class="name">fetchTmpl</b>
-                                                <span class="param">(path, fn)</span>
+                                                <b class="name">beginUpdateHTML</b>
+                                                <span class="param">()</span>
                                                 
                                                 
                                                 
                                             </div>
 
                                             <div class="desc">
-                                                使用xhr获取当前view对应的模板内容，仅在开发app阶段时使用，打包上线后html与js打包在一起，不会调用这个方法
+                                                通知当前view即将开始进行html的更新
                                                 
                                                 
                                             </div>
@@ -1078,30 +1051,43 @@ dl.data .dd{
                                             <dl>                                            
                                                 
                                                 
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">path</b>
-                                                            
-                                                            
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">路径</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">fn</b>
-                                                            
-                                                            
-                                                            <span class="type">{Function}</span> 
-                                                            <span class="desc">获取完成后的回调</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name="endUpdateHTML"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">endUpdateHTML</b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                通知当前view结束html的更新
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
                                                 
                                                 
                                                 
@@ -1525,60 +1511,6 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="planTmpl"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">planTmpl</b>
-                                                <span class="param">(fn)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                获取当前view对应的模板
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">fn</b>
-                                                            
-                                                            
-                                                            <span class="type">{Function}</span> 
-                                                            <span class="desc">取得模板后的回调方法</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
                                             <a name="render"> </a>
                                             <div class="title" >
                                                 
@@ -1712,6 +1644,60 @@ dl.data .dd{
                                                             
                                                             <span class="type">{Function}</span> 
                                                             <span class="desc">事件回调</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name="wrapMxEvent"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">wrapMxEvent</b>
+                                                <span class="param">(html)</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                包装mx-event，自动添加mx-owner属性
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">html</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">html字符串</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -2233,7 +2219,6 @@ dl.data .dd{
             <li><a href="../symbols/MxView.html">MxView</a></li>
             <li><a href="../symbols/MManager.html">MManager</a></li>
             <li><a href="../symbols/MRequest.html">MRequest</a></li>
-            <li><a href="../symbols/VfAnim.html">VfAnim</a></li>
         </ul>
     </div>
 </div>

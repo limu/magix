@@ -7,8 +7,8 @@ KISSY.add("mxext/router",function(S,R,E){
         E.on(W,'popstate',function(e){
             var newHref=location.href;
             var equal=newHref==initialURL;
-            if(!me.popFired&&equal)return;
-            me.popFired=true;
+            if(!me.poped&&equal)return;
+            me.poped=1;
             if(newHash!=lastHref){
                 e={
                     backward:function(){

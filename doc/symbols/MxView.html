@@ -310,6 +310,93 @@ dl.data .dd{
                             
                                 
                                 
+                                <div class="box methods-box">
+                                    <div class="box-hd">
+                                        <h3>Methods</h3>
+                                    </div>
+                                    <div class="box-bd">
+                                        <ul class="list summary-list">
+                                            
+                                            <li class="li">                                                
+                                                
+                                                <b class="name"><a href="../symbols/MxView.html#getManaged">getManaged</a></b>
+                                                <span class="param">(key)</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">获取托管的资源</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                
+                                                <b class="name"><a href="../symbols/MxView.html#manage">manage</a></b>
+                                                <span class="param">(key, res)</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">让view帮你管理资源，<b>强烈建议对组件等进行托管</b></span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                
+                                                <b class="name"><a href="../symbols/MxView.html#mxViewCtor">mxViewCtor</a></b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">当前view实例化后调用，供子类重写</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                
+                                                <b class="name"><a href="../symbols/MxView.html#navigate">navigate</a></b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">调用magix/router的navigate方法</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                
+                                                <b class="name"><a href="../symbols/MxView.html#postMessageTo">postMessageTo</a></b>
+                                                <span class="param">(aims, args)</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">向某个vframe发送消息</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                
+                                                <b class="name"><a href="../symbols/MxView.html#receiveMessage">receiveMessage</a></b>
+                                                <span class="param">(e)</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">用于接受其它view通过postMessageTo方法发来的消息，供最终的view开发人员进行覆盖</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                
+                                                <b class="name"><a href="../symbols/MxView.html#removeManaged">removeManaged</a></b>
+                                                <span class="param">(param)</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">移除托管的资源</span>                                                
+                                            </li>
+                                            
+                                        </ul>
+                                        
+                                        <hr/>
+                                        <ul class="summary-list">
+                                        <li>Methods borrowed from class <a href="../symbols/View.html">View</a>: <a href="../symbols/View.html#beginUpdateHTML">beginUpdateHTML</a>, <a href="../symbols/View.html#endUpdateHTML">endUpdateHTML</a>, <a href="../symbols/View.html#fire">fire</a>, <a href="../symbols/View.html#init">init</a>, <a href="../symbols/View.html#locationChange">locationChange</a>, <a href="../symbols/View.html#observeLocation">observeLocation</a>, <a href="../symbols/View.html#on">on</a>, <a href="../symbols/View.html#parentView">parentView</a>, <a href="../symbols/View.html#render">render</a>, <a href="../symbols/View.html#setViewHTML">setViewHTML</a>, <a href="../symbols/View.html#un">un</a>, <a href="../symbols/View.html#wrapMxEvent">wrapMxEvent</a></li>
+                                        </ul>
+                                        
+                                    </div>
+                                </div>
+                                
                             
                             <!-- methods END -->
                             
@@ -400,6 +487,424 @@ dl.data .dd{
                             <!-- properties detail END -->
 
                             <!-- methods detail START -->
+                            
+                            <div class="box">
+                                <div class="box-hd">
+                                    <h3>Methods Detail</h3>
+                                </div>
+                                <div class="box-bd">
+                                    <ul class="list detail-list">
+                                        
+                                        <li class="li">
+                                            <a name="getManaged"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">getManaged</b>
+                                                <span class="param">(key)</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                获取托管的资源
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">key</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">托管资源时传入的标识key</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    
+                                                        <li class="li">
+                                                            <span class="type">{Object}</span> 
+                                                            <span></span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name="manage"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">manage</b>
+                                                <span class="param">(key, res)</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                让view帮你管理资源，<b>强烈建议对组件等进行托管</b>
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">key</b>
+                                                            
+                                                            
+                                                            <span class="type">{String|Object}</span> 
+                                                            <span class="desc">托管的资源或要共享的资源标识key</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">res</b>
+                                                            
+                                                            
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">要托管的资源</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    
+                                                        <li class="li">
+                                                            <span class="type">{Object}</span> 
+                                                            <span>返回传入的资源，对于函数会自动进行一次包装</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">init:function(){     this.manage('user_list',[//管理对象资源         {id:1,name:'a'},         {id:2,name:'b'}     ]);},render:function(){     var _self=this;     var m=new Model();     m.load({         success:function(resp){             //TODO             var brix=new BrixDropdownList();             _self.manage(brix);//管理组件             var pagination=_self.manage(new BrixPagination());//也可以这样             var timer=_self.manage(setTimeout(function(){                 S.log('timer');             },2000));//也可以管理定时器                          var userList=_self.getManaged('user_list');//通过key取托管的资源             S.log(userList);         },         error:function(msg){             //TODO         }     });     _self.manage(m);}</pre>
+                                                        
+                                                </dd>
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name="mxViewCtor"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">mxViewCtor</b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                当前view实例化后调用，供子类重写
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name="navigate"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">navigate</b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                调用magix/router的navigate方法
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name="postMessageTo"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">postMessageTo</b>
+                                                <span class="param">(aims, args)</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                向某个vframe发送消息
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">aims</b>
+                                                            
+                                                            
+                                                            <span class="type">{Array|String}</span> 
+                                                            <span class="desc">目标vframe id数组</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">args</b>
+                                                            
+                                                            
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">消息对象</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name="receiveMessage"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">receiveMessage</b>
+                                                <span class="param">(e)</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                用于接受其它view通过postMessageTo方法发来的消息，供最终的view开发人员进行覆盖
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">e</b>
+                                                            
+                                                            
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">通过postMessageTo传递的第二个参数</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name="removeManaged"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">removeManaged</b>
+                                                <span class="param">(param)</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                移除托管的资源
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">param</b>
+                                                            
+                                                            
+                                                            <span class="type">{String|Object}</span> 
+                                                            <span class="desc">托管时标识key或托管的对象</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    
+                                                        <li class="li">
+                                                            <span class="type">{Object}</span> 
+                                                            <span>返回移除的资源</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
                             
                             <!-- methods detail END -->
 
@@ -517,7 +1022,6 @@ dl.data .dd{
             <li><a href="../symbols/MxView.html">MxView</a></li>
             <li><a href="../symbols/MManager.html">MManager</a></li>
             <li><a href="../symbols/MRequest.html">MRequest</a></li>
-            <li><a href="../symbols/VfAnim.html">VfAnim</a></li>
         </ul>
     </div>
 </div>

@@ -1,4 +1,4 @@
-KISSY.add("~seed/app/views/default", function(S, View, VOM, UA, Node) {
+KISSY.add("app/views/default", function(S, View, VOM, UA, Node) {
     return View.extend({
         init: function() {
             var me = this;
@@ -22,11 +22,11 @@ KISSY.add("~seed/app/views/default", function(S, View, VOM, UA, Node) {
                     me.unfixLowerIE();
                 });
             }
-            me.on('childrenAlter', function(e) {
+            me.on('alter', function(e) {
                 //console.log('正在加载页面...');
                 //bar.show('正在加载页面...');
             });
-            me.on('childrenCreated', function(e) {
+            me.on('created', function(e) {
                 //bar.hide()
             });
         },
@@ -53,6 +53,7 @@ KISSY.add("~seed/app/views/default", function(S, View, VOM, UA, Node) {
         },
         render: function() {
             var me = this;
+            console.log(this);
             me.setViewPagelet({
                 //数据对象
             }, function() {
@@ -73,7 +74,8 @@ KISSY.add("~seed/app/views/default", function(S, View, VOM, UA, Node) {
                 if (S.endsWith(view, '/')) {
                     view += 'index';
                 }
-                var viewPath = '~seed/app/views/' + folder + '/' + view;
+                var viewPath = 'app/views/' + folder + '/' + view;
+                console.log(viewPath);
                 vframe.mountView(viewPath);
             }
         },

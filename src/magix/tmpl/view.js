@@ -4,8 +4,23 @@ var Has=Magix.has;
 var COMMA=',';
 var EMPTY_ARRAY=[];
 var MxConfig=Magix.config();
-var VName=/^~[^\/]*/;
+
 var Mix=Magix.mix;
+var WrapAsynUpdateNames=Magix.listToMap('render,renderUI');
+var WrapKey='~';
+var WrapFn=function(fn){
+    return function(){
+        var me=this;
+        var r;
+        if(me.sign){
+            me.sign++;
+            me.fire('rendercall');
+            r=fn.apply(me,arguments);
+        }
+        return r;
+    }
+};
+
 /**
  * View类
  * @name View
@@ -51,20 +66,6 @@ var Mix=Magix.mix;
  *      }
  *   }
  */
-var WrapAsynUpdateNames=Magix.listToMap('render,renderUI');
-var WrapKey='~~';
-var WrapFn=function(fn){
-    return function(){
-        var me=this;
-        var r;
-        if(me.sign){
-            me.sign++;
-            me.fire('rendercall');
-            r=fn.apply(me,arguments);
-        }
-        return r;
-    }
-};
 
 
 var View=function(ops){
@@ -72,7 +73,7 @@ var View=function(ops){
     Mix(me,ops);
     me.sign=1;//标识view是否刷新过，对于托管的函数资源，在回调这个函数时，不但要确保view没有销毁，而且要确保view没有刷新过，如果刷新过则不回调
 };
-var BaseViewProto=View.prototype;
+
 Mix(View,{
     /**
      * @lends View
@@ -87,17 +88,10 @@ Mix(View,{
             view[WrapKey]=1;
             var prop=view.prototype;
             var old;
-            for(var p in prop){
+            for(var p in WrapAsynUpdateNames){
                 old=prop[p];
-                var wrap=null;
-                if(Magix.isFunction(old)&&
-                    old!=Magix.noop&&
-                    !old[WrapKey]&&
-                    Has(WrapAsynUpdateNames,p)
-                ){
-                    wrap=WrapFn(old);
-                    wrap[WrapKey]=old;
-                    prop[p]=wrap;
+                if(Magix.isFunction(old)){
+                    prop[p]=WrapFn(old);
                 }
             }
         }
@@ -107,7 +101,13 @@ Mix(View,{
 
 var VProto=View.prototype;
 var CollectGarbage=window.CollectGarbage||Magix.noop;
-var MxEvent=/\smx-[^ohv][a-z]+\s*=/g;
+//var MxEvent=/<(\w+)([\s\S]+?mx-[^ohv][a-z]+\s*=\s*"[^"]")/g;
+var MxEvent=/<[a-z]+(?:[^">]|"[^"]*")+(?=>)/g;
+var MxOwner=/\smx-owner\s*=/;
+var MxEvt=/\smx-[^v][a-z]+\s*=/;
+var MxEFun=function(m){
+    return !MxOwner.test(m)&&MxEvt.test(m)?m+' mx-owner="'+MxEFun.t+'"':m;
+};
 var WEvent={
     prevent:function(e){
         e=e||this.domEvent;
@@ -144,6 +144,7 @@ Mix(VProto,{
      * @function
      * @param {String} path 路径
      * @param {Function} fn 获取完成后的回调
+     * @private
      */
     fetchTmpl:Magix.unimpl,
     /**
@@ -205,7 +206,7 @@ Mix(VProto,{
      * view刷新时是否采用动画
      * @type {Boolean}
      */
-    enableAnim:false,
+    //enableAnim:false,
     /**
      * 加载view内容
      * @private
@@ -215,8 +216,12 @@ Mix(VProto,{
         var hasTmpl=me.hasTmpl;
         var args=arguments;
         var sign=me.sign;
-        var ready=function(){
+        var tmplReady=Has(me,'template');
+        var ready=function(tmpl){
             if(sign==me.sign){
+                if(!tmplReady){
+                    me.template=me.wrapMxEvent(tmpl);
+                }
                 me.delegateEvents();
                 /*
                     关于interact事件的设计 ：
@@ -237,57 +242,39 @@ Mix(VProto,{
                 }
             }
         };
-        if(hasTmpl&&!Has(me,'template')){
-            me.planTmpl(ready);
+        if(hasTmpl&&!tmplReady){
+            me.fetchTmpl(ready);
         }else{
             ready();
         }
     },
     /**
-     * 更新view的id，在启用动画的情况下，内部会做id转换
-     * @private
-     */
-    updateViewId:function(){
-        var me=this;
-        if(me.$(me.vId)){
-            me.id=me.vId;
-        }else{
-            me.id=me.vfId;
-        }
-    },
-    /**
-     * @private
+     * 通知当前view即将开始进行html的更新
      */
     beginUpdateHTML:function(){
         var me=this;
         if(me.sign){
             var isRendered=me.rendered;
             if(isRendered){//渲染过才使用动画
-                var enableAnim=me.enableAnim;//
+                //var enableAnim=me.enableAnim;//
                 //me.fire('refresh',null,true,true);//从最后注册的事件一直清到最先注册的事件
                 me.fire('refresh',0,1);
-                me.fire('prerender',{anim:enableAnim});
-                var owner=me.owner;
-                if(enableAnim){
-                    SafeExec(owner.oldViewDestroy,EMPTY_ARRAY,owner);
-                    SafeExec(owner.prepareNextView,EMPTY_ARRAY,owner);
-                    me.updateViewId();
-                }
+                me.fire('prerender');
             }
         }
     },
     /**
-     * @private
+     * 通知当前view结束html的更新
      */
     endUpdateHTML:function(){
         var me=this;
         if(me.sign){
-            if(me.rendered&&me.enableAnim){
+            /*if(me.rendered&&me.enableAnim){
                 var owner=me.owner;
                 SafeExec(owner.newViewCreated,EMPTY_ARRAY,owner);
-            }
+            }*/
             if(!me.rendered){//触发一次primed事件
-                me.fire('primed',null,1);
+                me.fire('primed',0,1);
             }
             me.rendered=true;
             me.fire('rendered');//可以在rendered事件中访问view.rendered属性
@@ -295,10 +282,12 @@ Mix(VProto,{
         }
     },
     /**
-     * @private
+     * 包装mx-event，自动添加mx-owner属性
+     * @param {String} html html字符串
      */
     wrapMxEvent:function(html){
-        return html?String(html).replace(MxEvent,' mx-owner="'+this.vfId+'"$&'):html;
+        MxEFun.t=this.id;
+        return String(html).replace(MxEvent,MxEFun);
     },
     /**
      * 设置view的html内容
@@ -321,7 +310,7 @@ Mix(VProto,{
         var me=this;
         me.beginUpdateHTML();
         if(me.sign){
-            me.$(me.id).innerHTML=me.wrapMxEvent(html);
+            me.$(me.id).innerHTML=html;
         }
         me.endUpdateHTML();
     },
@@ -476,24 +465,6 @@ Mix(VProto,{
         return r;
     },
     /**
-     * 获取当前view对应的模板
-     * @param {Function} fn 取得模板后的回调方法
-     */
-    planTmpl:function(fn){
-        var me=this;
-        var i=Magix.tmpl(me.path);
-        if(i.h){
-            me.template=i.v;
-            fn();
-        }else{
-            var path=me.home+me.path.replace(VName,'')+'.html';
-            me.fetchTmpl(path,function(t){
-                me.template=Magix.tmpl(me.path,t);
-                fn();
-            },MxConfig.debug);
-        }
-    },
-    /**
      * 处理dom事件
      * @param {Event} e dom事件对象
      * @private
@@ -511,8 +482,9 @@ Mix(VProto,{
             var events=me.events;
             if(events){
                 var eventsType=events[domEvent.type];
-                if(WEvent[flag]){
-                    WEvent[flag](domEvent);
+                var fn=WEvent[flag];
+                if(fn){
+                    fn(domEvent);
                 }
                 if(eventsType&&eventsType[evtName]){
                     
@@ -543,9 +515,10 @@ Mix(VProto,{
     delegateEvents:function(destroy){
         var me=this;
         var events=me.events;
-        var fn=destroy?Body.detachEvent:Body.attachEvent;
+        var fn=destroy?Body.un:Body.on;
+        var vom=me.vom;
         for(var p in events){
-            fn.call(Body,p);
+            fn.call(Body,p,vom);
         }
     }
     /**

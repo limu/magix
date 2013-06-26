@@ -47,7 +47,6 @@
         <copy todir="${debug.dir}">
             <fileset dir="${src.dir}">
                 <exclude name="**/magix_start.js" />
-                <exclude name="**/vfanim.js" />
                 <exclude name="**/mxext/router.js" />
             </fileset>
         </copy>
@@ -147,7 +146,6 @@
         <copy todir="${docsrc.dir}">
             <fileset dir="${build.dir}/debug" />
         </copy>
-        <copyfile src="${src.dir}/mxext/kissy/mxext/vfanim.js" dest="${docsrc.dir}/mxext/kissy/mxext/vfanim.js"></copyfile>
         <delete dir="${docsrc.dir}" includes="**/kissy-magix.js"></delete>
         <delete dir="${docsrc.dir}" includes="kissy-magix-core.js"></delete>
         <delete dir="${docsrc.dir}" includes="kissy-mxext.js"></delete>
@@ -204,7 +202,6 @@
         <delete dir="${debug.dir}" includes="kissy-magix-mxext.js"></delete>
         <delete dir="${debug.dir}/magix/tmpl"></delete>
         <copyfile src="${src.dir}/magix/kissy/magix/magix_start.js" dest="${debug.dir}/magix/kissy/magix/magix_start.js"></copyfile>
-        <copyfile src="${src.dir}/mxext/kissy/mxext/vfanim.js" dest="${debug.dir}/mxext/kissy/mxext/vfanim.js"></copyfile>
         <copyfile src="${src.dir}/mxext/kissy/mxext/router.js" dest="${debug.dir}/mxext/kissy/mxext/router.js"></copyfile>
     </target>
     <target name="copy_file_to_seed">

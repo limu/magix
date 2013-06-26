@@ -6,20 +6,17 @@
 KISSY.add('magix/router',function(S,Magix,Event,SE){
     eval(Magix.include('../tmpl/router'));
     Router.useState=function(){
-        var me=this,initialURL=location.href;
+        var me=Router,initialURL=location.href;
         SE.on(WIN,'popstate',function(e){
             var equal=location.href==initialURL;
-            if(!me.popFired&&equal)return;
-            me.popFired=1;
+            if(!me.poped&&equal)return;
+            me.poped=1;
             console.log('push?',e.type,e.state);
             me.route();
         });
     };
     Router.useHash=function(){//extension impl change event
-        var me=this;
-        SE.on(WIN,'hashchange',function(e){
-            me.route();
-        });
+        SE.on(WIN,'hashchange',Router.route);
     };
     return Router;
 },{

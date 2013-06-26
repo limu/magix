@@ -1,4 +1,4 @@
-KISSY.add("~seed/app/models/modelmanager",function(S,BaseManager,Model){
+KISSY.add("app/models/modelmanager",function(S,BaseManager,Model){
     var Manager=BaseManager.create(Model);
     Manager.registerModels([
         //查询当前是否有需要确认的协议
@@ -37,5 +37,5 @@ KISSY.add("~seed/app/models/modelmanager",function(S,BaseManager,Model){
     ]);
     return Manager;
 },{
-    requires:["mxext/mmanager","~seed/app/models/model"]
+    requires:["mxext/mmanager","app/models/model"]
 });

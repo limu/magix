@@ -22,12 +22,12 @@ var GetSetAttribute=function(dom,attrKey,attrVal){
     }
     return attrVal;
 };
-var Body=Mix({
-    onUnbubble:Magix.unimpl,
-    offUnbubble:Magix.unimpl,
+var VOM;
+var Body={
+    unbubble:Magix.unimpl,
 
-    processEvent:function(e){
-        var me=this;
+    process:function(e){
+        var me=Body;
         var target=e.target||e.srcElement;
         while(target&&target.nodeType!=1){
             target=target.parentNode;
@@ -57,7 +57,7 @@ var Body=Mix({
                 var handler=GetSetAttribute(current,MxOwner);//current.getAttribute(MxOwner);
                 if(!handler){//如果没有则找最近的vframe
                     var begin=current;
-                    var vfs=me.VOM.all();
+                    var vfs=VOM.all();
                     while(begin&&begin!=RootNode){
                         if(Has(vfs,begin.id)){
                             GetSetAttribute(current,MxOwner,handler=begin.id);
@@ -69,13 +69,17 @@ var Body=Mix({
                     }
                 }
                 if(handler){//有处理的vframe,派发事件，让对应的vframe进行处理
-                    me.fire('event',{
-                        info:info,
-                        se:e,
-                        tId:IdIt(target),
-                        cId:IdIt(current),
-                        hld:handler
-                    });
+                    
+                    var vframe=VOM.get(handler);
+                    var view=vframe&&vframe.view;
+                    if(view){
+                        view.processEvent({
+                            info:info,
+                            se:e,
+                            tId:IdIt(target),
+                            cId:IdIt(current)
+                        });
+                    }
                 }else{
                     throw Error('miss '+MxOwner+':'+info);
                 }
@@ -94,25 +98,26 @@ var Body=Mix({
             }
         }
     },
-    attachEvent:function(type){
+    on:function(type,vom){
         var me=this;
         if(!RootEvents[type]){
 
+            VOM=vom;
             RootEvents[type]=1;
             var unbubble=UnsupportBubble[type];
             if(unbubble){
-                me.onUnbubble(RootNode,type);
+                me.unbubble(0,RootNode,type);
             }else{
                 RootNode['on'+type]=function(e){
                     e=e||window.event;
-                    e&&me.processEvent(e);
+                    e&&me.process(e);
                 }
             }
         }else{
             RootEvents[type]++;
         }
     },
-    detachEvent:function(type){
+    un:function(type){
         var me=this;
         var counter=RootEvents[type];
         if(counter>0){
@@ -120,7 +125,7 @@ var Body=Mix({
             if(!counter){
                 var unbubble=UnsupportBubble[type];
                 if(unbubble){
-                    me.offUnbubble(RootNode,type);
+                    me.unbubble(1,RootNode,type);
                 }else{
                     RootNode['on'+type]=null;
                 }
@@ -128,4 +133,4 @@ var Body=Mix({
             RootEvents[type]=counter;
         }
     }
-},Event);
+};

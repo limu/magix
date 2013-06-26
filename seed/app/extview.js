@@ -1,4 +1,4 @@
-KISSY.add("~seed/app/extview",function(S,MV){
+KISSY.add("app/extview",function(S,MV){
 
 	var ViewModel = function(config) {
 		ViewModel.superclass.constructor.call(this, config);
@@ -71,6 +71,15 @@ KISSY.add("~seed/app/extview",function(S,MV){
 
 	var Pagelet;
 	var WIN=window;
+    var GetPagelet=function(fn){
+        if(Pagelet){
+            fn(Pagelet);
+        }else{
+            S.use('brix/core/pagelet',function(S,P){
+                fn(Pagelet=P);
+            });
+        }
+    };
     S.mix(MV.prototype,{
         /**
          * 设置view的pagelet，与brix深度整合
@@ -107,15 +116,6 @@ KISSY.add("~seed/app/extview",function(S,MV){
         setViewPagelet:function(data,ready){
             var me=this;
             var sign=me.sign;
-            var getPagelet=function(fn){
-                if(Pagelet){
-                    fn(Pagelet);
-                }else{
-                    S.use('brix/core/pagelet',function(S,P){
-                        fn(Pagelet=P);
-                    });
-                }
-            };
             var pagelet=me.getManaged('pagelet');
             if(pagelet){
                 pagelet.ready(function(){
@@ -130,14 +130,14 @@ KISSY.add("~seed/app/extview",function(S,MV){
                     return;
                 }
                 me.$pageletQueue=[];
-                getPagelet(function(Pglt){
+                GetPagelet(function(Pglt){
                     if(sign==me.sign){
                         S.one('#'+me.id).html('');
                         me.beginUpdateHTML();
                         pagelet=new Pglt({
                             container: '#' + me.id,
-                            tmpl: me.wrapMxEvent(me.template),
-                            data: me.wrapMustachData(data),
+                            tmpl: me.template,
+                            data: data,
                             destroyAction:'empty'
                         });
                         me.endUpdateHTML();
@@ -164,26 +164,6 @@ KISSY.add("~seed/app/extview",function(S,MV){
                     }
                 });
             }
-        },
-        wrapMustachData:function(data){
-            var self = this,
-                rr = this.renderer,
-                mcName, wrapperName;
-            if (rr) {
-                for (mcName in rr) {
-                    for (wrapperName in rr[mcName]) {
-                        (function() {
-                            var mn = mcName,
-                                wn = wrapperName;
-                            var fn = rr[mn][wn];
-                            data[mn + "_" + wn] = function() {
-                                return fn.call(this, self, mn);
-                            };
-                        })();
-                    }
-                }
-            }
-            return data;
         },
         mxViewCtor:function(){
             var me=this;

@@ -29,7 +29,8 @@ $C(TagName);
 var IdIt=function(dom){
     return dom.id||(dom.id='magix_vf_'+(VframeIdCounter--));
 };
-var ScriptsReg=/<script[^>]*>[\s\S]*?<\/script>/ig
+var ScriptsReg=/<script[^>]*>[\s\S]*?<\/script>/ig;
+var RefLoc;
 /**
  * Vframe类
  * @name Vframe
@@ -47,7 +48,7 @@ var ScriptsReg=/<script[^>]*>[\s\S]*?<\/script>/ig
 var Vframe=function(id){
     var me=this;
     me.id=id;
-    me.vId=id+'_v';
+    //me.vId=id+'_v';
     me.cM={};
     me.cC=0;
     me.rC=0;
@@ -63,9 +64,11 @@ Mix(Vframe,{
      * 获取根vframe
      * @param {VOM} vom vom对象
      * @return {Vframe}
+     * @private
      */
-    root:function(owner){
+    root:function(owner,refLoc){
         if(!RootVframe){
+            RefLoc=refLoc;
             var e=$(RootId);
             if(!e){
                 e=$C(TagName);
@@ -135,22 +138,22 @@ Mix(Mix(Vframe.prototype,Event),{
      * @default false
      * @function
      */
-    useAnimUpdate:Magix.noop,
+    //useAnimUpdate:Magix.noop,
     /**
      * 转场动画时或当view启用刷新动画时，旧的view销毁时调用
      * @function
      */
-    oldViewDestroy:Magix.noop,
+    //oldViewDestroy:Magix.noop,
     /**
      * 转场动画时或当view启用刷新动画时，为新view准备好填充的容器
      * @function
      */
-    prepareNextView:Magix.noop,
+    //prepareNextView:Magix.noop,
     /**
      * 转场动画时或当view启用刷新动画时，新的view创建完成时调用
      * @function
      */
-    newViewCreated:Magix.noop,
+    //newViewCreated:Magix.noop,
     /**
      * 加载对应的view
      * @param {String} viewPath 形如:app/views/home?type=1&page=2 这样的名称
@@ -165,8 +168,8 @@ Mix(Mix(Vframe.prototype,Event),{
         }else{
             node._chgd=1;
         }
-        var useTurnaround=me.viewUsable&&me.useAnimUpdate();
-        me.unmountView(useTurnaround,1);
+        //var useTurnaround=me.viewUsable&&me.useAnimUpdate();
+        me.unmountView();
         if(viewPath){
             var path=Magix.pathToObject(viewPath);
             var vn=path.pathname;
@@ -174,25 +177,24 @@ Mix(Mix(Vframe.prototype,Event),{
             Magix.libRequire(vn,function(View){
                 if(sign==me.sign){//有可能在view载入后，vframe已经卸载了
                     var vom=me.owner;
-                    BaseView.prepare(View,{
-                        $:$,
-                        path:vn,
-                        vom:vom
-                    });
+                    BaseView.prepare(View);
 
-                    var vId;
+                    /*var vId;
                     if(useTurnaround){
                         vId=me.vId;
                         me.prepareNextView();
                     }else{
                         vId=me.id;
-                    }
+                    }*/
                     var view=new View({
                         owner:me,
-                        id:vId,
-                        vId:me.vId,
-                        vfId:me.id,
-                        location:vom.getLoc()
+                        id:me.id,
+                        $:$,
+                        path:vn,
+                        vom:vom,
+                        //vId:me.vId,
+                        //vfId:me.id,
+                        location:RefLoc
                     });
                     me.view=view;
                     view.on('interact',function(e){//view准备好后触发
@@ -202,22 +204,24 @@ Mix(Mix(Vframe.prototype,Event),{
                             Q:为什么在interact中就进行动画，而不是在rendered之后？
                             A:可交互事件发生后，到渲染出来view的界面还是有些时间的，但这段时间可长可短，比如view所需要的数据都在内存中，则整个过程就是同步的，渲染会很快，也有可能每次数据都从服务器拉取（假设时间非常长），这时候渲染显示肯定会慢，如果到rendered后才进行动画，就会有相当长的一个时间停留在前一个view上，无法让用户感觉到程序在运行。通常这时候的另外一个解决办法是，切换到拉取时间较长的view时，这个view会整一个loading动画，也就是保证每个view及时的显示交互或状态内容，这样动画在做转场时，从上一个view转到下一个view时都会有内容，即使下一个view没内容也能及时的显示出白板页面，跟无动画时是一样的，所以这个点是最好的一个触发点
                          */
-                        if(useTurnaround){
+                        /*if(useTurnaround){
                             me.newViewCreated(1);
                         }
-                        
+                        */
                         if(!e.tmpl){
-                            if(!useTurnaround&&node._chgd){
+                            
+                            if(node._chgd){
                                 node.innerHTML=node._tmpl;
                             }
+
                             me.mountZoneVframes(0,0,1);
                         }
                         view.on('rendered',function(){//再绑定rendered
                             //console.log('xxxxxxxxxxx',view.path);
                             me.mountZoneVframes(0,0,1);
                         });
-                        view.on('prerender',function(e){
-                            me.unmountZoneVframes(0,e.anim);
+                        view.on('prerender',function(){
+                            me.unmountZoneVframes();
                         });
                     },0);
                     viewInitParams=viewInitParams||{};
@@ -228,23 +232,21 @@ Mix(Mix(Vframe.prototype,Event),{
     },
     /**
      * 销毁对应的view
-     * @param {Boolean} useAnim 是否启用动画，在启用动画的情况下，需要保持节点内容，不能删除
-     * @param {Boolean} isOutermostView 是否是最外层的view改变，不对内层的view处理
      */
-    unmountView:function(useAnim,isOutermostView){
+    unmountView:function(){
         var me=this;
         if(me.view){
             if(!GlobalAlter)GlobalAlter={caused:me.id};
-            me.unmountZoneVframes(0,useAnim);
-            me.childrenAlter(GlobalAlter);
+            me.unmountZoneVframes();
+            me.cAlter(GlobalAlter);
             me.view.destroy();
             var node=$(me.id);
-            if(!useAnim&&node._bak){
+            if(node&&node._bak){
                 node.innerHTML=node._tmpl;
             }
-            if(useAnim&&isOutermostView){//在动画启用的情况下才调用相关接口
+            /*if(useAnim&&isOutermostView){//在动画启用的情况下才调用相关接口
                 me.oldViewDestroy();
-            }
+            }*/
             delete me.view;
             delete me.viewUsable;
             GlobalAlter=0;
@@ -287,13 +289,13 @@ Mix(Mix(Vframe.prototype,Event),{
     mountZoneVframes:function(zoneId,viewInitParams,autoMount){
         var me=this;
         me.unmountZoneVframes(zoneId);
-        var owner=me.owner;
-        var node;
-        if(!zoneId){
-            node=$(me.vId)||$(me.id);
+        //var owner=me.owner;
+        var node=zoneId||me.id;
+       /* if(!zoneId){
+            node=me.id;
         }else{
             node=zoneId;
-        }
+        }*/
         var vframes=$$(node,TagName);
         var count=vframes.length;
         var subs={};
@@ -321,22 +323,21 @@ Mix(Mix(Vframe.prototype,Event),{
             }
         }
         if(me.cC==me.rC){//有可能在渲染某个vframe时，里面有n个vframes，但立即调用了mountZoneVframes，这个下面没有vframes，所以要等待
-            me.childrenCreated({});
+            me.cCreated({});
         }
     },
     /**
      * 销毁vframe
-     * @param  {String} id      节点id
-     * @param  {Boolean} useAnim 是否使用动画，使用动画时不销毁DOM节点
+     * @param  {String} [id]      节点id
      */
-    unmountVframe:function(id,useAnim){
+    unmountVframe:function(id){
         var me=this;
         id=id||me.id;
         var vom=me.owner;
         var vf=vom.get(id);
         if(vf){
             var cc=vf.fcc;
-            vf.unmountView(useAnim);
+            vf.unmountView();
             vom.remove(id,cc);
 
             var p=vom.get(vf.pId);
@@ -348,10 +349,9 @@ Mix(Mix(Vframe.prototype,Event),{
     },
     /**
      * 销毁某个区域下面的所有子vframes
-     * @param {zoneId} HTMLElement|String 节点对象或id
-     * @param {Boolean} useAnim 是否使用动画，使用动画时DOM节点不销毁
+     * @param {HTMLElement|String} [zoneId]节点对象或id
      */
-    unmountZoneVframes:function(zoneId,useAnim){
+    unmountZoneVframes:function(zoneId){
         var me=this;
         var children;
         if(zoneId){
@@ -368,7 +368,7 @@ Mix(Mix(Vframe.prototype,Event),{
             children=me.cM;
         }
         for(var p in children){
-            me.unmountVframe(p,useAnim);
+            me.unmountVframe(p);
         }
         /*if(!zoneId){
             me.cM={};
@@ -377,8 +377,9 @@ Mix(Mix(Vframe.prototype,Event),{
     },
     /**
      * 通知所有的子view创建完成
+     * @private
      */
-    childrenCreated:function(e){
+    cCreated:function(e){
         var me=this;
         var view=me.view;
         if(view&&!me.fcc){
@@ -388,7 +389,7 @@ Mix(Mix(Vframe.prototype,Event),{
             me.fire(Created,e);
         }
         var vom=me.owner;
-        vom.childCreated();
+        vom.vfCreated();
 
         var mId=me.id;
         var p=vom.get(me.pId);
@@ -398,14 +399,15 @@ Mix(Mix(Vframe.prototype,Event),{
             p.rC++
 
             if(p.rC==p.cC){
-                p.childrenCreated(e);
+                p.cCreated(e);
             }
         }
     },
     /**
      * 通知子vframe有变化
+     * @private
      */
-    childrenAlter:function(e){
+    cAlter:function(e){
         var me=this;
         delete me.fcc;
         if(!me.fca){
@@ -425,7 +427,7 @@ Mix(Mix(Vframe.prototype,Event),{
                 p.rC--;
                 delete p.rM[mId];
                 if(autoMount){
-                    p.childrenAlter(e);
+                    p.cAlter(e);
                 }
             }
         }        
@@ -434,8 +436,9 @@ Mix(Mix(Vframe.prototype,Event),{
      * 通知当前vframe，地址栏发生变化
      * @param {Object} loc window.location.href解析出来的对象
      * @param {Object} chged 包含有哪些变化的对象
+     * @private
      */
-    locationChanged:function(loc,chged){
+    locChged:function(loc,chged){
         var me=this;
         var view=me.view;
         /*
@@ -474,15 +477,26 @@ Mix(Mix(Vframe.prototype,Event),{
                 0.3把块放在view中了，在vom中取出vframe，但这块的职责应该在vframe中做才对，view只管显示，vframe负责父子关系
          */
         if(view&&view.sign){
-            view.location=loc;
+            //view.location=loc;
             if(view.rendered){//存在view时才进行广播，对于加载中的可在加载完成后通过调用view.location拿到对应的window.location.href对象，对于销毁的也不需要广播
                 var isChanged=view.olChanged(chged);
+                /**
+                 * 事件对象
+                 * @type {Object}
+                 */
                 var args={
                     location:loc,
                     changed:chged,
+                    /**
+                     * 阻止向所有的子view传递
+                     */
                     prevent:function(){
                         this.cs=[];
                     },
+                    /**
+                     * 向特定的子view传递
+                     * @param  {Array} c 子view数组
+                     */
                     toChildren:function(c){
                         c=c||[];
                         if(Magix.isString(c)){
@@ -501,31 +515,9 @@ Mix(Mix(Vframe.prototype,Event),{
                 for(var i=0,j=cs.length,vom=me.owner,vf;i<j;i++){
                     vf=vom.get(cs[i]);
                     if(vf){
-                        vf.locationChanged(loc,chged);
+                        vf.locChged(loc,chged);
                     }
                 }
-            }
-        }
-    },
-    /**
-     * 通知location更新
-     * @param  {Object} loc location
-     */
-    locationUpdated:function(loc){
-        var me=this;
-        var view=me.view;
-        if(view&&view.sign){
-            view.location=loc;
-            var children=me.cM;
-            var vf;
-            var vom=me.owner;
-            for(var p in children){
-                //if(Magix.has(children,p)){
-                    vf=vom.get(p);
-                    if(vf){
-                        vf.locationUpdated(loc);
-                    }
-                //}
             }
         }
     }

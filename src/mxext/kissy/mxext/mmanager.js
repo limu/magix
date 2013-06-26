@@ -481,8 +481,9 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                             if(S.isFunction(a)){
                                 arr.push((function(f){
                                     return function(){
-                                        if(aborted)return;
-                                        f.apply(f,arguments);
+                                        if(!aborted){
+                                            f.apply(f,arguments);
+                                        }
                                     }
                                 }(a)));
                             }else{

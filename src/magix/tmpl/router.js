@@ -111,7 +111,7 @@ var Router=Mix({
      * @return {String} 返回形如app/views/layouts/index这样的字符串
      */
     getView:function(pathname){
-        var me=this;
+        var me=Router;
         
         if(!Pnr){
             Pnr={
@@ -152,7 +152,7 @@ var Router=Mix({
      * @private
      */
     start:function(){
-        var me=this;
+        var me=Router;
         var H=WIN.history;
 
         SupportState=UseNativeHistory&&H.pushState;
@@ -174,10 +174,9 @@ var Router=Mix({
     path:function(path){
         var o=Magix.pathToObject(path,IsUtf8);
         var pn=o[PATHNAME];
-        var me=this;
         if(pn&&HashAsNativeHistory){//如果不是以/开头的并且要使用history state,当前浏览器又不支持history state则放hash中的pathname要进行处理
             o[PATHNAME]=Magix.path(WIN.location[PATHNAME],pn);
-        }        
+        }
         return o;
     },
     /**
@@ -189,7 +188,7 @@ var Router=Mix({
     parseQH:function(href,attachViewInfo){
         href=href||WIN.location.href;
 
-        var me=this;
+        var me=Router;
         /*var cfg=Magix.config();
         if(!cfg.originalHREF){
             try{
@@ -325,7 +324,7 @@ var Router=Mix({
      * 根据window.location.href路由并派发相应的事件
      */
     route:function(){
-        var me=this;
+        var me=Router;
         var location=me.parseQH(0,1);
         var oldLocation=LLoc||{params:{},href:'~'};
         var firstFire=!LLoc;//是否强制触发的changed，对于首次加载会强制触发一次
@@ -344,7 +343,7 @@ var Router=Mix({
         }
     },
     /**
-     * 根据参数进行有选择的导航
+     * 导航到新的地址
      * @param  {Object|String} pn pathname或参数字符串或参数对象
      * @param {String|Object} [params] 参数对象
      * @example
@@ -377,7 +376,7 @@ var Router=Mix({
             }
      */
     navigate:function(pn,params){
-        var me=this;
+        var me=Router;
         
         if(!params&&Magix.isObject(pn)){
             params=pn;
@@ -434,7 +433,7 @@ var Router=Mix({
             if(navigate){
                 
                 if(SupportState){//如果使用pushState
-                    me.popFired=1;
+                    me.poped=1;
                     history.pushState(TitleC--,D.title,tempPath);
                     me.route();
                 }else{
@@ -456,7 +455,7 @@ var Router=Mix({
                         
 
                      */
-                    me.fire('changed',{loc:TLoc=temp});
+                    me.fire('!ul',{loc:TLoc=temp});//hack 更新view的location属性
                     location.hash='#!'+tempPath;
                 }
             }

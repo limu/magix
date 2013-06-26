@@ -1,4 +1,4 @@
-KISSY.add("~seed/app/views/home/test", function(S, View, MM) {
+KISSY.add("app/views/home/test", function(S, View, MM) {
     return View.extend({
     	init : function() {
     		//监听url参数
@@ -44,5 +44,5 @@ KISSY.add("~seed/app/views/home/test", function(S, View, MM) {
         }
     })
 }, {
-    requires: ["mxext/view", "~seed/app/models/modelmanager"]
+    requires: ["mxext/view", "app/models/modelmanager"]
 });

@@ -3,7 +3,7 @@
  * @version 1.0
  * @author 行列
  */
-KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
+KISSY.add('mxext/view',function(S,Magix,View,Router){
     var WIN=window;
     
     var DestroyTimer=function(id){
@@ -36,7 +36,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                 delete VOMEventsObject[e.vframe.id];
             });
             var vf=vom.root();
-            vf.on('childrenCreated',function(){
+            vf.on('created',function(){
                 VOMEventsObject={};
             });
         }
@@ -60,6 +60,13 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
      * @augments View
      */
     var MxView=View.extend({
+        /**
+         * @lends MxView#
+         */
+        /**
+         * 当前view实例化后调用，供子类重写
+         * @function
+         */
         mxViewCtor:Magix.noop,//供扩展用
         /**
          * 调用magix/router的navigate方法
@@ -68,11 +75,9 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
             Router.navigate.apply(Router,arguments);
         },
         /**
-         * 让view帮你管理资源，对于异步回调函数更应该调用该方法进行托管
-         * 当调用该方法后，您不需要在异步回调方法内判断当前view是否已经销毁
-         * 同时对于view刷新后，上个异步请求返回刷新界面的问题也得到很好的解决。<b>强烈建议对异步回调函数，组件等进行托管</b>
+         * 让view帮你管理资源，<b>强烈建议对组件等进行托管</b>
          * @param {String|Object} key 托管的资源或要共享的资源标识key
-         * @param {Object} [res] 要托管的资源
+         * @param {Object} res 要托管的资源
          * @return {Object} 返回传入的资源，对于函数会自动进行一次包装
          * @example
          * init:function(){
@@ -85,7 +90,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
          *      var _self=this;
          *      var m=new Model();
          *      m.load({
-         *          success:_self.manage(function(resp){//管理匿名函数
+         *          success:function(resp){
          *              //TODO
          *              var brix=new BrixDropdownList();
          *
@@ -101,11 +106,13 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
          *              var userList=_self.getManaged('user_list');//通过key取托管的资源
          *
          *              S.log(userList);
-         *          }),
-         *          error:_self.manage(function(msg){
+         *          },
+         *          error:function(msg){
          *              //TODO
-         *          })
-         *      })
+         *          }
+         *      });
+         *
+         *      _self.manage(m);
          * }
          */
         manage:function(key,res){
@@ -135,7 +142,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
         /**
          * 获取托管的资源
          * @param {String} key 托管资源时传入的标识key
-         * @return {[type]} [description]
+         * @return {Object}
          */
         getManaged:function(key){
             var me=this;
@@ -174,10 +181,9 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
         },
         /**
          * 销毁托管的资源
-         * @param {Boolean} [byRefresh] 是否是刷新时的销毁
          * @private
          */
-        destroyManaged:function(byRefresh){
+        destroyManaged:function(e){
             var me=this;
             var cache=me.$res;
             //console.log('vvvvvvvvvvvvvv',cache);
@@ -192,7 +198,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                         destroy(res);
                         processed=true;
                     }
-                    if(byRefresh&&!o.hasKey){//如果是刷新且托管时没有给key值，则表示这是一个不会在其它方法内共享托管的资源，view刷新时可以删除掉
+                    if(!o.hasKey){//如果托管时没有给key值，则表示这是一个不会在其它方法内共享托管的资源，view刷新时可以删除掉
                         delete cache[p];
                     }
                     me.fire('destroyManaged',{
@@ -200,7 +206,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
                         processed:processed
                     });
                 }
-                if(!byRefresh){//如果不是刷新，则是view的销毁
+                if(e.type=='destroy'){//如果不是刷新，则是view的销毁
                     //me.un('destroyResource');
                     delete me.$res;
                 }
@@ -258,15 +264,9 @@ KISSY.add('mxext/view',function(S,Magix,View,Router,VM){
     },function(){
         var me=this;
         me.on('interact',function(){
-            me.on('rendercall',function(){
-                me.destroyMRequest();
-            });
-            me.on('prerender',function(){
-                me.destroyManaged(true);
-            });
-            me.on('destroy',function(){
-                me.destroyManaged();
-            });
+            me.on('rendercall',me.destroyMRequest);
+            me.on('prerender',me.destroyManaged);
+            me.on('destroy',me.destroyManaged);
         });
         me.mxViewCtor();
     });

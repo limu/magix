@@ -1,4 +1,4 @@
-KISSY.add("~seed/app/models/basemodel",function(S, MxModel,IO){
+KISSY.add("app/models/basemodel",function(S, MxModel,IO){
     var MxConfig=Magix.cfg;
     var Model;
     var SyncCounter=0;

@@ -3,7 +3,7 @@
  * @author 行列
  * @version 1.0
  */
-KISSY.add("~seed/app/ini",function(S){
+KISSY.add("app/ini",function(S){
     var T = {
         routes:{
 
@@ -27,11 +27,11 @@ KISSY.add("~seed/app/ini",function(S){
         //preloads:["app/global"],
 
         //默认加载的view
-        defaultView:'~seed/app/views/default',
+        defaultView:'app/views/default',
         //默认的pathname
         defaultPathname:'/home',
         //404时显示的view，如果未启用，则404时显示defaultView
-        notFoundView:'~seed/app/views/404',
+        notFoundView:'app/views/404',
         //映射规则，当更复杂时，请考虑下面routes为funciton的配置
         // routes:{
             // "/home":"app/common/views/default",

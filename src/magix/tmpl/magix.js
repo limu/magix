@@ -1,5 +1,5 @@
 var PathRelativeReg=/\/\.\/|\/[^\/]+?\/\.{2}\/|([^:\/])\/\/+/;
-var PathTrimFileReg=/[^\/]*$/;
+var PathTrimFileReg=/\/[^\/]*$/;
 var PathTrimParamsReg=/[#?].*$/;
 var EMPTY='';
 var ParamsReg=/([^=&?\/#]+)=([^&=#?]*)/g;
@@ -7,9 +7,11 @@ var PATHNAME='pathname';
 var ProtocalReg=/^https?:\/\//i;
 var Templates={};
 var CacheLatest=0;
+var Slash='/';
+
 var Cfg={
     debug:'%DEV%',
-    iniFile:'~/ini',
+    iniFile:'app/ini',
     appName:'app',
     appHome:'./',
     tagName:'vframe',
@@ -361,26 +363,14 @@ var Magix={
         var me=this;
         cfg=mix(Cfg,cfg);
         me.libEnv(cfg);
-        var iniFile=cfg.iniFile.replace('~',cfg.appName);
-        me.libRequire(iniFile,function(I){
+        me.libRequire(cfg.iniFile,function(I){
             Cfg=mix(cfg,I,cfg);
             var progress=cfg.progress;
             me.libRequire(['magix/router','magix/vom'],function(R,V){
-                R.on('changed',function(e){
-                    if(e.loc){
-                        V.locUpdated(e.loc);
-                    }else{
-                        if(e.changed.isView()){
-                            V.mountRoot(e);
-                        }else{
-                            V.locChanged(e);
-                        }
-                    }
-                });
-                V.on('progress',progress||noop);
-                me.libRequire(cfg.extensions,function(){
-                    R.start();
-                });
+                R.on('!ul',V.locChged);
+                R.on('changed',V.locChged);
+                progress&&V.on('progress',progress);
+                me.libRequire(cfg.extensions,R.start);
             });
         });
         if(cfg.ready){
@@ -390,6 +380,7 @@ var Magix={
     },
     /**
      * 获取对象的keys
+     * @function
      * @param  {Object} obj 要获取key的对象
      * @return {Array}
      */
@@ -437,23 +428,26 @@ var Magix={
         var key=url+'\n'+part;
         var result=PathCache.get(key);
         if(!result){
-            url=url.replace(PathTrimParamsReg,EMPTY).replace(PathTrimFileReg,EMPTY);
-            if(part.charAt(0)=='/'){
-                var ds=url.indexOf('://');
-                if(ds==-1){
-                    result=part;
-                }else{
-                    var fs=url.indexOf('/',ds+3);
-                    if(fs==-1){
-                        result=url+part;
-                    }else{
-                        result=url.substring(0,fs)+part;
-                    }
-                }
+            if(ProtocalReg.test(part)){
+                result=part;
             }else{
-                result=url+part;
+                url=url.replace(PathTrimParamsReg,EMPTY).replace(PathTrimFileReg,EMPTY)+Slash;
+
+                if(part.charAt(0)==Slash){
+                    var ds=ProtocalReg.test(url)?8:0;
+                    var fs=url.indexOf(Slash,ds);
+
+                   /* if(fs==-1){
+                        result=url+part;
+                    }else{*/
+                        result=url.substring(0,fs)+part;
+                    //}
+
+                }else{
+                    result=url+part;
+                }
             }
-            //console.log(result);
+            console.log('url',url,'part',part,'result',result);
             while(PathRelativeReg.test(result)){
                 //console.log(result);
                 result=result.replace(PathRelativeReg,'$1/');
@@ -492,9 +486,9 @@ var Magix={
             
             if(pathname){
                 if(ProtocalReg.test(pathname)){//解析以https?:开头的网址
-                    var first=pathname.indexOf('/',8);//找最近的 / 
+                    var first=pathname.indexOf(Slash,8);//找最近的 / 
                     if(first==-1){//未找到，比如 http://etao.com
-                        pathname='/';//则pathname为  /
+                        pathname=Slash;//则pathname为  /
                     }else{
                         pathname=pathname.substring(first); //截取
                     }

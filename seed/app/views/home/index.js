@@ -1,15 +1,8 @@
-KISSY.add("~seed/app/views/home/index", function(S, View, MM) {
+KISSY.add("app/views/home/index", function(S, View, MM) {
     return View.extend({
     	init : function() {
     		//监听url参数
 			//this.observeLocation(['start', 'end', 'tab']);
-            S.use('magix/router',function(S,R){
-                R.on('change',function(e){
-                    if(Math.random()<0.5){
-                    e.back();
-                }
-                });
-            });
 		},
         render: function() {
             var me = this;
@@ -28,8 +21,8 @@ KISSY.add("~seed/app/views/home/index", function(S, View, MM) {
             }], function(MesModel,err) {
                 console.log(arguments);
                 me.setViewPagelet({xx:MesModel.get("xx")});
-                            me.owner.mountVframe('T1','~seed/app/views/404?a=2',{a:'1'});
-            me.owner.mountVframe('T2','~seed/app/views/404?a=2',{a:'2'})
+                            me.owner.mountVframe('T1','app/views/404?a=2',{a:'1'});
+            me.owner.mountVframe('T2','app/views/404?a=2',{a:'2'})
                 if(err){
                     console.log(err.msg);
                 }
@@ -56,6 +49,7 @@ KISSY.add("~seed/app/views/home/index", function(S, View, MM) {
 
         },
         locationChange: function(e) {
+            console.log(e);
         	this.render();
         },
         events:{
@@ -79,5 +73,5 @@ KISSY.add("~seed/app/views/home/index", function(S, View, MM) {
         }
     })
 }, {
-    requires: ["mxext/view", "~seed/app/models/modelmanager"]
+    requires: ["mxext/view", "app/models/modelmanager"]
 });

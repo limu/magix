@@ -1,4 +1,4 @@
-KISSY.add("~seed/app/models/model",function(S,BaseModel){
+KISSY.add("app/models/model",function(S,BaseModel){
     return BaseModel.extend({
         urlMap:{
             home:{
@@ -11,5 +11,5 @@ KISSY.add("~seed/app/models/model",function(S,BaseModel){
         }
     })
 },{
-    requires:["~seed/app/models/basemodel"]
+    requires:["app/models/basemodel"]
 })

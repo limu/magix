@@ -4,42 +4,54 @@
  * @version 1.0
  */
 KISSY.add('magix/view',function(S,Magix,Event,Body,IO){
-    var Mods=S.Env.mods;
-    var StaticWhiteList={
-        wrapAsyn:1,
-        extend:1
-    };
-	
-	var ProcessObject=function(props,proto,enterObject){
+
+    eval(Magix.include('../tmpl/view'));
+    
+    var ProcessObject=function(props,proto,enterObject){
         for(var p in proto){
             if(S.isObject(proto[p])){
-                if(!Magix.has(props,p))props[p]={};
-                ProcessObject(props[p],proto[p],true);
+                if(!Has(props,p))props[p]={};
+                ProcessObject(props[p],proto[p],1);
             }else if(enterObject){
                 props[p]=proto[p];
             }
         }
     };
-    eval(Magix.include('../tmpl/view'));
+    
 
-    View.prototype.fetchTmpl=function(path,fn,d){
-        var l=ProcessObject[path];
-        if(l){
-            l.push(fn);
-        }else{
-            l=ProcessObject[path]=[fn];
-            IO({
-                url:path+(d?'?_='+S.now():''),
-                success:function(x){
-                    Magix.safeExec(l,x);
-                    delete ProcessObject[path];
-                },
-                error:function(e,m){
-                    Magix.safeExec(l,m);
-                    delete ProcessObject[path];
+    View.prototype.fetchTmpl=function(fn){
+        var me=this;
+        var tmpl=me.template;
+        if(S.isUndefined(tmpl)){
+            var i=Magix.tmpl(me.path);
+            if(i.h){
+                fn(i.v);
+            }else{
+                var file=MxConfig.appHome+me.path+'.html';
+                var l=ProcessObject[file];
+                var onload=function(tmpl){
+                    fn(Magix.tmpl(me.path,tmpl));
+                };
+                if(l){
+                    l.push(onload);
+                }else{
+                    l=ProcessObject[file]=[onload];
+                    IO({
+                        url:file+(MxConfig.debug?'?t='+S.now():''),
+                        success:function(x){
+                            SafeExec(l,x);
+                            delete ProcessObject[file];
+                        },
+                        error:function(e,m){
+                            SafeExec(l,m);
+                            delete ProcessObject[file];
+                        }
+                    });
                 }
-            });
-        }
+            }
+        }else{
+            fn(tmpl);
+        }        
     };
 
     View.extend=function(props,ctor){
@@ -47,30 +59,26 @@ KISSY.add('magix/view',function(S,Magix,Event,Body,IO){
         var BaseView=function(){
             BaseView.superclass.constructor.apply(this,arguments);
             if(ctor){
-                Magix.safeExec(ctor,arguments,this);
+                SafeExec(ctor,arguments,this);
             }
         }
         BaseView.extend=me.extend;
         return S.extend(BaseView,me,props);
     };
-	View.prepare=function(oView,toProto){
+	View.prepare=function(oView){
         var me=this;
         if(!oView.wrapAsyn){
-            for(var p in me){
-                if(Magix.has(StaticWhiteList,p)){
-                    oView[p]=me[p];
-                }
-            }
+            oView.wrapAsyn=me.wrapAsyn;
+            oView.extend=me.extend;
+
             var aimObject=oView.prototype;
-            var start=oView;
+            var start=oView.superclass;
             var temp;
-            while(start.superclass){
-                temp=start.superclass.constructor;
+            while(start){
+                temp=start.constructor;
                 ProcessObject(aimObject,temp.prototype);
-                start=temp;
+                start=temp.superclass;
             }
-            toProto.home=Mods[toProto.path].packageInfo.getBase();
-            Magix.mix(aimObject,toProto);
         }
         oView.wrapAsyn();
     };

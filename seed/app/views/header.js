@@ -1,4 +1,4 @@
-KISSY.add("~seed/app/views/header", function(S, View, MM) {
+KISSY.add("app/views/header", function(S, View, MM) {
     return View.extend({
         render: function() {
             var me = this;
@@ -26,5 +26,5 @@ KISSY.add("~seed/app/views/header", function(S, View, MM) {
         }
     })
 }, {
-    requires: ["mxext/view", "~seed/app/models/modelmanager"]
+    requires: ["mxext/view", "app/models/modelmanager"]
 });

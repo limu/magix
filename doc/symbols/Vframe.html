@@ -398,52 +398,12 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/Vframe.html#childrenAlter">childrenAlter</a></b>
-                                                <span class="param">(e)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">通知子vframe有变化</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/Vframe.html#childrenCreated">childrenCreated</a></b>
-                                                <span class="param">(e)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">通知所有的子view创建完成</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/Vframe.html#fire">fire</a></b>
                                                 <span class="param">(name, data, remove, lastToFirst)</span>
                                                 
                                                 
                                                 
                                                 <span class="desc">触发事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/Vframe.html#locationChanged">locationChanged</a></b>
-                                                <span class="param">(loc, chged)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">通知当前vframe，地址栏发生变化</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/Vframe.html#locationUpdated">locationUpdated</a></b>
-                                                <span class="param">(loc)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">通知location更新</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -478,52 +438,12 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/Vframe.html#newViewCreated">newViewCreated</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">转场动画时或当view启用刷新动画时，新的view创建完成时调用</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/Vframe.html#oldViewDestroy">oldViewDestroy</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">转场动画时或当view启用刷新动画时，旧的view销毁时调用</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/Vframe.html#on">on</a></b>
                                                 <span class="param">(name, fn, insertOrRemove)</span>
                                                 
                                                 
                                                 
                                                 <span class="desc">绑定事件</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/Vframe.html#prepareNextView">prepareNextView</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">转场动画时或当view启用刷新动画时，为新view准备好填充的容器</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                Vframe.
-                                                <b class="name"><a href="../symbols/Vframe.html#.root">root</a></b>
-                                                <span class="param">(vom)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">获取根vframe</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -539,7 +459,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/Vframe.html#unmountVframe">unmountVframe</a></b>
-                                                <span class="param">(id, useAnim)</span>
+                                                <span class="param">(id)</span>
                                                 
                                                 
                                                 
@@ -549,7 +469,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/Vframe.html#unmountView">unmountView</a></b>
-                                                <span class="param">(useAnim, isOutermostView)</span>
+                                                <span class="param">()</span>
                                                 
                                                 
                                                 
@@ -559,21 +479,11 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/Vframe.html#unmountZoneVframes">unmountZoneVframes</a></b>
-                                                <span class="param">(HTMLElement|String, useAnim)</span>
+                                                <span class="param">(zoneId)</span>
                                                 
                                                 
                                                 
                                                 <span class="desc">销毁某个区域下面的所有子vframes</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/Vframe.html#useAnimUpdate">useAnimUpdate</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">是否启用场景转场动画，相关的动画并未在该类中实现，如需动画，需要mxext/vfanim扩展来实现，设计为方法而不是属性可方便针对某些vframe使用动画</span>                                                
                                             </li>
                                             
                                         </ul>
@@ -805,114 +715,6 @@ dl.data .dd{
                                     <ul class="list detail-list">
                                         
                                         <li class="li">
-                                            <a name="childrenAlter"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">childrenAlter</b>
-                                                <span class="param">(e)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                通知子vframe有变化
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">e</b>
-                                                            
-                                                            
-                                                            
-                                                            <span class="desc"></span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="childrenCreated"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">childrenCreated</b>
-                                                <span class="param">(e)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                通知所有的子view创建完成
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">e</b>
-                                                            
-                                                            
-                                                            
-                                                            <span class="desc"></span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
                                             <a name="fire"> </a>
                                             <div class="title" >
                                                 
@@ -972,123 +774,6 @@ dl.data .dd{
                                                             
                                                             <span class="type">{Boolean}</span> 
                                                             <span class="desc">是否从后向前触发事件的监听列表</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="locationChanged"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">locationChanged</b>
-                                                <span class="param">(loc, chged)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                通知当前vframe，地址栏发生变化
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">loc</b>
-                                                            
-                                                            
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">window.location.href解析出来的对象</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">chged</b>
-                                                            
-                                                            
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">包含有哪些变化的对象</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="locationUpdated"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">locationUpdated</b>
-                                                <span class="param">(loc)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                通知location更新
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">loc</b>
-                                                            
-                                                            
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">location</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1341,82 +1026,6 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="newViewCreated"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">newViewCreated</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                转场动画时或当view启用刷新动画时，新的view创建完成时调用
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="oldViewDestroy"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">oldViewDestroy</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                转场动画时或当view启用刷新动画时，旧的view销毁时调用
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
                                             <a name="on"> </a>
                                             <div class="title" >
                                                 
@@ -1479,110 +1088,6 @@ dl.data .dd{
                                                 
                                                 
                                                 
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="prepareNextView"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">prepareNextView</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                转场动画时或当view启用刷新动画时，为新view准备好填充的容器
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name=".root"> </a>
-                                            <div class="title" >
-                                                <span>Vframe.</span>
-                                                <b class="name">root</b>
-                                                <span class="param">(vom)</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                获取根vframe
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">vom</b>
-                                                            
-                                                            
-                                                            <span class="type">{<a href="../symbols/VOM.html">VOM</a>}</span> 
-                                                            <span class="desc">vom对象</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{<a href="../symbols/Vframe.html">Vframe</a>}</span> 
-                                                            <span></span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
                                                 
                                                 
                                                 
@@ -1664,7 +1169,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">unmountVframe</b>
-                                                <span class="param">(id, useAnim)</span>
+                                                <span class="param">(id)</span>
                                                 
                                                 
                                                 
@@ -1684,21 +1189,12 @@ dl.data .dd{
                                                     <ul class="list param-list">
                                                     
                                                         <li class="li">
-                                                            &nbsp;
+                                                            [ 
                                                             <b class="name">id</b>
                                                             
-                                                            
+                                                             ]
                                                             <span class="type">{String}</span> 
                                                             <span class="desc">节点id</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">useAnim</b>
-                                                            
-                                                            
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否使用动画，使用动画时不销毁DOM节点</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1727,7 +1223,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">unmountView</b>
-                                                <span class="param">(useAnim, isOutermostView)</span>
+                                                <span class="param">()</span>
                                                 
                                                 
                                                 
@@ -1741,31 +1237,6 @@ dl.data .dd{
                                             
                                             <dl>                                            
                                                 
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">useAnim</b>
-                                                            
-                                                            
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否启用动画，在启用动画的情况下，需要保持节点内容，不能删除</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">isOutermostView</b>
-                                                            
-                                                            
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否是最外层的view改变，不对内层的view处理</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
                                                 
                                                 
                                                 
@@ -1790,7 +1261,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">unmountZoneVframes</b>
-                                                <span class="param">(HTMLElement|String, useAnim)</span>
+                                                <span class="param">(zoneId)</span>
                                                 
                                                 
                                                 
@@ -1810,23 +1281,14 @@ dl.data .dd{
                                                     <ul class="list param-list">
                                                     
                                                         <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">HTMLElement|String</b>
+                                                            [ 
+                                                            <b class="name">zoneId</b>
                                                             
-                                                            
-                                                            <span class="type">{zoneId}</span> 
+                                                             ]
+                                                            <span class="type">{HTMLElement|String}</span> 
                                                             <span class="desc">节点对象或id</span>
                                                         </li>
                                                     
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">useAnim</b>
-                                                            
-                                                            
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否使用动画，使用动画时DOM节点不销毁</span>
-                                                        </li>
-                                                    
                                                     </ul>
                                                 </dd>
                                                 
@@ -1837,56 +1299,6 @@ dl.data .dd{
                                                 
                                                 
                                                 
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="useAnimUpdate"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">useAnimUpdate</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                是否启用场景转场动画，相关的动画并未在该类中实现，如需动画，需要mxext/vfanim扩展来实现，设计为方法而不是属性可方便针对某些vframe使用动画
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span></span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
                                                 
                                                 
                                                 
@@ -2149,7 +1561,6 @@ dl.data .dd{
             <li><a href="../symbols/MxView.html">MxView</a></li>
             <li><a href="../symbols/MManager.html">MManager</a></li>
             <li><a href="../symbols/MRequest.html">MRequest</a></li>
-            <li><a href="../symbols/VfAnim.html">VfAnim</a></li>
         </ul>
     </div>
 </div>

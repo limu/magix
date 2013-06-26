@@ -1,9 +1,10 @@
-KISSY.add("~seed/app/views/404",function(S,View){
+KISSY.add("app/views/404",function(S,View){
 	return View.extend({
 		init:function(e){
 			console.log(e.a);
 		},
 		render:function(){
+			console.log(this.template);
 			this.setViewHTML(this.template);
 		},
 		events:{

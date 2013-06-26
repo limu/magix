@@ -1,4 +1,4 @@
-KISSY.add("~seed/app/views/menu",function(S,View){
+KISSY.add("app/views/menu",function(S,View){
 	return View.extend({
 		init:function(){
 			this.observeLocation({

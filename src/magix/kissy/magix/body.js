@@ -1,17 +1,15 @@
-KISSY.add("magix/body",function(S,Magix,Event,SE){
-    var C={};
+/**
+ * @fileOverview body事件代理
+ * @author 行列<xinglie.lkf@taobao.com>
+ * @version 1.0
+ **/
+KISSY.add("magix/body",function(S,Magix,SE){
     eval(Magix.include('../tmpl/body'));
-    Body.onUnbubble=function(node,type){
-        var me=this;
-        SE.delegate(node,type,'*[mx-'+type+']',C[type]=function(e){
-            me.processEvent(e);
-        });
-    };
-    Body.offUnbubble=function(node,type){
-        SE.undelegate(node,type,'*[mx-'+type+']',C[type]);
-        delete C[type];
+    Body.unbubble=function(remove,node,type){
+    	var fn=remove?SE.undelegate:SE.delegate;
+    	fn.call(SE,node,type,'[mx-'+type+']',Body.process);
     };
     return Body;
 },{
-    requires:["magix/magix","magix/event","event"]
+    requires:["magix/magix","event","sizzle"]
 });
