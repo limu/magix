@@ -159,6 +159,14 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                             SafeExec(after,[model,meta]);
                         }
                         host.fireAfter(meta.name,[model]);
+                    }else{
+                        var after=model._after;
+                        var meta=model._meta;
+
+                        if(after){//有after
+                            SafeExec(after,[model,meta]);
+                        }
+                        host.fireAfter(meta.name,[model]);
                     }
                 }               
 
