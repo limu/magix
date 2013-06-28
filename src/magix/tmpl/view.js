@@ -90,7 +90,7 @@ Mix(View,{
             var old;
             for(var p in WrapAsynUpdateNames){
                 old=prop[p];
-                if(Magix.isFunction(old)){
+                if(Magix.isFunction(old)&&old!=Magix.noop){
                     prop[p]=WrapFn(old);
                 }
             }
