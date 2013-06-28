@@ -1024,17 +1024,20 @@ var Router=Mix({
     /**
      * 使用history state做为改变url的方式来保存当前页面的状态
      * @function
+     * @private
      */
     
     /**
      * 使用hash做为改变url的方式来保存当前页面的状态
      * @function
+     * @private
      */
     
     /**
      * 根据地址栏中的pathname获取对应的前端view
      * @param  {String} pathname 形如/list/index这样的pathname
      * @return {String} 返回形如app/views/layouts/index这样的字符串
+     * @private
      */
     getView:function(pathname){
         var me=Router;

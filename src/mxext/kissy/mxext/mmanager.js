@@ -766,7 +766,11 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
         getModelUrl:function(name){
             var me=this;
             var meta=me.getModelMeta(name);
-            return me.$mClass.prototype.url(meta.uri);
+            if(meta.url){
+                return meta.url;
+            }else{
+                return me.$mClass.prototype.url(meta.uri);
+            }
         },
         /**
          * 监听某个model的before

@@ -263,6 +263,7 @@ KISSY.add('mxext/view',function(S,Magix,View,Router){
         }
     },function(){
         var me=this;
+        me.home=Magix.config().appHome;
         me.on('interact',function(){
             me.on('rendercall',me.destroyMRequest);
             me.on('prerender',me.destroyManaged);

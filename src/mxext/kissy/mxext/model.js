@@ -314,10 +314,11 @@ KISSY.add("mxext/model",function(S,Magix){
          * 获取model对象请求时的后台地址
          * @return {String}
          */
-        url:function (url) {
+        url:function (uri) {
             var self = this,
-                uri = url||self.get('uri'),
+                url = self.get('url'),
                 uris;
+            uri = uri||self.get('uri');
             if (uri) {
                 uris = uri.split(':');
                 var maps=self.urlMap;
@@ -330,11 +331,11 @@ KISSY.add("mxext/model",function(S,Magix){
                     }
                     uri=parent||uri;
                 }
-            }else{
-                console.log(self);
-                throw new Error('model not set uri');
+                url=uri;
+            }else if(!url){
+                throw new Error('model not set uri and url');
             }
-            return uri;
+            return url;
         },
         /**
          * 获取属性
