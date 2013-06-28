@@ -221,8 +221,11 @@ Mix(Mix(Vframe.prototype,Event),{
                         view.on('prerender',function(){
                             me.unmountZoneVframes();
                         });
-                        me.viewUsable=1;
-                        me.fire('viewInteract',{view:view});
+
+                        view.on('inited',function(){
+                            me.viewUsable=1;
+                            me.fire('viewInteract',{view:view});
+                        });                        
                     },0);
                     viewInitParams=viewInitParams||{};
                     view.load(Mix(viewInitParams,path.params,viewInitParams));

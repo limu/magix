@@ -232,6 +232,7 @@ Mix(VProto,{
                  */
                 me.fire('interact',{tmpl:hasTmpl},1);//可交互
                 SafeExec(me.init,args,me);
+                me.fire('inited',0,1);
                 SafeExec(me.render,EMPTY_ARRAY,me);
                 //console.log('render',me.render);
                 var noTemplateAndNoRendered=!hasTmpl&&!me.rendered;//没模板，调用render后，render里面也没调用setViewHTML

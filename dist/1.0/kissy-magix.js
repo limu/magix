@@ -1650,8 +1650,11 @@ Mix(Mix(Vframe.prototype,Event),{
                         view.on('prerender',function(){
                             me.unmountZoneVframes();
                         });
-                        me.viewUsable=1;
-                        me.fire('viewInteract',{view:view});
+
+                        view.on('inited',function(){
+                            me.viewUsable=1;
+                            me.fire('viewInteract',{view:view});
+                        });                        
                     },0);
                     viewInitParams=viewInitParams||{};
                     view.load(Mix(viewInitParams,path.params,viewInitParams));
@@ -2269,6 +2272,7 @@ Mix(VProto,{
                  */
                 me.fire('interact',{tmpl:hasTmpl},1);//可交互
                 SafeExec(me.init,args,me);
+                me.fire('inited',0,1);
                 SafeExec(me.render,EMPTY_ARRAY,me);
                 //
                 var noTemplateAndNoRendered=!hasTmpl&&!me.rendered;//没模板，调用render后，render里面也没调用setViewHTML
