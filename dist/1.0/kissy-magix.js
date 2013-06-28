@@ -1627,8 +1627,6 @@ Mix(Mix(Vframe.prototype,Event),{
                     });
                     me.view=view;
                     view.on('interact',function(e){//view准备好后触发
-                        me.fire('viewInteract',{view:view});
-                        me.viewUsable=1;
                         /*
                             Q:为什么在interact中就进行动画，而不是在rendered之后？
                             A:可交互事件发生后，到渲染出来view的界面还是有些时间的，但这段时间可长可短，比如view所需要的数据都在内存中，则整个过程就是同步的，渲染会很快，也有可能每次数据都从服务器拉取（假设时间非常长），这时候渲染显示肯定会慢，如果到rendered后才进行动画，就会有相当长的一个时间停留在前一个view上，无法让用户感觉到程序在运行。通常这时候的另外一个解决办法是，切换到拉取时间较长的view时，这个view会整一个loading动画，也就是保证每个view及时的显示交互或状态内容，这样动画在做转场时，从上一个view转到下一个view时都会有内容，即使下一个view没内容也能及时的显示出白板页面，跟无动画时是一样的，所以这个点是最好的一个触发点
@@ -1652,6 +1650,8 @@ Mix(Mix(Vframe.prototype,Event),{
                         view.on('prerender',function(){
                             me.unmountZoneVframes();
                         });
+                        me.viewUsable=1;
+                        me.fire('viewInteract',{view:view});
                     },0);
                     viewInitParams=viewInitParams||{};
                     view.load(Mix(viewInitParams,path.params,viewInitParams));
