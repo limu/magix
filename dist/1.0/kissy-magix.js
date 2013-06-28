@@ -1007,6 +1007,14 @@ var getParam=function(key){
     return params[key];
 };
 
+var Path=function(path){
+    var o=Magix.pathToObject(path,IsUtf8);
+    var pn=o[PATHNAME];
+    if(pn&&HashAsNativeHistory){//如果不是以/开头的并且要使用history state,当前浏览器又不支持history state则放hash中的pathname要进行处理
+        o[PATHNAME]=Magix.path(WIN.location[PATHNAME],pn);
+    }
+    return o;
+};
 
 //var PathTrimFileParamsReg=/(\/)?[^\/]*[=#]$/;//).replace(,'$1').replace(,EMPTY);
 //var PathTrimSearch=/\?.*$/;
@@ -1044,8 +1052,8 @@ var Router=Mix({
         
         if(!Pnr){
             Pnr={
-                routes:MxConfig.routes||{},
-                e404:MxConfig.notFoundView
+                rs:MxConfig.routes||{},
+                nf:MxConfig.notFoundView
             }
             //var home=pathCfg.defaultView;//处理默认加载的view
             //var dPathname=pathCfg.defaultPathname||EMPTY;
@@ -1055,8 +1063,8 @@ var Router=Mix({
             }
             Pnr.home=defaultView;
             var defaultPathname=MxConfig.defaultPathname||EMPTY;
-            //if(!Magix.isFunction(temp.routes)){
-            Pnr.routes[defaultPathname]=defaultView;
+            //if(!Magix.isFunction(temp.rs)){
+            Pnr.rs[defaultPathname]=defaultView;
             Pnr[PATHNAME]=defaultPathname;
         }
 
@@ -1064,7 +1072,7 @@ var Router=Mix({
 
         if(!pathname)pathname=Pnr[PATHNAME];
         //
-        var r=Pnr.routes;
+        var r=Pnr.rs;
         if(Magix.isFunction(r)){
             result=r.call(MxConfig,pathname);
         }else{
@@ -1072,8 +1080,8 @@ var Router=Mix({
         }
 
         return {
-            view:result?result:Pnr.e404||Pnr.home,
-            pathname:result?pathname:(Pnr.e404?pathname:Pnr[PATHNAME])
+            view:result?result:Pnr.nf||Pnr.home,
+            pathname:result?pathname:(Pnr.nf?pathname:Pnr[PATHNAME])
         }
     },
     /**
@@ -1094,27 +1102,13 @@ var Router=Mix({
         }
         me.route();//页面首次加载，初始化整个页面
     },
-    /**
-     * 解析path
-     * @param  {String} path /a/b/c?a=b&c=d的字符串
-     * @return {Object}
-     * @private
-     */
-    path:function(path){
-        var o=Magix.pathToObject(path,IsUtf8);
-        var pn=o[PATHNAME];
-        if(pn&&HashAsNativeHistory){//如果不是以/开头的并且要使用history state,当前浏览器又不支持history state则放hash中的pathname要进行处理
-            o[PATHNAME]=Magix.path(WIN.location[PATHNAME],pn);
-        }
-        return o;
-    },
+    
     /**
      * 解析href的query和hash，默认href为window.location.href
      * @param {String} [href] href
-     * @param {Boolean} [attachViewInfo] 是否附加对应的前端view信息
      * @return {Object} 解析的对象
      */
-    parseQH:function(href,attachViewInfo){
+    parseQH:function(href){
         href=href||WIN.location.href;
 
         var me=Router;
@@ -1133,9 +1127,9 @@ var Router=Mix({
             //var query=tPathname+params.replace(/^([^#]+).*$/g,'$1');
             var hash=href.replace(TrimQueryReg,EMPTY);//原始hash
             //
-            var queryObj=me.path(query);
+            var queryObj=Path(query);
             //
-            var hashObj=me.path(hash);//去掉可能的！开始符号
+            var hashObj=Path(hash);//去掉可能的！开始符号
             //
             var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
             Mix(comObj,queryObj[Ps]);
@@ -1155,7 +1149,7 @@ var Router=Mix({
             }
             HrefCache.set(href,result);
         }
-        if(attachViewInfo&&!result.view){
+        if(!result.view){
             //
             var tempPathname;
             /*
@@ -1254,7 +1248,7 @@ var Router=Mix({
      */
     route:function(){
         var me=Router;
-        var location=me.parseQH(0,1);
+        var location=me.parseQH();
         var oldLocation=LLoc||{params:{},href:'~'};
         var firstFire=!LLoc;//是否强制触发的changed，对于首次加载会强制触发一次
 
@@ -1328,7 +1322,7 @@ var Router=Mix({
 
         if(pn){
 
-            var pathObj=me.path(pn);
+            var pathObj=Path(pn);
             var temp={};
             temp[Ps]=Mix({},pathObj[Ps]);
             temp[PATHNAME]=pathObj[PATHNAME];

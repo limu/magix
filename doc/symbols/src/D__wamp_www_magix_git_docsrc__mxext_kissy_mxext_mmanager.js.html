@@ -773,98 +773,102 @@
 <span class='line'>766</span> </span><span class="WHIT">        </span><span class="NAME">getModelUrl</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>767</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>768</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">meta</span><span class="PUNC">=</span><span class="NAME">me.getModelMeta</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>769</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">me.$mClass.prototype.url</span><span class="PUNC">(</span><span class="NAME">meta.uri</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>770</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>771</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>772</span>          * 监听某个model的before
-<span class='line'>773</span>          * @param  {String}   name     注册时元信息中的名称
-<span class='line'>774</span>          * @param  {Function} callback 回调
-<span class='line'>775</span>          */</span><span class="WHIT">
-<span class='line'>776</span> </span><span class="WHIT">        </span><span class="NAME">listenBefore</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>777</span> </span><span class="WHIT">            </span><span class="NAME">Event.on.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">+</span><span class="NAME">BEFORE</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>778</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>779</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>780</span>          * 监听某个model的after
-<span class='line'>781</span>          * @param  {String}   name     注册时元信息中的名称
-<span class='line'>782</span>          * @param  {Function} callback 回调
-<span class='line'>783</span>          */</span><span class="WHIT">
-<span class='line'>784</span> </span><span class="WHIT">        </span><span class="NAME">listenAfter</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>785</span> </span><span class="WHIT">            </span><span class="NAME">Event.on.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">+</span><span class="NAME">AFTER</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>786</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>787</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>788</span>          * 取消before监听
-<span class='line'>789</span>          * @param  {String}   name     注册时元信息的名称
-<span class='line'>790</span>          * @param  {Function} [callback] 回调
-<span class='line'>791</span>          */</span><span class="WHIT">
-<span class='line'>792</span> </span><span class="WHIT">        </span><span class="NAME">unlistenBefore</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>793</span> </span><span class="WHIT">            </span><span class="NAME">Event.un.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">+</span><span class="NAME">BEFORE</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>794</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>795</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>796</span>          * 取消after监听
-<span class='line'>797</span>          * @param  {String}   name     注册时元信息的名称
-<span class='line'>798</span>          * @param  {Function} [callback] 回调
-<span class='line'>799</span>          */</span><span class="WHIT">
-<span class='line'>800</span> </span><span class="WHIT">        </span><span class="NAME">unlistenAfter</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>801</span> </span><span class="WHIT">            </span><span class="NAME">Event.un.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">+</span><span class="NAME">AFTER</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>802</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>803</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>804</span>          * 触发某个model的before监听
-<span class='line'>805</span>          * @param  {String} name 注册时元信息中的名称
-<span class='line'>806</span>          * @param  {Object} [args] 数据
-<span class='line'>807</span>          */</span><span class="WHIT">
-<span class='line'>808</span> </span><span class="WHIT">        </span><span class="NAME">fireBefore</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>809</span> </span><span class="WHIT">            </span><span class="NAME">Event.fire.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">+</span><span class="NAME">BEFORE</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>810</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>811</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>812</span>          * 触发某个model的after监听
-<span class='line'>813</span>          * @param  {String} name 注册时元信息中的名称
-<span class='line'>814</span>          * @param  {Object} [args] 数据
-<span class='line'>815</span>          */</span><span class="WHIT">
-<span class='line'>816</span> </span><span class="WHIT">        </span><span class="NAME">fireAfter</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>817</span> </span><span class="WHIT">            </span><span class="NAME">Event.fire.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">+</span><span class="NAME">AFTER</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>818</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>819</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>820</span>          * 从缓存中获取model对象
-<span class='line'>821</span>          * @param  {String|Object} modelAttrs
-<span class='line'>822</span>          * @return {Model}
-<span class='line'>823</span>          */</span><span class="WHIT">
-<span class='line'>824</span> </span><span class="WHIT">        </span><span class="NAME">getCachedModel</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">modelAttrs</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>825</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>826</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">modelsCache</span><span class="PUNC">=</span><span class="NAME">me.$mCache</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>827</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">entity</span><span class="PUNC">=</span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>828</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">cacheKey</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>829</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">meta</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>830</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">S.isString</span><span class="PUNC">(</span><span class="NAME">modelAttrs</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>831</span> </span><span class="WHIT">                </span><span class="NAME">cacheKey</span><span class="PUNC">=</span><span class="NAME">modelAttrs</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>832</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>833</span> </span><span class="WHIT">                </span><span class="NAME">meta</span><span class="PUNC">=</span><span class="NAME">me.getModelMeta</span><span class="PUNC">(</span><span class="NAME">modelAttrs</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>834</span> </span><span class="WHIT">                </span><span class="NAME">cacheKey</span><span class="PUNC">=</span><span class="NAME">modelAttrs.cacheKey</span><span class="PUNC">||</span><span class="NAME">meta.cacheKey</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>835</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">S.isFunction</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>836</span> </span><span class="WHIT">                    </span><span class="NAME">cacheKey</span><span class="PUNC">=</span><span class="NAME">SafeExec</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">,</span><span class="PUNC">[</span><span class="NAME">meta</span><span class="PUNC">,</span><span class="NAME">modelAttrs</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>837</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>838</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>839</span> 
-<span class='line'>840</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">&&</span><span class="PUNC">(</span><span class="NAME">entity</span><span class="PUNC">=</span><span class="NAME">modelsCache.get</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//缓存</span><span class="WHIT">
-<span class='line'>841</span> </span><span class="WHIT">                </span><span class="WHIT">
-<span class='line'>842</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">meta</span><span class="PUNC">)</span><span class="NAME">meta</span><span class="PUNC">=</span><span class="NAME">entity._meta</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>769</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">meta.url</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>770</span> </span><span class="WHIT">                </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">meta.url</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>771</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>772</span> </span><span class="WHIT">                </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">me.$mClass.prototype.url</span><span class="PUNC">(</span><span class="NAME">meta.uri</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>773</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>774</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>775</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>776</span>          * 监听某个model的before
+<span class='line'>777</span>          * @param  {String}   name     注册时元信息中的名称
+<span class='line'>778</span>          * @param  {Function} callback 回调
+<span class='line'>779</span>          */</span><span class="WHIT">
+<span class='line'>780</span> </span><span class="WHIT">        </span><span class="NAME">listenBefore</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>781</span> </span><span class="WHIT">            </span><span class="NAME">Event.on.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">+</span><span class="NAME">BEFORE</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>782</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>783</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>784</span>          * 监听某个model的after
+<span class='line'>785</span>          * @param  {String}   name     注册时元信息中的名称
+<span class='line'>786</span>          * @param  {Function} callback 回调
+<span class='line'>787</span>          */</span><span class="WHIT">
+<span class='line'>788</span> </span><span class="WHIT">        </span><span class="NAME">listenAfter</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>789</span> </span><span class="WHIT">            </span><span class="NAME">Event.on.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">+</span><span class="NAME">AFTER</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>790</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>791</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>792</span>          * 取消before监听
+<span class='line'>793</span>          * @param  {String}   name     注册时元信息的名称
+<span class='line'>794</span>          * @param  {Function} [callback] 回调
+<span class='line'>795</span>          */</span><span class="WHIT">
+<span class='line'>796</span> </span><span class="WHIT">        </span><span class="NAME">unlistenBefore</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>797</span> </span><span class="WHIT">            </span><span class="NAME">Event.un.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">+</span><span class="NAME">BEFORE</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>798</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>799</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>800</span>          * 取消after监听
+<span class='line'>801</span>          * @param  {String}   name     注册时元信息的名称
+<span class='line'>802</span>          * @param  {Function} [callback] 回调
+<span class='line'>803</span>          */</span><span class="WHIT">
+<span class='line'>804</span> </span><span class="WHIT">        </span><span class="NAME">unlistenAfter</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>805</span> </span><span class="WHIT">            </span><span class="NAME">Event.un.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">+</span><span class="NAME">AFTER</span><span class="PUNC">,</span><span class="NAME">callback</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>806</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>807</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>808</span>          * 触发某个model的before监听
+<span class='line'>809</span>          * @param  {String} name 注册时元信息中的名称
+<span class='line'>810</span>          * @param  {Object} [args] 数据
+<span class='line'>811</span>          */</span><span class="WHIT">
+<span class='line'>812</span> </span><span class="WHIT">        </span><span class="NAME">fireBefore</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>813</span> </span><span class="WHIT">            </span><span class="NAME">Event.fire.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">+</span><span class="NAME">BEFORE</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>814</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>815</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>816</span>          * 触发某个model的after监听
+<span class='line'>817</span>          * @param  {String} name 注册时元信息中的名称
+<span class='line'>818</span>          * @param  {Object} [args] 数据
+<span class='line'>819</span>          */</span><span class="WHIT">
+<span class='line'>820</span> </span><span class="WHIT">        </span><span class="NAME">fireAfter</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>821</span> </span><span class="WHIT">            </span><span class="NAME">Event.fire.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">name</span><span class="PUNC">+</span><span class="NAME">AFTER</span><span class="PUNC">,</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>822</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>823</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>824</span>          * 从缓存中获取model对象
+<span class='line'>825</span>          * @param  {String|Object} modelAttrs
+<span class='line'>826</span>          * @return {Model}
+<span class='line'>827</span>          */</span><span class="WHIT">
+<span class='line'>828</span> </span><span class="WHIT">        </span><span class="NAME">getCachedModel</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">modelAttrs</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>829</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>830</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">modelsCache</span><span class="PUNC">=</span><span class="NAME">me.$mCache</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>831</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">entity</span><span class="PUNC">=</span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>832</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">cacheKey</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>833</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">meta</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>834</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">S.isString</span><span class="PUNC">(</span><span class="NAME">modelAttrs</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>835</span> </span><span class="WHIT">                </span><span class="NAME">cacheKey</span><span class="PUNC">=</span><span class="NAME">modelAttrs</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>836</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>837</span> </span><span class="WHIT">                </span><span class="NAME">meta</span><span class="PUNC">=</span><span class="NAME">me.getModelMeta</span><span class="PUNC">(</span><span class="NAME">modelAttrs</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>838</span> </span><span class="WHIT">                </span><span class="NAME">cacheKey</span><span class="PUNC">=</span><span class="NAME">modelAttrs.cacheKey</span><span class="PUNC">||</span><span class="NAME">meta.cacheKey</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>839</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">S.isFunction</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>840</span> </span><span class="WHIT">                    </span><span class="NAME">cacheKey</span><span class="PUNC">=</span><span class="NAME">SafeExec</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">,</span><span class="PUNC">[</span><span class="NAME">meta</span><span class="PUNC">,</span><span class="NAME">modelAttrs</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>841</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>842</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'>843</span> 
-<span class='line'>844</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">cacheTime</span><span class="PUNC">=</span><span class="NAME">modelAttrs.cacheTime</span><span class="PUNC">||</span><span class="NAME">meta.cacheTime</span><span class="PUNC">||</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>845</span> 
-<span class='line'>846</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">S.isFunction</span><span class="PUNC">(</span><span class="NAME">cacheTime</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>847</span> </span><span class="WHIT">                    </span><span class="NAME">cacheTime</span><span class="PUNC">=</span><span class="NAME">SafeExec</span><span class="PUNC">(</span><span class="NAME">cacheTime</span><span class="PUNC">,</span><span class="PUNC">[</span><span class="NAME">meta</span><span class="PUNC">,</span><span class="NAME">modelAttrs</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>848</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>844</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">&&</span><span class="PUNC">(</span><span class="NAME">entity</span><span class="PUNC">=</span><span class="NAME">modelsCache.get</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//缓存</span><span class="WHIT">
+<span class='line'>845</span> </span><span class="WHIT">                </span><span class="WHIT">
+<span class='line'>846</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">meta</span><span class="PUNC">)</span><span class="NAME">meta</span><span class="PUNC">=</span><span class="NAME">entity._meta</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>847</span> 
+<span class='line'>848</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">cacheTime</span><span class="PUNC">=</span><span class="NAME">modelAttrs.cacheTime</span><span class="PUNC">||</span><span class="NAME">meta.cacheTime</span><span class="PUNC">||</span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>849</span> 
-<span class='line'>850</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cacheTime</span><span class="PUNC">></span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>851</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">S.now</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">-</span><span class="NAME">entity._doneAt</span><span class="PUNC">></span><span class="NAME">cacheTime</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>852</span> </span><span class="WHIT">                        </span><span class="NAME">me.clearCacheByKey</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>853</span> </span><span class="WHIT">                        </span><span class="NAME">entity</span><span class="PUNC">=</span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>854</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>855</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>856</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>857</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">entity</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>858</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>859</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>860</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">MManager</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>861</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>862</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/magix"</span><span class="PUNC">,</span><span class="STRN">"magix/event"</span><span class="PUNC">]</span><span class="WHIT">
-<span class='line'>863</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>850</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">S.isFunction</span><span class="PUNC">(</span><span class="NAME">cacheTime</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>851</span> </span><span class="WHIT">                    </span><span class="NAME">cacheTime</span><span class="PUNC">=</span><span class="NAME">SafeExec</span><span class="PUNC">(</span><span class="NAME">cacheTime</span><span class="PUNC">,</span><span class="PUNC">[</span><span class="NAME">meta</span><span class="PUNC">,</span><span class="NAME">modelAttrs</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>852</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>853</span> 
+<span class='line'>854</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">cacheTime</span><span class="PUNC">></span><span class="NUMB">0</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>855</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">S.now</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">-</span><span class="NAME">entity._doneAt</span><span class="PUNC">></span><span class="NAME">cacheTime</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>856</span> </span><span class="WHIT">                        </span><span class="NAME">me.clearCacheByKey</span><span class="PUNC">(</span><span class="NAME">cacheKey</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>857</span> </span><span class="WHIT">                        </span><span class="NAME">entity</span><span class="PUNC">=</span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>858</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>859</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>860</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>861</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">entity</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>862</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>863</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>864</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">MManager</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>865</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>866</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/magix"</span><span class="PUNC">,</span><span class="STRN">"magix/event"</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>867</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
