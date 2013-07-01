@@ -939,13 +939,13 @@ var ChgdCache=Magix.createCache();
 var TLoc,LLoc,Pnr;
 var TitleC=1<<16;
 var TrimHashReg=/#.*$/,TrimQueryReg=/^[^#]*#?!?/;
-var Ps='params';
+var PARAMS='params';
 var UseNativeHistory=MxConfig.nativeHistory;
 var SupportState,HashAsNativeHistory;
 
 var isParam=function(params,r,ps){
     if(params){
-        ps=this[Ps];
+        ps=this[PARAMS];
         if(!Magix.isArray(params))params=params.split(',');
         for(var i=0;i<params.length;i++){
             r=Has(ps,params[i]);
@@ -970,7 +970,7 @@ var isView=function(){
     for(var i=0;i<args.length;i++){
         temp[args[i]]=true;
     }
-    var keys=Magix.keys(this[Ps]);
+    var keys=Magix.keys(this[PARAMS]);
     for(i=0;i<keys.length;i++){
         if(!Has(temp,keys[i])){
             return true;
@@ -988,22 +988,22 @@ var paramDiff=function(param){
     var me=this;
     var hash=me.hash;
     var query=me.query;
-    return hash[Ps][param]!=query[Ps][param];
+    return hash[PARAMS][param]!=query[PARAMS][param];
 };
 var hashOwn=function(key){
     var me=this;
     var hash=me.hash;
-    return Has(hash[Ps],key);
+    return Has(hash[PARAMS],key);
 };
 var queryOwn=function(key){
     var me=this;
     var query=me.query;
-    return Has(query[Ps],key);
+    return Has(query[PARAMS],key);
 };
 
 var getParam=function(key){
     var me=this;
-    var params=me[Ps];
+    var params=me[PARAMS];
     return params[key];
 };
 
@@ -1132,8 +1132,8 @@ var Router=Mix({
             var hashObj=Path(hash);//去掉可能的！开始符号
             //
             var comObj={};//把query和hash解析的参数进行合并，用于hash和pushState之间的过度
-            Mix(comObj,queryObj[Ps]);
-            Mix(comObj,hashObj[Ps]);
+            Mix(comObj,queryObj[PARAMS]);
+            Mix(comObj,hashObj[PARAMS]);
             result={
                 pathnameDiff:pathnameDiff,
                 paramDiff:paramDiff,
@@ -1220,19 +1220,19 @@ var Router=Mix({
                 result.view=1;
                 hasChanged=1;
             }
-            var oldParams=oldLocation[Ps],newParams=newLocation[Ps];
+            var oldParams=oldLocation[PARAMS],newParams=newLocation[PARAMS];
             var p;
             for(p in oldParams){
                 if(oldParams[p]!=newParams[p]){
                     hasChanged=1;
-                    result[Ps][p]=1;
+                    result[PARAMS][p]=1;
                 }
             }
 
             for(p in newParams){
                 if(oldParams[p]!=newParams[p]){
                     hasChanged=1;
-                    result[Ps][p]=1;
+                    result[PARAMS][p]=1;
                 }
             }
             result.occur=hasChanged;
@@ -1324,23 +1324,23 @@ var Router=Mix({
 
             var pathObj=Path(pn);
             var temp={};
-            temp[Ps]=Mix({},pathObj[Ps]);
+            temp[PARAMS]=Mix({},pathObj[PARAMS]);
             temp[PATHNAME]=pathObj[PATHNAME];
 
             if(temp[PATHNAME]){
                 if(HashAsNativeHistory){//指定使用history state但浏览器不支持，需要把query中的存在的参数以空格替换掉
                     var query=TLoc.query;
-                    if(query&&(query=query[Ps])){
+                    if(query&&(query=query[PARAMS])){
                         for(var p in query){
-                            if(Has(query,p)&&!Has(temp[Ps],p)){
-                                temp[Ps][p]=EMPTY;
+                            if(Has(query,p)&&!Has(temp[PARAMS],p)){
+                                temp[PARAMS][p]=EMPTY;
                             }
                         }
                     }
                 }
             }else{
-                var ps=Mix({},TLoc[Ps]);
-                temp[Ps]=Mix(ps,temp[Ps]);
+                var ps=Mix({},TLoc[PARAMS]);
+                temp[PARAMS]=Mix(ps,temp[PARAMS]);
                 temp[PATHNAME]=TLoc[PATHNAME];
             }
             var tempPath=Magix.objectToPath(temp);
@@ -1363,7 +1363,7 @@ var Router=Mix({
                     Mix(temp,TLoc,temp);
                     temp.srcHash=tempPath;
                     temp.hash={
-                        params:temp[Ps],
+                        params:temp[PARAMS],
                         pathname:temp[PATHNAME]
                     };
                     /*
@@ -2525,7 +2525,7 @@ Mix(VProto,{
                 var eventsType=events[domEvent.type];
                 var fn=WEvent[flag];
                 if(fn){
-                    fn(domEvent);
+                    fn.call(WEvent,domEvent);
                 }
                 if(eventsType&&eventsType[evtName]){
                     

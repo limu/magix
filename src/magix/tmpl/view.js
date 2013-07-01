@@ -485,7 +485,7 @@ Mix(VProto,{
                 var eventsType=events[domEvent.type];
                 var fn=WEvent[flag];
                 if(fn){
-                    fn(domEvent);
+                    fn.call(WEvent,domEvent);
                 }
                 if(eventsType&&eventsType[evtName]){
                     
