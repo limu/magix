@@ -43,7 +43,7 @@ var RefLoc;
  * @property {String} id vframe id
  * @property {View} view view对象
  * @property {VOM} owner VOM对象
- * @property {Boolean} viewUsable view是否可用，即view的interact事件有没有派发
+ * @property {Boolean} viewInited view是否完成初始化，即view的inited事件有没有派发
  */
 var Vframe=function(id){
     var me=this;
@@ -168,7 +168,7 @@ Mix(Mix(Vframe.prototype,Event),{
         }else{
             node._chgd=1;
         }
-        //var useTurnaround=me.viewUsable&&me.useAnimUpdate();
+        //var useTurnaround=me.viewInited&&me.useAnimUpdate();
         me.unmountView();
         if(viewPath){
             var path=Magix.pathToObject(viewPath);
@@ -223,8 +223,8 @@ Mix(Mix(Vframe.prototype,Event),{
                         });
 
                         view.on('inited',function(){
-                            me.viewUsable=1;
-                            me.fire('viewInteract',{view:view});
+                            me.viewInited=1;
+                            me.fire('viewInited',{view:view});
                         });                        
                     },0);
                     viewInitParams=viewInitParams||{};
@@ -251,12 +251,12 @@ Mix(Mix(Vframe.prototype,Event),{
                 me.oldViewDestroy();
             }*/
             delete me.view;
-            delete me.viewUsable;
+            delete me.viewInited;
             GlobalAlter=0;
             me.fire('viewUnmounted');
             CollectGarbage();
         }
-        me.un('viewInteract');
+        me.un('viewInited');
         me.sign--;
     },
     /**
@@ -560,10 +560,10 @@ Mix(Mix(Vframe.prototype,Event),{
         }
     }*/
     /**
-     * view可交互时触发
-     * @name Vframe#viewInteract 
+     * view初始化完成后触发
+     * @name Vframe#viewInited 
      * @event
-     * @param {Object} e view加载完成后触发
+     * @param {Object} e
      */
     
     /**

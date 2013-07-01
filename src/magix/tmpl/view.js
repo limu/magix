@@ -460,7 +460,7 @@ Mix(VProto,{
     parentView:function(){
         var me=this,vom=me.vom,owner=me.owner;
         var pVframe=vom.get(owner.pId),r=null;
-        if(pVframe&&pVframe.viewUsable){
+        if(pVframe&&pVframe.viewInited){
             r=pVframe.view;
         }
         return r;
@@ -733,6 +733,13 @@ Mix(VProto,{
     /**
      * view销毁时触发
      * @name View#destroy
+     * @event
+     * @param {Object} e
+     */
+    
+    /**
+     * view调用init方法后触发
+     * @name View#inited
      * @event
      * @param {Object} e
      */

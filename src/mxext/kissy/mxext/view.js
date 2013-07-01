@@ -43,14 +43,14 @@ KISSY.add('mxext/view',function(S,Magix,View,Router){
     };
     var PostMessage=function(vframe,args){
         var view=vframe.view;
-        if(view&&vframe.viewUsable){
+        if(view&&vframe.viewInited){
             SafeExec(view.receiveMessage,args,view);
         }else{
             var interact=function(e){
-                vframe.un('viewInteract',interact);
+                vframe.un('viewInited',interact);
                 SafeExec(e.view.receiveMessage,args,e.view);
             };
-            vframe.on('viewInteract',interact);
+            vframe.on('viewInited',interact);
         }
     };
     /**
