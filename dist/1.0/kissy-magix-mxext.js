@@ -2062,7 +2062,7 @@ var WrapFn=function(fn){
 };
 
 var EvtInfoCache=Magix.cache(40);
-console.log(EvtInfoCache);
+
 /**
  * View类
  * @name View
@@ -3513,7 +3513,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             }
             for(var i=0,model;i<models.length;i++){
                 model=models[i];
-                if(!model.name){
+                if(model&&!model.name){
                     throw new Error('model must own a name attribute');
                 }
                 metas[model.name]=model;
