@@ -26,7 +26,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
     var MManager=function(modelClass){
         var me=this;
         me.$mClass=modelClass;
-        me.$mCache=Magix.createCache();
+        me.$mCache=Magix.cache();
         me.$mCacheKeys={};
         me.$mMetas={};
     };

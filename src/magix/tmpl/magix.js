@@ -579,5 +579,5 @@ var Magix={
      * @function
      * @param {Integer} max 最大缓存数
      */
-    createCache:CreateCache
+    cache:CreateCache
 };

@@ -7,8 +7,8 @@ var Mix=Magix.mix;
 var D=document;
 var IsUtf8=/^UTF-8$/i.test(D.charset||D.characterSet||'UTF-8');
 var MxConfig=Magix.config();
-var HrefCache=Magix.createCache();
-var ChgdCache=Magix.createCache();
+var HrefCache=Magix.cache();
+var ChgdCache=Magix.cache();
 
 var TLoc,LLoc,Pnr;
 var TitleC=1<<16;

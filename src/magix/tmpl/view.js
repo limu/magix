@@ -21,6 +21,8 @@ var WrapFn=function(fn){
     }
 };
 
+var EvtInfoCache=Magix.cache(40);
+
 /**
  * View类
  * @name View
@@ -476,32 +478,39 @@ Mix(VProto,{
             var info=e.info;
             var domEvent=e.se;
 
-            var m=info.match(EvtInfoReg);
-            var evtName=m[1];
-            var flag=m[2];
-            var infos=m[3];
+            var m=EvtInfoCache.get(info);
+
+            if(!m){
+                m=info.match(EvtInfoReg);
+                m={
+                    n:m[1],
+                    f:m[2],
+                    i:m[3],
+                    p:{}
+                };
+                if(m.i){
+                    m.i.replace(EvtParamsReg,function(x,a,b){
+                        m.p[a]=b;
+                    });
+                }
+                EvtInfoCache.set(info,m);
+            }
             var events=me.events;
             if(events){
                 var eventsType=events[domEvent.type];
-                var fn=WEvent[flag];
+                var fn=WEvent[m.f];
                 if(fn){
                     fn.call(WEvent,domEvent);
                 }
-                if(eventsType&&eventsType[evtName]){
-                    
-                    var params={};
-                    if(infos){
-                        infos.replace(EvtParamsReg,function(m,a,b){
-                            params[a]=b;
-                        });
-                    }
-                    SafeExec(eventsType[evtName],Mix({
+                fn=eventsType&&eventsType[m.n];
+                if(fn){
+                    SafeExec(fn,Mix({
                         view:me,
                         currentId:e.cId,
                         targetId:e.tId,
                         domEvent:domEvent,
                         events:events,
-                        params:params
+                        params:m.p
                     },WEvent),eventsType);
                 }
             }
