@@ -3197,15 +3197,17 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                 }else{
 
                     model._doneAt=S.now();
-                    if(cacheKey&&!modelsCache.has(cacheKey)){
-                        modelsCache.set(cacheKey,model);
-                        var after=model._after;
-                        var meta=model._meta;
+                    if(cacheKey){
+                        if(!modelsCache.has(cacheKey)){
+                            modelsCache.set(cacheKey,model);
+                            var after=model._after;
+                            var meta=model._meta;
 
-                        if(after){//有after
-                            SafeExec(after,[model,meta]);
+                            if(after){//有after
+                                SafeExec(after,[model,meta]);
+                            }
+                            host.fireAfter(meta.name,[model]);
                         }
-                        host.fireAfter(meta.name,[model]);
                     }else{
                         var after=model._after;
                         var meta=model._meta;
