@@ -2046,15 +2046,14 @@ var EMPTY_ARRAY=[];
 var MxConfig=Magix.config();
 
 var Mix=Magix.mix;
-var WrapAsynUpdateNames=Magix.listToMap('render,renderUI');
+var WrapAsynUpdateNames=['render','renderUI'];
 var WrapKey='~';
 var WrapFn=function(fn){
     return function(){
         var me=this;
         var r;
-        if(me.sign){
-            me.sign++;
-            me.fire('rendercall');
+        var u=me.notifyUpdate();
+        if(u){
             r=fn.apply(me,arguments);
         }
         return r;
@@ -2124,14 +2123,14 @@ Mix(View,{
      * 对异步更新view的方法进行一次包装
      * @private
      */
-    wrapAsyn:function(){
+    wrapUpdate:function(){
         var view=this;
         if(!view[WrapKey]){//只处理一次
             view[WrapKey]=1;
             var prop=view.prototype;
             var old;
-            for(var p in WrapAsynUpdateNames){
-                old=prop[p];
+            for(var p=WrapAsynUpdateNames.length-1;p>-1;p--){
+                old=prop[WrapAsynUpdateNames[p]];
                 if(Magix.isFunction(old)&&old!=Magix.noop){
                     prop[p]=WrapFn(old);
                 }
@@ -2219,7 +2218,7 @@ Mix(VProto,{
      * }
      *
      * //example3
-     * //当不调用e的阻止或指定子view时，默认向所有子view传递消息
+     * //当不调用e.prevent或e.toChildren，则向所有子view传递消息
      * locationChange:function(e){
      *     //...
      * }
@@ -2227,6 +2226,7 @@ Mix(VProto,{
     locationChange:Magix.noop,
     /**
      * 初始化方法，供最终的view开发人员进行覆盖
+     * @param {Object} extra 初始化时，外部传递的参数
      * @function
      */
     init:Magix.noop,
@@ -2294,7 +2294,7 @@ Mix(VProto,{
     /**
      * 通知当前view即将开始进行html的更新
      */
-    beginUpdateHTML:function(){
+    beginUpdate:function(){
         var me=this;
         if(me.sign){
             var isRendered=me.rendered;
@@ -2309,7 +2309,7 @@ Mix(VProto,{
     /**
      * 通知当前view结束html的更新
      */
-    endUpdateHTML:function(){
+    endUpdate:function(){
         var me=this;
         if(me.sign){
             /*if(me.rendered&&me.enableAnim){
@@ -2323,6 +2323,18 @@ Mix(VProto,{
             me.fire('rendered');//可以在rendered事件中访问view.rendered属性
             CollectGarbage();
         }
+    },
+    /**
+     * 通知当前view进行更新，与beginUpdate不同的是：begin是开始更新html，notify是开始调用更新的方法，通常render与renderUI已经自动做了处理，对于用户自定义的获取数据并更新界面时，在开始更新前，需要调用一下该方法
+     * @return {Integer} 当前view的签名
+     */
+    notifyUpdate:function(){
+        var me=this;
+        if(me.sign){
+            me.sign++;
+            me.fire('rendercall');
+        }
+        return me.sign;
     },
     /**
      * 包装mx-event，自动添加mx-owner属性
@@ -2350,12 +2362,13 @@ Mix(VProto,{
         rendered : loadSubVframes
      */
     setViewHTML:function(html){
-        var me=this;
-        me.beginUpdateHTML();
+        var me=this,n;
+        me.beginUpdate();
         if(me.sign){
-            me.$(me.id).innerHTML=html;
+            n=me.$(me.id);
+            if(n)n.innerHTML=html;
         }
-        me.endUpdateHTML();
+        me.endUpdate();
     },
     /**
      * 指定要监视地址栏中的哪些值有变化时，或pathname有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
@@ -2822,7 +2835,7 @@ Mix(VProto,{
     
     
     /**
-     * 每次调用beginUpdateHTML更新view内容前触发
+     * 每次调用beginUpdate更新view内容前触发
      * @name View#refresh 
      * @event
      * @param {Object} e
@@ -2890,8 +2903,8 @@ Mix(VProto,{
     };
 	View.prepare=function(oView){
         var me=this;
-        if(!oView.wrapAsyn){
-            oView.wrapAsyn=me.wrapAsyn;
+        if(!oView.wrapUpdate){
+            oView.wrapUpdate=me.wrapUpdate;
             oView.extend=me.extend;
 
             var aimObject=oView.prototype;
@@ -2903,7 +2916,7 @@ Mix(VProto,{
                 start=temp.superclass;
             }
         }
-        oView.wrapAsyn();
+        oView.wrapUpdate();
     };
     return View;
 },{

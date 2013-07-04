@@ -488,7 +488,7 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#beginUpdateHTML">beginUpdateHTML</a></b>
+                                                <b class="name"><a href="../symbols/View.html#beginUpdate">beginUpdate</a></b>
                                                 <span class="param">()</span>
                                                 
                                                 
@@ -498,7 +498,7 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#endUpdateHTML">endUpdateHTML</a></b>
+                                                <b class="name"><a href="../symbols/View.html#endUpdate">endUpdate</a></b>
                                                 <span class="param">()</span>
                                                 
                                                 
@@ -519,7 +519,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/View.html#init">init</a></b>
-                                                <span class="param">()</span>
+                                                <span class="param">(extra)</span>
                                                 
                                                 
                                                 
@@ -534,6 +534,16 @@ dl.data .dd{
                                                 
                                                 
                                                 <span class="desc">当window.location.href有变化时调用该方法（如果您通过observeLocation指定了相关参数，则这些相关参数有变化时才调用locationChange，否则不会调用），供最终的view开发人员进行覆盖</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                
+                                                <b class="name"><a href="../symbols/View.html#notifyUpdate">notifyUpdate</a></b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                
+                                                <span class="desc">通知当前view进行更新，与beginUpdate不同的是：begin是开始更新html，notify是开始调用更新的方法，通常render与renderUI已经自动做了处理，对于用户自定义的获取数据并更新界面时，在开始更新前，需要调用一下该方法</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -692,7 +702,7 @@ dl.data .dd{
                                                 
                                                 
                                                 
-                                                <span class="desc">每次调用beginUpdateHTML更新view内容前触发</span>
+                                                <span class="desc">每次调用beginUpdate更新view内容前触发</span>
                                             </li>
                                             
                                             <li class="li">
@@ -1042,10 +1052,10 @@ dl.data .dd{
                                     <ul class="list detail-list">
                                         
                                         <li class="li">
-                                            <a name="beginUpdateHTML"> </a>
+                                            <a name="beginUpdate"> </a>
                                             <div class="title" >
                                                 
-                                                <b class="name">beginUpdateHTML</b>
+                                                <b class="name">beginUpdate</b>
                                                 <span class="param">()</span>
                                                 
                                                 
@@ -1080,10 +1090,10 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="endUpdateHTML"> </a>
+                                            <a name="endUpdate"> </a>
                                             <div class="title" >
                                                 
-                                                <b class="name">endUpdateHTML</b>
+                                                <b class="name">endUpdate</b>
                                                 <span class="param">()</span>
                                                 
                                                 
@@ -1205,7 +1215,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">init</b>
-                                                <span class="param">()</span>
+                                                <span class="param">(extra)</span>
                                                 
                                                 
                                                 
@@ -1219,6 +1229,22 @@ dl.data .dd{
                                             
                                             <dl>                                            
                                                 
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">extra</b>
+                                                            
+                                                            
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">初始化时，外部传递的参数</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
                                                 
                                                 
                                                 
@@ -1327,9 +1353,59 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">//example1locationChange:function(e){    if(e.changed.isPathname()){//pathname的改变        //...        e.prevent();//阻止向所有子view传递改变的消息    }}//example2locationChange:function(e){    if(e.changed.isParam('menu')){//menu参数发生改变        e.toChildren('magix_vf_menus');//只向id为 magix_vf_menus的view传递这个消息    }}//example3//当不调用e的阻止或指定子view时，默认向所有子view传递消息locationChange:function(e){    //...}</pre>
+                                                            <pre class="brush: js; ">//example1locationChange:function(e){    if(e.changed.isPathname()){//pathname的改变        //...        e.prevent();//阻止向所有子view传递改变的消息    }}//example2locationChange:function(e){    if(e.changed.isParam('menu')){//menu参数发生改变        e.toChildren('magix_vf_menus');//只向id为 magix_vf_menus的view传递这个消息    }}//example3//当不调用e.prevent或e.toChildren，则向所有子view传递消息locationChange:function(e){    //...}</pre>
                                                         
                                                 </dd>
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
+                                            <a name="notifyUpdate"> </a>
+                                            <div class="title" >
+                                                
+                                                <b class="name">notifyUpdate</b>
+                                                <span class="param">()</span>
+                                                
+                                                
+                                                
+                                            </div>
+
+                                            <div class="desc">
+                                                通知当前view进行更新，与beginUpdate不同的是：begin是开始更新html，notify是开始调用更新的方法，通常render与renderUI已经自动做了处理，对于用户自定义的获取数据并更新界面时，在开始更新前，需要调用一下该方法
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    
+                                                        <li class="li">
+                                                            <span class="type">{Integer}</span> 
+                                                            <span>当前view的签名</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
                                                 
                                                 
                                             </dl>                                            
@@ -2101,7 +2177,7 @@ dl.data .dd{
                                         </div>
                                         
                                         <div class="desc">
-                                            每次调用beginUpdateHTML更新view内容前触发
+                                            每次调用beginUpdate更新view内容前触发
                                             
                                             
                                         </div>

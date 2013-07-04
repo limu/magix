@@ -67,8 +67,8 @@ KISSY.add('magix/view',function(S,Magix,Event,Body,IO){
     };
 	View.prepare=function(oView){
         var me=this;
-        if(!oView.wrapAsyn){
-            oView.wrapAsyn=me.wrapAsyn;
+        if(!oView.wrapUpdate){
+            oView.wrapUpdate=me.wrapUpdate;
             oView.extend=me.extend;
 
             var aimObject=oView.prototype;
@@ -80,7 +80,7 @@ KISSY.add('magix/view',function(S,Magix,Event,Body,IO){
                 start=temp.superclass;
             }
         }
-        oView.wrapAsyn();
+        oView.wrapUpdate();
     };
     return View;
 },{

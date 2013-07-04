@@ -271,113 +271,115 @@
 <span class='line'>264</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>265</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>266</span> </span><span class="WHIT">        </span><span class="NAME">me.home</span><span class="PUNC">=</span><span class="NAME">Magix.config</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">appHome</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>267</span> </span><span class="WHIT">        </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'interact'</span><span class="PUNC">,</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>268</span> </span><span class="WHIT">            </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'rendercall'</span><span class="PUNC">,</span><span class="NAME">me.destroyMRequest</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>269</span> </span><span class="WHIT">            </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'prerender'</span><span class="PUNC">,</span><span class="NAME">me.destroyManaged</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>270</span> </span><span class="WHIT">            </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'destroy'</span><span class="PUNC">,</span><span class="NAME">me.destroyManaged</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>271</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>272</span> </span><span class="WHIT">        </span><span class="NAME">me.mxViewCtor</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>273</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>274</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">MxView</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>275</span> </span><span class="WHIT">    </span><span class="COMM">/*
-<span class='line'>276</span>         推荐使用的事件，KISSY这块的
-<span class='line'>277</span>         queryEvents:{
-<span class='line'>278</span>             mouseover:{
-<span class='line'>279</span>                 '#id':function(){
-<span class='line'>280</span>                     
-<span class='line'>281</span>                 },
-<span class='line'>282</span>                 '.title':function(){//  S.one('.title').click(); S.one().delegate(); 
-<span class='line'>283</span>                     
-<span class='line'>284</span>                 }
-<span class='line'>285</span>             },
-<span class='line'>286</span>             mouseenter:{
-<span class='line'>287</span>                 '#id':function(e){
-<span class='line'>288</span>                     
-<span class='line'>289</span>                 }
-<span class='line'>290</span>             }
-<span class='line'>291</span>         }
-<span class='line'>292</span>      */</span><span class="WHIT">
-<span class='line'>293</span> </span><span class="WHIT">    </span><span class="COMM">//return View.extend({</span><span class="WHIT">
-<span class='line'>294</span> </span><span class="WHIT">        </span><span class="COMM">/*attachQueryEvents:function(){
-<span class='line'>295</span>             var me=this;
-<span class='line'>296</span>             var queryEvents=me.queryEvents;
-<span class='line'>297</span>             if(queryEvents){
-<span class='line'>298</span>                 me.$queryEventsCache={};
-<span class='line'>299</span>                 for(var p in queryEvents){
-<span class='line'>300</span>                     var evts=queryEvents[p];
-<span class='line'>301</span>                     for(var q in evts){
-<span class='line'>302</span>                         //
-<span class='line'>303</span>                         S.all('#'+me.id+' '+q).on(p,me.$queryEventsCache[p+'_'+q]=(function(fn){
-<span class='line'>304</span>                             return function(e){
-<span class='line'>305</span>                                 if(me.enableEvent){
-<span class='line'>306</span>                                     var targetId=View.idIt(e.target);
-<span class='line'>307</span>                                     var currentId=View.idIt(e.currentTarget);
-<span class='line'>308</span>                                     Magix.SafeExec(fn,{
-<span class='line'>309</span>                                         view:me,
-<span class='line'>310</span>                                         targetId:targetId,
-<span class='line'>311</span>                                         currentId:currentId,
-<span class='line'>312</span>                                         queryEvents:queryEvents,
-<span class='line'>313</span>                                         domEvent:e
-<span class='line'>314</span>                                     },queryEvents);
-<span class='line'>315</span>                                 }
-<span class='line'>316</span>                             }
-<span class='line'>317</span>                         }(evts[q])));
-<span class='line'>318</span>                     }
-<span class='line'>319</span>                 }
-<span class='line'>320</span>             }
-<span class='line'>321</span>             //
-<span class='line'>322</span>         },*/</span><span class="WHIT">
-<span class='line'>323</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>324</span>          * 清除根据选择器添加的事件
-<span class='line'>325</span>          */</span><span class="WHIT">
-<span class='line'>326</span> </span><span class="WHIT">        </span><span class="COMM">/*detachQueryEvents:function(){
-<span class='line'>327</span>             var me=this;
-<span class='line'>328</span>             var queryEvents=me.queryEvents;
-<span class='line'>329</span>             if(queryEvents){
-<span class='line'>330</span>                 for(var p in queryEvents){
-<span class='line'>331</span>                     var evts=queryEvents[p];
-<span class='line'>332</span>                     for(var q in evts){
-<span class='line'>333</span>                         S.all('#'+me.id+' '+q).detach(p,me.$queryEventsCache[p+'_'+q]);
-<span class='line'>334</span>                     }
-<span class='line'>335</span>                 }
-<span class='line'>336</span>                 delete me.$queryEventsCache;
-<span class='line'>337</span>             }
-<span class='line'>338</span>         },*/</span><span class="WHIT">
-<span class='line'>339</span> </span><span class="WHIT">        </span><span class="WHIT">
-<span class='line'>340</span> </span><span class="WHIT">        </span><span class="WHIT">
-<span class='line'>341</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>342</span>         
-<span class='line'>343</span>         
+<span class='line'>267</span> </span><span class="WHIT">        </span><span class="NAME">me.beginUpdateHTML</span><span class="PUNC">=</span><span class="NAME">me.beginUpdate</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>268</span> </span><span class="WHIT">        </span><span class="NAME">me.endUpdateHTML</span><span class="PUNC">=</span><span class="NAME">me.endUpdate</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>269</span> </span><span class="WHIT">        </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'interact'</span><span class="PUNC">,</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>270</span> </span><span class="WHIT">            </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'rendercall'</span><span class="PUNC">,</span><span class="NAME">me.destroyMRequest</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>271</span> </span><span class="WHIT">            </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'prerender'</span><span class="PUNC">,</span><span class="NAME">me.destroyManaged</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>272</span> </span><span class="WHIT">            </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'destroy'</span><span class="PUNC">,</span><span class="NAME">me.destroyManaged</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>273</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>274</span> </span><span class="WHIT">        </span><span class="NAME">me.mxViewCtor</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>275</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>276</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">MxView</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>277</span> </span><span class="WHIT">    </span><span class="COMM">/*
+<span class='line'>278</span>         推荐使用的事件，KISSY这块的
+<span class='line'>279</span>         queryEvents:{
+<span class='line'>280</span>             mouseover:{
+<span class='line'>281</span>                 '#id':function(){
+<span class='line'>282</span>                     
+<span class='line'>283</span>                 },
+<span class='line'>284</span>                 '.title':function(){//  S.one('.title').click(); S.one().delegate(); 
+<span class='line'>285</span>                     
+<span class='line'>286</span>                 }
+<span class='line'>287</span>             },
+<span class='line'>288</span>             mouseenter:{
+<span class='line'>289</span>                 '#id':function(e){
+<span class='line'>290</span>                     
+<span class='line'>291</span>                 }
+<span class='line'>292</span>             }
+<span class='line'>293</span>         }
+<span class='line'>294</span>      */</span><span class="WHIT">
+<span class='line'>295</span> </span><span class="WHIT">    </span><span class="COMM">//return View.extend({</span><span class="WHIT">
+<span class='line'>296</span> </span><span class="WHIT">        </span><span class="COMM">/*attachQueryEvents:function(){
+<span class='line'>297</span>             var me=this;
+<span class='line'>298</span>             var queryEvents=me.queryEvents;
+<span class='line'>299</span>             if(queryEvents){
+<span class='line'>300</span>                 me.$queryEventsCache={};
+<span class='line'>301</span>                 for(var p in queryEvents){
+<span class='line'>302</span>                     var evts=queryEvents[p];
+<span class='line'>303</span>                     for(var q in evts){
+<span class='line'>304</span>                         //
+<span class='line'>305</span>                         S.all('#'+me.id+' '+q).on(p,me.$queryEventsCache[p+'_'+q]=(function(fn){
+<span class='line'>306</span>                             return function(e){
+<span class='line'>307</span>                                 if(me.enableEvent){
+<span class='line'>308</span>                                     var targetId=View.idIt(e.target);
+<span class='line'>309</span>                                     var currentId=View.idIt(e.currentTarget);
+<span class='line'>310</span>                                     Magix.SafeExec(fn,{
+<span class='line'>311</span>                                         view:me,
+<span class='line'>312</span>                                         targetId:targetId,
+<span class='line'>313</span>                                         currentId:currentId,
+<span class='line'>314</span>                                         queryEvents:queryEvents,
+<span class='line'>315</span>                                         domEvent:e
+<span class='line'>316</span>                                     },queryEvents);
+<span class='line'>317</span>                                 }
+<span class='line'>318</span>                             }
+<span class='line'>319</span>                         }(evts[q])));
+<span class='line'>320</span>                     }
+<span class='line'>321</span>                 }
+<span class='line'>322</span>             }
+<span class='line'>323</span>             //
+<span class='line'>324</span>         },*/</span><span class="WHIT">
+<span class='line'>325</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>326</span>          * 清除根据选择器添加的事件
+<span class='line'>327</span>          */</span><span class="WHIT">
+<span class='line'>328</span> </span><span class="WHIT">        </span><span class="COMM">/*detachQueryEvents:function(){
+<span class='line'>329</span>             var me=this;
+<span class='line'>330</span>             var queryEvents=me.queryEvents;
+<span class='line'>331</span>             if(queryEvents){
+<span class='line'>332</span>                 for(var p in queryEvents){
+<span class='line'>333</span>                     var evts=queryEvents[p];
+<span class='line'>334</span>                     for(var q in evts){
+<span class='line'>335</span>                         S.all('#'+me.id+' '+q).detach(p,me.$queryEventsCache[p+'_'+q]);
+<span class='line'>336</span>                     }
+<span class='line'>337</span>                 }
+<span class='line'>338</span>                 delete me.$queryEventsCache;
+<span class='line'>339</span>             }
+<span class='line'>340</span>         },*/</span><span class="WHIT">
+<span class='line'>341</span> </span><span class="WHIT">        </span><span class="WHIT">
+<span class='line'>342</span> </span><span class="WHIT">        </span><span class="WHIT">
+<span class='line'>343</span> </span><span class="WHIT">        </span><span class="COMM">/**
 <span class='line'>344</span>         
-<span class='line'>345</span>     },function(){
-<span class='line'>346</span>         var me=this;
-<span class='line'>347</span>         me.vm = new VM();
-<span class='line'>348</span>         me.on('interact',function(){
-<span class='line'>349</span>             me.on('rendercall',function(){
-<span class='line'>350</span>                 me.destroyAsyncall();
-<span class='line'>351</span>             });
-<span class='line'>352</span>             me.on('prerender',function(){
-<span class='line'>353</span>                 me.destroyManaged(true);
-<span class='line'>354</span>                 me.detachQueryEvents();
-<span class='line'>355</span>             });
-<span class='line'>356</span>             me.on('rendered',function(){
-<span class='line'>357</span>                 me.attachQueryEvents();
-<span class='line'>358</span>             });
-<span class='line'>359</span>             me.on('destroy',function(){
-<span class='line'>360</span>                 me.destroyManaged();
-<span class='line'>361</span>             });
-<span class='line'>362</span>         });
-<span class='line'>363</span>     });*/</span><span class="WHIT">
-<span class='line'>364</span> 
-<span class='line'>365</span> 
-<span class='line'>366</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>367</span>      * view销毁托管资源时发生
-<span class='line'>368</span>      * @name MxView#destroyResource
-<span class='line'>369</span>      * @event
-<span class='line'>370</span>      * @param {Object} e
-<span class='line'>371</span>      * @param {Object} e.resource 托管的资源
-<span class='line'>372</span>      * @param {Boolean} e.processed 表示view是否对这个资源做过销毁处理，目前view仅对带 abort destroy dispose方法的资源进行自动处理，其它资源需要您响应该事件自已处理
-<span class='line'>373</span>      */</span><span class="WHIT">
-<span class='line'>374</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>375</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/magix"</span><span class="PUNC">,</span><span class="STRN">"magix/view"</span><span class="PUNC">,</span><span class="STRN">"magix/router"</span><span class="PUNC">]</span><span class="WHIT">
-<span class='line'>376</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>345</span>         
+<span class='line'>346</span>         
+<span class='line'>347</span>     },function(){
+<span class='line'>348</span>         var me=this;
+<span class='line'>349</span>         me.vm = new VM();
+<span class='line'>350</span>         me.on('interact',function(){
+<span class='line'>351</span>             me.on('rendercall',function(){
+<span class='line'>352</span>                 me.destroyAsyncall();
+<span class='line'>353</span>             });
+<span class='line'>354</span>             me.on('prerender',function(){
+<span class='line'>355</span>                 me.destroyManaged(true);
+<span class='line'>356</span>                 me.detachQueryEvents();
+<span class='line'>357</span>             });
+<span class='line'>358</span>             me.on('rendered',function(){
+<span class='line'>359</span>                 me.attachQueryEvents();
+<span class='line'>360</span>             });
+<span class='line'>361</span>             me.on('destroy',function(){
+<span class='line'>362</span>                 me.destroyManaged();
+<span class='line'>363</span>             });
+<span class='line'>364</span>         });
+<span class='line'>365</span>     });*/</span><span class="WHIT">
+<span class='line'>366</span> 
+<span class='line'>367</span> 
+<span class='line'>368</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>369</span>      * view销毁托管资源时发生
+<span class='line'>370</span>      * @name MxView#destroyResource
+<span class='line'>371</span>      * @event
+<span class='line'>372</span>      * @param {Object} e
+<span class='line'>373</span>      * @param {Object} e.resource 托管的资源
+<span class='line'>374</span>      * @param {Boolean} e.processed 表示view是否对这个资源做过销毁处理，目前view仅对带 abort destroy dispose方法的资源进行自动处理，其它资源需要您响应该事件自已处理
+<span class='line'>375</span>      */</span><span class="WHIT">
+<span class='line'>376</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>377</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/magix"</span><span class="PUNC">,</span><span class="STRN">"magix/view"</span><span class="PUNC">,</span><span class="STRN">"magix/router"</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>378</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
