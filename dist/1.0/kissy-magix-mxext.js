@@ -4280,9 +4280,10 @@ KISSY.add("mxext/model",function(S,Magix){
          */
         get:function(type){
             var me=this;
+            var getAll=!arguments.length;
             var attrs=me.$attrs;
             if(attrs){
-                return attrs[type];
+                return getAll?attrs:attrs[type];
             }
             return null;
         },

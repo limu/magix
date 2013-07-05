@@ -351,154 +351,155 @@
 <span class='line'>344</span>          */</span><span class="WHIT">
 <span class='line'>345</span> </span><span class="WHIT">        </span><span class="NAME">get</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">type</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>346</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>347</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">attrs</span><span class="PUNC">=</span><span class="NAME">me.$attrs</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>348</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">attrs</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>349</span> </span><span class="WHIT">                </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">attrs</span><span class="PUNC">[</span><span class="NAME">type</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>350</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>351</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>352</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>353</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>354</span>          * 设置属性
-<span class='line'>355</span>          * @param {String|Object} key 属性对象或属性key
-<span class='line'>356</span>          * @param {Object} [val] 属性值
-<span class='line'>357</span>          */</span><span class="WHIT">
-<span class='line'>358</span> </span><span class="WHIT">        </span><span class="NAME">set</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">,</span><span class="NAME">val</span><span class="PUNC">,</span><span class="NAME">saveKeyList</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>359</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>360</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$attrs</span><span class="PUNC">)</span><span class="NAME">me.$attrs</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>361</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">saveKeyList</span><span class="PUNC">&&</span><span class="PUNC">!</span><span class="NAME">me.$keys</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>362</span> </span><span class="WHIT">                </span><span class="NAME">me.$keys</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>363</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>364</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">S.isObject</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>365</span> </span><span class="WHIT">                </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">p</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>366</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">saveKeyList</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>367</span> </span><span class="WHIT">                        </span><span class="NAME">me.$keys.push</span><span class="PUNC">(</span><span class="NAME">p</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>368</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>369</span> </span><span class="WHIT">                    </span><span class="NAME">me.$attrs</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">key</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>370</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>371</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>372</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">saveKeyList</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>373</span> </span><span class="WHIT">                    </span><span class="NAME">me.$keys.push</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>374</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>375</span> </span><span class="WHIT">                </span><span class="NAME">me.$attrs</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">val</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>376</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>377</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>378</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>379</span>          * 加载model数据
-<span class='line'>380</span>          * @param {Object} ops 请求选项
-<span class='line'>381</span>          */</span><span class="WHIT">
-<span class='line'>382</span> </span><span class="WHIT">        </span><span class="NAME">load</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>383</span> </span><span class="WHIT">            </span><span class="NAME">this.request</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>384</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>385</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>386</span>          * 保存model数据
-<span class='line'>387</span>          * @param {Object} ops 请求选项
-<span class='line'>388</span>          */</span><span class="WHIT">
-<span class='line'>389</span> </span><span class="WHIT">        </span><span class="NAME">save</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>390</span> </span><span class="WHIT">            </span><span class="NAME">this.request</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>391</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>392</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>393</span>          * 向服务器请求，加载或保存数据
-<span class='line'>394</span>          * @param {Object} ops 请求选项
-<span class='line'>395</span>          * @param {Function} ops.success 成功后的回调
-<span class='line'>396</span>          * @param {Function} ops.error 失败后的回调
-<span class='line'>397</span>          */</span><span class="WHIT">
-<span class='line'>398</span> </span><span class="WHIT">        </span><span class="NAME">request</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>399</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="NAME">ops</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>400</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">success</span><span class="PUNC">=</span><span class="NAME">ops.success</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>401</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">=</span><span class="NAME">ops.error</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>402</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>403</span> </span><span class="WHIT">            </span><span class="NAME">me.$abort</span><span class="PUNC">=</span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>404</span> </span><span class="WHIT">            </span><span class="NAME">ops.success</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">resp</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>405</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$abort</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>406</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">resp</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>407</span> </span><span class="WHIT">                        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">val</span><span class="PUNC">=</span><span class="NAME">me.parse</span><span class="PUNC">(</span><span class="NAME">resp</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>408</span> </span><span class="WHIT">                        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">S.isObject</span><span class="PUNC">(</span><span class="NAME">val</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>409</span> </span><span class="WHIT">                            </span><span class="NAME">val</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>410</span> </span><span class="WHIT">                                </span><span class="NAME">data</span><span class="PUNC">:</span><span class="NAME">val</span><span class="WHIT">
-<span class='line'>411</span> </span><span class="WHIT">                            </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>412</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>413</span> </span><span class="WHIT">                        </span><span class="NAME">me.set</span><span class="PUNC">(</span><span class="NAME">val</span><span class="PUNC">,</span><span class="KEYW">null</span><span class="PUNC">,</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>414</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>415</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">success</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>416</span> </span><span class="WHIT">                        </span><span class="NAME">success.apply</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>417</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>418</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>419</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>420</span> </span><span class="WHIT">            </span><span class="NAME">ops.error</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>421</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$abort</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>422</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">error</span><span class="PUNC">)</span><span class="NAME">error.apply</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>423</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>424</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>425</span> </span><span class="WHIT">            </span><span class="NAME">me.$trans</span><span class="PUNC">=</span><span class="NAME">me.sync</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>426</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>427</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>428</span>          * 中止请求
-<span class='line'>429</span>          */</span><span class="WHIT">
-<span class='line'>430</span> </span><span class="WHIT">        </span><span class="NAME">abort</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>431</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>432</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">me.$trans</span><span class="PUNC">&&</span><span class="NAME">me.$trans.abort</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>433</span> </span><span class="WHIT">                </span><span class="NAME">me.$trans.abort</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>434</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>435</span> </span><span class="WHIT">            </span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">me.$trans</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>436</span> </span><span class="WHIT">            </span><span class="NAME">me.$abort</span><span class="PUNC">=</span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>437</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>438</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>439</span>          * 获取当前model是否已经取消了请求
-<span class='line'>440</span>          * @return {Boolean}
-<span class='line'>441</span>          */</span><span class="WHIT">
-<span class='line'>442</span> </span><span class="WHIT">        </span><span class="NAME">isAborted</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>443</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.$abort</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>444</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>445</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>446</span>          * 开始事务
-<span class='line'>447</span>          * @example
-<span class='line'>448</span>          * //...
-<span class='line'>449</span>          * var userList=m.get('userList');//从model中取出userList数据
-<span class='line'>450</span>          * m.beginTransaction();//开始更改的事务
-<span class='line'>451</span>          * userList.push({userId:'58782',userName:'xinglie.lkf'});//添加一个新用户
-<span class='line'>452</span>          * m.save({
-<span class='line'>453</span>          *     //...
-<span class='line'>454</span>          *     success:function(){
-<span class='line'>455</span>          *           m.endTransaction();//成功后通知model结束事务  
-<span class='line'>456</span>          *     },
-<span class='line'>457</span>          *     error:function(){
-<span class='line'>458</span>          *         m.rollbackTransaction();//出错，回滚到原始数据状态
-<span class='line'>459</span>          *     }
-<span class='line'>460</span>          * });
-<span class='line'>461</span>          * //应用场景：
-<span class='line'>462</span>          * //前端获取用户列表，添加，删除或修改用户后
-<span class='line'>463</span>          * //把新的数据提交到数据库，因model是数据的载体
-<span class='line'>464</span>          * //可能会直接在model原有的数据上修改，提交修改后的数据
-<span class='line'>465</span>          * //如果前端提交到服务器，发生失败时，需要把
-<span class='line'>466</span>          * //model中的数据还原到修改前的状态(当然也可以再次提交)
-<span class='line'>467</span>          * //
-<span class='line'>468</span>          * //注意：
-<span class='line'>469</span>          * //可能添加，删除不太容易应用这个方法，修改没问题
-<span class='line'>470</span>          * //
-<span class='line'>471</span>          */</span><span class="WHIT">
-<span class='line'>472</span> </span><span class="WHIT">        </span><span class="NAME">beginTransaction</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>473</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>474</span> </span><span class="WHIT">            </span><span class="NAME">me.$bakAttrs</span><span class="PUNC">=</span><span class="NAME">S.clone</span><span class="PUNC">(</span><span class="NAME">me.$attrs</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>475</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>476</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>477</span>          * 回滚对model数据做的更改
-<span class='line'>478</span>          */</span><span class="WHIT">
-<span class='line'>479</span> </span><span class="WHIT">        </span><span class="NAME">rollbackTransaction</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>480</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>481</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bakAttrs</span><span class="PUNC">=</span><span class="NAME">me.$bakAttrs</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>482</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">bakAttrs</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>483</span> </span><span class="WHIT">                </span><span class="NAME">me.$attrs</span><span class="PUNC">=</span><span class="NAME">bakAttrs</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>484</span> </span><span class="WHIT">                </span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">me.$bakAttrs</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>485</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>486</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>487</span> </span><span class="WHIT">        </span><span class="COMM">/**
-<span class='line'>488</span>          * 结束事务
-<span class='line'>489</span>          */</span><span class="WHIT">
-<span class='line'>490</span> </span><span class="WHIT">        </span><span class="NAME">endTransaction</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>491</span> </span><span class="WHIT">            </span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">this.$bakAttrs</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>492</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>493</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>494</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Model</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>495</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>496</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/magix"</span><span class="PUNC">]</span><span class="WHIT">
-<span class='line'>497</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>347</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">getAll</span><span class="PUNC">=</span><span class="PUNC">!</span><span class="NAME">arguments.length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>348</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">attrs</span><span class="PUNC">=</span><span class="NAME">me.$attrs</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>349</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">attrs</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>350</span> </span><span class="WHIT">                </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">getAll</span><span class="PUNC">?</span><span class="NAME">attrs</span><span class="PUNC">:</span><span class="NAME">attrs</span><span class="PUNC">[</span><span class="NAME">type</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>351</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>352</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>353</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>354</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>355</span>          * 设置属性
+<span class='line'>356</span>          * @param {String|Object} key 属性对象或属性key
+<span class='line'>357</span>          * @param {Object} [val] 属性值
+<span class='line'>358</span>          */</span><span class="WHIT">
+<span class='line'>359</span> </span><span class="WHIT">        </span><span class="NAME">set</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">,</span><span class="NAME">val</span><span class="PUNC">,</span><span class="NAME">saveKeyList</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>360</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>361</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$attrs</span><span class="PUNC">)</span><span class="NAME">me.$attrs</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>362</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">saveKeyList</span><span class="PUNC">&&</span><span class="PUNC">!</span><span class="NAME">me.$keys</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>363</span> </span><span class="WHIT">                </span><span class="NAME">me.$keys</span><span class="PUNC">=</span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>364</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>365</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">S.isObject</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>366</span> </span><span class="WHIT">                </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">p</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>367</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">saveKeyList</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>368</span> </span><span class="WHIT">                        </span><span class="NAME">me.$keys.push</span><span class="PUNC">(</span><span class="NAME">p</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>369</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>370</span> </span><span class="WHIT">                    </span><span class="NAME">me.$attrs</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">key</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>371</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>372</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>373</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">saveKeyList</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>374</span> </span><span class="WHIT">                    </span><span class="NAME">me.$keys.push</span><span class="PUNC">(</span><span class="NAME">key</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>375</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>376</span> </span><span class="WHIT">                </span><span class="NAME">me.$attrs</span><span class="PUNC">[</span><span class="NAME">key</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">val</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>377</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>378</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>379</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>380</span>          * 加载model数据
+<span class='line'>381</span>          * @param {Object} ops 请求选项
+<span class='line'>382</span>          */</span><span class="WHIT">
+<span class='line'>383</span> </span><span class="WHIT">        </span><span class="NAME">load</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>384</span> </span><span class="WHIT">            </span><span class="NAME">this.request</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>385</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>386</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>387</span>          * 保存model数据
+<span class='line'>388</span>          * @param {Object} ops 请求选项
+<span class='line'>389</span>          */</span><span class="WHIT">
+<span class='line'>390</span> </span><span class="WHIT">        </span><span class="NAME">save</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>391</span> </span><span class="WHIT">            </span><span class="NAME">this.request</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>392</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>393</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>394</span>          * 向服务器请求，加载或保存数据
+<span class='line'>395</span>          * @param {Object} ops 请求选项
+<span class='line'>396</span>          * @param {Function} ops.success 成功后的回调
+<span class='line'>397</span>          * @param {Function} ops.error 失败后的回调
+<span class='line'>398</span>          */</span><span class="WHIT">
+<span class='line'>399</span> </span><span class="WHIT">        </span><span class="NAME">request</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>400</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="NAME">ops</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>401</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">success</span><span class="PUNC">=</span><span class="NAME">ops.success</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>402</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">=</span><span class="NAME">ops.error</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>403</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>404</span> </span><span class="WHIT">            </span><span class="NAME">me.$abort</span><span class="PUNC">=</span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>405</span> </span><span class="WHIT">            </span><span class="NAME">ops.success</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">resp</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>406</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$abort</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>407</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">resp</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>408</span> </span><span class="WHIT">                        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">val</span><span class="PUNC">=</span><span class="NAME">me.parse</span><span class="PUNC">(</span><span class="NAME">resp</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>409</span> </span><span class="WHIT">                        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">S.isObject</span><span class="PUNC">(</span><span class="NAME">val</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>410</span> </span><span class="WHIT">                            </span><span class="NAME">val</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>411</span> </span><span class="WHIT">                                </span><span class="NAME">data</span><span class="PUNC">:</span><span class="NAME">val</span><span class="WHIT">
+<span class='line'>412</span> </span><span class="WHIT">                            </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>413</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>414</span> </span><span class="WHIT">                        </span><span class="NAME">me.set</span><span class="PUNC">(</span><span class="NAME">val</span><span class="PUNC">,</span><span class="KEYW">null</span><span class="PUNC">,</span><span class="KEYW">true</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>415</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>416</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">success</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>417</span> </span><span class="WHIT">                        </span><span class="NAME">success.apply</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>418</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>419</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>420</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>421</span> </span><span class="WHIT">            </span><span class="NAME">ops.error</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>422</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$abort</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>423</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">error</span><span class="PUNC">)</span><span class="NAME">error.apply</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>424</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>425</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>426</span> </span><span class="WHIT">            </span><span class="NAME">me.$trans</span><span class="PUNC">=</span><span class="NAME">me.sync</span><span class="PUNC">(</span><span class="NAME">ops</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>427</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>428</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>429</span>          * 中止请求
+<span class='line'>430</span>          */</span><span class="WHIT">
+<span class='line'>431</span> </span><span class="WHIT">        </span><span class="NAME">abort</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>432</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>433</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">me.$trans</span><span class="PUNC">&&</span><span class="NAME">me.$trans.abort</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>434</span> </span><span class="WHIT">                </span><span class="NAME">me.$trans.abort</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>435</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>436</span> </span><span class="WHIT">            </span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">me.$trans</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>437</span> </span><span class="WHIT">            </span><span class="NAME">me.$abort</span><span class="PUNC">=</span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>438</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>439</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>440</span>          * 获取当前model是否已经取消了请求
+<span class='line'>441</span>          * @return {Boolean}
+<span class='line'>442</span>          */</span><span class="WHIT">
+<span class='line'>443</span> </span><span class="WHIT">        </span><span class="NAME">isAborted</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>444</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.$abort</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>445</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>446</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>447</span>          * 开始事务
+<span class='line'>448</span>          * @example
+<span class='line'>449</span>          * //...
+<span class='line'>450</span>          * var userList=m.get('userList');//从model中取出userList数据
+<span class='line'>451</span>          * m.beginTransaction();//开始更改的事务
+<span class='line'>452</span>          * userList.push({userId:'58782',userName:'xinglie.lkf'});//添加一个新用户
+<span class='line'>453</span>          * m.save({
+<span class='line'>454</span>          *     //...
+<span class='line'>455</span>          *     success:function(){
+<span class='line'>456</span>          *           m.endTransaction();//成功后通知model结束事务  
+<span class='line'>457</span>          *     },
+<span class='line'>458</span>          *     error:function(){
+<span class='line'>459</span>          *         m.rollbackTransaction();//出错，回滚到原始数据状态
+<span class='line'>460</span>          *     }
+<span class='line'>461</span>          * });
+<span class='line'>462</span>          * //应用场景：
+<span class='line'>463</span>          * //前端获取用户列表，添加，删除或修改用户后
+<span class='line'>464</span>          * //把新的数据提交到数据库，因model是数据的载体
+<span class='line'>465</span>          * //可能会直接在model原有的数据上修改，提交修改后的数据
+<span class='line'>466</span>          * //如果前端提交到服务器，发生失败时，需要把
+<span class='line'>467</span>          * //model中的数据还原到修改前的状态(当然也可以再次提交)
+<span class='line'>468</span>          * //
+<span class='line'>469</span>          * //注意：
+<span class='line'>470</span>          * //可能添加，删除不太容易应用这个方法，修改没问题
+<span class='line'>471</span>          * //
+<span class='line'>472</span>          */</span><span class="WHIT">
+<span class='line'>473</span> </span><span class="WHIT">        </span><span class="NAME">beginTransaction</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>474</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>475</span> </span><span class="WHIT">            </span><span class="NAME">me.$bakAttrs</span><span class="PUNC">=</span><span class="NAME">S.clone</span><span class="PUNC">(</span><span class="NAME">me.$attrs</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>476</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>477</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>478</span>          * 回滚对model数据做的更改
+<span class='line'>479</span>          */</span><span class="WHIT">
+<span class='line'>480</span> </span><span class="WHIT">        </span><span class="NAME">rollbackTransaction</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>481</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>482</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bakAttrs</span><span class="PUNC">=</span><span class="NAME">me.$bakAttrs</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>483</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">bakAttrs</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>484</span> </span><span class="WHIT">                </span><span class="NAME">me.$attrs</span><span class="PUNC">=</span><span class="NAME">bakAttrs</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>485</span> </span><span class="WHIT">                </span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">me.$bakAttrs</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>486</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>487</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>488</span> </span><span class="WHIT">        </span><span class="COMM">/**
+<span class='line'>489</span>          * 结束事务
+<span class='line'>490</span>          */</span><span class="WHIT">
+<span class='line'>491</span> </span><span class="WHIT">        </span><span class="NAME">endTransaction</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>492</span> </span><span class="WHIT">            </span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">this.$bakAttrs</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>493</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>494</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>495</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Model</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>496</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>497</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/magix"</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>498</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
