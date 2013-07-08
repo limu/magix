@@ -89,10 +89,11 @@ Mix(View,{
             view[WrapKey]=1;
             var prop=view.prototype;
             var old;
-            for(var p=WrapAsynUpdateNames.length-1;p>-1;p--){
-                old=prop[WrapAsynUpdateNames[p]];
+            for(var p=WrapAsynUpdateNames.length-1,name;p>-1;p--){
+                name=WrapAsynUpdateNames[p];
+                old=prop[name];
                 if(Magix.isFunction(old)&&old!=Magix.noop){
-                    prop[p]=WrapFn(old);
+                    prop[name]=WrapFn(old);
                 }
             }
         }
