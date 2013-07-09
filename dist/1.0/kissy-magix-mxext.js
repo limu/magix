@@ -3111,7 +3111,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
         return r;
     };
     var WrapDone=function(fn,context){
-        var a = Slice.call(arguments, 2);
+        var a = Slice.call(arguments, 1);
         return function(){
             return fn.apply(context,a.concat(Slice.call(arguments)));
         }
@@ -3197,19 +3197,18 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             if(doneIsArray){
                 doneArgs=new Array(done.length);
             }
-            var doneFn=function(idx,isFail,model,args){
+            var doneFn=function(model,idx,data,err){
                 
                 if(me.$destroy)return;//销毁，啥也不做
                 current++;
                 delete reqModels[model.id];
                 var cacheKey=model._cacheKey;
                 doneArr[idx]=model;
-                if(isFail){
+                if(err){
                     hasError=true;
-                    errorMsg=args||errorMsg;
-                    errorArgs[idx]=args;
+                    errorMsg=err;
+                    errorArgs[idx]=data;
                 }else{
-
                     model._doneAt=S.now();
                     if(cacheKey){
                         if(!modelsCache.has(cacheKey)){
@@ -3236,11 +3235,11 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                 if(flag==FetchFlags.ONE){//如果是其中一个成功，则每次成功回调一次
                     var m=doneIsArray?done[idx]:done;
                     if(m){
-                        doneArgs[idx]=SafeExec(m,[model,isFail?{msg:args}:null,hasError?errorArgs:null],me);
+                        doneArgs[idx]=SafeExec(m,[model,hasError?{msg:errorMsg}:null,hasError?errorArgs:null],me);
                     }
                 }else if(flag==FetchFlags.ORDER){
                     //var m=doneIsArray?done[idx]:done;
-                    orderlyArr[idx]={m:model,e:isFail,s:args};
+                    orderlyArr[idx]={m:model,e:hasError,s:errorMsg};
                     //
                     for(var i=orderlyArr.i||0,t,d;t=orderlyArr[i];i++){
                         d=doneIsArray?done[i]:done;
@@ -3256,7 +3255,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                 if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
                     var fns=modelsCacheKeys[cacheKey];
                     delete modelsCacheKeys[cacheKey];
-                    SafeExec(fns,[isFail,model,args],model);
+                    SafeExec(fns,[data,err],model);
                 }
 
                 if(current>=total){
@@ -3270,7 +3269,6 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                         doneArgs.push(last);
                     }
                     me.$ntId=setTimeout(function(){//前面的任务可能从缓存中来，执行很快
-                        me.$doTask=false;
                         
                         me.doNext(doneArgs);
                     },30);
@@ -3284,22 +3282,20 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                     var modelEntity,modelInfo;
                     var modelInfo=host.getModel(model);
                     var cacheKey=modelInfo.cacheKey;
-                    
+                    modelEntity=modelInfo.entity;
+
                     if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
-                        modelsCacheKeys[cacheKey].push(WrapDone(doneFn,me,i));
+                        modelsCacheKeys[cacheKey].push(WrapDone(doneFn,modelEntity,i));
                     }else{                        
-                        modelEntity=modelInfo.entity;
+                        
                         if(modelInfo.needUpdate){
                             reqModels[modelEntity.id]=modelEntity;
                             if(cacheKey){
                                 modelsCacheKeys[cacheKey]=[];
                             }
-                            modelEntity.request({
-                                success:WrapDone(doneFn,modelEntity,i,false,modelEntity),
-                                error:WrapDone(doneFn,modelEntity,i,true,modelEntity)
-                            });
+                            modelEntity.request(WrapDone(doneFn,modelEntity,i));
                         }else{
-                            doneFn(i,false,modelEntity);
+                            doneFn(modelEntity,i);
                         }
                     }
                 }else{
@@ -3417,6 +3413,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          */
         doNext:function(preArgs){
             var me=this;
+            me.$doTask=false;
             var queue=me.$queue;
             if(queue){
                 var one=queue.shift();
@@ -4020,6 +4017,8 @@ KISSY.add("mxext/model",function(S,Magix){
         ProcessObject(props,this.prototype);
         return S.extend(BaseModel,this,props);
     };
+    var Encode=encodeURIComponent;
+
     Magix.mix(Model,{
         /**
          * @lends Model
@@ -4130,10 +4129,10 @@ KISSY.add("mxext/model",function(S,Magix){
                     v = params[p];
                     if (S.isArray(v)) {
                         for (var i = 0; i < v.length; i++) {
-                            arr.push(p + '=' + encodeURIComponent(v[i]));
+                            arr.push(p + '=' + Encode(v[i]));
                         }
                     } else {
-                        arr.push(p + '=' + encodeURIComponent(v));
+                        arr.push(p + '=' + Encode(v));
                     }
                 }
             }
@@ -4314,53 +4313,50 @@ KISSY.add("mxext/model",function(S,Magix){
             }
         },
         /**
-         * 加载model数据
-         * @param {Object} ops 请求选项
-         */
-        load:function(ops){
-            this.request(ops);
-        },
-        /**
-         * 保存model数据
-         * @param {Object} ops 请求选项
-         */
-        save:function(ops){
-            this.request(ops);
-        },
-        /**
          * 向服务器请求，加载或保存数据
-         * @param {Object} ops 请求选项
-         * @param {Function} ops.success 成功后的回调
-         * @param {Function} ops.error 失败后的回调
+         * @param {Function} callback 请求成功或失败的回调
          */
-        request:function(ops){
-            if(!ops)ops={};
-            var success=ops.success;
-            var error=ops.error;
+        request:function(callback,options){
+            if(!callback)callback=function(){};
+            var callbackIsFn=S.isFunction(callback);
+
+            var success=callback.success;
+            var error=callback.error;
+
             var me=this;
             me.$abort=false;
-            ops.success=function(resp){
+            var temp=function(data,err){
                 if(!me.$abort){
-                    if(resp){
-                        var val=me.parse(resp);
-                        if(!S.isObject(val)){
-                            val={
-                                data:val
-                            };
+                    console.log(callback,'callback');
+                    if(err){
+                        callbackIsFn&&callback(data,err,options);
+                        if(error){
+                            error.call(me,err);
                         }
-                        me.set(val,null,true);
-                    }
-                    if(success){
-                        success.apply(this,arguments);
+                    }else{
+                        if(data){
+                            var val=me.parse(data);
+                            if(!S.isObject(val)){
+                                val={
+                                    data:val
+                                };
+                            }
+                            me.set(val,null,true);
+                        }
+                        callbackIsFn&&callback(data,err,options);
+                        if(success){
+                            success.call(me,data);
+                        }
                     }
                 }
             };
-            ops.error=function(){
-                if(!me.$abort){
-                    if(error)error.apply(this,arguments);
-                }
+            temp.success=function(data){
+                temp(data);
             };
-            me.$trans=me.sync(ops);
+            temp.error=function(msg){
+                temp(null,msg||'request error');
+            };
+            me.$trans=me.sync(temp,options);
         },
         /**
          * 中止请求

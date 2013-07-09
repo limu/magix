@@ -512,16 +512,6 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/Model.html#load">load</a></b>
-                                                <span class="param">(ops)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">加载model数据</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/Model.html#parse">parse</a></b>
                                                 <span class="param">(resp)</span>
                                                 
@@ -533,7 +523,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/Model.html#request">request</a></b>
-                                                <span class="param">(ops)</span>
+                                                <span class="param">(callback, options)</span>
                                                 
                                                 
                                                 
@@ -558,16 +548,6 @@ dl.data .dd{
                                                 
                                                 
                                                 <span class="desc">回滚对model数据做的更改</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/Model.html#save">save</a></b>
-                                                <span class="param">(ops)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">保存model数据</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -1503,60 +1483,6 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="load"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">load</b>
-                                                <span class="param">(ops)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                加载model数据
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">ops</b>
-                                                            
-                                                            
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">请求选项</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
                                             <a name="parse"> </a>
                                             <div class="title" >
                                                 
@@ -1627,7 +1553,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">request</b>
-                                                <span class="param">(ops)</span>
+                                                <span class="param">(callback, options)</span>
                                                 
                                                 
                                                 
@@ -1648,29 +1574,20 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">ops</b>
+                                                            <b class="name">callback</b>
                                                             
                                                             
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">请求选项</span>
+                                                            <span class="type">{Function}</span> 
+                                                            <span class="desc">请求成功或失败的回调</span>
                                                         </li>
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">ops.success</b>
+                                                            <b class="name">options</b>
                                                             
                                                             
-                                                            <span class="type">{Function}</span> 
-                                                            <span class="desc">成功后的回调</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">ops.error</b>
                                                             
-                                                            
-                                                            <span class="type">{Function}</span> 
-                                                            <span class="desc">失败后的回调</span>
+                                                            <span class="desc"></span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1751,60 +1668,6 @@ dl.data .dd{
                                             
                                             <dl>                                            
                                                 
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="save"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">save</b>
-                                                <span class="param">(ops)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                保存model数据
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">ops</b>
-                                                            
-                                                            
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">请求选项</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
                                                 
                                                 
                                                 

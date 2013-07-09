@@ -50,7 +50,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
         return r;
     };
     var WrapDone=function(fn,context){
-        var a = Slice.call(arguments, 2);
+        var a = Slice.call(arguments, 1);
         return function(){
             return fn.apply(context,a.concat(Slice.call(arguments)));
         }
@@ -136,19 +136,18 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             if(doneIsArray){
                 doneArgs=new Array(done.length);
             }
-            var doneFn=function(idx,isFail,model,args){
-                console.log(me.$destroy,idx,isFail,model,args);
+            var doneFn=function(model,idx,data,err){
+                console.log(me.$destroy,idx,err,model,data);
                 if(me.$destroy)return;//销毁，啥也不做
                 current++;
                 delete reqModels[model.id];
                 var cacheKey=model._cacheKey;
                 doneArr[idx]=model;
-                if(isFail){
+                if(err){
                     hasError=true;
-                    errorMsg=args||errorMsg;
-                    errorArgs[idx]=args;
+                    errorMsg=err;
+                    errorArgs[idx]=data;
                 }else{
-
                     model._doneAt=S.now();
                     if(cacheKey){
                         if(!modelsCache.has(cacheKey)){
@@ -175,11 +174,11 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                 if(flag==FetchFlags.ONE){//如果是其中一个成功，则每次成功回调一次
                     var m=doneIsArray?done[idx]:done;
                     if(m){
-                        doneArgs[idx]=SafeExec(m,[model,isFail?{msg:args}:null,hasError?errorArgs:null],me);
+                        doneArgs[idx]=SafeExec(m,[model,hasError?{msg:errorMsg}:null,hasError?errorArgs:null],me);
                     }
                 }else if(flag==FetchFlags.ORDER){
                     //var m=doneIsArray?done[idx]:done;
-                    orderlyArr[idx]={m:model,e:isFail,s:args};
+                    orderlyArr[idx]={m:model,e:hasError,s:errorMsg};
                     //console.log(S.clone(orderlyArr),idx);
                     for(var i=orderlyArr.i||0,t,d;t=orderlyArr[i];i++){
                         d=doneIsArray?done[i]:done;
@@ -195,7 +194,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                 if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
                     var fns=modelsCacheKeys[cacheKey];
                     delete modelsCacheKeys[cacheKey];
-                    SafeExec(fns,[isFail,model,args],model);
+                    SafeExec(fns,[data,err],model);
                 }
 
                 if(current>=total){
@@ -209,7 +208,6 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                         doneArgs.push(last);
                     }
                     me.$ntId=setTimeout(function(){//前面的任务可能从缓存中来，执行很快
-                        me.$doTask=false;
                         console.log('doneArgsdoneArgs',doneArgs);
                         me.doNext(doneArgs);
                     },30);
@@ -223,22 +221,20 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                     var modelEntity,modelInfo;
                     var modelInfo=host.getModel(model);
                     var cacheKey=modelInfo.cacheKey;
-                    
+                    modelEntity=modelInfo.entity;
+
                     if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
-                        modelsCacheKeys[cacheKey].push(WrapDone(doneFn,me,i));
+                        modelsCacheKeys[cacheKey].push(WrapDone(doneFn,modelEntity,i));
                     }else{                        
-                        modelEntity=modelInfo.entity;
+                        
                         if(modelInfo.needUpdate){
                             reqModels[modelEntity.id]=modelEntity;
                             if(cacheKey){
                                 modelsCacheKeys[cacheKey]=[];
                             }
-                            modelEntity.request({
-                                success:WrapDone(doneFn,modelEntity,i,false,modelEntity),
-                                error:WrapDone(doneFn,modelEntity,i,true,modelEntity)
-                            });
+                            modelEntity.request(WrapDone(doneFn,modelEntity,i));
                         }else{
-                            doneFn(i,false,modelEntity);
+                            doneFn(modelEntity,i);
                         }
                     }
                 }else{
@@ -356,6 +352,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
          */
         doNext:function(preArgs){
             var me=this;
+            me.$doTask=false;
             var queue=me.$queue;
             if(queue){
                 var one=queue.shift();
