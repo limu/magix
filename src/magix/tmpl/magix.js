@@ -90,9 +90,9 @@ mix(Cache.prototype,{
             if(r.f>=1){
                 r.f++;
                 r.t=CacheLatest++;
-                console.log(r.f);
+                //console.log(r.f);
                 r=r.v;
-                console.log('hit cache:'+key);
+                //console.log('hit cache:'+key);
             }
         }
         return r;
@@ -110,7 +110,7 @@ mix(Cache.prototype,{
                 var t=me.b-me.x;
                 while(t--){
                     r=c.pop();
-                    console.log('delete from cache:'+r.k);
+                    //console.log('delete from cache:'+r.k);
                     delete c[r.k];
                 }
             }
@@ -447,7 +447,7 @@ var Magix={
                     result=url+part;
                 }
             }
-            console.log('url',url,'part',part,'result',result);
+            //console.log('url',url,'part',part,'result',result);
             while(PathRelativeReg.test(result)){
                 //console.log(result);
                 result=result.replace(PathRelativeReg,'$1/');

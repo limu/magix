@@ -358,9 +358,9 @@ mix(Cache.prototype,{
             if(r.f>=1){
                 r.f++;
                 r.t=CacheLatest++;
-                
+                //
                 r=r.v;
-                
+                //
             }
         }
         return r;
@@ -378,7 +378,7 @@ mix(Cache.prototype,{
                 var t=me.b-me.x;
                 while(t--){
                     r=c.pop();
-                    
+                    //
                     delete c[r.k];
                 }
             }
@@ -715,7 +715,7 @@ var Magix={
                     result=url+part;
                 }
             }
-            
+            //
             while(PathRelativeReg.test(result)){
                 //
                 result=result.replace(PathRelativeReg,'$1/');
@@ -937,7 +937,6 @@ var HrefCache=Magix.cache();
 var ChgdCache=Magix.cache();
 
 var TLoc,LLoc,Pnr;
-var TitleC=1<<16;
 var TrimHashReg=/#.*$/,TrimQueryReg=/^[^#]*#?!?/;
 var PARAMS='params';
 var UseNativeHistory=MxConfig.nativeHistory;
@@ -1269,6 +1268,7 @@ var Router=Mix({
      * 导航到新的地址
      * @param  {Object|String} pn pathname或参数字符串或参数对象
      * @param {String|Object} [params] 参数对象
+     * @param {Boolean} [replace] 是否替换当前历史记录
      * @example
      * KISSY.use('magix/router',function(S,R){
      *      R.navigate('/list?page=2&rows=20');//改变pathname和相关的参数，地址栏上的其它参数会进行丢弃，不会保留
@@ -1298,7 +1298,7 @@ var Router=Mix({
                 }
             }
      */
-    navigate:function(pn,params){
+    navigate:function(pn,params,replace){
         var me=Router;
         
         if(!params&&Magix.isObject(pn)){
@@ -1357,7 +1357,7 @@ var Router=Mix({
                 
                 if(SupportState){//如果使用pushState
                     me.poped=1;
-                    history.pushState(TitleC--,D.title,tempPath);
+                    history[replace?'replaceState':'pushState']({},D.title,tempPath);
                     me.route();
                 }else{
                     Mix(temp,TLoc,temp);
@@ -1379,7 +1379,12 @@ var Router=Mix({
 
                      */
                     me.fire('!ul',{loc:TLoc=temp});//hack 更新view的location属性
-                    location.hash='#!'+tempPath;
+                    tempPath='#!'+tempPath;
+                    if(replace){
+                        location.replace(tempPath);
+                    }else{
+                        location.hash=tempPath;
+                    }
                 }
             }
         }
