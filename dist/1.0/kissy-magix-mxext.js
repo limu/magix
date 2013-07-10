@@ -2896,7 +2896,7 @@ Mix(VProto,{
         }        
     };
 
-    View.extend=function(props,ctor){
+    View.extend=function(props,ctor,statics){
         var me=this;
         var BaseView=function(){
             BaseView.superclass.constructor.apply(this,arguments);
@@ -2905,7 +2905,7 @@ Mix(VProto,{
             }
         }
         BaseView.extend=me.extend;
-        return S.extend(BaseView,me,props);
+        return S.extend(BaseView,me,props,statics);
     };
 	View.prepare=function(oView){
         var me=this;
@@ -3115,10 +3115,9 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
         }
         return r;
     };
-    var WrapDone=function(fn,context){
-        var a = Slice.call(arguments, 1);
+    var WrapDone=function(fn,model,idx){
         return function(){
-            return fn.apply(context,a.concat(Slice.call(arguments)));
+            return fn.apply(model,[model,idx].concat(Slice.call(arguments)));
         }
     };
     Magix.mix(MManager,{
@@ -3258,7 +3257,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                 }
 
                 if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
-                    var fns=modelsCacheKeys[cacheKey];
+                    var fns=modelsCacheKeys[cacheKey].q;
                     delete modelsCacheKeys[cacheKey];
                     SafeExec(fns,[data,err],model);
                 }
@@ -3288,19 +3287,19 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                     var modelInfo=host.getModel(model);
                     var cacheKey=modelInfo.cacheKey;
                     modelEntity=modelInfo.entity;
+                    var wrapDoneFn=WrapDone(doneFn,modelEntity,i);
 
                     if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
-                        modelsCacheKeys[cacheKey].push(WrapDone(doneFn,modelEntity,i));
-                    }else{                        
-                        
+                        modelsCacheKeys[cacheKey].q.push(wrapDoneFn);
+                    }else{
                         if(modelInfo.needUpdate){
                             reqModels[modelEntity.id]=modelEntity;
                             if(cacheKey){
-                                modelsCacheKeys[cacheKey]=[];
+                                modelsCacheKeys[cacheKey]={q:[],e:modelEntity};
                             }
-                            modelEntity.request(WrapDone(doneFn,modelEntity,i));
+                            modelEntity.request(wrapDoneFn);
                         }else{
-                            doneFn(modelEntity,i);
+                            wrapDoneFn();
                         }
                     }
                 }else{
@@ -3913,21 +3912,26 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                     cacheKey=SafeExec(cacheKey,[meta,modelAttrs]);
                 }
             }
+            
+            if(cacheKey){
+                var requestCacheKeys=me.$mCacheKeys;
+                var info=requestCacheKeys[cacheKey];
+                if(info){
+                    entity=info.e;
+                }else if(entity=modelsCache.get(cacheKey)){//缓存
 
-            if(cacheKey&&(entity=modelsCache.get(cacheKey))){//缓存
-                
-                if(!meta)meta=entity._meta;
+                    if(!meta)meta=entity._meta;
+                    var cacheTime=modelAttrs.cacheTime||meta.cacheTime||0;
 
-                var cacheTime=modelAttrs.cacheTime||meta.cacheTime||0;
+                    if(S.isFunction(cacheTime)){
+                        cacheTime=SafeExec(cacheTime,[meta,modelAttrs]);
+                    }
 
-                if(S.isFunction(cacheTime)){
-                    cacheTime=SafeExec(cacheTime,[meta,modelAttrs]);
-                }
-
-                if(cacheTime>0){
-                    if(S.now()-entity._doneAt>cacheTime){
-                        me.clearCacheByKey(cacheKey);
-                        entity=null;
+                    if(cacheTime>0){
+                        if(S.now()-entity._doneAt>cacheTime){
+                            me.clearCacheByKey(cacheKey);
+                            entity=null;
+                        }
                     }
                 }
             }

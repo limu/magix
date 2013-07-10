@@ -2896,7 +2896,7 @@ Mix(VProto,{
         }        
     };
 
-    View.extend=function(props,ctor){
+    View.extend=function(props,ctor,statics){
         var me=this;
         var BaseView=function(){
             BaseView.superclass.constructor.apply(this,arguments);
@@ -2905,7 +2905,7 @@ Mix(VProto,{
             }
         }
         BaseView.extend=me.extend;
-        return S.extend(BaseView,me,props);
+        return S.extend(BaseView,me,props,statics);
     };
 	View.prepare=function(oView){
         var me=this;

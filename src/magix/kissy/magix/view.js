@@ -54,7 +54,7 @@ KISSY.add('magix/view',function(S,Magix,Event,Body,IO){
         }        
     };
 
-    View.extend=function(props,ctor){
+    View.extend=function(props,ctor,statics){
         var me=this;
         var BaseView=function(){
             BaseView.superclass.constructor.apply(this,arguments);
@@ -63,7 +63,7 @@ KISSY.add('magix/view',function(S,Magix,Event,Body,IO){
             }
         }
         BaseView.extend=me.extend;
-        return S.extend(BaseView,me,props);
+        return S.extend(BaseView,me,props,statics);
     };
 	View.prepare=function(oView){
         var me=this;
