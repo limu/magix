@@ -11,7 +11,8 @@ KISSY.add("mxext/model",function(S,Magix){
      * @class
      * @constructor
      * @param {Object} ops 初始化Model时传递的其它参数对象
-     * @property {String} uri 与后台接口对应的前端url key
+     * @property {String} id model唯一标识
+     * @property {Boolean} fromCache 在与ModelManager配合使用时，标识当前model对象是不是从缓存中来
      * @example
      * 项目中对Model的引用及配置：
      * KISSY.add("app/base/model",function(S,Model,io){
@@ -142,24 +143,24 @@ KISSY.add("mxext/model",function(S,Magix){
          * @param  {String} [type] 参数分组的key[Model.GET,Model.POST]，默认为Model.GET
          * @return {Object}
          */
-        getParamsObject:function(type){
+        /*getParamsObject:function(type){
             if(!type)type=Model.GET;
             return this['$'+type]||null;
-        },
+        },*/
         /**
          * 获取参数对象
          * @return {Object}
          */
-        getUrlParamsObject:function(){
+       /* getUrlParamsObject:function(){
             return this.getParamsObject(Model.GET);
-        },
+        },*/
         /**
          * 获取Post参数对象
          * @return {Object}
          */
-        getPostParamsObject:function(){
+        /*getPostParamsObject:function(){
             return this.getParamsObject(Model.POST);
-        },
+        },*/
         /**
          * 获取通过setPostParams放入的参数
          * @return {String}
@@ -273,22 +274,22 @@ KISSY.add("mxext/model",function(S,Magix){
         /**
          * @private
          */
-        removeParamsObject:function(type){
+        /*removeParamsObject:function(type){
             if(!type)type=Model.GET;
             delete this['$'+type];
-        },
+        },*/
         /**
          * @private
          */
-        removePostParamsObject:function(){
+        /*removePostParamsObject:function(){
             this.removeParamsObject(Model.POST);
-        },
+        },*/
         /**
          * @private
          */
-        removeUrlParamsObject:function(){
+        /*removeUrlParamsObject:function(){
             this.removeParamsObject(Model.GET);
-        },
+        },*/
         /**
          * 重置缓存的参数对象，对于同一个model反复使用前，最好能reset一下，防止把上次请求的参数也带上
          */

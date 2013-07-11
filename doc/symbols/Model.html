@@ -303,19 +303,31 @@ dl.data .dd{
                                         <ul class="list summary-list">
                                             
                                                 
+                                                    <li class="li">
+                                                        <b class="name"><a href="../symbols/Model.html#fromCache">fromCache</a></b>
+                                                        <span class="type">{Boolean}</span>
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        <span class="desc">在与ModelManager配合使用时，标识当前model对象是不是从缓存中来</span>
+                                                    </li>
+                                                
                                             
                                                 
                                             
                                                 
                                                     <li class="li">
-                                                        <b class="name"><a href="../symbols/Model.html#uri">uri</a></b>
+                                                        <b class="name"><a href="../symbols/Model.html#id">id</a></b>
                                                         <span class="type">{String}</span>
                                                         
                                                         
                                                         
                                                         
-                                                        <span class="desc">与后台接口对应的前端url key</span>
+                                                        <span class="desc">model唯一标识</span>
                                                     </li>
+                                                
+                                            
                                                 
                                             
                                                 
@@ -347,6 +359,9 @@ dl.data .dd{
                                             <ul class="static-list">
                                             
                                                 
+
+                                            
+                                                
                                                     <li class="li">
                                                         Model.<b class="name"><a href="../symbols/Model.html#.GET">GET</a></b>
                                                         
@@ -357,15 +372,15 @@ dl.data .dd{
 
                                             
                                                 
+
+                                            
+                                                
                                                     <li class="li">
                                                         Model.<b class="name"><a href="../symbols/Model.html#.POST">POST</a></b>
                                                         
                                                         <span class="desc">POST枚举</span>
                                                     </li>
 
-                                                
-
-                                            
                                                 
 
                                             
@@ -452,16 +467,6 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/Model.html#getParamsObject">getParamsObject</a></b>
-                                                <span class="param">(type)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">获取参数对象</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/Model.html#getPostParams">getPostParams</a></b>
                                                 <span class="param">()</span>
                                                 
@@ -472,32 +477,12 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/Model.html#getPostParamsObject">getPostParamsObject</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">获取Post参数对象</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/Model.html#getUrlParams">getUrlParams</a></b>
                                                 <span class="param">()</span>
                                                 
                                                 
                                                 
                                                 <span class="desc">获取通过setUrlParams放入的参数</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
-                                                <b class="name"><a href="../symbols/Model.html#getUrlParamsObject">getUrlParamsObject</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">获取参数对象</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -750,6 +735,28 @@ dl.data .dd{
 					Property Detail
 				</h3>
 				
+					<a name="fromCache"> </a>
+					<div class="fixedFont">
+
+					<span class="light">{Boolean}</span>
+					<b class="name">fromCache</b>
+                     
+					</div>
+					<div class="desc">
+						在与ModelManager配合使用时，标识当前model对象是不是从缓存中来
+						
+						
+					</div>
+
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".GET"> </a>
 					<div class="fixedFont">
 
@@ -772,15 +779,15 @@ dl.data .dd{
 
 					<hr />
 				
-					<a name=".POST"> </a>
+					<a name="id"> </a>
 					<div class="fixedFont">
 
-					
-					<span class="light">Model.</span><b class="name">POST</b>
-                     &lt;static&gt; 
+					<span class="light">{String}</span>
+					<b class="name">id</b>
+                     
 					</div>
 					<div class="desc">
-						POST枚举
+						model唯一标识
 						
 						
 					</div>
@@ -794,15 +801,15 @@ dl.data .dd{
 
 					<hr />
 				
-					<a name="uri"> </a>
+					<a name=".POST"> </a>
 					<div class="fixedFont">
 
-					<span class="light">{String}</span>
-					<b class="name">uri</b>
-                     
+					
+					<span class="light">Model.</span><b class="name">POST</b>
+                     &lt;static&gt; 
 					</div>
 					<div class="desc">
-						与后台接口对应的前端url key
+						POST枚举
 						
 						
 					</div>
@@ -1167,72 +1174,6 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="getParamsObject"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">getParamsObject</b>
-                                                <span class="param">(type)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                获取参数对象
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            [ 
-                                                            <b class="name">type</b>
-                                                            
-                                                             ]
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">参数分组的key[Model.GET,Model.POST]，默认为Model.GET</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{Object}</span> 
-                                                            <span></span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
                                             <a name="getPostParams"> </a>
                                             <div class="title" >
                                                 
@@ -1283,56 +1224,6 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="getPostParamsObject"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">getPostParamsObject</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                获取Post参数对象
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{Object}</span> 
-                                                            <span></span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
                                             <a name="getUrlParams"> </a>
                                             <div class="title" >
                                                 
@@ -1366,56 +1257,6 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             <span class="type">{String}</span> 
-                                                            <span></span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="getUrlParamsObject"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">getUrlParamsObject</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                获取参数对象
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{Object}</span> 
                                                             <span></span>
                                                         </li>
                                                     

@@ -54,6 +54,19 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             return fn.apply(model,[model,idx].concat(Slice.call(arguments)));
         }
     };
+    var UsedModel=function(m,f){
+        if(f){
+            for(var i=m.length-1;i>-1;i--){
+                UsedModel(m[i]);
+            }
+        }else{
+            var mm=m.$mm;
+            if(!m.fromCache&&mm.used>0){
+                m.fromCache=true;
+            }
+            mm.used++;
+        }
+    };
     Magix.mix(MManager,{
         /**
          * @lends MManager
@@ -140,39 +153,33 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                 if(me.$destroy)return;//销毁，啥也不做
                 current++;
                 delete reqModels[model.id];
-                var cacheKey=model._cacheKey;
+                var mm=model.$mm;
+                var cacheKey=mm.cacheKey;
                 doneArr[idx]=model;
                 if(err){
                     hasError=true;
                     errorMsg=err;
                     errorArgs[idx]=data;
                 }else{
-                    model._doneAt=S.now();
-                    if(cacheKey){
-                        if(!modelsCache.has(cacheKey)){
+                    if(!cacheKey||(cacheKey&&!modelsCache.has(cacheKey))){
+                        if(cacheKey){
                             modelsCache.set(cacheKey,model);
-                            var after=model._after;
-                            var meta=model._meta;
-
-                            if(after){//有after
-                                SafeExec(after,[model,meta]);
-                            }
-                            host.fireAfter(meta.name,[model]);
                         }
-                    }else{
-                        var after=model._after;
-                        var meta=model._meta;
+                        mm.doneAt=S.now();
+                        var after=mm.after;
+                        var meta=mm.meta;
 
                         if(after){//有after
                             SafeExec(after,[model,meta]);
                         }
                         host.fireAfter(meta.name,[model]);
                     }
-                }               
+                }
 
                 if(flag==FetchFlags.ONE){//如果是其中一个成功，则每次成功回调一次
                     var m=doneIsArray?done[idx]:done;
                     if(m){
+                        UsedModel(model);
                         doneArgs[idx]=SafeExec(m,[model,hasError?{msg:errorMsg}:null,hasError?errorArgs:null],me);
                     }
                 }else if(flag==FetchFlags.ORDER){
@@ -181,6 +188,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                     //console.log(S.clone(orderlyArr),idx);
                     for(var i=orderlyArr.i||0,t,d;t=orderlyArr[i];i++){
                         d=doneIsArray?done[i]:done;
+                        UsedModel(t.m);
                         doneArgs[i]=SafeExec(d,[t.m,t.e?{msg:t.s}:null,orderlyArr.e?errorArgs:null,doneArgs],me);
                         if(t.e){
                             errorArgs[i]=t.s;
@@ -190,16 +198,12 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                     orderlyArr.i=i;
                 }
 
-                if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
-                    var fns=modelsCacheKeys[cacheKey].q;
-                    delete modelsCacheKeys[cacheKey];
-                    SafeExec(fns,[data,err],model);
-                }
-
+                
                 if(current>=total){
                     errorArgs.msg=errorMsg;
                     var last=hasError?errorArgs:null;
-                    if(flag==FetchFlags.ALL){                           
+                    if(flag==FetchFlags.ALL){
+                        UsedModel(doneArr,1);       
                         doneArr.push(last);
                         doneArgs[0]=SafeExec(done,doneArr,me);
                         doneArgs[1]=last;
@@ -211,6 +215,13 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                         me.doNext(doneArgs);
                     },30);
                 }
+
+                if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
+                    var fns=modelsCacheKeys[cacheKey].q;
+                    delete modelsCacheKeys[cacheKey];
+                    SafeExec(fns,[data,err],model);
+                }
+
             };
             //console.log(me);
             
@@ -317,7 +328,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             if(reqModels){
                 for(var p in reqModels){
                     var m=reqModels[p];
-                    var cacheKey=m._cacheKey;
+                    var cacheKey=m.$mm.cacheKey;
                     if(cacheKey&&Has(modelsCacheKeys,cacheKey)){
                         var fns=modelsCacheKeys[cacheKey];
                         delete modelsCacheKeys[cacheKey];
@@ -478,32 +489,22 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             var me=this;
             for(var p in methods){
                 me[p]=(function(fn){
-                    return function(){
+                    return function(data,callback){
                         var aborted;
-                        var args=arguments;
-                        var arr=[];
-                        for(var i=0,a;i<args.length;i++){
-                            a=args[i];
-                            if(S.isFunction(a)){
-                                arr.push((function(f){
-                                    return function(){
-                                        if(!aborted){
-                                            f.apply(f,arguments);
-                                        }
-                                    }
-                                }(a)));
-                            }else{
-                                arr.push(a);
+                        var result=fn.call(me,data,function(){
+                            if(!aborted){
+                                callback.apply(me,arguments);
                             }
-                        }
-                        var result=fn.apply(me,arr);
+                        });
                         return {
                             destroy:function(){
                                 aborted=true;
                                 if(result&&result.destroy){
                                     result.destroy();
                                 }
-                            }
+                            },
+                            fetchAll:1,
+                            fetchOne:1
                         }
                     }
                 }(methods[p]));
@@ -604,7 +605,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             var meta=me.getModelMeta(modelAttrs);            
 
             var entity=new me.$mClass(GetOptions(meta));
-
+            entity.$mm={used:0};
             var before=modelAttrs.before||meta.before;
 
             me.fireBefore(meta.name,[entity]);
@@ -615,7 +616,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
 
             var after=modelAttrs.after||meta.after;
 
-            entity._after=after;
+            entity.$mm.after=after;
 
             var cacheKey=modelAttrs.cacheKey||meta.cacheKey;
 
@@ -623,8 +624,8 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                 cacheKey=SafeExec(cacheKey,[meta,modelAttrs]);
             }
             
-            entity._cacheKey=cacheKey;
-            entity._meta=meta;
+            entity.$mm.cacheKey=cacheKey;
+            entity.$mm.meta=meta;
             entity.set(GetOptions(modelAttrs));
             //默认设置的
             entity.setUrlParams(meta.urlParams);
@@ -673,7 +674,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             }
             return {
                 entity:entity,
-                cacheKey:entity._cacheKey,
+                cacheKey:entity.$mm.cacheKey,
                 needUpdate:needUpdate
             }
         },
@@ -758,9 +759,12 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
             for(var i=0;i<list.length;i++){
                 var one=list[i];
                 var m=one.v;
-                var tName=m&&m._meta.name;
-                if(tName==name){
-                    modelsCache.del(m._cacheKey);
+                var mm=m&&m.$mm;
+                if(mm){
+                    var tName=mm.meta.name;
+                    if(tName==name){
+                        modelsCache.del(mm.cacheKey);
+                    }
                 }
             }
         },
@@ -853,8 +857,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                 if(info){
                     entity=info.e;
                 }else if(entity=modelsCache.get(cacheKey)){//缓存
-
-                    if(!meta)meta=entity._meta;
+                    if(!meta)meta=entity.$mm.meta;
                     var cacheTime=modelAttrs.cacheTime||meta.cacheTime||0;
 
                     if(S.isFunction(cacheTime)){
@@ -862,7 +865,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                     }
 
                     if(cacheTime>0){
-                        if(S.now()-entity._doneAt>cacheTime){
+                        if(S.now()-entity.$mm.doneAt>cacheTime){
                             me.clearCacheByKey(cacheKey);
                             entity=null;
                         }
