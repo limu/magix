@@ -3573,16 +3573,7 @@ KISSY.add("mxext/mmanager",function(S,Magix,Event){
                                 callback.apply(me,arguments);
                             }
                         });
-                        return {
-                            destroy:function(){
-                                aborted=true;
-                                if(result&&result.destroy){
-                                    result.destroy();
-                                }
-                            },
-                            fetchAll:1,
-                            fetchOne:1
-                        }
+                        return result;
                     }
                 }(methods[p]));
             }

@@ -5,9 +5,9 @@
     <dirname property="current.dir" file="${ant.file}"></dirname>
     <property name="root.dir" location="${current.dir}/../"></property>
     <property name="build.dir" location="${root.dir}/dist"></property>
-    <property name="src.dir" location="${root.dir}/src"></property>
-    <property name="magix.dir" location="${root.dir}/src/magix"></property>
-    <property name="mxext.dir" location="${root.dir}/src/mxext"></property>
+    <property name="src.dir" location="${root.dir}/src/1.0"></property>
+    <property name="magix.dir" location="${src.dir}/magix"></property>
+    <property name="mxext.dir" location="${src.dir}/mxext"></property>
     <!--dir that out put product -->
     <property name="debug.dir" location="${build.dir}/debug"></property>
     <property name="raw.dir" location="${build.dir}/1.0"></property>
