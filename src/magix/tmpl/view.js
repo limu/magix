@@ -3,7 +3,6 @@ var SafeExec=Magix.safeExec;
 var Has=Magix.has;
 var COMMA=',';
 var EMPTY_ARRAY=[];
-var MxConfig=Magix.config();
 
 var Mix=Magix.mix;
 var WrapAsynUpdateNames=['render','renderUI'];
@@ -363,7 +362,7 @@ Mix(VProto,{
             args=args.keys;
         }
         if(args){
-            loc.keys=keys.concat(Magix.isString(args)?args.split(COMMA):args);
+            loc.keys=keys.concat(String(args).split(COMMA));
         }
     },
     /**

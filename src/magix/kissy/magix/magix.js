@@ -22,7 +22,7 @@ KISSY.add('magix/magix',function(S){
         include:Include,
         libRequire:function(name,fn){
             if(name){
-                S.use(name.toString(),function(S){
+                S.use(String(name),function(S){
                     if(fn){
                         fn.apply(S,Slice.call(arguments,1));
                     }

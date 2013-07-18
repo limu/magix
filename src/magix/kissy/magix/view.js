@@ -6,7 +6,9 @@
 KISSY.add('magix/view',function(S,Magix,Event,Body,IO){
 
     eval(Magix.include('../tmpl/view'));
-    
+    var AppHome=Magix.config('appHome');
+    var Suffix=Magix.config('debug')?'?t='+S.now():'';
+
     var ProcessObject=function(props,proto,enterObject){
         for(var p in proto){
             if(S.isObject(proto[p])){
@@ -27,7 +29,7 @@ KISSY.add('magix/view',function(S,Magix,Event,Body,IO){
             if(i.h){
                 fn(i.v);
             }else{
-                var file=MxConfig.appHome+me.path+'.html';
+                var file=AppHome+me.path+'.html';
                 var l=ProcessObject[file];
                 var onload=function(tmpl){
                     fn(Magix.tmpl(me.path,tmpl));
@@ -37,7 +39,7 @@ KISSY.add('magix/view',function(S,Magix,Event,Body,IO){
                 }else{
                     l=ProcessObject[file]=[onload];
                     IO({
-                        url:file+(MxConfig.debug?'?t='+S.now():''),
+                        url:file+Suffix,
                         success:function(x){
                             SafeExec(l,x);
                             delete ProcessObject[file];

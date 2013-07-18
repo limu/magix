@@ -276,13 +276,14 @@ var ProtocalReg=/^https?:\/\//i;
 var Templates={};
 var CacheLatest=0;
 var Slash='/';
+var DefaultTagName='vframe';
 
 var Cfg={
     debug:'%DEV%',
     iniFile:'app/ini',
     appName:'app',
     appHome:'./',
-    tagName:'vframe',
+    tagName:DefaultTagName,
     rootId:'magix_vf_root'
 };
 var Has=Templates.hasOwnProperty;
@@ -633,6 +634,8 @@ var Magix={
         me.libEnv(cfg);
         me.libRequire(cfg.iniFile,function(I){
             Cfg=mix(cfg,I,cfg);
+            Cfg.tagNameChanged=Cfg.tagName!=DefaultTagName;
+            
             var progress=cfg.progress;
             me.libRequire(['magix/router','magix/vom'],function(R,V){
                 R.on('!ul',V.locChged);
@@ -830,8 +833,8 @@ var Magix={
      * 
      */
     listToMap:function(list,key){
-        var me=this,i,e,map={},l;
-        if(me.isString(list)){
+        var i,e,map={},l;
+        if(Magix.isString(list)){
             list=list.split(',');
         }
         if(list&&(l=list.length)){
@@ -854,7 +857,7 @@ var Magix={
         
         libRequire:function(name,fn){
             if(name){
-                S.use(name.toString(),function(S){
+                S.use(String(name),function(S){
                     if(fn){
                         fn.apply(S,Slice.call(arguments,1));
                     }
@@ -1357,7 +1360,7 @@ var Router=Mix({
                 
                 if(SupportState){//如果使用pushState
                     me.poped=1;
-                    history[replace?'replaceState':'pushState']({},D.title,tempPath);
+                    history[replace?'replaceState':'pushState'](null,null,tempPath);
                     me.route();
                 }else{
                     Mix(temp,TLoc,temp);
@@ -1438,12 +1441,14 @@ var WIN=window;
 var CollectGarbage=WIN.CollectGarbage||Magix.noop;
 
 var Mix=Magix.mix;
-var MxConfig=Magix.config();
-var TagName=MxConfig.tagName;
-var RootId=MxConfig.rootId;
+
+var TagName=Magix.config('tagName');
+var RootId=Magix.config('rootId');
+var IsDefaultTagName=!Magix.config('tagNameChanged');
 var Has=Magix.has;
 var MxView='mx-view';
-var MxDefer='mx-defer';
+var MxBuild=IsDefaultTagName?'mx-defer':'mx-vframe';
+
 var Alter='alter';
 var Created='created';
 var RootVframe;
@@ -1737,26 +1742,31 @@ Mix(Mix(Vframe.prototype,Event),{
         var count=vframes.length;
         var subs={};
         if(count){
-            for(var i=0,vframe,key,mView,mDefer;i<count;i++){
+            for(var i=0,vframe,key,mxView,mxBuild;i<count;i++){
                 vframe=vframes[i];
                 
                 key=IdIt(vframe);
                 if(!Has(subs,key)){
-                    mView=vframe.getAttribute(MxView);
-                    mDefer=vframe.getAttribute(MxDefer);
-                    if(!mDefer||mView){
+                    mxView=vframe.getAttribute(MxView);
+                    mxBuild=!vframe.getAttribute(MxBuild)==IsDefaultTagName;
+                    if(mxBuild||mxView){
                         me.mountVframe(
                             key,
-                            mView,
+                            mxView,
                             viewInitParams,
                             autoMount
                         );
+                        var svs=$$(vframe,TagName);
+                        for(var j=0,c=svs.length,temp;j<c;j++){
+                            temp=svs[j];
+                            mxView=temp.getAttribute(MxView);
+                            mxBuild=!vframe.getAttribute(MxBuild)==IsDefaultTagName;
+                            if(!mxBuild&&!mxView){
+                                subs[IdIt(temp)]=1;
+                            }
+                        }
                     }
-                }
-                var svs=$$(vframe,TagName);
-                for(var j=0,c=svs.length;j<c;j++){
-                    subs[IdIt(svs[j])]=1;
-                }
+                }                
             }
         }
         if(me.cC==me.rC){//有可能在渲染某个vframe时，里面有n个vframes，但立即调用了mountZoneVframes，这个下面没有vframes，所以要等待
@@ -2048,7 +2058,6 @@ var SafeExec=Magix.safeExec;
 var Has=Magix.has;
 var COMMA=',';
 var EMPTY_ARRAY=[];
-var MxConfig=Magix.config();
 
 var Mix=Magix.mix;
 var WrapAsynUpdateNames=['render','renderUI'];
@@ -2408,7 +2417,7 @@ Mix(VProto,{
             args=args.keys;
         }
         if(args){
-            loc.keys=keys.concat(Magix.isString(args)?args.split(COMMA):args);
+            loc.keys=keys.concat(String(args).split(COMMA));
         }
     },
     /**
@@ -2848,7 +2857,9 @@ Mix(VProto,{
      * 与prerender不同的是：refresh触发后即删除监听列表
      */
 });
-    
+    var AppHome=Magix.config('appHome');
+    var Suffix=Magix.config('debug')?'?t='+S.now():'';
+
     var ProcessObject=function(props,proto,enterObject){
         for(var p in proto){
             if(S.isObject(proto[p])){
@@ -2869,7 +2880,7 @@ Mix(VProto,{
             if(i.h){
                 fn(i.v);
             }else{
-                var file=MxConfig.appHome+me.path+'.html';
+                var file=AppHome+me.path+'.html';
                 var l=ProcessObject[file];
                 var onload=function(tmpl){
                     fn(Magix.tmpl(me.path,tmpl));
@@ -2879,7 +2890,7 @@ Mix(VProto,{
                 }else{
                     l=ProcessObject[file]=[onload];
                     IO({
-                        url:file+(MxConfig.debug?'?t='+S.now():''),
+                        url:file+Suffix,
                         success:function(x){
                             SafeExec(l,x);
                             delete ProcessObject[file];

@@ -431,7 +431,7 @@ var Router=Mix({
                 
                 if(SupportState){//如果使用pushState
                     me.poped=1;
-                    history[replace?'replaceState':'pushState']({},D.title,tempPath);
+                    history[replace?'replaceState':'pushState'](null,null,tempPath);
                     me.route();
                 }else{
                     Mix(temp,TLoc,temp);

@@ -4,12 +4,14 @@ var WIN=window;
 var CollectGarbage=WIN.CollectGarbage||Magix.noop;
 
 var Mix=Magix.mix;
-var MxConfig=Magix.config();
-var TagName=MxConfig.tagName;
-var RootId=MxConfig.rootId;
+
+var TagName=Magix.config('tagName');
+var RootId=Magix.config('rootId');
+var IsDefaultTagName=!Magix.config('tagNameChanged');
 var Has=Magix.has;
 var MxView='mx-view';
-var MxDefer='mx-defer';
+var MxBuild=IsDefaultTagName?'mx-defer':'mx-vframe';
+
 var Alter='alter';
 var Created='created';
 var RootVframe;
@@ -303,26 +305,31 @@ Mix(Mix(Vframe.prototype,Event),{
         var count=vframes.length;
         var subs={};
         if(count){
-            for(var i=0,vframe,key,mView,mDefer;i<count;i++){
+            for(var i=0,vframe,key,mxView,mxBuild;i<count;i++){
                 vframe=vframes[i];
                 
                 key=IdIt(vframe);
                 if(!Has(subs,key)){
-                    mView=vframe.getAttribute(MxView);
-                    mDefer=vframe.getAttribute(MxDefer);
-                    if(!mDefer||mView){
+                    mxView=vframe.getAttribute(MxView);
+                    mxBuild=!vframe.getAttribute(MxBuild)==IsDefaultTagName;
+                    if(mxBuild||mxView){
                         me.mountVframe(
                             key,
-                            mView,
+                            mxView,
                             viewInitParams,
                             autoMount
                         );
+                        var svs=$$(vframe,TagName);
+                        for(var j=0,c=svs.length,temp;j<c;j++){
+                            temp=svs[j];
+                            mxView=temp.getAttribute(MxView);
+                            mxBuild=!vframe.getAttribute(MxBuild)==IsDefaultTagName;
+                            if(!mxBuild&&!mxView){
+                                subs[IdIt(temp)]=1;
+                            }
+                        }
                     }
-                }
-                var svs=$$(vframe,TagName);
-                for(var j=0,c=svs.length;j<c;j++){
-                    subs[IdIt(svs[j])]=1;
-                }
+                }                
             }
         }
         if(me.cC==me.rC){//有可能在渲染某个vframe时，里面有n个vframes，但立即调用了mountZoneVframes，这个下面没有vframes，所以要等待

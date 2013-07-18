@@ -8,13 +8,14 @@ var ProtocalReg=/^https?:\/\//i;
 var Templates={};
 var CacheLatest=0;
 var Slash='/';
+var DefaultTagName='vframe';
 
 var Cfg={
     debug:'%DEV%',
     iniFile:'app/ini',
     appName:'app',
     appHome:'./',
-    tagName:'vframe',
+    tagName:DefaultTagName,
     rootId:'magix_vf_root'
 };
 var Has=Templates.hasOwnProperty;
@@ -365,6 +366,8 @@ var Magix={
         me.libEnv(cfg);
         me.libRequire(cfg.iniFile,function(I){
             Cfg=mix(cfg,I,cfg);
+            Cfg.tagNameChanged=Cfg.tagName!=DefaultTagName;
+            
             var progress=cfg.progress;
             me.libRequire(['magix/router','magix/vom'],function(R,V){
                 R.on('!ul',V.locChged);
@@ -562,8 +565,8 @@ var Magix={
      * 
      */
     listToMap:function(list,key){
-        var me=this,i,e,map={},l;
-        if(me.isString(list)){
+        var i,e,map={},l;
+        if(Magix.isString(list)){
             list=list.split(',');
         }
         if(list&&(l=list.length)){
