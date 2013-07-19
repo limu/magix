@@ -1,0 +1,10 @@
+<div bx-tmpl="test" bx-datakey="xx,groupId,showVf">
+我是test,{{xx}}
+groupId:{{groupId}}
+{{showVf}}
+{{#showVf}}
+<vframe mx-view="app/views/404"></vframe>
+{{/showVf}}
+<vframe mx-view="app/views/404"></vframe>
+<input type="button" value="change" mx-click="change" />
+</div>

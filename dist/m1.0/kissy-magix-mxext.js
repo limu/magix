@@ -316,8 +316,8 @@ var GSObj=function(o){
 var Cache=function(max){
     var me=this;
     me.c=[];
-    me.x=max||20;
-    me.b=me.x+5;
+    me.x=max||5;
+    me.b=me.x+3;
 };
 var CreateCache=function(max){
     return new Cache(max);
@@ -409,7 +409,7 @@ mix(Cache.prototype,{
     }
 })
 
-var PathToObjCache=CreateCache(60);
+var PathToObjCache=CreateCache(20);
 var PathCache=CreateCache();
 
 /**
@@ -1437,8 +1437,6 @@ var Router=Mix({
 KISSY.add('magix/vframe',function(S,Magix,Event,BaseView){
     var D=document;
 var VframeIdCounter=1<<16;
-var WIN=window;
-var CollectGarbage=WIN.CollectGarbage||Magix.noop;
 
 var Mix=Magix.mix;
 
@@ -1463,7 +1461,6 @@ var $$=function(id,tag){
 var $C=function(tag){
     return D.createElement(tag);
 };
-$C(TagName);
 
 var IdIt=function(dom){
     return dom.id||(dom.id='magix_vf_'+(VframeIdCounter--));
@@ -1693,7 +1690,6 @@ Mix(Mix(Vframe.prototype,Event),{
             delete me.viewInited;
             GlobalAlter=0;
             me.fire('viewUnmounted');
-            CollectGarbage();
         }
         me.un('viewInited');
         me.sign--;
