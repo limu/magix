@@ -1,67 +1,67 @@
-var PathRelativeReg=/\/\.\/|\/[^\/]+?\/\.{2}\/|([^:\/])\/\/+/;
-var PathTrimFileReg=/\/[^\/]*$/;
-var PathTrimParamsReg=/[#?].*$/;
-var EMPTY='';
-var ParamsReg=/([^=&?\/#]+)=([^&=#?]*)/g;
-var PATHNAME='pathname';
-var ProtocalReg=/^https?:\/\//i;
-var Templates={};
-var CacheLatest=0;
-var Slash='/';
-var DefaultTagName='vframe';
+var PathRelativeReg = /\/\.\/|\/[^\/]+?\/\.{2}\/|([^:\/])\/\/+/;
+var PathTrimFileReg = /\/[^\/]*$/;
+var PathTrimParamsReg = /[#?].*$/;
+var EMPTY = '';
+var ParamsReg = /([^=&?\/#]+)=([^&=#?]*)/g;
+var PATHNAME = 'pathname';
+var ProtocalReg = /^https?:\/\//i;
+var Templates = {};
+var CacheLatest = 0;
+var Slash = '/';
+var DefaultTagName = 'vframe';
 
-var Cfg={
-    debug:'%DEV%',
-    iniFile:'app/ini',
-    appName:'app',
-    appHome:'./',
-    tagName:DefaultTagName,
-    rootId:'magix_vf_root'
+var Cfg = {
+    debug: '*_*',
+    iniFile: 'app/ini',
+    appName: 'app',
+    appHome: './',
+    tagName: DefaultTagName,
+    rootId: 'magix_vf_root'
 };
-var Has=Templates.hasOwnProperty;
+var Has = Templates.hasOwnProperty;
 
-var GSObj=function(o){
-    return function(k,v,r){
-        switch(arguments.length){
+var GSObj = function(o) {
+    return function(k, v, r) {
+        switch (arguments.length) {
             case 0:
-                r=o;
+                r = o;
                 break;
             case 1:
-                if(Magix.isObject(k)){
-                    r=mix(o,k)
-                }else{
-                    r=has(o,k)?o[k]:null;
+                if (Magix.isObject(k)) {
+                    r = mix(o, k)
+                } else {
+                    r = has(o, k) ? o[k] : null;
                 }
                 break;
             case 2:
-                if(v===null){
+                if (v === null) {
                     delete o[k];
-                    r=v;
-                }else{
-                    o[k]=r=v;
+                    r = v;
+                } else {
+                    o[k] = r = v;
                 }
                 break;
         }
         return r;
     }
 };
-var Cache=function(max){
-    var me=this;
-    me.c=[];
-    me.x=max||20;
-    me.b=me.x+5;
+var Cache = function(max) {
+    var me = this;
+    me.c = [];
+    me.x = max || 20;
+    me.b = me.x + 5;
 };
-var CreateCache=function(max){
+var CreateCache = function(max) {
     return new Cache(max);
 };
 /**
  * 检测某个对象是否拥有某个属性
  * @param  {Object}  owner 检测对象
  * @param  {String}  prop  属性
- * @return {Boolean} 是否拥有prop属性 
+ * @return {Boolean} 是否拥有prop属性
  */
-var has=function(owner,prop){
-    return owner?Has.call(owner,prop):0;//false 0 null '' undefined
+var has = function(owner, prop) {
+    return owner ? Has.call(owner, prop) : 0; //false 0 null '' undefined
 };
 
 /**
@@ -71,78 +71,80 @@ var has=function(owner,prop){
  * @param  {Object} ignore 在复制时，忽略的值
  * @return {Object}
  */
-var mix=function(aim,src,ignore){
-    for(var p in src){
-        if(!ignore||!has(ignore,p)){
-            aim[p]=src[p];
+var mix = function(aim, src, ignore) {
+    for (var p in src) {
+        if (!ignore || !has(ignore, p)) {
+            aim[p] = src[p];
         }
     }
     return aim;
 };
 
-mix(Cache.prototype,{
-    get:function(key){
-        var me=this;
-        var c=me.c;
+mix(Cache.prototype, {
+    get: function(key) {
+        var me = this;
+        var c = me.c;
         var r;
-        key=PATHNAME+key;
-        if(has(c,key)){
-            r=c[key];
-            if(r.f>=1){
+        key = PATHNAME + key;
+        if (has(c, key)) {
+            r = c[key];
+            if (r.f >= 1) {
                 r.f++;
-                r.t=CacheLatest++;
+                r.t = CacheLatest++;
                 //console.log(r.f);
-                r=r.v;
+                r = r.v;
                 //console.log('hit cache:'+key);
             }
         }
         return r;
     },
-    set:function(key,value){
-        var me=this;
-        var c=me.c;
-        
-        key=PATHNAME+key;
-        var r=c[key];
+    set: function(key, value) {
+        var me = this;
+        var c = me.c;
 
-        if(!has(c,key)){
-            if(c.length>=me.b){
-                c.sort(function(a,b){return b.f==a.f?b.t-a.t:b.f-a.f});
-                var t=me.b-me.x;
-                while(t--){
-                    r=c.pop();
+        key = PATHNAME + key;
+        var r = c[key];
+
+        if (!has(c, key)) {
+            if (c.length >= me.b) {
+                c.sort(function(a, b) {
+                    return b.f == a.f ? b.t - a.t : b.f - a.f
+                });
+                var t = me.b - me.x;
+                while (t--) {
+                    r = c.pop();
                     //console.log('delete from cache:'+r.k);
                     delete c[r.k];
                 }
             }
-            r={};
+            r = {};
             c.push(r);
-            c[key]=r;
+            c[key] = r;
         }
-        r.k=key;
-        r.v=value;
-        r.f=1;
-        r.t=CacheLatest++;
+        r.k = key;
+        r.v = value;
+        r.f = 1;
+        r.t = CacheLatest++;
         return r;
     },
-    del:function(k){
-        k=PATHNAME+k;
-        var c=this.c;
-        var r=c[k];
-        if(r){
-            r.f=-1E5;
-            r.v=EMPTY;
+    del: function(k) {
+        k = PATHNAME + k;
+        var c = this.c;
+        var r = c[k];
+        if (r) {
+            r.f = -1E5;
+            r.v = EMPTY;
             delete c[k];
         }
     },
-    has:function(k){
-        k=PATHNAME+k;
-        return has(this.c,k);
+    has: function(k) {
+        k = PATHNAME + k;
+        return has(this.c, k);
     }
 })
 
-var PathToObjCache=CreateCache(60);
-var PathCache=CreateCache();
+var PathToObjCache = CreateCache(60);
+var PathCache = CreateCache();
 
 /**
  * 以try cache方式执行方法，忽略掉任何异常
@@ -151,17 +153,17 @@ var PathCache=CreateCache();
  * @param  {Object} context 在待执行的方法内部，this的指向
  * @return {Object} 返回执行的最后一个方法的返回值
  */
-var safeExec=function(fns,args,context,i,r,e){
-    if(!Magix.isArray(fns)){
-        fns=[fns];
+var safeExec = function(fns, args, context, i, r, e) {
+    if (!Magix.isArray(fns)) {
+        fns = [fns];
     }
-    if(!args||(!Magix.isArray(args)&&!args.callee)){
-        args=[args];
+    if (!args || (!Magix.isArray(args) && !args.callee)) {
+        args = [args];
     }
-    for(i=0;i<fns.length;i++){
+    for (i = 0; i < fns.length; i++) {
         //KEEP try{/*_*/
-            e=fns[i];
-            r=Magix.isFunction(e)&&e.apply(context,args);
+        e = fns[i];
+        r = Magix.isFunction(e) && e.apply(context, args);
         //KEEP }catch(x){/*_*/
         //KEEP 
         //KEEP }/*_*/
@@ -178,7 +180,7 @@ var unimpl = function() {
 /**
  * 空方法
  */
-var noop=function(){};
+var noop = function() {};
 
 
 /**
@@ -186,7 +188,7 @@ var noop=function(){};
  * @name Magix
  * @namespace
  */
-var Magix={
+var Magix = {
     /**
      * @lends Magix
      */
@@ -196,49 +198,49 @@ var Magix={
      * @param {Object} o 待检测的对象
      * @return {Boolean}
      */
-    isArray:unimpl,
+    isArray: unimpl,
     /**
      * 判断o是否为对象
      * @function
      * @param {Object} o 待检测的对象
      * @return {Boolean}
      */
-    isObject:unimpl,
+    isObject: unimpl,
     /**
      * 判断o是否为函数
      * @function
      * @param {Object} o 待检测的对象
      * @return {Boolean}
      */
-    isFunction:unimpl,
+    isFunction: unimpl,
     /**
      * 判断o是否为正则
      * @function
      * @param {Object} o 待检测的对象
      * @return {Boolean}
      */
-    isRegExp:unimpl,
+    isRegExp: unimpl,
     /**
      * 判断o是否为字符串
      * @function
      * @param {Object} o 待检测的对象
      * @return {Boolean}
      */
-    isString:unimpl,
+    isString: unimpl,
     /**
      * 判断o是否为数字
      * @function
      * @param {Object} o 待检测的对象
      * @return {Boolean}
      */
-    isNumber:unimpl,
+    isNumber: unimpl,
     /**
      * 判断是否可转为数字
      * @param  {Object}  o 待检测的对象
      * @return {Boolean}
      */
-    isNumeric:function(o){
-        return !isNaN(parseFloat(o))&&isFinite(o);
+    isNumeric: function(o) {
+        return !isNaN(parseFloat(o)) && isFinite(o);
     },
     /**
      * 利用底层类库的包机制加载js文件，仅Magix内部使用，不推荐在app中使用
@@ -247,7 +249,7 @@ var Magix={
      * @param {Function} fn 加载完成后的回调方法
      * @private
      */
-    libRequire:unimpl,
+    libRequire: unimpl,
     /**
      * 通过xhr同步获取文件的内容，仅开发magix时使用
      * @function
@@ -255,13 +257,13 @@ var Magix={
      * @return {String} 文件内容
      * @private
      */
-    include:unimpl,
+    include: unimpl,
     /**
      * 设置底层类库的环境
      * @function
      * @private
      */
-    libEnv:unimpl,
+    libEnv: unimpl,
     /**
      * 把src对象的值混入到aim对象上
      * @function
@@ -270,21 +272,21 @@ var Magix={
      * @param  {Object} [ignore] 在复制时，需要忽略的key
      * @return {Object}
      */
-    mix:mix,
+    mix: mix,
     /**
      * 未实现的方法
      * @function
      * @type {Function}
      */
-    unimpl:unimpl,
+    unimpl: unimpl,
     /**
      * 检测某个对象是否拥有某个属性
      * @function
      * @param  {Object}  owner 检测对象
      * @param  {String}  prop  属性
-     * @return {Boolean} 是否拥有prop属性 
+     * @return {Boolean} 是否拥有prop属性
      */
-    has:has,
+    has: has,
     /**
      * 以try catch的方式执行方法，忽略掉任何异常
      * @function
@@ -305,12 +307,12 @@ var Magix={
      *
      * S.log(result);//得到f2的返回值
      */
-    safeExec:safeExec,
+    safeExec: safeExec,
     /**
      * 空方法
      * @function
      */
-    noop:noop,
+    noop: noop,
     /**
      * 配置信息对象
      */
@@ -329,7 +331,7 @@ var Magix={
      *
      * S.log(config.appHome);
      */
-    config:GSObj(Cfg),
+    config: GSObj(Cfg),
     /**
      * magix开始工作
      * @param  {Object} cfg 初始化配置参数对象
@@ -360,26 +362,26 @@ var Magix={
      *      }
      * });
      */
-    start:function(cfg){
-        var me=this;
-        cfg=mix(Cfg,cfg);
+    start: function(cfg) {
+        var me = this;
+        cfg = mix(Cfg, cfg);
         me.libEnv(cfg);
-        me.libRequire(cfg.iniFile,function(I){
-            Cfg=mix(cfg,I,cfg);
-            Cfg.tagNameChanged=Cfg.tagName!=DefaultTagName;
-            
-            var progress=cfg.progress;
-            me.libRequire(['magix/router','magix/vom'],function(R,V){
-                R.on('!ul',V.locChged);
-                R.on('changed',V.locChged);
-                progress&&V.on('progress',progress);
-                me.libRequire(cfg.extensions,R.start);
-            });
-        });
-        if(cfg.ready){
+        if (cfg.ready) {
             safeExec(cfg.ready);
             delete cfg.ready;
         }
+        me.libRequire(cfg.iniFile, function(I) {
+            Cfg = mix(cfg, I, cfg);
+            Cfg.tagNameChanged = Cfg.tagName != DefaultTagName;
+
+            var progress = cfg.progress;
+            me.libRequire(['magix/router', 'magix/vom'], function(R, V) {
+                R.on('!ul', V.locChged);
+                R.on('changed', V.locChged);
+                progress && V.on('progress', progress);
+                me.libRequire(cfg.extensions, R.start);
+            });
+        });
     },
     /**
      * 获取对象的keys
@@ -387,10 +389,10 @@ var Magix={
      * @param  {Object} obj 要获取key的对象
      * @return {Array}
      */
-    keys:Object.keys||function(obj){
-        var keys=[];
-        for(var p in obj){
-            if(has(obj,p)){
+    keys: Object.keys || function(obj) {
+        var keys = [];
+        for (var p in obj) {
+            if (has(obj, p)) {
                 keys.push(p);
             }
         }
@@ -415,7 +417,7 @@ var Magix={
      *
      * S.log(locals);
      */
-    local:GSObj({}),
+    local: GSObj({}),
     /**
      * 路径
      * @private
@@ -427,35 +429,35 @@ var Magix={
      * http://www.a.com/a/b.html?a=b#!/home?e=f   ../../
      * http://www.a.com/a/b.html?a=b#!/home?e=f   ./../
      */
-    path:function(url,part){
-        var key=url+'\n'+part;
-        var result=PathCache.get(key);
-        if(!result){
-            if(ProtocalReg.test(part)){
-                result=part;
-            }else{
-                url=url.replace(PathTrimParamsReg,EMPTY).replace(PathTrimFileReg,EMPTY)+Slash;
+    path: function(url, part) {
+        var key = url + '\n' + part;
+        var result = PathCache.get(key);
+        if (!result) {
+            if (ProtocalReg.test(part)) {
+                result = part;
+            } else {
+                url = url.replace(PathTrimParamsReg, EMPTY).replace(PathTrimFileReg, EMPTY) + Slash;
 
-                if(part.charAt(0)==Slash){
-                    var ds=ProtocalReg.test(url)?8:0;
-                    var fs=url.indexOf(Slash,ds);
+                if (part.charAt(0) == Slash) {
+                    var ds = ProtocalReg.test(url) ? 8 : 0;
+                    var fs = url.indexOf(Slash, ds);
 
-                   /* if(fs==-1){
+                    /* if(fs==-1){
                         result=url+part;
                     }else{*/
-                        result=url.substring(0,fs)+part;
+                    result = url.substring(0, fs) + part;
                     //}
 
-                }else{
-                    result=url+part;
+                } else {
+                    result = url + part;
                 }
             }
             //console.log('url',url,'part',part,'result',result);
-            while(PathRelativeReg.test(result)){
+            while (PathRelativeReg.test(result)) {
                 //console.log(result);
-                result=result.replace(PathRelativeReg,'$1/');
+                result = result.replace(PathRelativeReg, '$1/');
             }
-            PathCache.set(key,result);
+            PathCache.set(key, result);
         }
         return result;
     },
@@ -463,8 +465,11 @@ var Magix={
      * 把路径字符串转换成对象
      * @param  {String} path 路径字符串
      * @return {Object} 解析后的对象
+     * @example
+     * var obj=Magix.pathToObject)('/xxx/?a=b&c=d');
+     * //obj={pathname:'/xxx/',params:{a:'b',c:'d'}}
      */
-    pathToObject:function(path,decode){
+    pathToObject: function(path, decode) {
         //把形如 /xxx/a=b&c=d 转换成对象 {pathname:'/xxx/',params:{a:'b',c:'d'}}
         //1. /xxx/a.b.c.html?a=b&c=d  pathname /xxx/a.b.c.html 
         //2. /xxx/?a=b&c=d  pathname /xxx/
@@ -474,42 +479,42 @@ var Magix={
         //6. /xxx/#           => pathname /xxx/
         //7. a=b&c=d          => pathname ''
         //8. /s?src=b#        => pathname /s params:{src:'b'}
-        var r=PathToObjCache.get(path);
-        if(!r){
-            var me=this;
-            var r={};
-            var params={};
+        var r = PathToObjCache.get(path);
+        if (!r) {
+            var me = this;
+            var r = {};
+            var params = {};
 
-            var pathname=EMPTY;
-            if(PathTrimParamsReg.test(path)){//有#?号，表示有pathname
-                pathname=path.replace(PathTrimParamsReg,EMPTY)
-            }else if(!~path.indexOf('=')){//没有=号，路径可能是 xxx 相对路径 
-                pathname=path;
+            var pathname = EMPTY;
+            if (PathTrimParamsReg.test(path)) { //有#?号，表示有pathname
+                pathname = path.replace(PathTrimParamsReg, EMPTY)
+            } else if (!~path.indexOf('=')) { //没有=号，路径可能是 xxx 相对路径 
+                pathname = path;
             }
-            
-            if(pathname){
-                if(ProtocalReg.test(pathname)){//解析以https?:开头的网址
-                    var first=pathname.indexOf(Slash,8);//找最近的 / 
-                    if(first==-1){//未找到，比如 http://etao.com
-                        pathname=Slash;//则pathname为  /
-                    }else{
-                        pathname=pathname.substring(first); //截取
+
+            if (pathname) {
+                if (ProtocalReg.test(pathname)) { //解析以https?:开头的网址
+                    var first = pathname.indexOf(Slash, 8); //找最近的 / 
+                    if (first == -1) { //未找到，比如 http://etao.com
+                        pathname = Slash; //则pathname为  /
+                    } else {
+                        pathname = pathname.substring(first); //截取
                     }
                 }
             }
-            path.replace(ParamsReg,function(match,name,value){
-                if(decode){
-                    try{
-                        value=decodeURIComponent(value);
-                    }catch(e){
+            path.replace(ParamsReg, function(match, name, value) {
+                if (decode) {
+                    try {
+                        value = decodeURIComponent(value);
+                    } catch (e) {
 
                     }
                 }
-                params[name]=value;
+                params[name] = value;
             });
-            r[PATHNAME]=pathname;
-            r.params=params;
-            PathToObjCache.set(path,r);
+            r[PATHNAME] = pathname;
+            r.params = params;
+            PathToObjCache.set(path, r);
         }
         return r;
     },
@@ -517,20 +522,23 @@ var Magix={
      * 把对象内容转换成字符串路径
      * @param  {Object} obj 对象
      * @return {String} 字符串路径
+     * @example
+     * var str=Magix.objectToPath({pathname:'/xxx/',params:{a:'b',c:'d'}});
+     * //str==/xxx/?a=b&c=d
      */
-    objectToPath:function(obj,encode){//上个方法的逆向
-        var pn=obj[PATHNAME];
-        var params=[];
-        var oPs=obj.params;
+    objectToPath: function(obj, encode) { //上个方法的逆向
+        var pn = obj[PATHNAME];
+        var params = [];
+        var oPs = obj.params;
         var v;
-        for(var p in oPs){
-            v=oPs[p];
-            if(encode){
+        for (var p in oPs) {
+            v = oPs[p];
+            if (encode) {
                 encodeURIComponent(v);
             }
-            params.push(p+'='+v);
+            params.push(p + '=' + v);
         }
-        return pn+(pn&&params.length?'?':EMPTY)+params.join('&');
+        return pn + (pn && params.length ? '?' : EMPTY) + params.join('&');
     },
     /**
      * 读取或设置view的模板
@@ -538,14 +546,14 @@ var Magix={
      * @param  {String} [value] 模板字符串
      * @return {String}
      */
-    tmpl:function(key,value){
-        if(arguments.length==1){
+    tmpl: function(key, value) {
+        if (arguments.length == 1) {
             return {
-                v:Templates[key],
-                h:has(Templates,key)
+                v: Templates[key],
+                h: has(Templates, key)
             }
         }
-        return Templates[key]=value;
+        return Templates[key] = value;
     },
     /**
      * 把列表转化成hash对象
@@ -562,17 +570,17 @@ var Magix={
      * var map=Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
      *
      * //=>{submit:1,focusin:1,focusout:1,mouseenter:1,mouseleave:1,mousewheel:1,change:1}
-     * 
+     *
      */
-    listToMap:function(list,key){
-        var i,e,map={},l;
-        if(Magix.isString(list)){
-            list=list.split(',');
+    listToMap: function(list, key) {
+        var i, e, map = {}, l;
+        if (Magix.isString(list)) {
+            list = list.split(',');
         }
-        if(list&&(l=list.length)){
-            for(i=0;i<l;i++){
-                e=list[i];
-                map[key?e[key]:e]=key?e:1;
+        if (list && (l = list.length)) {
+            for (i = 0; i < l; i++) {
+                e = list[i];
+                map[key ? e[key] : e] = key ? e : 1;
             }
         }
         return map;
@@ -581,6 +589,14 @@ var Magix={
      * 创建缓存对象
      * @function
      * @param {Integer} max 最大缓存数
+     * @param {Integer} buffer 缓冲区大小
+     * @example
+     * var c=Magix.cache(5,2);//创建一个可缓存5个，且缓存区为2个的缓存对象
+     * c.set('key1',{});//缓存
+     * c.get('key1');//获取
+     * c.del('key1');//删除
+     * c.has('key1');//判断
+     * //注意：缓存通常配合其它方法使用，不建议单独使用。在Magix中，对路径的解释等使用了缓存。在使用缓存优化性能时，可以达到节省CPU和内存的双赢效果
      */
-    cache:CreateCache
+    cache: CreateCache
 };

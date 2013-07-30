@@ -1,0 +1,5 @@
+{
+"--output":"aaa",
+"–-encoding":"utf-8",
+"--":"../src/1.0/magix"
+}

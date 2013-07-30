@@ -1,25 +1,24 @@
+var SafeExec = Magix.safeExec;
+var Has = Magix.has;
+var COMMA = ',';
+var EMPTY_ARRAY = [];
 
-var SafeExec=Magix.safeExec;
-var Has=Magix.has;
-var COMMA=',';
-var EMPTY_ARRAY=[];
-
-var Mix=Magix.mix;
-var WrapAsynUpdateNames=['render','renderUI'];
-var WrapKey='~';
-var WrapFn=function(fn){
-    return function(){
-        var me=this;
+var Mix = Magix.mix;
+var WrapAsynUpdateNames = ['render', 'renderUI'];
+var WrapKey = '~';
+var WrapFn = function(fn) {
+    return function() {
+        var me = this;
         var r;
-        var u=me.notifyUpdate();
-        if(u){
-            r=fn.apply(me,arguments);
+        var u = me.notifyUpdate();
+        if (u) {
+            r = fn.apply(me, arguments);
         }
         return r;
     }
 };
 
-var EvtInfoCache=Magix.cache(40);
+var EvtInfoCache = Magix.cache(40);
 
 /**
  * View类
@@ -37,17 +36,17 @@ var EvtInfoCache=Magix.cache(40);
  * @property {Integer} sign view的签名，用于刷新，销毁等的异步标识判断
  * @property {String} template 当前view对应的模板字符串(当hasTmpl为true时)，该属性在primed事件触发后才存在
  * @property {Boolean} rendered 标识当前view有没有渲染过，即primed事件有没有触发过
- * @property {Object} location window.locaiton.href解析出来的对象 
+ * @property {Object} location window.locaiton.href解析出来的对象
  * @example
  * 关于View.prototype.events:
  * 示例：
  *   html写法：
- *   
+ *
  *   &lt;input type="button" mx-click="test{id:100,name:xinglie}" value="test" /&gt;
  *   &lt;a href="http://etao.com" mx-click="test&lt;prevent&gt;{com:etao.com}"&gt;http://etao.com&lt;/a&gt;
  *
  *   view写法：
- *   
+ *
  *   events:{
  *      click:{
  *          test:function(e){
@@ -61,20 +60,20 @@ var EvtInfoCache=Magix.cache(40);
  *      },
  *      mousedown:{
  *          test:function(e){
- *              
+ *
  *          }
  *      }
  *   }
  */
 
 
-var View=function(ops){
-    var me=this;
-    Mix(me,ops);
-    me.sign=1;//标识view是否刷新过，对于托管的函数资源，在回调这个函数时，不但要确保view没有销毁，而且要确保view没有刷新过，如果刷新过则不回调
+var View = function(ops) {
+    var me = this;
+    Mix(me, ops);
+    me.sign = 1; //标识view是否刷新过，对于托管的函数资源，在回调这个函数时，不但要确保view没有销毁，而且要确保view没有刷新过，如果刷新过则不回调
 };
 
-Mix(View,{
+Mix(View, {
     /**
      * @lends View
      */
@@ -82,17 +81,17 @@ Mix(View,{
      * 对异步更新view的方法进行一次包装
      * @private
      */
-    wrapUpdate:function(){
-        var view=this;
-        if(!view[WrapKey]){//只处理一次
-            view[WrapKey]=1;
-            var prop=view.prototype;
+    wrapUpdate: function() {
+        var view = this;
+        if (!view[WrapKey]) { //只处理一次
+            view[WrapKey] = 1;
+            var prop = view.prototype;
             var old;
-            for(var p=WrapAsynUpdateNames.length-1,name;p>-1;p--){
-                name=WrapAsynUpdateNames[p];
-                old=prop[name];
-                if(Magix.isFunction(old)&&old!=Magix.noop){
-                    prop[name]=WrapFn(old);
+            for (var p = WrapAsynUpdateNames.length - 1, name; p > -1; p--) {
+                name = WrapAsynUpdateNames[p];
+                old = prop[name];
+                if (Magix.isFunction(old) && old != Magix.noop) {
+                    prop[name] = WrapFn(old);
                 }
             }
         }
@@ -100,43 +99,42 @@ Mix(View,{
 });
 
 
-var VProto=View.prototype;
-var CollectGarbage=window.CollectGarbage||Magix.noop;
+var VProto = View.prototype;
 //var MxEvent=/<(\w+)([\s\S]+?mx-[^ohv][a-z]+\s*=\s*"[^"]")/g;
-var MxEvent=/<[a-z]+(?:[^">]|"[^"]*")+(?=>)/g;
-var MxOwner=/\smx-owner\s*=/;
-var MxEvt=/\smx-[^v][a-z]+\s*=/;
-var MxEFun=function(m){
-    return !MxOwner.test(m)&&MxEvt.test(m)?m+' mx-owner="'+MxEFun.t+'"':m;
+var MxEvent = /<[a-z]+(?:[^">]|"[^"]*")+(?=>)/g;
+var MxOwner = /\smx-owner\s*=/;
+var MxEvt = /\smx-[^v][a-z]+\s*=/;
+var MxEFun = function(m) {
+    return !MxOwner.test(m) && MxEvt.test(m) ? m + ' mx-owner="' + MxEFun.t + '"' : m;
 };
-var WEvent={
-    prevent:function(e){
-        e=e||this.domEvent;
-        if(e.preventDefault){
+var WEvent = {
+    prevent: function(e) {
+        e = e || this.domEvent;
+        if (e.preventDefault) {
             e.preventDefault();
-        }else{
-            e.returnValue=false;
+        } else {
+            e.returnValue = false;
         }
     },
-    stop:function(e){
-        e=e||this.domEvent;
-        if(e.stopPropagation){
+    stop: function(e) {
+        e = e || this.domEvent;
+        if (e.stopPropagation) {
             e.stopPropagation();
-        }else{
-            e.cancelBubble=true;
+        } else {
+            e.cancelBubble = true;
         }
     },
-    halt:function(e){
+    halt: function(e) {
         this.prevent(e);
         this.stop(e);
     }
 };
-var EvtInfoReg=/(\w+)(?:<(\w+)>)?(?:{([\s\S]*)})?/;
-var EvtParamsReg=/(\w+):([^,]+)/g;
+var EvtInfoReg = /(\w+)(?:<(\w+)>)?(?:{([\s\S]*)})?/;
+var EvtParamsReg = /(\w+):([^,]+)/g;
 
-Mix(VProto,Event);
+Mix(VProto, Event);
 
-Mix(VProto,{
+Mix(VProto, {
     /**
      * @lends View#
      */
@@ -147,12 +145,12 @@ Mix(VProto,{
      * @param {Function} fn 获取完成后的回调
      * @private
      */
-    fetchTmpl:Magix.unimpl,
+    fetchTmpl: Magix.unimpl,
     /**
      * 渲染view，供最终view开发者覆盖
      * @function
      */
-    render:Magix.noop,
+    render: Magix.noop,
     /**
      * 当window.location.href有变化时调用该方法（如果您通过observeLocation指定了相关参数，则这些相关参数有变化时才调用locationChange，否则不会调用），供最终的view开发人员进行覆盖
      * @function
@@ -183,18 +181,18 @@ Mix(VProto,{
      *     //...
      * }
      */
-    locationChange:Magix.noop,
+    locationChange: Magix.noop,
     /**
      * 初始化方法，供最终的view开发人员进行覆盖
      * @param {Object} extra 初始化时，外部传递的参数
      * @function
      */
-    init:Magix.noop,
+    init: Magix.noop,
     /**
      * 标识当前view是否有模板文件
      * @default true
      */
-    hasTmpl:true,
+    hasTmpl: true,
     /**
      * 是否启用DOM事件(events对象指定的事件是否生效)
      * @default true
@@ -203,7 +201,7 @@ Mix(VProto,{
      * Q:为什么不支持history state的浏览器上还要使用view？
      * A:考虑 http://etao.com/list?page=2#!/list?page=3; 在IE6上，实际的页码是3，但后台生成时候生成的页码是2，<br />所以需要magix/view载入后对相应的a标签链接进行处理成实际的3。用户点击链接时，由于view没启用事件，不会阻止a标签的默认行为，后续才是正确的结果
      */
-    enableEvent:true,
+    enableEvent: true,
     /**
      * view刷新时是否采用动画
      * @type {Boolean}
@@ -213,16 +211,16 @@ Mix(VProto,{
      * 加载view内容
      * @private
      */
-    load:function(){
-        var me=this;
-        var hasTmpl=me.hasTmpl;
-        var args=arguments;
-        var sign=me.sign;
-        var tmplReady=Has(me,'template');
-        var ready=function(tmpl){
-            if(sign==me.sign){
-                if(!tmplReady){
-                    me.template=me.wrapMxEvent(tmpl);
+    load: function() {
+        var me = this;
+        var hasTmpl = me.hasTmpl;
+        var args = arguments;
+        var sign = me.sign;
+        var tmplReady = Has(me, 'template');
+        var ready = function(tmpl) {
+            if (sign == me.sign) {
+                if (!tmplReady) {
+                    me.template = me.wrapMxEvent(tmpl);
                 }
                 me.delegateEvents();
                 /*
@@ -232,36 +230,38 @@ Mix(VProto,{
                     interact : view准备好，让外部尽早介入，进行其它事件的监听 ，当这个事件触发时，view有可能已经有html了(无模板的情况)，所以此时外部可以去加载相应的子view了，同时要考虑在调用render方法后，有可能在该方法内通过setViewHTML更新html，所以在使用setViewHTML更新界面前，一定要先监听prerender rendered事件，因此设计了该  interact事件
 
                  */
-                me.fire('interact',{tmpl:hasTmpl},1);//可交互
-                SafeExec(me.init,args,me);
-                me.fire('inited',0,1);
-                SafeExec(me.render,EMPTY_ARRAY,me);
+                me.fire('interact', {
+                    tmpl: hasTmpl
+                }, 1); //可交互
+                SafeExec(me.init, args, me);
+                me.fire('inited', 0, 1);
+                SafeExec(me.render, EMPTY_ARRAY, me);
                 //console.log('render',me.render);
-                var noTemplateAndNoRendered=!hasTmpl&&!me.rendered;//没模板，调用render后，render里面也没调用setViewHTML
+                var noTemplateAndNoRendered = !hasTmpl && !me.rendered; //没模板，调用render后，render里面也没调用setViewHTML
 
-                if(noTemplateAndNoRendered){//监视有没有在调用render方法内更新view，对于没有模板的view，需要派发一次事件
-                    me.rendered=true;
-                    me.fire('primed',null,1);//primed事件只触发一次
+                if (noTemplateAndNoRendered) { //监视有没有在调用render方法内更新view，对于没有模板的view，需要派发一次事件
+                    me.rendered = true;
+                    me.fire('primed', null, 1); //primed事件只触发一次
                 }
             }
         };
-        if(hasTmpl&&!tmplReady){
+        if (hasTmpl && !tmplReady) {
             me.fetchTmpl(ready);
-        }else{
+        } else {
             ready();
         }
     },
     /**
      * 通知当前view即将开始进行html的更新
      */
-    beginUpdate:function(){
-        var me=this;
-        if(me.sign){
-            var isRendered=me.rendered;
-            if(isRendered){//渲染过才使用动画
+    beginUpdate: function() {
+        var me = this;
+        if (me.sign) {
+            var isRendered = me.rendered;
+            if (isRendered) { //渲染过才使用动画
                 //var enableAnim=me.enableAnim;//
                 //me.fire('refresh',null,true,true);//从最后注册的事件一直清到最先注册的事件
-                me.fire('refresh',0,1);
+                me.fire('refresh', 0, 1);
                 me.fire('prerender');
             }
         }
@@ -269,28 +269,27 @@ Mix(VProto,{
     /**
      * 通知当前view结束html的更新
      */
-    endUpdate:function(){
-        var me=this;
-        if(me.sign){
+    endUpdate: function() {
+        var me = this;
+        if (me.sign) {
             /*if(me.rendered&&me.enableAnim){
                 var owner=me.owner;
                 SafeExec(owner.newViewCreated,EMPTY_ARRAY,owner);
             }*/
-            if(!me.rendered){//触发一次primed事件
-                me.fire('primed',0,1);
+            if (!me.rendered) { //触发一次primed事件
+                me.fire('primed', 0, 1);
             }
-            me.rendered=true;
-            me.fire('rendered');//可以在rendered事件中访问view.rendered属性
-            CollectGarbage();
+            me.rendered = true;
+            me.fire('rendered'); //可以在rendered事件中访问view.rendered属性
         }
     },
     /**
      * 通知当前view进行更新，与beginUpdate不同的是：begin是开始更新html，notify是开始调用更新的方法，通常render与renderUI已经自动做了处理，对于用户自定义的获取数据并更新界面时，在开始更新前，需要调用一下该方法
      * @return {Integer} 当前view的签名
      */
-    notifyUpdate:function(){
-        var me=this;
-        if(me.sign){
+    notifyUpdate: function() {
+        var me = this;
+        if (me.sign) {
             me.sign++;
             me.fire('rendercall');
         }
@@ -300,9 +299,9 @@ Mix(VProto,{
      * 包装mx-event，自动添加mx-owner属性
      * @param {String} html html字符串
      */
-    wrapMxEvent:function(html){
-        MxEFun.t=this.id;
-        return String(html).replace(MxEvent,MxEFun);
+    wrapMxEvent: function(html) {
+        MxEFun.t = this.id;
+        return String(html).replace(MxEvent, MxEFun);
     },
     /**
      * 设置view的html内容
@@ -321,12 +320,13 @@ Mix(VProto,{
 
         rendered : loadSubVframes
      */
-    setViewHTML:function(html){
-        var me=this,n;
+    setViewHTML: function(html) {
+        var me = this,
+            n;
         me.beginUpdate();
-        if(me.sign){
-            n=me.$(me.id);
-            if(n)n.innerHTML=html;
+        if (me.sign) {
+            n = me.$(me.id);
+            if (n) n.innerHTML = html;
         }
         me.endUpdate();
     },
@@ -352,17 +352,20 @@ Mix(VProto,{
      *      }
      * });
      */
-    observeLocation:function(args){
-        var me=this,loc;
-        if(!me.$ol)me.$ol={keys:[]};
-        loc=me.$ol;
-        var keys=loc.keys;
-        if(Magix.isObject(args)){
-            loc.pn=args.pathname;
-            args=args.keys;
+    observeLocation: function(args) {
+        var me = this,
+            loc;
+        if (!me.$ol) me.$ol = {
+            keys: []
+        };
+        loc = me.$ol;
+        var keys = loc.keys;
+        if (Magix.isObject(args)) {
+            loc.pn = args.pathname;
+            args = args.keys;
         }
-        if(args){
-            loc.keys=keys.concat(String(args).split(COMMA));
+        if (args) {
+            loc.keys = keys.concat(String(args).split(COMMA));
         }
     },
     /**
@@ -408,75 +411,56 @@ Mix(VProto,{
      * @return {Boolean} 是否发生改变
      * @private
      */
-    olChanged:function(changed){
-        var me=this;
-        var location=me.$ol;
-        if(location){
-            var res=0;
-            if(location.pn){
-                res=changed.isPathname();
+    olChanged: function(changed) {
+        var me = this;
+        var location = me.$ol;
+        if (location) {
+            var res = 0;
+            if (location.pn) {
+                res = changed.isPathname();
             }
-            if(!res){
-                var keys=location.keys;
-                res=changed.isParam(keys);
+            if (!res) {
+                var keys = location.keys;
+                res = changed.isParam(keys);
             }
             return res;
         }
         return 1;
     },
-    /**
-     * 销毁当前view内的iframes 
-     */
-    /*destroyFrames:function(){
-        /*var me=this;
-        var node=$(me.id),
-            iframes=node.getElementsByTagName('iframe'),
-            iframe, parent;
-        while (iframes.length) {
-            iframe = iframes[0];
-            parent = iframe.parentNode;
-            iframe.src = EMPTY; // 似乎是关键步骤
-            parent.removeChild(iframe);
-            //parent.parentNode.removeChild(parent);
-            iframe = parent = null;
-        }*/
-        /*if(WIN.CollectGarbage){
-            WIN.CollectGarbage();
-        }
-    },*/
-    /**
-     * 销毁当前view
-     * @private
-     */
-    destroy:function(){
-        var me=this;
-        //me.fire('refresh',null,true,true);//先清除绑定在上面的app中的刷新
-        me.fire('refresh',0,1);
-        me.fire('destroy',0,1,1);//同上
-        
+
+    /***销毁当前view * @private */
+    destroy: function() {
+        var me = this;
+        //me.fire('refresh', null, true, true); //先清除绑定在上面的app中的刷新
+        me.fire('refresh', 0, 1);
+        me.fire('destroy', 0, 1, 1); //同上
+
         me.delegateEvents(1);
         //if(!keepContent){
-            //me.destroyFrames();
-            //var node=$(me.vfId);
-            //if(node._dataBak){
-                //node.innerHTML=node._dataTmpl;
-            //}
+        //me.destroyFrames();
+        //var node=$(me.vfId);
+        //if(node._dataBak){
+        //node.innerHTML=node._dataTmpl;
         //}
-        
+        //}
+
         //me.un('prerender',null,true); 销毁的话也就访问不到view对象了，这些事件不解绑也没问题
         //me.un('rendered',null,true);
-        me.sign=0;
+        me.sign = 0;
         //console.log('core view destroy:',me.id);
     },
     /**
      * 获取渲染当前view的父view
      * @return {View}
      */
-    parentView:function(){
-        var me=this,vom=me.vom,owner=me.owner;
-        var pVframe=vom.get(owner.pId),r=null;
-        if(pVframe&&pVframe.viewInited){
-            r=pVframe.view;
+    parentView: function() {
+        var me = this,
+            vom = me.vom,
+            owner = me.owner;
+        var pVframe = vom.get(owner.pId),
+            r = null;
+        if (pVframe && pVframe.viewInited) {
+            r = pVframe.view;
         }
         return r;
     },
@@ -485,46 +469,46 @@ Mix(VProto,{
      * @param {Event} e dom事件对象
      * @private
      */
-    processEvent:function(e){
-        var me=this;
-        if(me.enableEvent&&me.sign){
-            var info=e.info;
-            var domEvent=e.se;
+    processEvent: function(e) {
+        var me = this;
+        if (me.enableEvent && me.sign) {
+            var info = e.info;
+            var domEvent = e.se;
 
-            var m=EvtInfoCache.get(info);
+            var m = EvtInfoCache.get(info);
 
-            if(!m){
-                m=info.match(EvtInfoReg);
-                m={
-                    n:m[1],
-                    f:m[2],
-                    i:m[3],
-                    p:{}
+            if (!m) {
+                m = info.match(EvtInfoReg);
+                m = {
+                    n: m[1],
+                    f: m[2],
+                    i: m[3],
+                    p: {}
                 };
-                if(m.i){
-                    m.i.replace(EvtParamsReg,function(x,a,b){
-                        m.p[a]=b;
+                if (m.i) {
+                    m.i.replace(EvtParamsReg, function(x, a, b) {
+                        m.p[a] = b;
                     });
                 }
-                EvtInfoCache.set(info,m);
+                EvtInfoCache.set(info, m);
             }
-            var events=me.events;
-            if(events){
-                var eventsType=events[domEvent.type];
-                var fn=WEvent[m.f];
-                if(fn){
-                    fn.call(WEvent,domEvent);
+            var events = me.events;
+            if (events) {
+                var eventsType = events[domEvent.type];
+                var fn = WEvent[m.f];
+                if (fn) {
+                    fn.call(WEvent, domEvent);
                 }
-                fn=eventsType&&eventsType[m.n];
-                if(fn){
-                    SafeExec(fn,Mix({
-                        view:me,
-                        currentId:e.cId,
-                        targetId:e.tId,
-                        domEvent:domEvent,
-                        events:events,
-                        params:m.p
-                    },WEvent),eventsType);
+                fn = eventsType && eventsType[m.n];
+                if (fn) {
+                    SafeExec(fn, Mix({
+                        view: me,
+                        currentId: e.cId,
+                        targetId: e.tId,
+                        domEvent: domEvent,
+                        events: events,
+                        params: m.p
+                    }, WEvent), eventsType);
                 }
             }
         }
@@ -535,13 +519,13 @@ Mix(VProto,{
      * @param {Boolean} dispose 是否销毁
      * @private
      */
-    delegateEvents:function(destroy){
-        var me=this;
-        var events=me.events;
-        var fn=destroy?Body.un:Body.on;
-        var vom=me.vom;
-        for(var p in events){
-            fn.call(Body,p,vom);
+    delegateEvents: function(destroy) {
+        var me = this;
+        var events = me.events;
+        var fn = destroy ? Body.un : Body.on;
+        var vom = me.vom;
+        for (var p in events) {
+            fn.call(Body, p, vom);
         }
     }
     /**
@@ -567,7 +551,7 @@ Mix(VProto,{
      * //异步更新带来的问题：
      * //view对象监听地址栏中的某个参数，当这个参数发生变化时，view调用render方法进行刷新，因为是异步的，所以并不能立即更新界面，
      * //当监控的这个参数连续变化时，view会多次调用render方法进行刷新，由于异步，你并不能保证最后刷新时发出的异步请求最后返回，
-     * //有可能先发出的请求后返回，这样就会出现界面与url并不符合的情况，比如tabs的切换和tabPanel的更新，连续点击tab1 tab2 tab3 
+     * //有可能先发出的请求后返回，这样就会出现界面与url并不符合的情况，比如tabs的切换和tabPanel的更新，连续点击tab1 tab2 tab3
      * //会引起tabPanel这个view刷新，但是异步返回有可能3先回来2最后回来，会导致明明选中的是tab3，却显示着tab2的内容
      * //所以要么你自已在回调中做判断，要么把上面的示例改写成下面这样的：
      *  render:function(){
@@ -677,7 +661,7 @@ Mix(VProto,{
      *                  Helper.tipMsg('添加失败')
      *              }
      *          })
-     *      
+     *
      *      }
      * }
      *
@@ -694,13 +678,13 @@ Mix(VProto,{
      *          });
      *
      *          var sign=e.view.signature();//获取签名
-     * 
+     *
      *          m.save({
      *              success:function(){//该回调不太适合托管
      *                  m.endTransaction();
      *                  if(sign==e.view.signature()){//相等时表示view即没刷新也没销毁，此时才提示
      *                      Helper.tipMsg('添加成功')
-     *                  }       
+     *                  }
      *              },
      *              error:function(msg){//该方法同样不适合托管，当数据保存失败时，需要回滚数据，而如果此时view有刷新或销毁，会导致该方法不被调用，无法达到数据的回滚
      *                  m.rollbackTransaction();
@@ -709,7 +693,7 @@ Mix(VProto,{
      *                  }
      *              }
      *          })
-     *      
+     *
      *      }
      * }
      *
@@ -721,7 +705,7 @@ Mix(VProto,{
     /**
      * 获取view在当前状态下的签名，view在刷新或销毁时，均会更新签名。(通过签名可识别view有没有搞过什么动作)
      */
-/*    signature:function(){
+    /*    signature:function(){
         return this.sign;
     },*/
     /**
@@ -737,35 +721,35 @@ Mix(VProto,{
      * @event
      * @param {Object} e
      */
-    
+
     /**
      * 当view首次完成界面的html设置后触发，view有没有模板均会触发该事件，对于有模板的view，会等到模板取回，第一次调用setViewHTML更新界面后才触发，总之该事件触发后，您就可以访问view的HTML DOM节点对象（该事件仅代表自身的html创建完成，如果需要对整个子view也要监控，请使用created事件）
-     * @name View#primed 
+     * @name View#primed
      * @event
      * @param {Object} e view首次调用render完成界面的创建后触发
      */
 
     /**
      * 每次调用setViewHTML更新view内容完成后触发
-     * @name View#rendered 
+     * @name View#rendered
      * @event
      * @param {Object} e view每次调用setViewHTML完成后触发，当hasTmpl属性为false时，并不会触发该事 件，但会触发primed首次完成创建界面的事件
      */
-    
+
     /**
      * view销毁时触发
      * @name View#destroy
      * @event
      * @param {Object} e
      */
-    
+
     /**
      * view调用init方法后触发
      * @name View#inited
      * @event
      * @param {Object} e
      */
-    
+
     /**
      * view自身和所有子孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子孙view组成的，通过监听该事件可知道子孙view什么时间创建完成（注意：当view中有子view，且该子view是通过程序动态mountView而不是通过mx-view指定时，该事件会也会等待到view创建完成触发，而对于您在某个view中有如下代码：<div><vframe></vframe></div>，有一个空的vframe且未指定mx-view属性，同时您在这个view中没有动态渲染vframe对应的view，则该事件不会触发，magix无法识别出您留空vframe的意图，到底是需要动态mount还是手误，不过在具体应用中，出现空vframe且没有动态mount几乎是不存在的^_^）
      * @name View#created
@@ -778,25 +762,25 @@ Mix(VProto,{
      *      })
      * }
      */
-    
+
     /**
      * view自身和所有子孙view有改动时触发，改动包括刷新和重新mountView，与created一起使用，当view自身和所有子孙view创建完成会触发created，当其中的一个view刷新或重新mountView，会触发childrenAlter，当是刷新时，刷新完成会再次触发created事件，因此这2个事件不只触发一次！！但这2个事件会成对触发，比如触发几次childrenAlter就会触发几次created
      * @name View#alter
      * @event
      * @param {Object} e
      */
-    
+
     /**
      * 异步更新ui的方法(render,renderUI)被调用前触发
      * @name View#rendercall
      * @event
      * @param {Object} e
      */
-    
-    
+
+
     /**
      * 每次调用beginUpdate更新view内容前触发
-     * @name View#refresh 
+     * @name View#refresh
      * @event
      * @param {Object} e
      * 与prerender不同的是：refresh触发后即删除监听列表
