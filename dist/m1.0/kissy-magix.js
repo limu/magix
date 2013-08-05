@@ -1057,7 +1057,6 @@ var Router=Mix({
     /*
         1.
             render:function(){
-                
             },
             events:{
                 click:{
@@ -1139,7 +1138,6 @@ var Router=Mix({
                     };
                     /*
                         window.onhashchange=function(e){
-                            
                         };
                         (function(){
                             location.hash='a';
@@ -1187,7 +1185,6 @@ var Router=Mix({
             var equal=location.href==initialURL;
             if(!me.poped&&equal)return;
             me.poped=1;
-            
             me.route();
         });
     };

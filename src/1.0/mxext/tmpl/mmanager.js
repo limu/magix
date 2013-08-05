@@ -489,9 +489,9 @@ Mix(MManager.prototype, {
             name = model.name;
             if (model && !name) {
                 throw new Error('miss name attribute');
-            } else if (metas[name]) {
-                throw new Error('already exist:' + name);
             }
+
+
             metas[name] = model;
         }
     },

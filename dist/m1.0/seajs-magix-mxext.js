@@ -1069,7 +1069,6 @@ var Router=Mix({
     /*
         1.
             render:function(){
-                
             },
             events:{
                 click:{
@@ -1151,7 +1150,6 @@ var Router=Mix({
                     };
                     /*
                         window.onhashchange=function(e){
-                            
                         };
                         (function(){
                             location.hash='a';
@@ -1199,7 +1197,6 @@ var Router=Mix({
             var equal=location.href==initialURL;
             if(!me.poped&&equal)return;
             me.poped=1;
-            
             me.route();
         },false);
     };
@@ -3329,7 +3326,6 @@ Mix(MRequest.prototype, {
             doneArgs = new Array(done.length);
         }
         var doneFn = function(model, idx, data, err) {
-            
             if (me.$destroy) return; //销毁，啥也不做
             current++;
             delete reqModels[model.id];
@@ -3399,7 +3395,6 @@ Mix(MRequest.prototype, {
                     doneArgs.push(last);
                 }
                 me.$ntId = setTimeout(function() { //前面的任务可能从缓存中来，执行很快
-                    
                     me.doNext(doneArgs);
                 }, 30);
             }
@@ -3587,7 +3582,6 @@ Mix(MRequest.prototype, {
         if (queue) {
             var one = queue.shift();
             if (one) {
-                
                 SafeExec(one, [me].concat(preArgs), me);
             }
         }
@@ -3633,10 +3627,8 @@ Mix(MManager.prototype, {
                         cacheKey:'',
                         cacheTime:20000,//缓存多久
                         before:function(m){
-                            
                         },
                         after:function(m){
-                            
                         }
                     },
                     {
@@ -3645,10 +3637,8 @@ Mix(MManager.prototype, {
                             uri:'test'
                         },
                         before:function(m){
-                            
                         },
                         after:function(m){
-                            
                         }
                     }
                 ]);
@@ -3858,7 +3848,6 @@ Mix(MManager.prototype, {
         }
         var meta = metas[name];
         if (!meta) {
-            
             throw new Error('Not found:' + modelAttrs.name);
         }
         return meta;

@@ -271,21 +271,23 @@
 <span class='line'>264</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
 <span class='line'>265</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>266</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>267</span> </span><span class="WHIT">    </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'interact'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>268</span> </span><span class="WHIT">        </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'rendercall'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">me.destroyMRequest</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>269</span> </span><span class="WHIT">        </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'prerender'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">me.destroyManaged</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>270</span> </span><span class="WHIT">        </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'destroy'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">me.destroyManaged</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>271</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>272</span> </span><span class="WHIT">    </span><span class="NAME">me.mxViewCtor</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>273</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>274</span> 
-<span class='line'>275</span> </span><span class="COMM">/**
-<span class='line'>276</span>  * view销毁托管资源时发生
-<span class='line'>277</span>  * @name MxView#destroyResource
-<span class='line'>278</span>  * @event
-<span class='line'>279</span>  * @param {Object} e
-<span class='line'>280</span>  * @param {Object} e.resource 托管的资源
-<span class='line'>281</span>  * @param {Boolean} e.processed 表示view是否对这个资源做过销毁处理，目前view仅对带 abort destroy dispose方法的资源进行自动处理，其它资源需要您响应该事件自已处理
-<span class='line'>282</span>  */</span><span class="WHIT">
-<span class='line'>283</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">MxView</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>284</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>267</span> </span><span class="WHIT">    </span><span class="NAME">me.beginUpdateHTML</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.beginUpdate</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>268</span> </span><span class="WHIT">    </span><span class="NAME">me.endUpdateHTML</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.endUpdate</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>269</span> </span><span class="WHIT">    </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'interact'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>270</span> </span><span class="WHIT">        </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'rendercall'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">me.destroyMRequest</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>271</span> </span><span class="WHIT">        </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'prerender'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">me.destroyManaged</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>272</span> </span><span class="WHIT">        </span><span class="NAME">me.on</span><span class="PUNC">(</span><span class="STRN">'destroy'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">me.destroyManaged</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>273</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>274</span> </span><span class="WHIT">    </span><span class="NAME">me.mxViewCtor</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>275</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>276</span> 
+<span class='line'>277</span> </span><span class="COMM">/**
+<span class='line'>278</span>  * view销毁托管资源时发生
+<span class='line'>279</span>  * @name MxView#destroyResource
+<span class='line'>280</span>  * @event
+<span class='line'>281</span>  * @param {Object} e
+<span class='line'>282</span>  * @param {Object} e.resource 托管的资源
+<span class='line'>283</span>  * @param {Boolean} e.processed 表示view是否对这个资源做过销毁处理，目前view仅对带 abort destroy dispose方法的资源进行自动处理，其它资源需要您响应该事件自已处理
+<span class='line'>284</span>  */</span><span class="WHIT">
+<span class='line'>285</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">MxView</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>286</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

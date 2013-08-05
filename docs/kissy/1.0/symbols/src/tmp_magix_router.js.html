@@ -373,144 +373,141 @@
 <span class='line'>366</span> </span><span class="WHIT">    </span><span class="COMM">/*
 <span class='line'>367</span>         1.
 <span class='line'>368</span>             render:function(){
-<span class='line'>369</span>                 
-<span class='line'>370</span>             },
-<span class='line'>371</span>             events:{
-<span class='line'>372</span>                 click:{
-<span class='line'>373</span>                     changeHash:function(e){
-<span class='line'>374</span>                         Router.navigate('a='+S.now());
-<span class='line'>375</span>                         Router.navigate('b='+S.now());
-<span class='line'>376</span>                         e.view.render();
-<span class='line'>377</span>                     }
-<span class='line'>378</span>                 }
-<span class='line'>379</span>             }
-<span class='line'>380</span>      */</span><span class="WHIT">
-<span class='line'>381</span> </span><span class="WHIT">    </span><span class="NAME">navigate</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">pn</span><span class="PUNC">,</span><span class="NAME">params</span><span class="PUNC">,</span><span class="NAME">replace</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>382</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="NAME">Router</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>383</span> </span><span class="WHIT">        </span><span class="WHIT">
-<span class='line'>384</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">params</span><span class="PUNC">&&</span><span class="NAME">Magix.isObject</span><span class="PUNC">(</span><span class="NAME">pn</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>385</span> </span><span class="WHIT">            </span><span class="NAME">params</span><span class="PUNC">=</span><span class="NAME">pn</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>386</span> </span><span class="WHIT">            </span><span class="NAME">pn</span><span class="PUNC">=</span><span class="NAME">EMPTY</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>387</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>388</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">params</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>389</span> </span><span class="WHIT">            </span><span class="NAME">pn</span><span class="PUNC">=</span><span class="NAME">Magix.objectToPath</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>390</span> </span><span class="WHIT">                </span><span class="NAME">params</span><span class="PUNC">:</span><span class="NAME">params</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>391</span> </span><span class="WHIT">                </span><span class="NAME">pathname</span><span class="PUNC">:</span><span class="NAME">pn</span><span class="WHIT">
-<span class='line'>392</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">IsUtf8</span><span class="PUNC">)</span><span class="WHIT">
-<span class='line'>393</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>394</span> </span><span class="WHIT">        </span><span class="COMM">//TLoc引用</span><span class="WHIT">
-<span class='line'>395</span> </span><span class="WHIT">        </span><span class="COMM">//pathObj引用</span><span class="WHIT">
-<span class='line'>396</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
-<span class='line'>397</span> </span><span class="WHIT">        </span><span class="COMM">//temp={params:{},pathname:{}}</span><span class="WHIT">
-<span class='line'>398</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
-<span class='line'>399</span> </span><span class="WHIT">        </span><span class="COMM">//Mix(temp,TLoc,temp);</span><span class="WHIT">
+<span class='line'>369</span>             },
+<span class='line'>370</span>             events:{
+<span class='line'>371</span>                 click:{
+<span class='line'>372</span>                     changeHash:function(e){
+<span class='line'>373</span>                         Router.navigate('a='+S.now());
+<span class='line'>374</span>                         Router.navigate('b='+S.now());
+<span class='line'>375</span>                         e.view.render();
+<span class='line'>376</span>                     }
+<span class='line'>377</span>                 }
+<span class='line'>378</span>             }
+<span class='line'>379</span>      */</span><span class="WHIT">
+<span class='line'>380</span> </span><span class="WHIT">    </span><span class="NAME">navigate</span><span class="PUNC">:</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">pn</span><span class="PUNC">,</span><span class="NAME">params</span><span class="PUNC">,</span><span class="NAME">replace</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>381</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="NAME">Router</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>382</span> </span><span class="WHIT">        </span><span class="WHIT">
+<span class='line'>383</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">params</span><span class="PUNC">&&</span><span class="NAME">Magix.isObject</span><span class="PUNC">(</span><span class="NAME">pn</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>384</span> </span><span class="WHIT">            </span><span class="NAME">params</span><span class="PUNC">=</span><span class="NAME">pn</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>385</span> </span><span class="WHIT">            </span><span class="NAME">pn</span><span class="PUNC">=</span><span class="NAME">EMPTY</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>386</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>387</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">params</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>388</span> </span><span class="WHIT">            </span><span class="NAME">pn</span><span class="PUNC">=</span><span class="NAME">Magix.objectToPath</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>389</span> </span><span class="WHIT">                </span><span class="NAME">params</span><span class="PUNC">:</span><span class="NAME">params</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>390</span> </span><span class="WHIT">                </span><span class="NAME">pathname</span><span class="PUNC">:</span><span class="NAME">pn</span><span class="WHIT">
+<span class='line'>391</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">IsUtf8</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>392</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>393</span> </span><span class="WHIT">        </span><span class="COMM">//TLoc引用</span><span class="WHIT">
+<span class='line'>394</span> </span><span class="WHIT">        </span><span class="COMM">//pathObj引用</span><span class="WHIT">
+<span class='line'>395</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
+<span class='line'>396</span> </span><span class="WHIT">        </span><span class="COMM">//temp={params:{},pathname:{}}</span><span class="WHIT">
+<span class='line'>397</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
+<span class='line'>398</span> </span><span class="WHIT">        </span><span class="COMM">//Mix(temp,TLoc,temp);</span><span class="WHIT">
+<span class='line'>399</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
 <span class='line'>400</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
-<span class='line'>401</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
-<span class='line'>402</span> 
-<span class='line'>403</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">pn</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>404</span> 
-<span class='line'>405</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">pathObj</span><span class="PUNC">=</span><span class="NAME">Path</span><span class="PUNC">(</span><span class="NAME">pn</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>406</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">temp</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>407</span> </span><span class="WHIT">            </span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">Mix</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">pathObj</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>408</span> </span><span class="WHIT">            </span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">pathObj</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>409</span> 
-<span class='line'>410</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>411</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">HashAsNativeHistory</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//指定使用history state但浏览器不支持，需要把query中的存在的参数以空格替换掉</span><span class="WHIT">
-<span class='line'>412</span> </span><span class="WHIT">                    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">query</span><span class="PUNC">=</span><span class="NAME">TLoc.query</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>413</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">query</span><span class="PUNC">&&</span><span class="PUNC">(</span><span class="NAME">query</span><span class="PUNC">=</span><span class="NAME">query</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>414</span> </span><span class="WHIT">                        </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">p</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">query</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>415</span> </span><span class="WHIT">                            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">Has</span><span class="PUNC">(</span><span class="NAME">query</span><span class="PUNC">,</span><span class="NAME">p</span><span class="PUNC">)</span><span class="PUNC">&&</span><span class="PUNC">!</span><span class="NAME">Has</span><span class="PUNC">(</span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="NAME">p</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>416</span> </span><span class="WHIT">                                </span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">EMPTY</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>417</span> </span><span class="WHIT">                            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>418</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>419</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>420</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>421</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>422</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ps</span><span class="PUNC">=</span><span class="NAME">Mix</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">TLoc</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>423</span> </span><span class="WHIT">                </span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">Mix</span><span class="PUNC">(</span><span class="NAME">ps</span><span class="PUNC">,</span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>424</span> </span><span class="WHIT">                </span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">TLoc</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>425</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>426</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">tempPath</span><span class="PUNC">=</span><span class="NAME">Magix.objectToPath</span><span class="PUNC">(</span><span class="NAME">temp</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>427</span> 
-<span class='line'>428</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">navigate</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>429</span> 
-<span class='line'>430</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">SupportState</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>431</span> </span><span class="WHIT">                </span><span class="NAME">navigate</span><span class="PUNC">=</span><span class="NAME">tempPath</span><span class="PUNC">!=</span><span class="NAME">TLoc.srcQuery</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>432</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>433</span> </span><span class="WHIT">                </span><span class="NAME">navigate</span><span class="PUNC">=</span><span class="NAME">tempPath</span><span class="PUNC">!=</span><span class="NAME">TLoc.srcHash</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>434</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>435</span> 
-<span class='line'>436</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">navigate</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>437</span> </span><span class="WHIT">                </span><span class="WHIT">
-<span class='line'>438</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">SupportState</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//如果使用pushState</span><span class="WHIT">
-<span class='line'>439</span> </span><span class="WHIT">                    </span><span class="NAME">me.poped</span><span class="PUNC">=</span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>440</span> </span><span class="WHIT">                    </span><span class="NAME">history</span><span class="PUNC">[</span><span class="NAME">replace</span><span class="PUNC">?</span><span class="STRN">'replaceState'</span><span class="PUNC">:</span><span class="STRN">'pushState'</span><span class="PUNC">]</span><span class="PUNC">(</span><span class="KEYW">null</span><span class="PUNC">,</span><span class="KEYW">null</span><span class="PUNC">,</span><span class="NAME">tempPath</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>441</span> </span><span class="WHIT">                    </span><span class="NAME">me.route</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>442</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>443</span> </span><span class="WHIT">                    </span><span class="NAME">Mix</span><span class="PUNC">(</span><span class="NAME">temp</span><span class="PUNC">,</span><span class="NAME">TLoc</span><span class="PUNC">,</span><span class="NAME">temp</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>444</span> </span><span class="WHIT">                    </span><span class="NAME">temp.srcHash</span><span class="PUNC">=</span><span class="NAME">tempPath</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>445</span> </span><span class="WHIT">                    </span><span class="NAME">temp.hash</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>446</span> </span><span class="WHIT">                        </span><span class="NAME">params</span><span class="PUNC">:</span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>447</span> </span><span class="WHIT">                        </span><span class="NAME">pathname</span><span class="PUNC">:</span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="WHIT">
-<span class='line'>448</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>449</span> </span><span class="WHIT">                    </span><span class="COMM">/*
-<span class='line'>450</span>                         window.onhashchange=function(e){
-<span class='line'>451</span>                             
-<span class='line'>452</span>                         };
-<span class='line'>453</span>                         (function(){
-<span class='line'>454</span>                             location.hash='a';
-<span class='line'>455</span>                             location.hash='b';
-<span class='line'>456</span>                             location.hash='c';
-<span class='line'>457</span>                         }());
-<span class='line'>458</span>                         
-<span class='line'>459</span> 
-<span class='line'>460</span>                      */</span><span class="WHIT">
-<span class='line'>461</span> </span><span class="WHIT">                    </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'!ul'</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="NAME">loc</span><span class="PUNC">:</span><span class="NAME">TLoc</span><span class="PUNC">=</span><span class="NAME">temp</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="COMM">//hack 更新view的location属性</span><span class="WHIT">
-<span class='line'>462</span> </span><span class="WHIT">                    </span><span class="NAME">tempPath</span><span class="PUNC">=</span><span class="STRN">'#!'</span><span class="PUNC">+</span><span class="NAME">tempPath</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>463</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">replace</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>464</span> </span><span class="WHIT">                        </span><span class="NAME">location.replace</span><span class="PUNC">(</span><span class="NAME">tempPath</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>465</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>466</span> </span><span class="WHIT">                        </span><span class="NAME">location.hash</span><span class="PUNC">=</span><span class="NAME">tempPath</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>467</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>468</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>469</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>470</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>471</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>472</span> </span><span class="WHIT">    </span><span class="WHIT">
-<span class='line'>473</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>474</span>      * 当window.location.href有改变化时触发
-<span class='line'>475</span>      * @name Router.changed 
-<span class='line'>476</span>      * @event 
-<span class='line'>477</span>      * @param {Object} e 事件对象
-<span class='line'>478</span>      * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
-<span class='line'>479</span>      * @param {Object} e.changed 有哪些值发生改变的对象
-<span class='line'>480</span>      * @param {Boolean} e.force 标识是否是第一次强制触发的changed，对于首次加载完Magix，会强制触发一次changed
-<span class='line'>481</span>      */</span><span class="WHIT">
-<span class='line'>482</span> </span><span class="WHIT">    </span><span class="WHIT">
-<span class='line'>483</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>484</span>      * 当window.location.href有改变化时触发（该事件在扩展中实现）
-<span class='line'>485</span>      * @name Router.change 
-<span class='line'>486</span>      * @event 
-<span class='line'>487</span>      * @param {Object} e 事件对象
-<span class='line'>488</span>      * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
-<span class='line'>489</span>      * @param {Function} e.back 回退到变化前的地址上，阻止跳转
-<span class='line'>490</span>      */</span><span class="WHIT">
-<span class='line'>491</span> 
-<span class='line'>492</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">Event</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>493</span> </span><span class="WHIT">    </span><span class="NAME">Router.useState</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>494</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="NAME">Router</span><span class="PUNC">,</span><span class="NAME">initialURL</span><span class="PUNC">=</span><span class="NAME">location.href</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>495</span> </span><span class="WHIT">        </span><span class="NAME">SE.on</span><span class="PUNC">(</span><span class="NAME">WIN</span><span class="PUNC">,</span><span class="STRN">'popstate'</span><span class="PUNC">,</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>496</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">equal</span><span class="PUNC">=</span><span class="NAME">location.href</span><span class="PUNC">==</span><span class="NAME">initialURL</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>497</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.poped</span><span class="PUNC">&&</span><span class="NAME">equal</span><span class="PUNC">)</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>498</span> </span><span class="WHIT">            </span><span class="NAME">me.poped</span><span class="PUNC">=</span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>499</span> </span><span class="WHIT">            </span><span class="WHIT">
-<span class='line'>500</span> </span><span class="WHIT">            </span><span class="NAME">me.route</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>501</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>401</span> 
+<span class='line'>402</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">pn</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>403</span> 
+<span class='line'>404</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">pathObj</span><span class="PUNC">=</span><span class="NAME">Path</span><span class="PUNC">(</span><span class="NAME">pn</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>405</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">temp</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>406</span> </span><span class="WHIT">            </span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">Mix</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">pathObj</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>407</span> </span><span class="WHIT">            </span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">pathObj</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>408</span> 
+<span class='line'>409</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>410</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">HashAsNativeHistory</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//指定使用history state但浏览器不支持，需要把query中的存在的参数以空格替换掉</span><span class="WHIT">
+<span class='line'>411</span> </span><span class="WHIT">                    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">query</span><span class="PUNC">=</span><span class="NAME">TLoc.query</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>412</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">query</span><span class="PUNC">&&</span><span class="PUNC">(</span><span class="NAME">query</span><span class="PUNC">=</span><span class="NAME">query</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>413</span> </span><span class="WHIT">                        </span><span class="KEYW">for</span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">p</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">query</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>414</span> </span><span class="WHIT">                            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">Has</span><span class="PUNC">(</span><span class="NAME">query</span><span class="PUNC">,</span><span class="NAME">p</span><span class="PUNC">)</span><span class="PUNC">&&</span><span class="PUNC">!</span><span class="NAME">Has</span><span class="PUNC">(</span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="NAME">p</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>415</span> </span><span class="WHIT">                                </span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">EMPTY</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>416</span> </span><span class="WHIT">                            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>417</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>418</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>419</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>420</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>421</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ps</span><span class="PUNC">=</span><span class="NAME">Mix</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">TLoc</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>422</span> </span><span class="WHIT">                </span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">Mix</span><span class="PUNC">(</span><span class="NAME">ps</span><span class="PUNC">,</span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>423</span> </span><span class="WHIT">                </span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">=</span><span class="NAME">TLoc</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>424</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>425</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">tempPath</span><span class="PUNC">=</span><span class="NAME">Magix.objectToPath</span><span class="PUNC">(</span><span class="NAME">temp</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>426</span> 
+<span class='line'>427</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">navigate</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>428</span> 
+<span class='line'>429</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">SupportState</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>430</span> </span><span class="WHIT">                </span><span class="NAME">navigate</span><span class="PUNC">=</span><span class="NAME">tempPath</span><span class="PUNC">!=</span><span class="NAME">TLoc.srcQuery</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>431</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>432</span> </span><span class="WHIT">                </span><span class="NAME">navigate</span><span class="PUNC">=</span><span class="NAME">tempPath</span><span class="PUNC">!=</span><span class="NAME">TLoc.srcHash</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>433</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>434</span> 
+<span class='line'>435</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">navigate</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>436</span> </span><span class="WHIT">                </span><span class="WHIT">
+<span class='line'>437</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">SupportState</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//如果使用pushState</span><span class="WHIT">
+<span class='line'>438</span> </span><span class="WHIT">                    </span><span class="NAME">me.poped</span><span class="PUNC">=</span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>439</span> </span><span class="WHIT">                    </span><span class="NAME">history</span><span class="PUNC">[</span><span class="NAME">replace</span><span class="PUNC">?</span><span class="STRN">'replaceState'</span><span class="PUNC">:</span><span class="STRN">'pushState'</span><span class="PUNC">]</span><span class="PUNC">(</span><span class="KEYW">null</span><span class="PUNC">,</span><span class="KEYW">null</span><span class="PUNC">,</span><span class="NAME">tempPath</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>440</span> </span><span class="WHIT">                    </span><span class="NAME">me.route</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>441</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>442</span> </span><span class="WHIT">                    </span><span class="NAME">Mix</span><span class="PUNC">(</span><span class="NAME">temp</span><span class="PUNC">,</span><span class="NAME">TLoc</span><span class="PUNC">,</span><span class="NAME">temp</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>443</span> </span><span class="WHIT">                    </span><span class="NAME">temp.srcHash</span><span class="PUNC">=</span><span class="NAME">tempPath</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>444</span> </span><span class="WHIT">                    </span><span class="NAME">temp.hash</span><span class="PUNC">=</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>445</span> </span><span class="WHIT">                        </span><span class="NAME">params</span><span class="PUNC">:</span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PARAMS</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>446</span> </span><span class="WHIT">                        </span><span class="NAME">pathname</span><span class="PUNC">:</span><span class="NAME">temp</span><span class="PUNC">[</span><span class="NAME">PATHNAME</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>447</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>448</span> </span><span class="WHIT">                    </span><span class="COMM">/*
+<span class='line'>449</span>                         window.onhashchange=function(e){
+<span class='line'>450</span>                         };
+<span class='line'>451</span>                         (function(){
+<span class='line'>452</span>                             location.hash='a';
+<span class='line'>453</span>                             location.hash='b';
+<span class='line'>454</span>                             location.hash='c';
+<span class='line'>455</span>                         }());
+<span class='line'>456</span>                         
+<span class='line'>457</span> 
+<span class='line'>458</span>                      */</span><span class="WHIT">
+<span class='line'>459</span> </span><span class="WHIT">                    </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'!ul'</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="NAME">loc</span><span class="PUNC">:</span><span class="NAME">TLoc</span><span class="PUNC">=</span><span class="NAME">temp</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="COMM">//hack 更新view的location属性</span><span class="WHIT">
+<span class='line'>460</span> </span><span class="WHIT">                    </span><span class="NAME">tempPath</span><span class="PUNC">=</span><span class="STRN">'#!'</span><span class="PUNC">+</span><span class="NAME">tempPath</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>461</span> </span><span class="WHIT">                    </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="NAME">replace</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>462</span> </span><span class="WHIT">                        </span><span class="NAME">location.replace</span><span class="PUNC">(</span><span class="NAME">tempPath</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>463</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="KEYW">else</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>464</span> </span><span class="WHIT">                        </span><span class="NAME">location.hash</span><span class="PUNC">=</span><span class="NAME">tempPath</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>465</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>466</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>467</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>468</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>469</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>470</span> </span><span class="WHIT">    </span><span class="WHIT">
+<span class='line'>471</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>472</span>      * 当window.location.href有改变化时触发
+<span class='line'>473</span>      * @name Router.changed 
+<span class='line'>474</span>      * @event 
+<span class='line'>475</span>      * @param {Object} e 事件对象
+<span class='line'>476</span>      * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
+<span class='line'>477</span>      * @param {Object} e.changed 有哪些值发生改变的对象
+<span class='line'>478</span>      * @param {Boolean} e.force 标识是否是第一次强制触发的changed，对于首次加载完Magix，会强制触发一次changed
+<span class='line'>479</span>      */</span><span class="WHIT">
+<span class='line'>480</span> </span><span class="WHIT">    </span><span class="WHIT">
+<span class='line'>481</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>482</span>      * 当window.location.href有改变化时触发（该事件在扩展中实现）
+<span class='line'>483</span>      * @name Router.change 
+<span class='line'>484</span>      * @event 
+<span class='line'>485</span>      * @param {Object} e 事件对象
+<span class='line'>486</span>      * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
+<span class='line'>487</span>      * @param {Function} e.back 回退到变化前的地址上，阻止跳转
+<span class='line'>488</span>      */</span><span class="WHIT">
+<span class='line'>489</span> 
+<span class='line'>490</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="NAME">Event</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>491</span> </span><span class="WHIT">    </span><span class="NAME">Router.useState</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>492</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">=</span><span class="NAME">Router</span><span class="PUNC">,</span><span class="NAME">initialURL</span><span class="PUNC">=</span><span class="NAME">location.href</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>493</span> </span><span class="WHIT">        </span><span class="NAME">SE.on</span><span class="PUNC">(</span><span class="NAME">WIN</span><span class="PUNC">,</span><span class="STRN">'popstate'</span><span class="PUNC">,</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>494</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">equal</span><span class="PUNC">=</span><span class="NAME">location.href</span><span class="PUNC">==</span><span class="NAME">initialURL</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>495</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.poped</span><span class="PUNC">&&</span><span class="NAME">equal</span><span class="PUNC">)</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>496</span> </span><span class="WHIT">            </span><span class="NAME">me.poped</span><span class="PUNC">=</span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>497</span> </span><span class="WHIT">            </span><span class="NAME">me.route</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>498</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>499</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>500</span> </span><span class="WHIT">    </span><span class="NAME">Router.useHash</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//extension impl change event</span><span class="WHIT">
+<span class='line'>501</span> </span><span class="WHIT">        </span><span class="NAME">SE.on</span><span class="PUNC">(</span><span class="NAME">WIN</span><span class="PUNC">,</span><span class="STRN">'hashchange'</span><span class="PUNC">,</span><span class="NAME">Router.route</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
 <span class='line'>502</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>503</span> </span><span class="WHIT">    </span><span class="NAME">Router.useHash</span><span class="PUNC">=</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="COMM">//extension impl change event</span><span class="WHIT">
-<span class='line'>504</span> </span><span class="WHIT">        </span><span class="NAME">SE.on</span><span class="PUNC">(</span><span class="NAME">WIN</span><span class="PUNC">,</span><span class="STRN">'hashchange'</span><span class="PUNC">,</span><span class="NAME">Router.route</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>505</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>506</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Router</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>507</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>508</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/magix"</span><span class="PUNC">,</span><span class="STRN">"magix/event"</span><span class="PUNC">,</span><span class="STRN">"event"</span><span class="PUNC">]</span><span class="WHIT">
-<span class='line'>509</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>503</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">Router</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>504</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>505</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="PUNC">[</span><span class="STRN">"magix/magix"</span><span class="PUNC">,</span><span class="STRN">"magix/event"</span><span class="PUNC">,</span><span class="STRN">"event"</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>506</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>

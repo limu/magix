@@ -35,7 +35,7 @@ module.exports = function(grunt) {
         allJSFiles.forEach(function(f) {
             grunt.file.copy(f, f, {
                 process: function(content) {
-                    return content = content.replace(/console\.\w+\((.*)\);?/g, function(m) {
+                    return content = content.replace(/\s*console\.\w+\((.*)\);?/g, function(m) {
                         return '';
                     }).replace(/\/\/KEEP\s/g, '');
                 }

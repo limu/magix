@@ -258,6 +258,8 @@ var MxView = View.extend({
     }
 }, function() {
     var me = this;
+    me.beginUpdateHTML = me.beginUpdate;
+    me.endUpdateHTML = me.endUpdate;
     me.on('interact', function() {
         me.on('rendercall', me.destroyMRequest);
         me.on('prerender', me.destroyManaged);
