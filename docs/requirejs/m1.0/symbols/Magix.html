@@ -494,7 +494,7 @@ dl.data .dd{
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">magix开始工作</span>                                                
+                                                <span class="desc">应用初始化入口</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -505,16 +505,6 @@ dl.data .dd{
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
                                                 <span class="desc">读取或设置view的模板</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                Magix.
-                                                <b class="name"><a href="../symbols/Magix.html#.unimpl">unimpl</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                                <span class="desc">未实现的方法</span>                                                
                                             </li>
                                             
                                         </ul>
@@ -639,6 +629,13 @@ dl.data .dd{
                                                 
                                                                                                 
                                                 
+                                                
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">var c=Magix.cache(5,2);//创建一个可缓存5个，且缓存区为2个的缓存对象c.set('key1',{});//缓存c.get('key1');//获取c.del('key1');//删除c.has('key1');//判断//注意：缓存通常配合其它方法使用，不建议单独使用。在Magix中，对路径的解释等使用了缓存。在使用缓存优化性能时，可以达到节省CPU和内存的双赢效果</pre>
+                                                        
+                                                </dd>
                                                 
                                                 
                                             </dl>                                            
@@ -1677,6 +1674,13 @@ dl.data .dd{
                                                                                                 
                                                 
                                                 
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">var str=Magix.objectToPath({pathname:'/xxx/',params:{a:'b',c:'d'}});//str==/xxx/?a=b&c=d</pre>
+                                                        
+                                                </dd>
+                                                
                                                 
                                             </dl>                                            
                                         </li>
@@ -1751,6 +1755,13 @@ dl.data .dd{
                                                 
                                                                                                 
                                                 
+                                                
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">var obj=Magix.pathToObject)('/xxx/?a=b&c=d');//obj={pathname:'/xxx/',params:{a:'b',c:'d'}}</pre>
+                                                        
+                                                </dd>
                                                 
                                                 
                                             </dl>                                            
@@ -1859,7 +1870,7 @@ dl.data .dd{
                                             </div>
 
                                             <div class="desc">
-                                                magix开始工作
+                                                应用初始化入口
                                                 
                                                 
                                             </div>
@@ -2089,44 +2100,6 @@ dl.data .dd{
                                                     
                                                     </ul>
                                                 </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name=".unimpl"> </a>
-                                            <div class="title" >
-                                                <span>Magix.</span>
-                                                <b class="name">unimpl</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                <span class="attr">&lt;static&gt;</span>
-                                            </div>
-
-                                            <div class="desc">
-                                                未实现的方法
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
                                                 
                                                 
                                                 

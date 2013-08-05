@@ -2,3 +2,5 @@
 
 1.alter与created。alter需包含当前view，当前view更新html时触发alter，需要修改view.onprerender事件中的unmountZoneVframes，当不包含子view时，调用cAlter  (done@2013-07-30)
 2.MM中，修改回调，所有的回调以error开始，同nodejs
+
+3.registerModels 判断有没有重名的model信息

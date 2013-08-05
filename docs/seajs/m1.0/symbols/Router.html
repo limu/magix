@@ -698,6 +698,13 @@ dl.data .dd{
                                                                                                 
                                                 
                                                 
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">var T=Magix.mix({},Event);T.on('done',function(e){});T.on('done',function(e){},0)//监听插入到开始位置T.on('done',function(e){},true)//触发后即删除该监听T.fire('done',{    data:'test'})</pre>
+                                                        
+                                                </dd>
+                                                
                                                 
                                             </dl>                                            
                                         </li>

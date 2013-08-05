@@ -1,18 +1,18 @@
-var Has=Magix.has;
-var Mix=Magix.mix;
-var VframesCount=0;
-var FirstVframesLoaded=0;
-var LastPercent=0;
-var FirstReady=0;
-var Vframes={};
-var Loc={};
+var Has = Magix.has;
+var Mix = Magix.mix;
+var VframesCount = 0;
+var FirstVframesLoaded = 0;
+var LastPercent = 0;
+var FirstReady = 0;
+var Vframes = {};
+var Loc = {};
 
 /**
  * VOM对象
  * @name VOM
  * @namespace
  */
-var VOM=Magix.mix({
+var VOM = Magix.mix({
     /**
      * @lends VOM
      */
@@ -20,19 +20,21 @@ var VOM=Magix.mix({
      * 获取所有的vframe对象
      * @return {Object}
      */
-    all:function(){
+    all: function() {
         return Vframes;
     },
     /**
      * 注册vframe对象
      * @param {Vframe} vf Vframe对象
      */
-    add:function(vf){
-        if(!Has(Vframes,vf.id)){
+    add: function(vf) {
+        if (!Has(Vframes, vf.id)) {
             VframesCount++;
-            Vframes[vf.id]=vf;
-            vf.owner=VOM;
-            VOM.fire('add',{vframe:vf});
+            Vframes[vf.id] = vf;
+            vf.owner = VOM;
+            VOM.fire('add', {
+                vframe: vf
+            });
         }
     },
     /**
@@ -40,43 +42,44 @@ var VOM=Magix.mix({
      * @param {String} id vframe的id
      * @return {Vframe} vframe对象
      */
-    get:function(id){
+    get: function(id) {
         return Vframes[id];
     },
     /**
      * 删除已注册的vframe对象
      * @param {String} id vframe对象的id
      */
-    remove:function(id,cc){
-        //var id=Magix.isString(vf)?vf:vf.id;
-        var vf=Vframes[id];
-        if(vf){
+    remove: function(id, cc) {
+        var vf = Vframes[id];
+        if (vf) {
             VframesCount--;
-            if(cc)FirstVframesLoaded--;
+            if (cc) FirstVframesLoaded--;
             delete Vframes[id];
-            VOM.fire('remove',{vframe:vf});
+            VOM.fire('remove', {
+                vframe: vf
+            });
         }
     },
     /**
      * 通知其中的一个vframe创建完成
      * @private
      */
-    vfCreated:function(){
-        if(!FirstReady){
+    vfCreated: function() {
+        if (!FirstReady) {
             FirstVframesLoaded++;
-            var np=FirstVframesLoaded/VframesCount;
-            if(LastPercent<np){
-                VOM.fire('progress',{
-                    percent:LastPercent=np
-                },FirstReady=(np==1));
+            var np = FirstVframesLoaded / VframesCount;
+            if (LastPercent < np) {
+                VOM.fire('progress', {
+                    percent: LastPercent = np
+                }, FirstReady = (np == 1));
             }
         }
     },
     /**
      * 获取根vframe对象
      */
-    root:function(){
-        return Vframe.root(VOM,Loc);
+    root: function() {
+        return Vframe.root(VOM, Loc);
     },
     /**
      * 向vframe通知地址栏发生变化
@@ -85,22 +88,22 @@ var VOM=Magix.mix({
      * @param {Object} e.changed 包含有哪些变化的对象
      * @private
      */
-    locChged:function(e){
-        var loc=e.loc;
+    locChged: function(e) {
+        var loc = e.loc;
         var hack;
-        if(loc){
-            hack=1;
-        }else{
-            loc=e.location;
+        if (loc) {
+            hack = 1;
+        } else {
+            loc = e.location;
         }
-        Mix(Loc,loc);
-        if(!hack){
-            var vf=VOM.root();
-            var chged=e.changed;
-            if(chged.isView()){
+        Mix(Loc, loc);
+        if (!hack) {
+            var vf = VOM.root();
+            var chged = e.changed;
+            if (chged.isView()) {
                 vf.mountView(loc.view);
-            }else{
-                vf.locChged(loc,chged);
+            } else {
+                vf.locChged(loc, chged);
             }
         }
     }
@@ -125,4 +128,4 @@ var VOM=Magix.mix({
      * @param {Object} e
      * @param {Vframe} e.vframe
      */
-},Event);
+}, Event);

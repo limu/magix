@@ -165,7 +165,7 @@ var safeExec = function(fns, args, context, i, r, e) {
         e = fns[i];
         r = Magix.isFunction(e) && e.apply(context, args);
         //KEEP }catch(x){/*_*/
-        //KEEP 
+        //KEEP
         //KEEP }/*_*/
     }
     return r;
@@ -277,6 +277,7 @@ var Magix = {
      * 未实现的方法
      * @function
      * @type {Function}
+     * @private
      */
     unimpl: unimpl,
     /**
@@ -333,7 +334,7 @@ var Magix = {
      */
     config: GSObj(Cfg),
     /**
-     * magix开始工作
+     * 应用初始化入口
      * @param  {Object} cfg 初始化配置参数对象
      * @param {String} cfg.appHome 当前app所在的文件夹路径 http 形式的 如：http://etao.com/srp/app/
      * @param {Boolean} cfg.debug 指定当前app是否是发布版本，当使用发布版本时，view的html和js应该打包成一个 view-min.js文件，否则Magix在加载view时会分开加载view.js和view.html(view.hasTemplate为true的情况下)
@@ -471,7 +472,7 @@ var Magix = {
      */
     pathToObject: function(path, decode) {
         //把形如 /xxx/a=b&c=d 转换成对象 {pathname:'/xxx/',params:{a:'b',c:'d'}}
-        //1. /xxx/a.b.c.html?a=b&c=d  pathname /xxx/a.b.c.html 
+        //1. /xxx/a.b.c.html?a=b&c=d  pathname /xxx/a.b.c.html
         //2. /xxx/?a=b&c=d  pathname /xxx/
         //3. /xxx/#?a=b => pathname /xxx/
         //4. /xxx/index.html# => pathname /xxx/index.html
@@ -488,13 +489,13 @@ var Magix = {
             var pathname = EMPTY;
             if (PathTrimParamsReg.test(path)) { //有#?号，表示有pathname
                 pathname = path.replace(PathTrimParamsReg, EMPTY)
-            } else if (!~path.indexOf('=')) { //没有=号，路径可能是 xxx 相对路径 
+            } else if (!~path.indexOf('=')) { //没有=号，路径可能是 xxx 相对路径
                 pathname = path;
             }
 
             if (pathname) {
                 if (ProtocalReg.test(pathname)) { //解析以https?:开头的网址
-                    var first = pathname.indexOf(Slash, 8); //找最近的 / 
+                    var first = pathname.indexOf(Slash, 8); //找最近的 /
                     if (first == -1) { //未找到，比如 http://etao.com
                         pathname = Slash; //则pathname为  /
                     } else {

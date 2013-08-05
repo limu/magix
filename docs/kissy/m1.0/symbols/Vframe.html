@@ -409,7 +409,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/Vframe.html#mountVframe">mountVframe</a></b>
-                                                <span class="param">(id, viewPath, viewInitParams, byHand)</span>
+                                                <span class="param">(id, viewPath, viewInitParams, autoMount)</span>
                                                 
                                                 
                                                 
@@ -812,7 +812,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">mountVframe</b>
-                                                <span class="param">(id, viewPath, viewInitParams, byHand)</span>
+                                                <span class="param">(id, viewPath, viewInitParams, autoMount)</span>
                                                 
                                                 
                                                 
@@ -860,7 +860,7 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">byHand</b>
+                                                            <b class="name">autoMount</b>
                                                             
                                                             
                                                             <span class="type">{Boolean}</span> 
@@ -895,6 +895,13 @@ dl.data .dd{
                                                 
                                                                                                 
                                                 
+                                                
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">//html<div id="magix_vf_defer"></div>//jsview.owner.mountVframe('magix_vf_defer','app/views/list',{page:2})//注意：动态向某个节点渲染view时，该节点无须是vframe标签</pre>
+                                                        
+                                                </dd>
                                                 
                                                 
                                             </dl>                                            
@@ -1104,6 +1111,13 @@ dl.data .dd{
                                                 
                                                                                                 
                                                 
+                                                
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">var T=Magix.mix({},Event);T.on('done',function(e){});T.on('done',function(e){},0)//监听插入到开始位置T.on('done',function(e){},true)//触发后即删除该监听T.fire('done',{    data:'test'})</pre>
+                                                        
+                                                </dd>
                                                 
                                                 
                                             </dl>                                            

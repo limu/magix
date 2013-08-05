@@ -1,6 +1,8 @@
 var D = document;
 var VframeIdCounter = 1 << 16;
 
+
+
 var Mix = Magix.mix;
 
 var TagName = Magix.config('tagName');
@@ -24,6 +26,7 @@ var $$ = function(id, tag) {
 var $C = function(tag) {
     return D.createElement(tag);
 };
+
 
 var IdIt = function(dom) {
     return dom.id || (dom.id = 'magix_vf_' + (VframeIdCounter--));
@@ -263,6 +266,7 @@ Mix(Mix(Vframe.prototype, Event), {
             delete me.viewInited;
             GlobalAlter = 0;
             me.fire('viewUnmounted');
+
         }
         me.un('viewInited');
         me.sign--;
@@ -272,8 +276,14 @@ Mix(Mix(Vframe.prototype, Event), {
      * @param  {String} id             节点id
      * @param  {String} viewPath       view路径
      * @param  {Object} viewInitParams 传递给view init方法的参数
-     * @param  {Boolean} byHand         是否自动渲染
+     * @param  {Boolean} autoMount         是否自动渲染
      * @return {Vframe} vframe对象
+     * @example
+     * //html
+     * <div id="magix_vf_defer"></div>
+     * //js
+     * view.owner.mountVframe('magix_vf_defer','app/views/list',{page:2})
+     * //注意：动态向某个节点渲染view时，该节点无须是vframe标签
      */
     mountVframe: function(id, viewPath, viewInitParams, autoMount) {
         var me = this;
@@ -351,7 +361,6 @@ Mix(Mix(Vframe.prototype, Event), {
             vf.unmountView();
             vom.remove(id, cc);
             me.fire('destroy');
-
             var p = vom.get(vf.pId);
             if (p && Has(p.cM, id)) {
                 delete p.cM[id];
@@ -546,7 +555,7 @@ Mix(Mix(Vframe.prototype, Event), {
                 <vframe id="v1" mx-view="..."></vframe>
                 <vframe id="v2" mx-view="..."></vframe>
                 <vframe id="v3" mx-view="..."></vframe>
-                
+
                 v1渲染后postMessage向v2 v3发消息，此时v2 v3的view对象是构建好了，但它对应的模板可能并未就绪，需要等待到view创建完成后再发消息过去
              */
     //if(view.rendered){
@@ -582,12 +591,6 @@ Mix(Mix(Vframe.prototype, Event), {
      */
 
     /**
-     * vframe销毁时触发
-     * @name Vframe#destroy
-     * @event
-     */
-
-    /**
      * 子孙view修改时触发
      * @name Vframe#alter
      * @event
@@ -599,6 +602,12 @@ Mix(Mix(Vframe.prototype, Event), {
      * @name Vframe#created
      * @event
      * @param {Object} e
+     */
+
+    /**
+     * vframe销毁时触发
+     * @name Vframe#destroy
+     * @event
      */
 });
 

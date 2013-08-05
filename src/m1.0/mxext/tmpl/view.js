@@ -12,41 +12,41 @@ var Destroy = function(res) {
 var ResCounter = 0;
 var SafeExec = Magix.safeExec;
 var Has = Magix.has;
-var VOMEventsObject = {};
-var PrepareVOMMessage = function(vom) {
-    if (!PrepareVOMMessage.d) {
-        PrepareVOMMessage.d = 1;
-        vom.on('add', function(e) {
-            var vf = e.vframe;
-            var list = VOMEventsObject[vf.id];
-            if (list) {
-                for (var i = 0; i < list.length; i++) {
-                    PostMessage(vf, list[i]);
-                }
-                delete VOMEventsObject[vf.id];
-            }
-        });
-        vom.on('remove', function(e) {
-            delete VOMEventsObject[e.vframe.id];
-        });
-        var vf = vom.root();
-        vf.on('created', function() {
-            VOMEventsObject = {};
-        });
-    }
-};
-var PostMessage = function(vframe, args) {
-    var view = vframe.view;
-    if (view && vframe.viewInited) {
-        SafeExec(view.receiveMessage, args, view);
-    } else {
-        var interact = function(e) {
-            vframe.un('viewInited', interact);
-            SafeExec(e.view.receiveMessage, args, e.view);
-        };
-        vframe.on('viewInited', interact);
-    }
-};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * @name MxView
  * @namespace
@@ -207,38 +207,38 @@ var MxView = View.extend({
             }
         }
     },
-    /**
-     * 用于接受其它view通过postMessageTo方法发来的消息，供最终的view开发人员进行覆盖
-     * @function
-     * @param {Object} e 通过postMessageTo传递的第二个参数
-     */
-    receiveMessage: Magix.noop,
-    /**
-     * 向某个vframe发送消息
-     * @param {Array|String} aims  目标vframe id数组
-     * @param {Object} args 消息对象
-     */
-    postMessageTo: function(aims, args) {
-        var vom = this.vom;
-        PrepareVOMMessage(vom);
 
-        if (!Magix.isArray(aims)) {
-            aims = [aims];
-        }
-        if (!args) args = {};
-        for (var i = 0, it; i < aims.length; i++) {
-            it = aims[i];
-            var vframe = vom.get(it);
-            if (vframe) {
-                PostMessage(vframe, args);
-            } else {
-                if (!VOMEventsObject[it]) {
-                    VOMEventsObject[it] = [];
-                }
-                VOMEventsObject[it].push(args);
-            }
-        }
-    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * @private
      */

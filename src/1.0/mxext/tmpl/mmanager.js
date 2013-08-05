@@ -268,7 +268,7 @@ Mix(MRequest.prototype, {
      * @param {Function} done   完成时的回调
      * @return {MRequest}
      * @example
-          #example-1#
+            #example-1#
      */
     fetchAll: function(models, done) {
         return this.fetchModels(models, done, FetchFlags.ALL);
@@ -455,9 +455,9 @@ Mix(MManager.prototype, {
                     {name:'Home_List',cacheKey:'aaa',urlParams:{e:'f'}},
                     {name:'Home_List1',urlParams:{a:'b'}}
                 ],function(m1,m2){
-    
+
                 },function(msg){
-    
+
                 });
             });
          */
@@ -472,10 +472,10 @@ Mix(MManager.prototype, {
                 postParams:'',
                 cacheTime:20000,//缓存多久
                 before:function(m){
-    
+
                 },
                 after:function(m){
-                    
+
                 }
              */
         var me = this;
@@ -484,12 +484,15 @@ Mix(MManager.prototype, {
         if (!Magix.isArray(models)) {
             models = [models];
         }
-        for (var i = 0, model; i < models.length; i++) {
+        for (var i = 0, model, name; i < models.length; i++) {
             model = models[i];
-            if (model && !model.name) {
-                throw new Error('model must own a name attribute');
+            name = model.name;
+            if (model && !name) {
+                throw new Error('miss name attribute');
+            } else if (metas[name]) {
+                throw new Error('already exist:' + name);
             }
-            metas[model.name] = model;
+            metas[name] = model;
         }
     },
     /**
@@ -572,7 +575,7 @@ Mix(MManager.prototype, {
                 if(fn){
                     if(!one.params)one.params=[];
                     if(!S.isArray(one.params))one.params=[one.params];
-                    
+
                     one.params.push(check(i,true),check(i));
                     fn.apply(me,one.params);
                 }else{

@@ -51,8 +51,8 @@ var EvtInfoCache = Magix.cache(40);
  *      click:{
  *          test:function(e){
  *              //e.view  当前view对象
- *              //e.currentId 处理事件的dom节点id
- *              //e.targetId 触发事件的dom节点id
+ *              //e.currentId 处理事件的dom节点id(即带有mx-click属性的节点)
+ *              //e.targetId 触发事件的dom节点id(即鼠标点中的节点，在currentId里包含其它节点时，currentId与targetId有可能不一样)
  *              //e.events  view.events对象，可访问其它事件对象，如：e.events.mousedown.test
  *              //e.params  传递的参数
  *              //e.params.com,e.params.id,e.params.name
@@ -100,6 +100,7 @@ Mix(View, {
 
 
 var VProto = View.prototype;
+
 //var MxEvent=/<(\w+)([\s\S]+?mx-[^ohv][a-z]+\s*=\s*"[^"]")/g;
 var MxEvent = /<[a-z]+(?:[^">]|"[^"]*")+(?=>)/g;
 var MxOwner = /\smx-owner\s*=/;
@@ -281,6 +282,7 @@ Mix(VProto, {
             }
             me.rendered = true;
             me.fire('rendered'); //可以在rendered事件中访问view.rendered属性
+
         }
     },
     /**
@@ -306,6 +308,10 @@ Mix(VProto, {
     /**
      * 设置view的html内容
      * @param {Strig} html html字符串
+     * @example
+     * render:function(){
+     *     this.setViewHTML(this.template);//渲染界面，当界面复杂时，请考虑用其它方案进行更新
+     * }
      */
     /*
         1.首次调用：
@@ -428,7 +434,10 @@ Mix(VProto, {
         return 1;
     },
 
-    /***销毁当前view * @private */
+    /**
+     * 销毁当前view
+     * @private
+     */
     destroy: function() {
         var me = this;
         //me.fire('refresh', null, true, true); //先清除绑定在上面的app中的刷新

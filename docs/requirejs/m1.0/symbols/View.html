@@ -498,16 +498,6 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/View.html#destroy">destroy</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">销毁当前view * @private</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/View.html#endUpdate">endUpdate</a></b>
                                                 <span class="param">()</span>
                                                 
@@ -793,7 +783,7 @@ dl.data .dd{
                                                 <dt>示例：</dt>
                                                 <dd>
                                                     
-                                                    <pre class='brush: js;'>关于View.prototype.events:示例：  html写法：  &lt;input type="button" mx-click="test{id:100,name:xinglie}" value="test" /&gt;  &lt;a href="http://etao.com" mx-click="test&lt;prevent&gt;{com:etao.com}"&gt;http://etao.com&lt;/a&gt;  view写法：  events:{     click:{         test:function(e){             //e.view  当前view对象             //e.currentId 处理事件的dom节点id             //e.targetId 触发事件的dom节点id             //e.events  view.events对象，可访问其它事件对象，如：e.events.mousedown.test             //e.params  传递的参数             //e.params.com,e.params.id,e.params.name         }     },     mousedown:{         test:function(e){         }     }  }</pre>
+                                                    <pre class='brush: js;'>关于View.prototype.events:示例：  html写法：  &lt;input type="button" mx-click="test{id:100,name:xinglie}" value="test" /&gt;  &lt;a href="http://etao.com" mx-click="test&lt;prevent&gt;{com:etao.com}"&gt;http://etao.com&lt;/a&gt;  view写法：  events:{     click:{         test:function(e){             //e.view  当前view对象             //e.currentId 处理事件的dom节点id(即带有mx-click属性的节点)             //e.targetId 触发事件的dom节点id(即鼠标点中的节点，在currentId里包含其它节点时，currentId与targetId有可能不一样)             //e.events  view.events对象，可访问其它事件对象，如：e.events.mousedown.test             //e.params  传递的参数             //e.params.com,e.params.id,e.params.name         }     },     mousedown:{         test:function(e){         }     }  }</pre>
                                                     
                                                 </dd>                                                
                                                 
@@ -1074,44 +1064,6 @@ dl.data .dd{
 
                                             <div class="desc">
                                                 通知当前view即将开始进行html的更新
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="destroy"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">destroy</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                销毁当前view * @private
                                                 
                                                 
                                             </div>
@@ -1590,6 +1542,13 @@ dl.data .dd{
                                                                                                 
                                                 
                                                 
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">var T=Magix.mix({},Event);T.on('done',function(e){});T.on('done',function(e){},0)//监听插入到开始位置T.on('done',function(e){},true)//触发后即删除该监听T.fire('done',{    data:'test'})</pre>
+                                                        
+                                                </dd>
+                                                
                                                 
                                             </dl>                                            
                                         </li>
@@ -1731,6 +1690,13 @@ dl.data .dd{
                                                 
                                                                                                 
                                                 
+                                                
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">render:function(){    this.setViewHTML(this.template);//渲染界面，当界面复杂时，请考虑用其它方案进行更新}</pre>
+                                                        
+                                                </dd>
                                                 
                                                 
                                             </dl>                                            
