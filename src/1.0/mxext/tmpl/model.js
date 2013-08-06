@@ -308,11 +308,16 @@ Magix.mix(Model.prototype, {
             me.$keys = [];
         }
         if (Magix.isObject(key)) {
+            if (!Magix.isObject(val)) {
+                val = {}
+            }
             for (var p in key) {
                 if (saveKeyList) {
                     me.$keys.push(p);
                 }
-                me.$attrs[p] = key[p];
+                if (!Magix.has(val, p)) {
+                    me.$attrs[p] = key[p];
+                }
             }
         } else if (key) {
             if (saveKeyList) {

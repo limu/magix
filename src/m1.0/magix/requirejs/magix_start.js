@@ -9,7 +9,7 @@
         W.console = {
             log: noop,
             info: noop,
-            error: noop
+            warn: noop
         }
     };
     var tempCfg, cCfg = {};

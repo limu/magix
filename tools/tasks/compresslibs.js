@@ -46,7 +46,7 @@ module.exports = function(grunt) {
     // ==========================================================================
     // TASKS
     // ==========================================================================
-    //concat all useful files 
+    //concat all useful files
     grunt.registerMultiTask('compresslibs', 'compress lib files', function() {
         var platType = this.data.platType;
         var loaderType = this.data.loaderType;
@@ -80,6 +80,7 @@ module.exports = function(grunt) {
                 process: function(content) {
                     content = content.replace(/\S*\/\*_\*\//g, '');
                     content = content.replace('//debug-*_*', "debug:'*_*',");
+                    content = content.replace('//KEEPCONSOLE', 'console')
                     return content;
                 }
             });

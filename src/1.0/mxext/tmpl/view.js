@@ -259,7 +259,7 @@ var MxView = View.extend({
 }, function() {
     var me = this;
     me.beginUpdateHTML = me.beginUpdate;
-    me.endUpdateHTML = me.endUpdate;
+    me.endUpdateHTML = me.endUpdate; //兼容线上，这2行不要删除
     me.on('interact', function() {
         me.on('rendercall', me.destroyMRequest);
         me.on('prerender', me.destroyManaged);

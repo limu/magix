@@ -60,9 +60,9 @@ Magix.mix(Model.prototype, {
      * url映射对象
      * @type {Object}
      */
-    urlMap: {
+    /*urlMap: {
 
-    },
+    },*/
     /**
      * Model调用save或load方法后，与服务器同步的方法，供应用开发人员覆盖
      * @function
@@ -255,33 +255,33 @@ Magix.mix(Model.prototype, {
             delete me.$keys;
         }
     },
-    /**
-     * 获取model对象请求时的后台地址
-     * @return {String}
-     */
-    url: function(uri) {
-        var self = this,
-            url = self.get('url'),
-            uris;
-        uri = uri || self.get('uri');
-        if (uri) {
-            uris = uri.split(':');
-            var maps = self.urlMap;
-            if (maps) {
-                for (var i = 0, parent = maps, j = uris.length; i < j; i++) {
-                    parent = parent[uris[i]];
-                    if (!parent) {
-                        break;
-                    }
-                }
-                uri = parent || uri;
-            }
-            url = uri;
-        } else if (!url) {
-            throw new Error('model not set uri and url');
-        }
-        return url;
-    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * 获取属性
      * @param {String} type type
@@ -308,11 +308,16 @@ Magix.mix(Model.prototype, {
             me.$keys = [];
         }
         if (Magix.isObject(key)) {
+            if (!Magix.isObject(val)) {
+                val = {}
+            }
             for (var p in key) {
                 if (saveKeyList) {
                     me.$keys.push(p);
                 }
-                me.$attrs[p] = key[p];
+                if (!Magix.has(val, p)) {
+                    me.$attrs[p] = key[p];
+                }
             }
         } else if (key) {
             if (saveKeyList) {
@@ -358,12 +363,12 @@ Magix.mix(Model.prototype, {
                 }
             }
         };
-        temp.success = function(data) {
-            temp(data);
-        };
-        temp.error = function(msg) {
-            temp(null, msg || 'request error');
-        };
+
+
+
+
+
+
         me.$trans = me.sync(temp, options);
     },
     /**

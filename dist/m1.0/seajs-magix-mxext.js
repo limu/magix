@@ -3180,16 +3180,6 @@ define("mxext/mmanager", ["magix/magix", "magix/event"], function(require) {
     var Has = Magix.has;
 var SafeExec = Magix.safeExec;
 var Mix = Magix.mix;
-var DeleteCacheKey = function(modelsAttr) {
-    if (!Magix.isArray(modelsAttr)) {
-        modelsAttr = [modelsAttr];
-    }
-    for (var i = 0, m; i < modelsAttr.length; i++) {
-        m = modelsAttr[i];
-        delete m.cacheKey;
-    }
-    return modelsAttr;
-};
 /**
  * Model管理对象，可方便的对Model进行缓存和更新
  * @name MManager
@@ -3214,15 +3204,7 @@ var WhiteList = {
     before: 1,
     after: 1
 };
-var GetOptions = function(obj) {
-    var r = {};
-    for (var p in obj) {
-        if (!WhiteList[p]) {
-            r[p] = obj[p];
-        }
-    }
-    return r;
-};
+
 var WrapDone = function(fn, model, idx) {
     return function() {
         return fn.apply(model, [model, idx].concat(Slice.call(arguments)));
@@ -3252,7 +3234,7 @@ Mix(MManager, {
     create: function(modelClass) {
         var me = this;
         if (!modelClass) {
-            throw new Error('MManager.create:modelClass ungiven');
+            throw Error('MManager.create:modelClass ungiven');
         }
         return new MManager(modelClass);
     }
@@ -3291,13 +3273,14 @@ Mix(MRequest.prototype, {
      * @param {Object|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2},params:[]}
      * @param {Function} done   完成时的回调
      * @param {Integer} flag   获取哪种类型的models
+     * @param {Boolean} save 是否是保存的动作
      * @return {MRequest}
      */
-    fetchModels: function(models, done, flag) {
+    send: function(models, done, flag, save) {
         var me = this;
         if (me.$doTask) {
             me.next(function(request) {
-                request.fetchModels(models, done, flag);
+                request.send(models, done, flag, save);
             });
             return me;
         }
@@ -3412,7 +3395,7 @@ Mix(MRequest.prototype, {
             model = models[i];
             if (model) {
                 var modelEntity, modelInfo;
-                var modelInfo = host.getModel(model);
+                var modelInfo = host.getModel(model, save);
                 var cacheKey = modelInfo.cacheKey;
                 modelEntity = modelInfo.entity;
                 var wrapDoneFn = WrapDone(doneFn, modelEntity, i);
@@ -3434,7 +3417,7 @@ Mix(MRequest.prototype, {
                     }
                 }
             } else {
-                throw new Error('miss attrs:' + models);
+                throw Error('miss attrs:' + models);
             }
         }
         return me;
@@ -3475,7 +3458,7 @@ Mix(MRequest.prototype, {
         
      */
     fetchAll: function(models, done) {
-        return this.fetchModels(models, done, FetchFlags.ALL);
+        return this.send(models, done, FetchFlags.ALL);
     },
     /**
      * 保存models，所有请求完成回调done
@@ -3484,8 +3467,7 @@ Mix(MRequest.prototype, {
      * @return {MRequest}
      */
     saveAll: function(models, done) {
-        models = DeleteCacheKey(models);
-        return this.fetchModels(models, done, FetchFlags.ALL);
+        return this.send(models, done, FetchFlags.ALL, 1);
     },
     /**
      * 获取models，按顺序执行回调done
@@ -3495,7 +3477,7 @@ Mix(MRequest.prototype, {
      */
     fetchOrder: function(models, done) {
         var cbs = Slice.call(arguments, 1);
-        return this.fetchModels(models, cbs.length > 1 ? cbs : done, FetchFlags.ORDER);
+        return this.send(models, cbs.length > 1 ? cbs : done, FetchFlags.ORDER);
     },
     /**
      * 保存models，按顺序执行回调done
@@ -3504,9 +3486,8 @@ Mix(MRequest.prototype, {
      * @return {MRequest}
      */
     saveOrder: function(models, done) {
-        models = DeleteCacheKey(models);
         var cbs = Slice.call(arguments, 1);
-        return this.fetchModels(models, cbs.length > 1 ? cbs : done, FetchFlags.ORDER);
+        return this.send(models, cbs.length > 1 ? cbs : done, FetchFlags.ORDER, 1);
     },
     /**
      * 保存models，其中任意一个成功均立即回调，回调会被调用多次
@@ -3515,9 +3496,8 @@ Mix(MRequest.prototype, {
      * @return {MRequest}
      */
     saveOne: function(models, callback) {
-        models = DeleteCacheKey(models);
         var cbs = Slice.call(arguments, 1);
-        return this.fetchModels(models, cbs.length > 1 ? cbs : callback, FetchFlags.ONE);
+        return this.send(models, cbs.length > 1 ? cbs : callback, FetchFlags.ONE, 1);
     },
     /**
      * 获取models，其中任意一个成功均立即回调，回调会被调用多次
@@ -3527,7 +3507,7 @@ Mix(MRequest.prototype, {
      */
     fetchOne: function(models, callback) {
         var cbs = Slice.call(arguments, 1);
-        return this.fetchModels(models, cbs.length > 1 ? cbs : callback, FetchFlags.ONE);
+        return this.send(models, cbs.length > 1 ? cbs : callback, FetchFlags.ONE);
     },
     /**
      * 中止所有model的请求
@@ -3687,9 +3667,9 @@ Mix(MManager.prototype, {
             model = models[i];
             name = model.name;
             if (model && !name) {
-                throw new Error('miss name attribute');
+                throw Error('miss name attribute');
             } else if (metas[name]) {
-                throw new Error('already exist:' + name);
+                throw Error('already exist:' + name);
             }
             metas[name] = model;
         }
@@ -3796,7 +3776,8 @@ Mix(MManager.prototype, {
         var me = this;
         var meta = me.getModelMeta(modelAttrs);
 
-        var entity = new me.$mClass(GetOptions(meta));
+        var entity = new me.$mClass();
+        entity.set(meta, WhiteList);
         entity.$mm = {
             used: 0
         };
@@ -3820,7 +3801,7 @@ Mix(MManager.prototype, {
 
         entity.$mm.cacheKey = cacheKey;
         entity.$mm.meta = meta;
-        entity.set(GetOptions(modelAttrs));
+        entity.set(modelAttrs, WhiteList);
         //默认设置的
         entity.setUrlParams(meta.urlParams);
         entity.setPostParams(meta.postParams);
@@ -3848,19 +3829,24 @@ Mix(MManager.prototype, {
         }
         var meta = metas[name];
         if (!meta) {
-            throw new Error('Not found:' + modelAttrs.name);
+            throw Error('Not found:' + modelAttrs.name);
         }
         return meta;
     },
     /**
      * 获取model对象，优先从缓存中获取
      * @param {Object} modelAttrs           model描述信息对象
+     * @param {Boolean} createNew 是否是创建新的Model对象，如果否，则尝试从缓存中获取
      * @return {Object}
      */
-    getModel: function(modelAttrs) {
+    getModel: function(modelAttrs, createNew) {
         var me = this;
-        var entity = me.getCachedModel(modelAttrs);
+        var entity;
         var needUpdate;
+        if (!createNew) {
+            entity = me.getCachedModel(modelAttrs);
+        }
+
         if (!entity) {
             needUpdate = true;
             entity = me.createModel(modelAttrs);
@@ -3936,9 +3922,7 @@ Mix(MManager.prototype, {
     clearCacheByKey: function(key) {
         var me = this;
         var modelsCache = me.$mCache;
-        if (Magix.isString(key)) {
-            modelsCache.del(key);
-        }
+        modelsCache.del(key);
     },
     /**
      * 根据name清除缓存的models
@@ -3971,9 +3955,9 @@ Mix(MManager.prototype, {
         var meta = me.getModelMeta(name);
         if (meta.url) {
             return meta.url;
-        } else {
-            return me.$mClass.prototype.url(meta.uri);
         }
+
+
     },
     /**
      * 监听某个model的before
@@ -4155,9 +4139,9 @@ Magix.mix(Model.prototype, {
      * url映射对象
      * @type {Object}
      */
-    urlMap: {
+    /*urlMap: {
 
-    },
+    },*/
     /**
      * Model调用save或load方法后，与服务器同步的方法，供应用开发人员覆盖
      * @function
@@ -4350,33 +4334,33 @@ Magix.mix(Model.prototype, {
             delete me.$keys;
         }
     },
-    /**
-     * 获取model对象请求时的后台地址
-     * @return {String}
-     */
-    url: function(uri) {
-        var self = this,
-            url = self.get('url'),
-            uris;
-        uri = uri || self.get('uri');
-        if (uri) {
-            uris = uri.split(':');
-            var maps = self.urlMap;
-            if (maps) {
-                for (var i = 0, parent = maps, j = uris.length; i < j; i++) {
-                    parent = parent[uris[i]];
-                    if (!parent) {
-                        break;
-                    }
-                }
-                uri = parent || uri;
-            }
-            url = uri;
-        } else if (!url) {
-            throw new Error('model not set uri and url');
-        }
-        return url;
-    },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * 获取属性
      * @param {String} type type
@@ -4403,11 +4387,16 @@ Magix.mix(Model.prototype, {
             me.$keys = [];
         }
         if (Magix.isObject(key)) {
+            if (!Magix.isObject(val)) {
+                val = {}
+            }
             for (var p in key) {
                 if (saveKeyList) {
                     me.$keys.push(p);
                 }
-                me.$attrs[p] = key[p];
+                if (!Magix.has(val, p)) {
+                    me.$attrs[p] = key[p];
+                }
             }
         } else if (key) {
             if (saveKeyList) {
@@ -4453,12 +4442,12 @@ Magix.mix(Model.prototype, {
                 }
             }
         };
-        temp.success = function(data) {
-            temp(data);
-        };
-        temp.error = function(msg) {
-            temp(null, msg || 'request error');
-        };
+
+
+
+
+
+
         me.$trans = me.sync(temp, options);
     },
     /**
@@ -4800,6 +4789,8 @@ var MxView = View.extend({
     }
 }, function() {
     var me = this;
+
+
     me.on('interact', function() {
         me.on('rendercall', me.destroyMRequest);
         me.on('prerender', me.destroyManaged);
@@ -4823,31 +4814,31 @@ var MxView = View.extend({
  * @author 行列<xinglie.lkf@taobao.com>
  * @version 1.0
  **/
-(function(W){
-    var noop=function(){};
-    if(!W.console){
-        W.console={
-            log:noop,
-            info:noop,
-            error:noop
+(function(W) {
+    var noop = function() {};
+    if (!W.console) {
+        W.console = {
+            log: noop,
+            info: noop,
+            warn: noop
         }
     };
-    var tempCfg,cCfg={};
-    if(!W.Magix){
-        W.Magix={
-            config:function(cfg){
-                for(var p in cfg){
-                    cCfg[p]=cfg[p];
+    var tempCfg, cCfg = {};
+    if (!W.Magix) {
+        W.Magix = {
+            config: function(cfg) {
+                for (var p in cfg) {
+                    cCfg[p] = cfg[p];
                 }
             },
-            start:function(cfg){
-                tempCfg=cfg;
+            start: function(cfg) {
+                tempCfg = cfg;
             }
         };
-        seajs.use('magix/magix',function(M){
-            W.Magix=M;
+        seajs.use('magix/magix', function(M) {
+            W.Magix = M;
             M.config(cCfg);
-            if(tempCfg){
+            if (tempCfg) {
                 M.start(tempCfg);
             }
         });
