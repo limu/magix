@@ -257,14 +257,9 @@ Mix(VProto, {
      */
     beginUpdate: function() {
         var me = this;
-        if (me.sign) {
-            var isRendered = me.rendered;
-            if (isRendered) { //渲染过才使用动画
-                //var enableAnim=me.enableAnim;//
-                //me.fire('refresh',null,true,true);//从最后注册的事件一直清到最先注册的事件
-                me.fire('refresh', 0, 1);
-                me.fire('prerender');
-            }
+        if (me.sign && me.rendered) {
+            me.fire('refresh', 0, 1);
+            me.fire('prerender');
         }
     },
     /**

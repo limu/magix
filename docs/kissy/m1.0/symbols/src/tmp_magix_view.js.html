@@ -271,623 +271,618 @@
 <span class='line'>264</span>      */</span><span class="WHIT">
 <span class='line'>265</span> </span><span class="WHIT">    </span><span class="NAME">beginUpdate</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
 <span class='line'>266</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>267</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">me.sign</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>268</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">isRendered</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.rendered</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>269</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">isRendered</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> </span><span class="COMM">//渲染过才使用动画</span><span class="WHIT">
-<span class='line'>270</span> </span><span class="WHIT">                </span><span class="COMM">//var enableAnim=me.enableAnim;//</span><span class="WHIT">
-<span class='line'>271</span> </span><span class="WHIT">                </span><span class="COMM">//me.fire('refresh',null,true,true);//从最后注册的事件一直清到最先注册的事件</span><span class="WHIT">
-<span class='line'>272</span> </span><span class="WHIT">                </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'refresh'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>273</span> </span><span class="WHIT">                </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'prerender'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>274</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>275</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>276</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>277</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>278</span>      * 通知当前view结束html的更新
-<span class='line'>279</span>      */</span><span class="WHIT">
-<span class='line'>280</span> </span><span class="WHIT">    </span><span class="NAME">endUpdate</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>281</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>282</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">me.sign</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>283</span> </span><span class="WHIT">            </span><span class="COMM">/*if(me.rendered&&me.enableAnim){
-<span class='line'>284</span>                 var owner=me.owner;
-<span class='line'>285</span>                 SafeExec(owner.newViewCreated,EMPTY_ARRAY,owner);
-<span class='line'>286</span>             }*/</span><span class="WHIT">
-<span class='line'>287</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.rendered</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> </span><span class="COMM">//触发一次primed事件</span><span class="WHIT">
-<span class='line'>288</span> </span><span class="WHIT">                </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'primed'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>289</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>290</span> </span><span class="WHIT">            </span><span class="NAME">me.rendered</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>291</span> </span><span class="WHIT">            </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'rendered'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">//可以在rendered事件中访问view.rendered属性</span><span class="WHIT">
-<span class='line'>292</span> 
-<span class='line'>293</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>294</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>295</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>296</span>      * 通知当前view进行更新，与beginUpdate不同的是：begin是开始更新html，notify是开始调用更新的方法，通常render与renderUI已经自动做了处理，对于用户自定义的获取数据并更新界面时，在开始更新前，需要调用一下该方法
-<span class='line'>297</span>      * @return {Integer} 当前view的签名
-<span class='line'>298</span>      */</span><span class="WHIT">
-<span class='line'>299</span> </span><span class="WHIT">    </span><span class="NAME">notifyUpdate</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>300</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>301</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">me.sign</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>302</span> </span><span class="WHIT">            </span><span class="NAME">me.sign</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>303</span> </span><span class="WHIT">            </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'rendercall'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>304</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>305</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">me.sign</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>306</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>307</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>308</span>      * 包装mx-event，自动添加mx-owner属性
-<span class='line'>309</span>      * @param {String} html html字符串
-<span class='line'>310</span>      */</span><span class="WHIT">
-<span class='line'>311</span> </span><span class="WHIT">    </span><span class="NAME">wrapMxEvent</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">html</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>312</span> </span><span class="WHIT">        </span><span class="NAME">MxEFun.t</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.id</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>313</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">String</span><span class="PUNC">(</span><span class="NAME">html</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">replace</span><span class="PUNC">(</span><span class="NAME">MxEvent</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">MxEFun</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>314</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>315</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>316</span>      * 设置view的html内容
-<span class='line'>317</span>      * @param {Strig} html html字符串
-<span class='line'>318</span>      * @example
-<span class='line'>319</span>      * render:function(){
-<span class='line'>320</span>      *     this.setViewHTML(this.template);//渲染界面，当界面复杂时，请考虑用其它方案进行更新
-<span class='line'>321</span>      * }
-<span class='line'>322</span>      */</span><span class="WHIT">
-<span class='line'>323</span> </span><span class="WHIT">    </span><span class="COMM">/*
-<span class='line'>324</span>         1.首次调用：
-<span class='line'>325</span>             setNodeHTML -> delegate unbubble events -> rendered(事件) -> primed(事件)
+<span class='line'>267</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">me.sign</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">me.rendered</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>268</span> </span><span class="WHIT">            </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'refresh'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>269</span> </span><span class="WHIT">            </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'prerender'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>270</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>271</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>272</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>273</span>      * 通知当前view结束html的更新
+<span class='line'>274</span>      */</span><span class="WHIT">
+<span class='line'>275</span> </span><span class="WHIT">    </span><span class="NAME">endUpdate</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>276</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>277</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">me.sign</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>278</span> </span><span class="WHIT">            </span><span class="COMM">/*if(me.rendered&&me.enableAnim){
+<span class='line'>279</span>                 var owner=me.owner;
+<span class='line'>280</span>                 SafeExec(owner.newViewCreated,EMPTY_ARRAY,owner);
+<span class='line'>281</span>             }*/</span><span class="WHIT">
+<span class='line'>282</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.rendered</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> </span><span class="COMM">//触发一次primed事件</span><span class="WHIT">
+<span class='line'>283</span> </span><span class="WHIT">                </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'primed'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>284</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>285</span> </span><span class="WHIT">            </span><span class="NAME">me.rendered</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>286</span> </span><span class="WHIT">            </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'rendered'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">//可以在rendered事件中访问view.rendered属性</span><span class="WHIT">
+<span class='line'>287</span> 
+<span class='line'>288</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>289</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>290</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>291</span>      * 通知当前view进行更新，与beginUpdate不同的是：begin是开始更新html，notify是开始调用更新的方法，通常render与renderUI已经自动做了处理，对于用户自定义的获取数据并更新界面时，在开始更新前，需要调用一下该方法
+<span class='line'>292</span>      * @return {Integer} 当前view的签名
+<span class='line'>293</span>      */</span><span class="WHIT">
+<span class='line'>294</span> </span><span class="WHIT">    </span><span class="NAME">notifyUpdate</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>295</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>296</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">me.sign</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>297</span> </span><span class="WHIT">            </span><span class="NAME">me.sign</span><span class="PUNC">++</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>298</span> </span><span class="WHIT">            </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'rendercall'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>299</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>300</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">me.sign</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>301</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>302</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>303</span>      * 包装mx-event，自动添加mx-owner属性
+<span class='line'>304</span>      * @param {String} html html字符串
+<span class='line'>305</span>      */</span><span class="WHIT">
+<span class='line'>306</span> </span><span class="WHIT">    </span><span class="NAME">wrapMxEvent</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">html</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>307</span> </span><span class="WHIT">        </span><span class="NAME">MxEFun.t</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.id</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>308</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">String</span><span class="PUNC">(</span><span class="NAME">html</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">replace</span><span class="PUNC">(</span><span class="NAME">MxEvent</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">MxEFun</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>309</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>310</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>311</span>      * 设置view的html内容
+<span class='line'>312</span>      * @param {Strig} html html字符串
+<span class='line'>313</span>      * @example
+<span class='line'>314</span>      * render:function(){
+<span class='line'>315</span>      *     this.setViewHTML(this.template);//渲染界面，当界面复杂时，请考虑用其它方案进行更新
+<span class='line'>316</span>      * }
+<span class='line'>317</span>      */</span><span class="WHIT">
+<span class='line'>318</span> </span><span class="WHIT">    </span><span class="COMM">/*
+<span class='line'>319</span>         1.首次调用：
+<span class='line'>320</span>             setNodeHTML -> delegate unbubble events -> rendered(事件) -> primed(事件)
+<span class='line'>321</span> 
+<span class='line'>322</span>         2.再次调用
+<span class='line'>323</span>             refresh(事件) -> prerender(事件) -> undelegate unbubble events -> anim... -> setNodeHTML -> delegate unbubble events -> rendered(事件)
+<span class='line'>324</span> 
+<span class='line'>325</span>         当prerender、rendered事件触发时，在vframe中
 <span class='line'>326</span> 
-<span class='line'>327</span>         2.再次调用
-<span class='line'>328</span>             refresh(事件) -> prerender(事件) -> undelegate unbubble events -> anim... -> setNodeHTML -> delegate unbubble events -> rendered(事件)
-<span class='line'>329</span> 
-<span class='line'>330</span>         当prerender、rendered事件触发时，在vframe中
-<span class='line'>331</span> 
-<span class='line'>332</span>         prerender : unloadSubVframes
-<span class='line'>333</span> 
-<span class='line'>334</span>         rendered : loadSubVframes
-<span class='line'>335</span>      */</span><span class="WHIT">
-<span class='line'>336</span> </span><span class="WHIT">    </span><span class="NAME">setViewHTML</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">html</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>337</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>338</span> </span><span class="WHIT">            </span><span class="NAME">n</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>339</span> </span><span class="WHIT">        </span><span class="NAME">me.beginUpdate</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>340</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">me.sign</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>341</span> </span><span class="WHIT">            </span><span class="NAME">n</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.$</span><span class="PUNC">(</span><span class="NAME">me.id</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>342</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">n</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">n.innerHTML</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">html</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>343</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>344</span> </span><span class="WHIT">        </span><span class="NAME">me.endUpdate</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>345</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>346</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>347</span>      * 指定要监视地址栏中的哪些值有变化时，或pathname有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
-<span class='line'>348</span>      * @param {Array|String|Object} args  数组字符串或对象
-<span class='line'>349</span>      * @example
-<span class='line'>350</span>      * return View.extend({
-<span class='line'>351</span>      *      init:function(){
-<span class='line'>352</span>      *          this.observeLocation('page,rows');//关注地址栏中的page rows2个参数的变化，当其中的任意一个改变时，才引起当前view的locationChange被调用
-<span class='line'>353</span>      *          this.observeLocation({
-<span class='line'>354</span>      *              pathname:true//关注pathname的变化
-<span class='line'>355</span>      *          });
-<span class='line'>356</span>      *          //也可以写成下面的形式
-<span class='line'>357</span>      *          //this.observeLocation({
-<span class='line'>358</span>      *          //    keys:['page','rows'],
-<span class='line'>359</span>      *          //    pathname:true
-<span class='line'>360</span>      *          //})
-<span class='line'>361</span>      *      },
-<span class='line'>362</span>      *      locationChange:function(e){
-<span class='line'>363</span>      *          if(e.changed.isParam('page')){};//检测是否是page发生的改变
-<span class='line'>364</span>      *          if(e.changed.isParam('rows')){};//检测是否是rows发生的改变
-<span class='line'>365</span>      *      }
-<span class='line'>366</span>      * });
-<span class='line'>367</span>      */</span><span class="WHIT">
-<span class='line'>368</span> </span><span class="WHIT">    </span><span class="NAME">observeLocation</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>369</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>370</span> </span><span class="WHIT">            </span><span class="NAME">loc</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>371</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$ol</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">me.$ol</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>372</span> </span><span class="WHIT">            </span><span class="NAME">keys</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="WHIT">
-<span class='line'>373</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>374</span> </span><span class="WHIT">        </span><span class="NAME">loc</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.$ol</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>375</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">keys</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">loc.keys</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>376</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">Magix.isObject</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>377</span> </span><span class="WHIT">            </span><span class="NAME">loc.pn</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">args.pathname</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>378</span> </span><span class="WHIT">            </span><span class="NAME">args</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">args.keys</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>379</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>380</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>381</span> </span><span class="WHIT">            </span><span class="NAME">loc.keys</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">keys.concat</span><span class="PUNC">(</span><span class="NAME">String</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">split</span><span class="PUNC">(</span><span class="NAME">COMMA</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>382</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>383</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>384</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>385</span>      * 指定监控地址栏中pathname的改变
-<span class='line'>386</span>      * @example
-<span class='line'>387</span>      * return View.extend({
-<span class='line'>388</span>      *      init:function(){
-<span class='line'>389</span>      *          this.observePathname();//关注地址栏中pathname的改变，pathname改变才引起当前view的locationChange被调用
-<span class='line'>390</span>      *      },
-<span class='line'>391</span>      *      locationChange:function(e){
-<span class='line'>392</span>      *          if(e.changed.isPathname()){};//是否是pathname发生的改变
-<span class='line'>393</span>      *      }
-<span class='line'>394</span>      * });
-<span class='line'>395</span>      */</span><span class="WHIT">
-<span class='line'>396</span> </span><span class="WHIT">    </span><span class="COMM">/*observePathname:function(){
-<span class='line'>397</span>         var me=this;
-<span class='line'>398</span>         if(!me.$loc)me.$loc={};
-<span class='line'>399</span>         me.$loc.pn=true;
-<span class='line'>400</span>     },*/</span><span class="WHIT">
-<span class='line'>401</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>402</span>      * 指定要监视地址栏中的哪些值有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
-<span class='line'>403</span>      * @param {Array|String} keys            key数组或字符串
-<span class='line'>404</span>      * @param {Boolean} observePathname 是否监视pathname
-<span class='line'>405</span>      * @example
-<span class='line'>406</span>      * return View.extend({
-<span class='line'>407</span>      *      init:function(){
-<span class='line'>408</span>      *          this.observeParams('page,rows');//关注地址栏中的page rows2个参数的变化，当其中的任意一个改变时，才引起当前view的locationChange被调用
-<span class='line'>409</span>      *      },
-<span class='line'>410</span>      *      locationChange:function(e){
-<span class='line'>411</span>      *          if(e.changed.isParam('page')){};//检测是否是page发生的改变
-<span class='line'>412</span>      *          if(e.changed.isParam('rows')){};//检测是否是rows发生的改变
-<span class='line'>413</span>      *      }
-<span class='line'>414</span>      * });
-<span class='line'>415</span>      */</span><span class="WHIT">
-<span class='line'>416</span> </span><span class="WHIT">    </span><span class="COMM">/*observeParams:function(keys){
-<span class='line'>417</span>         var me=this;
-<span class='line'>418</span>         if(!me.$loc)me.$loc={};
-<span class='line'>419</span>         me.$loc.keys=Magix.isArray(keys)?keys:String(keys).split(COMMA);
-<span class='line'>420</span>     },*/</span><span class="WHIT">
-<span class='line'>421</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>422</span>      * 检测通过observeLocation方法指定的key对应的值有没有发生变化
-<span class='line'>423</span>      * @param {Object} changed 对象
-<span class='line'>424</span>      * @return {Boolean} 是否发生改变
-<span class='line'>425</span>      * @private
-<span class='line'>426</span>      */</span><span class="WHIT">
-<span class='line'>427</span> </span><span class="WHIT">    </span><span class="NAME">olChanged</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">changed</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>428</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>429</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">location</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.$ol</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>430</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">location</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>431</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">res</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>432</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">location.pn</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>433</span> </span><span class="WHIT">                </span><span class="NAME">res</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">changed.isPathname</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>434</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>435</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">res</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>436</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">keys</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">location.keys</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>437</span> </span><span class="WHIT">                </span><span class="NAME">res</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">changed.isParam</span><span class="PUNC">(</span><span class="NAME">keys</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>438</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>439</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">res</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>440</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>441</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>442</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>443</span> 
-<span class='line'>444</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>445</span>      * 销毁当前view
-<span class='line'>446</span>      * @private
-<span class='line'>447</span>      */</span><span class="WHIT">
-<span class='line'>448</span> </span><span class="WHIT">    </span><span class="NAME">destroy</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>449</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>450</span> </span><span class="WHIT">        </span><span class="COMM">//me.fire('refresh', null, true, true); //先清除绑定在上面的app中的刷新</span><span class="WHIT">
-<span class='line'>451</span> </span><span class="WHIT">        </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'refresh'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>452</span> </span><span class="WHIT">        </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'destroy'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">//同上</span><span class="WHIT">
-<span class='line'>453</span> 
-<span class='line'>454</span> </span><span class="WHIT">        </span><span class="NAME">me.delegateEvents</span><span class="PUNC">(</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>455</span> </span><span class="WHIT">        </span><span class="COMM">//if(!keepContent){</span><span class="WHIT">
-<span class='line'>456</span> </span><span class="WHIT">        </span><span class="COMM">//me.destroyFrames();</span><span class="WHIT">
-<span class='line'>457</span> </span><span class="WHIT">        </span><span class="COMM">//var node=$(me.vfId);</span><span class="WHIT">
-<span class='line'>458</span> </span><span class="WHIT">        </span><span class="COMM">//if(node._dataBak){</span><span class="WHIT">
-<span class='line'>459</span> </span><span class="WHIT">        </span><span class="COMM">//node.innerHTML=node._dataTmpl;</span><span class="WHIT">
-<span class='line'>460</span> </span><span class="WHIT">        </span><span class="COMM">//}</span><span class="WHIT">
-<span class='line'>461</span> </span><span class="WHIT">        </span><span class="COMM">//}</span><span class="WHIT">
-<span class='line'>462</span> 
-<span class='line'>463</span> </span><span class="WHIT">        </span><span class="COMM">//me.un('prerender',null,true); 销毁的话也就访问不到view对象了，这些事件不解绑也没问题</span><span class="WHIT">
-<span class='line'>464</span> </span><span class="WHIT">        </span><span class="COMM">//me.un('rendered',null,true);</span><span class="WHIT">
-<span class='line'>465</span> </span><span class="WHIT">        </span><span class="NAME">me.sign</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>466</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
-<span class='line'>467</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>468</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>469</span>      * 获取渲染当前view的父view
-<span class='line'>470</span>      * @return {View}
-<span class='line'>471</span>      */</span><span class="WHIT">
-<span class='line'>472</span> </span><span class="WHIT">    </span><span class="NAME">parentView</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>473</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>474</span> </span><span class="WHIT">            </span><span class="NAME">vom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.vom</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>475</span> </span><span class="WHIT">            </span><span class="NAME">owner</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.owner</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>476</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">pVframe</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">vom.get</span><span class="PUNC">(</span><span class="NAME">owner.pId</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>477</span> </span><span class="WHIT">            </span><span class="NAME">r</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>478</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">pVframe</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">pVframe.viewInited</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>479</span> </span><span class="WHIT">            </span><span class="NAME">r</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">pVframe.view</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>480</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>481</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">r</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>482</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>483</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>484</span>      * 处理dom事件
-<span class='line'>485</span>      * @param {Event} e dom事件对象
-<span class='line'>486</span>      * @private
-<span class='line'>487</span>      */</span><span class="WHIT">
-<span class='line'>488</span> </span><span class="WHIT">    </span><span class="NAME">processEvent</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>489</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>490</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">me.enableEvent</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">me.sign</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>491</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">info</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">e.info</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>492</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">domEvent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">e.se</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>493</span> 
-<span class='line'>494</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">m</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">EvtInfoCache.get</span><span class="PUNC">(</span><span class="NAME">info</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>495</span> 
-<span class='line'>496</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">m</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>497</span> </span><span class="WHIT">                </span><span class="NAME">m</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">info.match</span><span class="PUNC">(</span><span class="NAME">EvtInfoReg</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>498</span> </span><span class="WHIT">                </span><span class="NAME">m</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>499</span> </span><span class="WHIT">                    </span><span class="NAME">n</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">m</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>500</span> </span><span class="WHIT">                    </span><span class="NAME">f</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">m</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>501</span> </span><span class="WHIT">                    </span><span class="NAME">i</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">m</span><span class="PUNC">[</span><span class="NUMB">3</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>502</span> </span><span class="WHIT">                    </span><span class="NAME">p</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>503</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>504</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">m.i</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>505</span> </span><span class="WHIT">                    </span><span class="NAME">m.i.replace</span><span class="PUNC">(</span><span class="NAME">EvtParamsReg</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">x</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">a</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">b</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>506</span> </span><span class="WHIT">                        </span><span class="NAME">m.p</span><span class="PUNC">[</span><span class="NAME">a</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">b</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>507</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>508</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>509</span> </span><span class="WHIT">                </span><span class="NAME">EvtInfoCache.set</span><span class="PUNC">(</span><span class="NAME">info</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">m</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>510</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>511</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">events</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.events</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>512</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">events</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>513</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">eventsType</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">events</span><span class="PUNC">[</span><span class="NAME">domEvent.type</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>514</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">fn</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">WEvent</span><span class="PUNC">[</span><span class="NAME">m.f</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>515</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>516</span> </span><span class="WHIT">                    </span><span class="NAME">fn.call</span><span class="PUNC">(</span><span class="NAME">WEvent</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">domEvent</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>517</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>518</span> </span><span class="WHIT">                </span><span class="NAME">fn</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">eventsType</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">eventsType</span><span class="PUNC">[</span><span class="NAME">m.n</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>519</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>520</span> </span><span class="WHIT">                    </span><span class="NAME">SafeExec</span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">Mix</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>521</span> </span><span class="WHIT">                        </span><span class="NAME">view</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>522</span> </span><span class="WHIT">                        </span><span class="NAME">currentId</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">e.cId</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>523</span> </span><span class="WHIT">                        </span><span class="NAME">targetId</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">e.tId</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>524</span> </span><span class="WHIT">                        </span><span class="NAME">domEvent</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">domEvent</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>525</span> </span><span class="WHIT">                        </span><span class="NAME">events</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">events</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>526</span> </span><span class="WHIT">                        </span><span class="NAME">params</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">m.p</span><span class="WHIT">
-<span class='line'>527</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">WEvent</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">eventsType</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>528</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>529</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>530</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>531</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>532</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>533</span>      * 处理代理事件
-<span class='line'>534</span>      * @param {Boolean} bubble  是否冒泡的事件
-<span class='line'>535</span>      * @param {Boolean} dispose 是否销毁
-<span class='line'>536</span>      * @private
-<span class='line'>537</span>      */</span><span class="WHIT">
-<span class='line'>538</span> </span><span class="WHIT">    </span><span class="NAME">delegateEvents</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">destroy</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>539</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>540</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">events</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.events</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>541</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">fn</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">destroy</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="NAME">Body.un</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">Body.on</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>542</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">vom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.vom</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>543</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">p</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">events</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>544</span> </span><span class="WHIT">            </span><span class="NAME">fn.call</span><span class="PUNC">(</span><span class="NAME">Body</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">p</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">vom</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>545</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>546</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>547</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>548</span>      * 当您采用setViewHTML方法异步更新html时，通知view做好异步更新的准备，&lt;b>注意:该方法最好和manage，setViewHTML一起使用。当您采用其它方式异步更新整个view的html时，仍需调用该方法&lt;/b>，建议对所有的异步更新回调使用manage方法托管，对更新整个view html前，调用beginAsyncUpdate进行更新通知
-<span class='line'>549</span>      * @example
-<span class='line'>550</span>      * // 什么是异步更新html？
-<span class='line'>551</span>      * render:function(){
-<span class='line'>552</span>      *      var _self=this;
-<span class='line'>553</span>      *      var m=new Model({uri:'user:list'});
-<span class='line'>554</span>      *      m.load({
-<span class='line'>555</span>      *          success:_self.manage(function(data){
-<span class='line'>556</span>      *              var html=Mu.to_html(_self.template,data);
-<span class='line'>557</span>      *              _self.setViewHTML(html);
-<span class='line'>558</span>      *          }),
-<span class='line'>559</span>      *          error:_self.manage(function(msg){
-<span class='line'>560</span>      *              _self.setViewHTML(msg);
-<span class='line'>561</span>      *          })
-<span class='line'>562</span>      *      })
-<span class='line'>563</span>      * }
-<span class='line'>564</span>      *
-<span class='line'>565</span>      * //如上所示，当调用render方法时，render方法内部使用model异步获取数据后才完成html的更新则这个render就是采用异步更新html的
-<span class='line'>566</span>      *
-<span class='line'>567</span>      * //异步更新带来的问题：
-<span class='line'>568</span>      * //view对象监听地址栏中的某个参数，当这个参数发生变化时，view调用render方法进行刷新，因为是异步的，所以并不能立即更新界面，
-<span class='line'>569</span>      * //当监控的这个参数连续变化时，view会多次调用render方法进行刷新，由于异步，你并不能保证最后刷新时发出的异步请求最后返回，
-<span class='line'>570</span>      * //有可能先发出的请求后返回，这样就会出现界面与url并不符合的情况，比如tabs的切换和tabPanel的更新，连续点击tab1 tab2 tab3
-<span class='line'>571</span>      * //会引起tabPanel这个view刷新，但是异步返回有可能3先回来2最后回来，会导致明明选中的是tab3，却显示着tab2的内容
-<span class='line'>572</span>      * //所以要么你自已在回调中做判断，要么把上面的示例改写成下面这样的：
-<span class='line'>573</span>      *  render:function(){
-<span class='line'>574</span>      *      var _self=this;
-<span class='line'>575</span>      *      _self.beginAsyncUpdate();//开始异步更新
-<span class='line'>576</span>      *      var m=new Model({uri:'user:list'});
-<span class='line'>577</span>      *      m.load({
-<span class='line'>578</span>      *          success:_self.manage(function(data){
-<span class='line'>579</span>      *              var html=Mu.to_html(_self.template,data);
-<span class='line'>580</span>      *              _self.setViewHTML(html);
-<span class='line'>581</span>      *          }),
-<span class='line'>582</span>      *          error:_self.manage(function(msg){
-<span class='line'>583</span>      *              _self.setViewHTML(msg);
-<span class='line'>584</span>      *          })
-<span class='line'>585</span>      *      });
-<span class='line'>586</span>      *      _self.endAsyncUpdate();//结束异步更新
-<span class='line'>587</span>      * }
-<span class='line'>588</span>      * //其中endAsyncUpdate是备用的，把你的异步更新的代码放begin end之间即可
-<span class='line'>589</span>      * //当然如果在每个异步更新的都需要这样写的话来带来差劲的编码体验，所以View会对render,renderUI,updateUI三个方法自动进行异步更新包装
-<span class='line'>590</span>      * //您在使用这三个方法异步更新html时无须调用beginAsyncUpdate和endAsyncUpdate方法
-<span class='line'>591</span>      * //如果除了这三个方法外你还要添加其它的异步更新方法，可调用View静态方法View.registerAsyncUpdateName来注册自已的方法
-<span class='line'>592</span>      * //请优先考虑使用render renderUI updateUI 这三个方法来实现view的html更新，其中render方法magix会自动调用，您就考虑后2个方法吧
-<span class='line'>593</span>      * //比如这样：
-<span class='line'>594</span>      *
-<span class='line'>595</span>      * renderUI:function(){//当方法名为 render renderUI updateUI时您不需要考虑异步更新带来的问题
-<span class='line'>596</span>      *      var _self=this;
-<span class='line'>597</span>      *      setTimeout(this.manage(function(){
-<span class='line'>598</span>      *          _self.setViewHTML(_self.template);
-<span class='line'>599</span>      *      }),5000);
-<span class='line'>600</span>      * },
-<span class='line'>601</span>      *
-<span class='line'>602</span>      * receiveMessage:function(e){
-<span class='line'>603</span>      *      if(e.action=='render'){
-<span class='line'>604</span>      *          this.renderUI();
-<span class='line'>605</span>      *      }
-<span class='line'>606</span>      * }
-<span class='line'>607</span>      *
-<span class='line'>608</span>      * //当您需要自定义异步更新方法时，可以这样：
-<span class='line'>609</span>      * KISSY.add("app/views/list",function(S,MxView){
-<span class='line'>610</span>      *      var ListView=MxView.extend({
-<span class='line'>611</span>      *          updateHTMLByXHR:function(){
-<span class='line'>612</span>      *              var _self=this;
-<span class='line'>613</span>      *              S.io({
-<span class='line'>614</span>      *                  success:_self.manage(function(html){
-<span class='line'>615</span>      *                      //TODO
-<span class='line'>616</span>      *                      _self.setViewHTML(html);
-<span class='line'>617</span>      *                  })
-<span class='line'>618</span>      *              });
-<span class='line'>619</span>      *          },
-<span class='line'>620</span>      *          receiveMessage:function(e){
-<span class='line'>621</span>      *              if(e.action=='update'){
-<span class='line'>622</span>      *                  this.updateHTMLByXHR();
-<span class='line'>623</span>      *              }
-<span class='line'>624</span>      *          }
-<span class='line'>625</span>      *      });
-<span class='line'>626</span>      *      ListView.registerAsyncUpdateName('updateHTMLByXHR');//注册异步更新html的方法名
-<span class='line'>627</span>      *      return ListView;
-<span class='line'>628</span>      * },{
-<span class='line'>629</span>      *      requires:["magix/view"]
-<span class='line'>630</span>      * })
-<span class='line'>631</span>      * //当您不想托管回调方法，又想消除异步更新带来的隐患时，可以这样：
-<span class='line'>632</span>      *
-<span class='line'>633</span>      * updateHTML:function(){
-<span class='line'>634</span>      *      var _self=this;
-<span class='line'>635</span>      *      var begin=_self.beginAsyncUpdate();//记录异步更新标识
-<span class='line'>636</span>      *      S.io({
-<span class='line'>637</span>      *          success:function(html){
-<span class='line'>638</span>      *              //if(_self.sign){//不托管方法时，您需要自已判断view有没有销毁(使用异步更新标识时，不需要判断exist)
-<span class='line'>639</span>      *                  var end=_self.endAsyncUpdate();//结束异步更新
-<span class='line'>640</span>      *                  if(begin==end){//开始和结束时的标识一样，表示view没有更新过
-<span class='line'>641</span>      *                      _self.setViewHTML(html);
-<span class='line'>642</span>      *                  }
-<span class='line'>643</span>      *              //}
-<span class='line'>644</span>      *          }
-<span class='line'>645</span>      *      });
-<span class='line'>646</span>      * }
-<span class='line'>647</span>      *
-<span class='line'>648</span>      * //顺带说一下signature
-<span class='line'>649</span>      * //并不是所有的异步更新都需要托管，考虑这样的情况：
-<span class='line'>650</span>      *
-<span class='line'>651</span>      * render:function(){
-<span class='line'>652</span>      *      ModelFactory.fetchAll({
-<span class='line'>653</span>      *          type:'User_List',
-<span class='line'>654</span>      *          cacheKey:'User_List'
-<span class='line'>655</span>      *      },function(m){
-<span class='line'>656</span>      *          //render
-<span class='line'>657</span>      *      });
-<span class='line'>658</span>      * },
-<span class='line'>659</span>      * //...
-<span class='line'>660</span>      * click:{
-<span class='line'>661</span>      *      addUser:function(e){
-<span class='line'>662</span>      *          var m=ModelFactory.getIf('User_List');
-<span class='line'>663</span>      *          var userList=m.get("userList");
-<span class='line'>664</span>      *          m.beginTransaction();
-<span class='line'>665</span>      *          userList.push({
-<span class='line'>666</span>      *              id:'xinglie',
-<span class='line'>667</span>      *              name:'xl'
-<span class='line'>668</span>      *          });
-<span class='line'>669</span>      *
-<span class='line'>670</span>      *          m.save({
-<span class='line'>671</span>      *              success:function(){//该回调不太适合托管
-<span class='line'>672</span>      *                  m.endTransaction();
-<span class='line'>673</span>      *                  Helper.tipMsg('添加成功')
-<span class='line'>674</span>      *              },
-<span class='line'>675</span>      *              error:function(msg){//该方法同样不适合托管，当数据保存失败时，需要回滚数据，而如果此时view有刷新或销毁，会导致该方法不被调用，无法达到数据的回滚
-<span class='line'>676</span>      *                  m.rollbackTransaction();
-<span class='line'>677</span>      *                  Helper.tipMsg('添加失败')
-<span class='line'>678</span>      *              }
-<span class='line'>679</span>      *          })
+<span class='line'>327</span>         prerender : unloadSubVframes
+<span class='line'>328</span> 
+<span class='line'>329</span>         rendered : loadSubVframes
+<span class='line'>330</span>      */</span><span class="WHIT">
+<span class='line'>331</span> </span><span class="WHIT">    </span><span class="NAME">setViewHTML</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">html</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>332</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>333</span> </span><span class="WHIT">            </span><span class="NAME">n</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>334</span> </span><span class="WHIT">        </span><span class="NAME">me.beginUpdate</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>335</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">me.sign</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>336</span> </span><span class="WHIT">            </span><span class="NAME">n</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.$</span><span class="PUNC">(</span><span class="NAME">me.id</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>337</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">n</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">n.innerHTML</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">html</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>338</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>339</span> </span><span class="WHIT">        </span><span class="NAME">me.endUpdate</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>340</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>341</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>342</span>      * 指定要监视地址栏中的哪些值有变化时，或pathname有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
+<span class='line'>343</span>      * @param {Array|String|Object} args  数组字符串或对象
+<span class='line'>344</span>      * @example
+<span class='line'>345</span>      * return View.extend({
+<span class='line'>346</span>      *      init:function(){
+<span class='line'>347</span>      *          this.observeLocation('page,rows');//关注地址栏中的page rows2个参数的变化，当其中的任意一个改变时，才引起当前view的locationChange被调用
+<span class='line'>348</span>      *          this.observeLocation({
+<span class='line'>349</span>      *              pathname:true//关注pathname的变化
+<span class='line'>350</span>      *          });
+<span class='line'>351</span>      *          //也可以写成下面的形式
+<span class='line'>352</span>      *          //this.observeLocation({
+<span class='line'>353</span>      *          //    keys:['page','rows'],
+<span class='line'>354</span>      *          //    pathname:true
+<span class='line'>355</span>      *          //})
+<span class='line'>356</span>      *      },
+<span class='line'>357</span>      *      locationChange:function(e){
+<span class='line'>358</span>      *          if(e.changed.isParam('page')){};//检测是否是page发生的改变
+<span class='line'>359</span>      *          if(e.changed.isParam('rows')){};//检测是否是rows发生的改变
+<span class='line'>360</span>      *      }
+<span class='line'>361</span>      * });
+<span class='line'>362</span>      */</span><span class="WHIT">
+<span class='line'>363</span> </span><span class="WHIT">    </span><span class="NAME">observeLocation</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>364</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>365</span> </span><span class="WHIT">            </span><span class="NAME">loc</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>366</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">me.$ol</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">me.$ol</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>367</span> </span><span class="WHIT">            </span><span class="NAME">keys</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>368</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>369</span> </span><span class="WHIT">        </span><span class="NAME">loc</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.$ol</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>370</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">keys</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">loc.keys</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>371</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">Magix.isObject</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>372</span> </span><span class="WHIT">            </span><span class="NAME">loc.pn</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">args.pathname</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>373</span> </span><span class="WHIT">            </span><span class="NAME">args</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">args.keys</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>374</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>375</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>376</span> </span><span class="WHIT">            </span><span class="NAME">loc.keys</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">keys.concat</span><span class="PUNC">(</span><span class="NAME">String</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">split</span><span class="PUNC">(</span><span class="NAME">COMMA</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>377</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>378</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>379</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>380</span>      * 指定监控地址栏中pathname的改变
+<span class='line'>381</span>      * @example
+<span class='line'>382</span>      * return View.extend({
+<span class='line'>383</span>      *      init:function(){
+<span class='line'>384</span>      *          this.observePathname();//关注地址栏中pathname的改变，pathname改变才引起当前view的locationChange被调用
+<span class='line'>385</span>      *      },
+<span class='line'>386</span>      *      locationChange:function(e){
+<span class='line'>387</span>      *          if(e.changed.isPathname()){};//是否是pathname发生的改变
+<span class='line'>388</span>      *      }
+<span class='line'>389</span>      * });
+<span class='line'>390</span>      */</span><span class="WHIT">
+<span class='line'>391</span> </span><span class="WHIT">    </span><span class="COMM">/*observePathname:function(){
+<span class='line'>392</span>         var me=this;
+<span class='line'>393</span>         if(!me.$loc)me.$loc={};
+<span class='line'>394</span>         me.$loc.pn=true;
+<span class='line'>395</span>     },*/</span><span class="WHIT">
+<span class='line'>396</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>397</span>      * 指定要监视地址栏中的哪些值有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
+<span class='line'>398</span>      * @param {Array|String} keys            key数组或字符串
+<span class='line'>399</span>      * @param {Boolean} observePathname 是否监视pathname
+<span class='line'>400</span>      * @example
+<span class='line'>401</span>      * return View.extend({
+<span class='line'>402</span>      *      init:function(){
+<span class='line'>403</span>      *          this.observeParams('page,rows');//关注地址栏中的page rows2个参数的变化，当其中的任意一个改变时，才引起当前view的locationChange被调用
+<span class='line'>404</span>      *      },
+<span class='line'>405</span>      *      locationChange:function(e){
+<span class='line'>406</span>      *          if(e.changed.isParam('page')){};//检测是否是page发生的改变
+<span class='line'>407</span>      *          if(e.changed.isParam('rows')){};//检测是否是rows发生的改变
+<span class='line'>408</span>      *      }
+<span class='line'>409</span>      * });
+<span class='line'>410</span>      */</span><span class="WHIT">
+<span class='line'>411</span> </span><span class="WHIT">    </span><span class="COMM">/*observeParams:function(keys){
+<span class='line'>412</span>         var me=this;
+<span class='line'>413</span>         if(!me.$loc)me.$loc={};
+<span class='line'>414</span>         me.$loc.keys=Magix.isArray(keys)?keys:String(keys).split(COMMA);
+<span class='line'>415</span>     },*/</span><span class="WHIT">
+<span class='line'>416</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>417</span>      * 检测通过observeLocation方法指定的key对应的值有没有发生变化
+<span class='line'>418</span>      * @param {Object} changed 对象
+<span class='line'>419</span>      * @return {Boolean} 是否发生改变
+<span class='line'>420</span>      * @private
+<span class='line'>421</span>      */</span><span class="WHIT">
+<span class='line'>422</span> </span><span class="WHIT">    </span><span class="NAME">olChanged</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">changed</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>423</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>424</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">location</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.$ol</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>425</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">location</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>426</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">res</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>427</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">location.pn</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>428</span> </span><span class="WHIT">                </span><span class="NAME">res</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">changed.isPathname</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>429</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>430</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">res</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>431</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">keys</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">location.keys</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>432</span> </span><span class="WHIT">                </span><span class="NAME">res</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">changed.isParam</span><span class="PUNC">(</span><span class="NAME">keys</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>433</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>434</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">res</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>435</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>436</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>437</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>438</span> 
+<span class='line'>439</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>440</span>      * 销毁当前view
+<span class='line'>441</span>      * @private
+<span class='line'>442</span>      */</span><span class="WHIT">
+<span class='line'>443</span> </span><span class="WHIT">    </span><span class="NAME">destroy</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>444</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>445</span> </span><span class="WHIT">        </span><span class="COMM">//me.fire('refresh', null, true, true); //先清除绑定在上面的app中的刷新</span><span class="WHIT">
+<span class='line'>446</span> </span><span class="WHIT">        </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'refresh'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>447</span> </span><span class="WHIT">        </span><span class="NAME">me.fire</span><span class="PUNC">(</span><span class="STRN">'destroy'</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">//同上</span><span class="WHIT">
+<span class='line'>448</span> 
+<span class='line'>449</span> </span><span class="WHIT">        </span><span class="NAME">me.delegateEvents</span><span class="PUNC">(</span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>450</span> </span><span class="WHIT">        </span><span class="COMM">//if(!keepContent){</span><span class="WHIT">
+<span class='line'>451</span> </span><span class="WHIT">        </span><span class="COMM">//me.destroyFrames();</span><span class="WHIT">
+<span class='line'>452</span> </span><span class="WHIT">        </span><span class="COMM">//var node=$(me.vfId);</span><span class="WHIT">
+<span class='line'>453</span> </span><span class="WHIT">        </span><span class="COMM">//if(node._dataBak){</span><span class="WHIT">
+<span class='line'>454</span> </span><span class="WHIT">        </span><span class="COMM">//node.innerHTML=node._dataTmpl;</span><span class="WHIT">
+<span class='line'>455</span> </span><span class="WHIT">        </span><span class="COMM">//}</span><span class="WHIT">
+<span class='line'>456</span> </span><span class="WHIT">        </span><span class="COMM">//}</span><span class="WHIT">
+<span class='line'>457</span> 
+<span class='line'>458</span> </span><span class="WHIT">        </span><span class="COMM">//me.un('prerender',null,true); 销毁的话也就访问不到view对象了，这些事件不解绑也没问题</span><span class="WHIT">
+<span class='line'>459</span> </span><span class="WHIT">        </span><span class="COMM">//me.un('rendered',null,true);</span><span class="WHIT">
+<span class='line'>460</span> </span><span class="WHIT">        </span><span class="NAME">me.sign</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>461</span> </span><span class="WHIT">        </span><span class="COMM">//</span><span class="WHIT">
+<span class='line'>462</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>463</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>464</span>      * 获取渲染当前view的父view
+<span class='line'>465</span>      * @return {View}
+<span class='line'>466</span>      */</span><span class="WHIT">
+<span class='line'>467</span> </span><span class="WHIT">    </span><span class="NAME">parentView</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>468</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>469</span> </span><span class="WHIT">            </span><span class="NAME">vom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.vom</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>470</span> </span><span class="WHIT">            </span><span class="NAME">owner</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.owner</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>471</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">pVframe</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">vom.get</span><span class="PUNC">(</span><span class="NAME">owner.pId</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>472</span> </span><span class="WHIT">            </span><span class="NAME">r</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>473</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">pVframe</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">pVframe.viewInited</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>474</span> </span><span class="WHIT">            </span><span class="NAME">r</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">pVframe.view</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>475</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>476</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">r</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>477</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>478</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>479</span>      * 处理dom事件
+<span class='line'>480</span>      * @param {Event} e dom事件对象
+<span class='line'>481</span>      * @private
+<span class='line'>482</span>      */</span><span class="WHIT">
+<span class='line'>483</span> </span><span class="WHIT">    </span><span class="NAME">processEvent</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>484</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>485</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">me.enableEvent</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">me.sign</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>486</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">info</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">e.info</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>487</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">domEvent</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">e.se</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>488</span> 
+<span class='line'>489</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">m</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">EvtInfoCache.get</span><span class="PUNC">(</span><span class="NAME">info</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>490</span> 
+<span class='line'>491</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">m</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>492</span> </span><span class="WHIT">                </span><span class="NAME">m</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">info.match</span><span class="PUNC">(</span><span class="NAME">EvtInfoReg</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>493</span> </span><span class="WHIT">                </span><span class="NAME">m</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>494</span> </span><span class="WHIT">                    </span><span class="NAME">n</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">m</span><span class="PUNC">[</span><span class="NUMB">1</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>495</span> </span><span class="WHIT">                    </span><span class="NAME">f</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">m</span><span class="PUNC">[</span><span class="NUMB">2</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>496</span> </span><span class="WHIT">                    </span><span class="NAME">i</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">m</span><span class="PUNC">[</span><span class="NUMB">3</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>497</span> </span><span class="WHIT">                    </span><span class="NAME">p</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>498</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>499</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">m.i</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>500</span> </span><span class="WHIT">                    </span><span class="NAME">m.i.replace</span><span class="PUNC">(</span><span class="NAME">EvtParamsReg</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">x</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">a</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">b</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>501</span> </span><span class="WHIT">                        </span><span class="NAME">m.p</span><span class="PUNC">[</span><span class="NAME">a</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">b</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>502</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>503</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>504</span> </span><span class="WHIT">                </span><span class="NAME">EvtInfoCache.set</span><span class="PUNC">(</span><span class="NAME">info</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">m</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>505</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>506</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">events</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.events</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>507</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">events</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>508</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">eventsType</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">events</span><span class="PUNC">[</span><span class="NAME">domEvent.type</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>509</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">fn</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">WEvent</span><span class="PUNC">[</span><span class="NAME">m.f</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>510</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>511</span> </span><span class="WHIT">                    </span><span class="NAME">fn.call</span><span class="PUNC">(</span><span class="NAME">WEvent</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">domEvent</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>512</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>513</span> </span><span class="WHIT">                </span><span class="NAME">fn</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">eventsType</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">eventsType</span><span class="PUNC">[</span><span class="NAME">m.n</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>514</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>515</span> </span><span class="WHIT">                    </span><span class="NAME">SafeExec</span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">Mix</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>516</span> </span><span class="WHIT">                        </span><span class="NAME">view</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>517</span> </span><span class="WHIT">                        </span><span class="NAME">currentId</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">e.cId</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>518</span> </span><span class="WHIT">                        </span><span class="NAME">targetId</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">e.tId</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>519</span> </span><span class="WHIT">                        </span><span class="NAME">domEvent</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">domEvent</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>520</span> </span><span class="WHIT">                        </span><span class="NAME">events</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">events</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>521</span> </span><span class="WHIT">                        </span><span class="NAME">params</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">m.p</span><span class="WHIT">
+<span class='line'>522</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">WEvent</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">eventsType</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>523</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>524</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>525</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>526</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>527</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>528</span>      * 处理代理事件
+<span class='line'>529</span>      * @param {Boolean} bubble  是否冒泡的事件
+<span class='line'>530</span>      * @param {Boolean} dispose 是否销毁
+<span class='line'>531</span>      * @private
+<span class='line'>532</span>      */</span><span class="WHIT">
+<span class='line'>533</span> </span><span class="WHIT">    </span><span class="NAME">delegateEvents</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">destroy</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>534</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>535</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">events</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.events</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>536</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">fn</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">destroy</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="NAME">Body.un</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">Body.on</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>537</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">vom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.vom</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>538</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">p</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">events</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>539</span> </span><span class="WHIT">            </span><span class="NAME">fn.call</span><span class="PUNC">(</span><span class="NAME">Body</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">p</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">vom</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>540</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>541</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>542</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>543</span>      * 当您采用setViewHTML方法异步更新html时，通知view做好异步更新的准备，&lt;b>注意:该方法最好和manage，setViewHTML一起使用。当您采用其它方式异步更新整个view的html时，仍需调用该方法&lt;/b>，建议对所有的异步更新回调使用manage方法托管，对更新整个view html前，调用beginAsyncUpdate进行更新通知
+<span class='line'>544</span>      * @example
+<span class='line'>545</span>      * // 什么是异步更新html？
+<span class='line'>546</span>      * render:function(){
+<span class='line'>547</span>      *      var _self=this;
+<span class='line'>548</span>      *      var m=new Model({uri:'user:list'});
+<span class='line'>549</span>      *      m.load({
+<span class='line'>550</span>      *          success:_self.manage(function(data){
+<span class='line'>551</span>      *              var html=Mu.to_html(_self.template,data);
+<span class='line'>552</span>      *              _self.setViewHTML(html);
+<span class='line'>553</span>      *          }),
+<span class='line'>554</span>      *          error:_self.manage(function(msg){
+<span class='line'>555</span>      *              _self.setViewHTML(msg);
+<span class='line'>556</span>      *          })
+<span class='line'>557</span>      *      })
+<span class='line'>558</span>      * }
+<span class='line'>559</span>      *
+<span class='line'>560</span>      * //如上所示，当调用render方法时，render方法内部使用model异步获取数据后才完成html的更新则这个render就是采用异步更新html的
+<span class='line'>561</span>      *
+<span class='line'>562</span>      * //异步更新带来的问题：
+<span class='line'>563</span>      * //view对象监听地址栏中的某个参数，当这个参数发生变化时，view调用render方法进行刷新，因为是异步的，所以并不能立即更新界面，
+<span class='line'>564</span>      * //当监控的这个参数连续变化时，view会多次调用render方法进行刷新，由于异步，你并不能保证最后刷新时发出的异步请求最后返回，
+<span class='line'>565</span>      * //有可能先发出的请求后返回，这样就会出现界面与url并不符合的情况，比如tabs的切换和tabPanel的更新，连续点击tab1 tab2 tab3
+<span class='line'>566</span>      * //会引起tabPanel这个view刷新，但是异步返回有可能3先回来2最后回来，会导致明明选中的是tab3，却显示着tab2的内容
+<span class='line'>567</span>      * //所以要么你自已在回调中做判断，要么把上面的示例改写成下面这样的：
+<span class='line'>568</span>      *  render:function(){
+<span class='line'>569</span>      *      var _self=this;
+<span class='line'>570</span>      *      _self.beginAsyncUpdate();//开始异步更新
+<span class='line'>571</span>      *      var m=new Model({uri:'user:list'});
+<span class='line'>572</span>      *      m.load({
+<span class='line'>573</span>      *          success:_self.manage(function(data){
+<span class='line'>574</span>      *              var html=Mu.to_html(_self.template,data);
+<span class='line'>575</span>      *              _self.setViewHTML(html);
+<span class='line'>576</span>      *          }),
+<span class='line'>577</span>      *          error:_self.manage(function(msg){
+<span class='line'>578</span>      *              _self.setViewHTML(msg);
+<span class='line'>579</span>      *          })
+<span class='line'>580</span>      *      });
+<span class='line'>581</span>      *      _self.endAsyncUpdate();//结束异步更新
+<span class='line'>582</span>      * }
+<span class='line'>583</span>      * //其中endAsyncUpdate是备用的，把你的异步更新的代码放begin end之间即可
+<span class='line'>584</span>      * //当然如果在每个异步更新的都需要这样写的话来带来差劲的编码体验，所以View会对render,renderUI,updateUI三个方法自动进行异步更新包装
+<span class='line'>585</span>      * //您在使用这三个方法异步更新html时无须调用beginAsyncUpdate和endAsyncUpdate方法
+<span class='line'>586</span>      * //如果除了这三个方法外你还要添加其它的异步更新方法，可调用View静态方法View.registerAsyncUpdateName来注册自已的方法
+<span class='line'>587</span>      * //请优先考虑使用render renderUI updateUI 这三个方法来实现view的html更新，其中render方法magix会自动调用，您就考虑后2个方法吧
+<span class='line'>588</span>      * //比如这样：
+<span class='line'>589</span>      *
+<span class='line'>590</span>      * renderUI:function(){//当方法名为 render renderUI updateUI时您不需要考虑异步更新带来的问题
+<span class='line'>591</span>      *      var _self=this;
+<span class='line'>592</span>      *      setTimeout(this.manage(function(){
+<span class='line'>593</span>      *          _self.setViewHTML(_self.template);
+<span class='line'>594</span>      *      }),5000);
+<span class='line'>595</span>      * },
+<span class='line'>596</span>      *
+<span class='line'>597</span>      * receiveMessage:function(e){
+<span class='line'>598</span>      *      if(e.action=='render'){
+<span class='line'>599</span>      *          this.renderUI();
+<span class='line'>600</span>      *      }
+<span class='line'>601</span>      * }
+<span class='line'>602</span>      *
+<span class='line'>603</span>      * //当您需要自定义异步更新方法时，可以这样：
+<span class='line'>604</span>      * KISSY.add("app/views/list",function(S,MxView){
+<span class='line'>605</span>      *      var ListView=MxView.extend({
+<span class='line'>606</span>      *          updateHTMLByXHR:function(){
+<span class='line'>607</span>      *              var _self=this;
+<span class='line'>608</span>      *              S.io({
+<span class='line'>609</span>      *                  success:_self.manage(function(html){
+<span class='line'>610</span>      *                      //TODO
+<span class='line'>611</span>      *                      _self.setViewHTML(html);
+<span class='line'>612</span>      *                  })
+<span class='line'>613</span>      *              });
+<span class='line'>614</span>      *          },
+<span class='line'>615</span>      *          receiveMessage:function(e){
+<span class='line'>616</span>      *              if(e.action=='update'){
+<span class='line'>617</span>      *                  this.updateHTMLByXHR();
+<span class='line'>618</span>      *              }
+<span class='line'>619</span>      *          }
+<span class='line'>620</span>      *      });
+<span class='line'>621</span>      *      ListView.registerAsyncUpdateName('updateHTMLByXHR');//注册异步更新html的方法名
+<span class='line'>622</span>      *      return ListView;
+<span class='line'>623</span>      * },{
+<span class='line'>624</span>      *      requires:["magix/view"]
+<span class='line'>625</span>      * })
+<span class='line'>626</span>      * //当您不想托管回调方法，又想消除异步更新带来的隐患时，可以这样：
+<span class='line'>627</span>      *
+<span class='line'>628</span>      * updateHTML:function(){
+<span class='line'>629</span>      *      var _self=this;
+<span class='line'>630</span>      *      var begin=_self.beginAsyncUpdate();//记录异步更新标识
+<span class='line'>631</span>      *      S.io({
+<span class='line'>632</span>      *          success:function(html){
+<span class='line'>633</span>      *              //if(_self.sign){//不托管方法时，您需要自已判断view有没有销毁(使用异步更新标识时，不需要判断exist)
+<span class='line'>634</span>      *                  var end=_self.endAsyncUpdate();//结束异步更新
+<span class='line'>635</span>      *                  if(begin==end){//开始和结束时的标识一样，表示view没有更新过
+<span class='line'>636</span>      *                      _self.setViewHTML(html);
+<span class='line'>637</span>      *                  }
+<span class='line'>638</span>      *              //}
+<span class='line'>639</span>      *          }
+<span class='line'>640</span>      *      });
+<span class='line'>641</span>      * }
+<span class='line'>642</span>      *
+<span class='line'>643</span>      * //顺带说一下signature
+<span class='line'>644</span>      * //并不是所有的异步更新都需要托管，考虑这样的情况：
+<span class='line'>645</span>      *
+<span class='line'>646</span>      * render:function(){
+<span class='line'>647</span>      *      ModelFactory.fetchAll({
+<span class='line'>648</span>      *          type:'User_List',
+<span class='line'>649</span>      *          cacheKey:'User_List'
+<span class='line'>650</span>      *      },function(m){
+<span class='line'>651</span>      *          //render
+<span class='line'>652</span>      *      });
+<span class='line'>653</span>      * },
+<span class='line'>654</span>      * //...
+<span class='line'>655</span>      * click:{
+<span class='line'>656</span>      *      addUser:function(e){
+<span class='line'>657</span>      *          var m=ModelFactory.getIf('User_List');
+<span class='line'>658</span>      *          var userList=m.get("userList");
+<span class='line'>659</span>      *          m.beginTransaction();
+<span class='line'>660</span>      *          userList.push({
+<span class='line'>661</span>      *              id:'xinglie',
+<span class='line'>662</span>      *              name:'xl'
+<span class='line'>663</span>      *          });
+<span class='line'>664</span>      *
+<span class='line'>665</span>      *          m.save({
+<span class='line'>666</span>      *              success:function(){//该回调不太适合托管
+<span class='line'>667</span>      *                  m.endTransaction();
+<span class='line'>668</span>      *                  Helper.tipMsg('添加成功')
+<span class='line'>669</span>      *              },
+<span class='line'>670</span>      *              error:function(msg){//该方法同样不适合托管，当数据保存失败时，需要回滚数据，而如果此时view有刷新或销毁，会导致该方法不被调用，无法达到数据的回滚
+<span class='line'>671</span>      *                  m.rollbackTransaction();
+<span class='line'>672</span>      *                  Helper.tipMsg('添加失败')
+<span class='line'>673</span>      *              }
+<span class='line'>674</span>      *          })
+<span class='line'>675</span>      *
+<span class='line'>676</span>      *      }
+<span class='line'>677</span>      * }
+<span class='line'>678</span>      *
+<span class='line'>679</span>      * //以上click中的方法这样写较合适：
 <span class='line'>680</span>      *
-<span class='line'>681</span>      *      }
-<span class='line'>682</span>      * }
-<span class='line'>683</span>      *
-<span class='line'>684</span>      * //以上click中的方法这样写较合适：
-<span class='line'>685</span>      *
-<span class='line'>686</span>      * click:{
-<span class='line'>687</span>      *      addUser:function(e){
-<span class='line'>688</span>      *          var m=ModelFactory.getIf('User_List');
-<span class='line'>689</span>      *          var userList=m.get("userList");
-<span class='line'>690</span>      *          m.beginTransaction();
-<span class='line'>691</span>      *          userList.push({
-<span class='line'>692</span>      *              id:'xinglie',
-<span class='line'>693</span>      *              name:'xl'
-<span class='line'>694</span>      *          });
-<span class='line'>695</span>      *
-<span class='line'>696</span>      *          var sign=e.view.signature();//获取签名
-<span class='line'>697</span>      *
-<span class='line'>698</span>      *          m.save({
-<span class='line'>699</span>      *              success:function(){//该回调不太适合托管
-<span class='line'>700</span>      *                  m.endTransaction();
-<span class='line'>701</span>      *                  if(sign==e.view.signature()){//相等时表示view即没刷新也没销毁，此时才提示
-<span class='line'>702</span>      *                      Helper.tipMsg('添加成功')
-<span class='line'>703</span>      *                  }
-<span class='line'>704</span>      *              },
-<span class='line'>705</span>      *              error:function(msg){//该方法同样不适合托管，当数据保存失败时，需要回滚数据，而如果此时view有刷新或销毁，会导致该方法不被调用，无法达到数据的回滚
-<span class='line'>706</span>      *                  m.rollbackTransaction();
-<span class='line'>707</span>      *                  if(sign==e.view.signature()){//view即没刷新也没销毁
-<span class='line'>708</span>      *                      Helper.tipMsg('添加失败')
-<span class='line'>709</span>      *                  }
-<span class='line'>710</span>      *              }
-<span class='line'>711</span>      *          })
-<span class='line'>712</span>      *
-<span class='line'>713</span>      *      }
-<span class='line'>714</span>      * }
-<span class='line'>715</span>      *
-<span class='line'>716</span>      * //如果您无法识别哪些需要托管，哪些需要签名，统一使用托管方法就好了
-<span class='line'>717</span>      */</span><span class="WHIT">
-<span class='line'>718</span> </span><span class="WHIT">    </span><span class="COMM">/*beginAsyncUpdate:function(){
-<span class='line'>719</span>         return this.sign++;//更新sign
-<span class='line'>720</span>     },*/</span><span class="WHIT">
-<span class='line'>721</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>722</span>      * 获取view在当前状态下的签名，view在刷新或销毁时，均会更新签名。(通过签名可识别view有没有搞过什么动作)
-<span class='line'>723</span>      */</span><span class="WHIT">
-<span class='line'>724</span> </span><span class="WHIT">    </span><span class="COMM">/*    signature:function(){
-<span class='line'>725</span>         return this.sign;
-<span class='line'>726</span>     },*/</span><span class="WHIT">
-<span class='line'>727</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>728</span>      * 通知view结束异步更新html
-<span class='line'>729</span>      * @see View#beginAsyncUpdate
-<span class='line'>730</span>      */</span><span class="WHIT">
-<span class='line'>731</span> </span><span class="WHIT">    </span><span class="COMM">/*endAsyncUpdate:function(){
-<span class='line'>732</span>         return this.sign;
-<span class='line'>733</span>     },*/</span><span class="WHIT">
-<span class='line'>734</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>735</span>      * 当view调用setViewHTML刷新前触发
-<span class='line'>736</span>      * @name View#prerender
-<span class='line'>737</span>      * @event
-<span class='line'>738</span>      * @param {Object} e
-<span class='line'>739</span>      */</span><span class="WHIT">
-<span class='line'>740</span> 
-<span class='line'>741</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>742</span>      * 当view首次完成界面的html设置后触发，view有没有模板均会触发该事件，对于有模板的view，会等到模板取回，第一次调用setViewHTML更新界面后才触发，总之该事件触发后，您就可以访问view的HTML DOM节点对象（该事件仅代表自身的html创建完成，如果需要对整个子view也要监控，请使用created事件）
-<span class='line'>743</span>      * @name View#primed
-<span class='line'>744</span>      * @event
-<span class='line'>745</span>      * @param {Object} e view首次调用render完成界面的创建后触发
-<span class='line'>746</span>      */</span><span class="WHIT">
-<span class='line'>747</span> 
-<span class='line'>748</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>749</span>      * 每次调用setViewHTML更新view内容完成后触发
-<span class='line'>750</span>      * @name View#rendered
-<span class='line'>751</span>      * @event
-<span class='line'>752</span>      * @param {Object} e view每次调用setViewHTML完成后触发，当hasTmpl属性为false时，并不会触发该事 件，但会触发primed首次完成创建界面的事件
-<span class='line'>753</span>      */</span><span class="WHIT">
-<span class='line'>754</span> 
-<span class='line'>755</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>756</span>      * view销毁时触发
-<span class='line'>757</span>      * @name View#destroy
-<span class='line'>758</span>      * @event
-<span class='line'>759</span>      * @param {Object} e
-<span class='line'>760</span>      */</span><span class="WHIT">
-<span class='line'>761</span> 
-<span class='line'>762</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>763</span>      * view调用init方法后触发
-<span class='line'>764</span>      * @name View#inited
-<span class='line'>765</span>      * @event
-<span class='line'>766</span>      * @param {Object} e
-<span class='line'>767</span>      */</span><span class="WHIT">
-<span class='line'>768</span> 
-<span class='line'>769</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>770</span>      * view自身和所有子孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子孙view组成的，通过监听该事件可知道子孙view什么时间创建完成（注意：当view中有子view，且该子view是通过程序动态mountView而不是通过mx-view指定时，该事件会也会等待到view创建完成触发，而对于您在某个view中有如下代码：&lt;div>&lt;vframe>&lt;/vframe>&lt;/div>，有一个空的vframe且未指定mx-view属性，同时您在这个view中没有动态渲染vframe对应的view，则该事件不会触发，magix无法识别出您留空vframe的意图，到底是需要动态mount还是手误，不过在具体应用中，出现空vframe且没有动态mount几乎是不存在的^_^）
-<span class='line'>771</span>      * @name View#created
-<span class='line'>772</span>      * @event
-<span class='line'>773</span>      * @param {Object} e
-<span class='line'>774</span>      * @example
-<span class='line'>775</span>      * init:function(){
-<span class='line'>776</span>      *      this.on('created',function(){
-<span class='line'>777</span>      *          //
-<span class='line'>778</span>      *      })
-<span class='line'>779</span>      * }
-<span class='line'>780</span>      */</span><span class="WHIT">
-<span class='line'>781</span> 
-<span class='line'>782</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>783</span>      * view自身和所有子孙view有改动时触发，改动包括刷新和重新mountView，与created一起使用，当view自身和所有子孙view创建完成会触发created，当其中的一个view刷新或重新mountView，会触发childrenAlter，当是刷新时，刷新完成会再次触发created事件，因此这2个事件不只触发一次！！但这2个事件会成对触发，比如触发几次childrenAlter就会触发几次created
-<span class='line'>784</span>      * @name View#alter
-<span class='line'>785</span>      * @event
-<span class='line'>786</span>      * @param {Object} e
-<span class='line'>787</span>      */</span><span class="WHIT">
-<span class='line'>788</span> 
-<span class='line'>789</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>790</span>      * 异步更新ui的方法(render,renderUI)被调用前触发
-<span class='line'>791</span>      * @name View#rendercall
-<span class='line'>792</span>      * @event
-<span class='line'>793</span>      * @param {Object} e
-<span class='line'>794</span>      */</span><span class="WHIT">
-<span class='line'>795</span> 
-<span class='line'>796</span> 
-<span class='line'>797</span> </span><span class="WHIT">    </span><span class="COMM">/**
-<span class='line'>798</span>      * 每次调用beginUpdate更新view内容前触发
-<span class='line'>799</span>      * @name View#refresh
-<span class='line'>800</span>      * @event
-<span class='line'>801</span>      * @param {Object} e
-<span class='line'>802</span>      * 与prerender不同的是：refresh触发后即删除监听列表
-<span class='line'>803</span>      */</span><span class="WHIT">
-<span class='line'>804</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>805</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">AppHome</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Magix.config</span><span class="PUNC">(</span><span class="STRN">'appHome'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>806</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Suffix</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Magix.config</span><span class="PUNC">(</span><span class="STRN">'debug'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="STRN">'?t='</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">S.now</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">''</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>807</span> 
-<span class='line'>808</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ProcessObject</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">props</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">proto</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">enterObject</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>809</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">p</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">proto</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>810</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">S.isObject</span><span class="PUNC">(</span><span class="NAME">proto</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>811</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">Has</span><span class="PUNC">(</span><span class="NAME">props</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">p</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">props</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>812</span> </span><span class="WHIT">                </span><span class="NAME">ProcessObject</span><span class="PUNC">(</span><span class="NAME">props</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">proto</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>813</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">enterObject</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>814</span> </span><span class="WHIT">                </span><span class="NAME">props</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">proto</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>815</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>816</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>817</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>818</span> 
-<span class='line'>819</span> 
-<span class='line'>820</span> </span><span class="WHIT">    </span><span class="NAME">View.prototype.fetchTmpl</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>821</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>822</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">hasTemplate</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'template'</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>823</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">hasTemplate</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>824</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Magix.tmpl</span><span class="PUNC">(</span><span class="NAME">me.path</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>825</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i.h</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>826</span> </span><span class="WHIT">                </span><span class="NAME">fn</span><span class="PUNC">(</span><span class="NAME">i.v</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>827</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>828</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">file</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">AppHome</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">me.path</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'.html'</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>829</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">l</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ProcessObject</span><span class="PUNC">[</span><span class="NAME">file</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>830</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">onload</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">tmpl</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>831</span> </span><span class="WHIT">                    </span><span class="NAME">fn</span><span class="PUNC">(</span><span class="NAME">Magix.tmpl</span><span class="PUNC">(</span><span class="NAME">me.path</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">tmpl</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>832</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>833</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">l</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>834</span> </span><span class="WHIT">                    </span><span class="NAME">l.push</span><span class="PUNC">(</span><span class="NAME">onload</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>835</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>836</span> </span><span class="WHIT">                    </span><span class="NAME">l</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ProcessObject</span><span class="PUNC">[</span><span class="NAME">file</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="NAME">onload</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>837</span> </span><span class="WHIT">                    </span><span class="NAME">IO</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>838</span> </span><span class="WHIT">                        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">file</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">Suffix</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>839</span> </span><span class="WHIT">                        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">x</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>840</span> </span><span class="WHIT">                            </span><span class="NAME">SafeExec</span><span class="PUNC">(</span><span class="NAME">l</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">x</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>841</span> </span><span class="WHIT">                            </span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">ProcessObject</span><span class="PUNC">[</span><span class="NAME">file</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>842</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>843</span> </span><span class="WHIT">                        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">m</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>844</span> </span><span class="WHIT">                            </span><span class="NAME">SafeExec</span><span class="PUNC">(</span><span class="NAME">l</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">m</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>845</span> </span><span class="WHIT">                            </span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">ProcessObject</span><span class="PUNC">[</span><span class="NAME">file</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>846</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>847</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>848</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>849</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>850</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>851</span> </span><span class="WHIT">            </span><span class="NAME">fn</span><span class="PUNC">(</span><span class="NAME">tmpl</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>852</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>853</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>854</span> 
-<span class='line'>855</span> </span><span class="WHIT">    </span><span class="NAME">View.extend</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">props</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">ctor</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">statics</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>856</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>857</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">BaseView</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>858</span> </span><span class="WHIT">            </span><span class="NAME">BaseView.superclass.constructor.apply</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>859</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">ctor</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>860</span> </span><span class="WHIT">                </span><span class="NAME">SafeExec</span><span class="PUNC">(</span><span class="NAME">ctor</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">arguments</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>861</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>862</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>863</span> </span><span class="WHIT">        </span><span class="NAME">BaseView.extend</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.extend</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>864</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">S.extend</span><span class="PUNC">(</span><span class="NAME">BaseView</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">props</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">statics</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>865</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>866</span> </span><span class="WHIT">    </span><span class="NAME">View.prepare</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">oView</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>867</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>868</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">oView.wrapUpdate</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>869</span> </span><span class="WHIT">            </span><span class="NAME">oView.wrapUpdate</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.wrapUpdate</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>870</span> </span><span class="WHIT">            </span><span class="NAME">oView.extend</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.extend</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>871</span> 
-<span class='line'>872</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">aimObject</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">oView.prototype</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>873</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">start</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">oView.superclass</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>874</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">temp</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>875</span> </span><span class="WHIT">            </span><span class="KEYW">while</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">start</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>876</span> </span><span class="WHIT">                </span><span class="NAME">temp</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">start.constructor</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>877</span> </span><span class="WHIT">                </span><span class="NAME">ProcessObject</span><span class="PUNC">(</span><span class="NAME">aimObject</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">temp.prototype</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>878</span> </span><span class="WHIT">                </span><span class="NAME">start</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">temp.superclass</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>879</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>880</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>881</span> </span><span class="WHIT">        </span><span class="NAME">oView.wrapUpdate</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>882</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>883</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">View</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>884</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>885</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="STRN">"magix/magix"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"magix/event"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"magix/body"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"ajax"</span><span class="PUNC">]</span><span class="WHIT">
-<span class='line'>886</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
+<span class='line'>681</span>      * click:{
+<span class='line'>682</span>      *      addUser:function(e){
+<span class='line'>683</span>      *          var m=ModelFactory.getIf('User_List');
+<span class='line'>684</span>      *          var userList=m.get("userList");
+<span class='line'>685</span>      *          m.beginTransaction();
+<span class='line'>686</span>      *          userList.push({
+<span class='line'>687</span>      *              id:'xinglie',
+<span class='line'>688</span>      *              name:'xl'
+<span class='line'>689</span>      *          });
+<span class='line'>690</span>      *
+<span class='line'>691</span>      *          var sign=e.view.signature();//获取签名
+<span class='line'>692</span>      *
+<span class='line'>693</span>      *          m.save({
+<span class='line'>694</span>      *              success:function(){//该回调不太适合托管
+<span class='line'>695</span>      *                  m.endTransaction();
+<span class='line'>696</span>      *                  if(sign==e.view.signature()){//相等时表示view即没刷新也没销毁，此时才提示
+<span class='line'>697</span>      *                      Helper.tipMsg('添加成功')
+<span class='line'>698</span>      *                  }
+<span class='line'>699</span>      *              },
+<span class='line'>700</span>      *              error:function(msg){//该方法同样不适合托管，当数据保存失败时，需要回滚数据，而如果此时view有刷新或销毁，会导致该方法不被调用，无法达到数据的回滚
+<span class='line'>701</span>      *                  m.rollbackTransaction();
+<span class='line'>702</span>      *                  if(sign==e.view.signature()){//view即没刷新也没销毁
+<span class='line'>703</span>      *                      Helper.tipMsg('添加失败')
+<span class='line'>704</span>      *                  }
+<span class='line'>705</span>      *              }
+<span class='line'>706</span>      *          })
+<span class='line'>707</span>      *
+<span class='line'>708</span>      *      }
+<span class='line'>709</span>      * }
+<span class='line'>710</span>      *
+<span class='line'>711</span>      * //如果您无法识别哪些需要托管，哪些需要签名，统一使用托管方法就好了
+<span class='line'>712</span>      */</span><span class="WHIT">
+<span class='line'>713</span> </span><span class="WHIT">    </span><span class="COMM">/*beginAsyncUpdate:function(){
+<span class='line'>714</span>         return this.sign++;//更新sign
+<span class='line'>715</span>     },*/</span><span class="WHIT">
+<span class='line'>716</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>717</span>      * 获取view在当前状态下的签名，view在刷新或销毁时，均会更新签名。(通过签名可识别view有没有搞过什么动作)
+<span class='line'>718</span>      */</span><span class="WHIT">
+<span class='line'>719</span> </span><span class="WHIT">    </span><span class="COMM">/*    signature:function(){
+<span class='line'>720</span>         return this.sign;
+<span class='line'>721</span>     },*/</span><span class="WHIT">
+<span class='line'>722</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>723</span>      * 通知view结束异步更新html
+<span class='line'>724</span>      * @see View#beginAsyncUpdate
+<span class='line'>725</span>      */</span><span class="WHIT">
+<span class='line'>726</span> </span><span class="WHIT">    </span><span class="COMM">/*endAsyncUpdate:function(){
+<span class='line'>727</span>         return this.sign;
+<span class='line'>728</span>     },*/</span><span class="WHIT">
+<span class='line'>729</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>730</span>      * 当view调用setViewHTML刷新前触发
+<span class='line'>731</span>      * @name View#prerender
+<span class='line'>732</span>      * @event
+<span class='line'>733</span>      * @param {Object} e
+<span class='line'>734</span>      */</span><span class="WHIT">
+<span class='line'>735</span> 
+<span class='line'>736</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>737</span>      * 当view首次完成界面的html设置后触发，view有没有模板均会触发该事件，对于有模板的view，会等到模板取回，第一次调用setViewHTML更新界面后才触发，总之该事件触发后，您就可以访问view的HTML DOM节点对象（该事件仅代表自身的html创建完成，如果需要对整个子view也要监控，请使用created事件）
+<span class='line'>738</span>      * @name View#primed
+<span class='line'>739</span>      * @event
+<span class='line'>740</span>      * @param {Object} e view首次调用render完成界面的创建后触发
+<span class='line'>741</span>      */</span><span class="WHIT">
+<span class='line'>742</span> 
+<span class='line'>743</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>744</span>      * 每次调用setViewHTML更新view内容完成后触发
+<span class='line'>745</span>      * @name View#rendered
+<span class='line'>746</span>      * @event
+<span class='line'>747</span>      * @param {Object} e view每次调用setViewHTML完成后触发，当hasTmpl属性为false时，并不会触发该事 件，但会触发primed首次完成创建界面的事件
+<span class='line'>748</span>      */</span><span class="WHIT">
+<span class='line'>749</span> 
+<span class='line'>750</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>751</span>      * view销毁时触发
+<span class='line'>752</span>      * @name View#destroy
+<span class='line'>753</span>      * @event
+<span class='line'>754</span>      * @param {Object} e
+<span class='line'>755</span>      */</span><span class="WHIT">
+<span class='line'>756</span> 
+<span class='line'>757</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>758</span>      * view调用init方法后触发
+<span class='line'>759</span>      * @name View#inited
+<span class='line'>760</span>      * @event
+<span class='line'>761</span>      * @param {Object} e
+<span class='line'>762</span>      */</span><span class="WHIT">
+<span class='line'>763</span> 
+<span class='line'>764</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>765</span>      * view自身和所有子孙view创建完成后触发，常用于要在某个view中统一绑定事件或统一做字段校验，而这个view是由许多子孙view组成的，通过监听该事件可知道子孙view什么时间创建完成（注意：当view中有子view，且该子view是通过程序动态mountView而不是通过mx-view指定时，该事件会也会等待到view创建完成触发，而对于您在某个view中有如下代码：&lt;div>&lt;vframe>&lt;/vframe>&lt;/div>，有一个空的vframe且未指定mx-view属性，同时您在这个view中没有动态渲染vframe对应的view，则该事件不会触发，magix无法识别出您留空vframe的意图，到底是需要动态mount还是手误，不过在具体应用中，出现空vframe且没有动态mount几乎是不存在的^_^）
+<span class='line'>766</span>      * @name View#created
+<span class='line'>767</span>      * @event
+<span class='line'>768</span>      * @param {Object} e
+<span class='line'>769</span>      * @example
+<span class='line'>770</span>      * init:function(){
+<span class='line'>771</span>      *      this.on('created',function(){
+<span class='line'>772</span>      *          //
+<span class='line'>773</span>      *      })
+<span class='line'>774</span>      * }
+<span class='line'>775</span>      */</span><span class="WHIT">
+<span class='line'>776</span> 
+<span class='line'>777</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>778</span>      * view自身和所有子孙view有改动时触发，改动包括刷新和重新mountView，与created一起使用，当view自身和所有子孙view创建完成会触发created，当其中的一个view刷新或重新mountView，会触发childrenAlter，当是刷新时，刷新完成会再次触发created事件，因此这2个事件不只触发一次！！但这2个事件会成对触发，比如触发几次childrenAlter就会触发几次created
+<span class='line'>779</span>      * @name View#alter
+<span class='line'>780</span>      * @event
+<span class='line'>781</span>      * @param {Object} e
+<span class='line'>782</span>      */</span><span class="WHIT">
+<span class='line'>783</span> 
+<span class='line'>784</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>785</span>      * 异步更新ui的方法(render,renderUI)被调用前触发
+<span class='line'>786</span>      * @name View#rendercall
+<span class='line'>787</span>      * @event
+<span class='line'>788</span>      * @param {Object} e
+<span class='line'>789</span>      */</span><span class="WHIT">
+<span class='line'>790</span> 
+<span class='line'>791</span> 
+<span class='line'>792</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'>793</span>      * 每次调用beginUpdate更新view内容前触发
+<span class='line'>794</span>      * @name View#refresh
+<span class='line'>795</span>      * @event
+<span class='line'>796</span>      * @param {Object} e
+<span class='line'>797</span>      * 与prerender不同的是：refresh触发后即删除监听列表
+<span class='line'>798</span>      */</span><span class="WHIT">
+<span class='line'>799</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>800</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">AppHome</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Magix.config</span><span class="PUNC">(</span><span class="STRN">'appHome'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>801</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">Suffix</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Magix.config</span><span class="PUNC">(</span><span class="STRN">'debug'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="STRN">'?t='</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">S.now</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">''</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>802</span> 
+<span class='line'>803</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ProcessObject</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">props</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">proto</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">enterObject</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>804</span> </span><span class="WHIT">        </span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">p</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">proto</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>805</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">S.isObject</span><span class="PUNC">(</span><span class="NAME">proto</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>806</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">Has</span><span class="PUNC">(</span><span class="NAME">props</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">p</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="NAME">props</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>807</span> </span><span class="WHIT">                </span><span class="NAME">ProcessObject</span><span class="PUNC">(</span><span class="NAME">props</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">proto</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>808</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">enterObject</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>809</span> </span><span class="WHIT">                </span><span class="NAME">props</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">proto</span><span class="PUNC">[</span><span class="NAME">p</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>810</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>811</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>812</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>813</span> 
+<span class='line'>814</span> 
+<span class='line'>815</span> </span><span class="WHIT">    </span><span class="NAME">View.prototype.fetchTmpl</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">fn</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>816</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>817</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">hasTemplate</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">'template'</span><span class="WHIT"> </span><span class="KEYW">in</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>818</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">hasTemplate</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>819</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Magix.tmpl</span><span class="PUNC">(</span><span class="NAME">me.path</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>820</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">i.h</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>821</span> </span><span class="WHIT">                </span><span class="NAME">fn</span><span class="PUNC">(</span><span class="NAME">i.v</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>822</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>823</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">file</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">AppHome</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">me.path</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'.html'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>824</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">l</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ProcessObject</span><span class="PUNC">[</span><span class="NAME">file</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>825</span> </span><span class="WHIT">                </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">onload</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">tmpl</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>826</span> </span><span class="WHIT">                    </span><span class="NAME">fn</span><span class="PUNC">(</span><span class="NAME">Magix.tmpl</span><span class="PUNC">(</span><span class="NAME">me.path</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">tmpl</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>827</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>828</span> </span><span class="WHIT">                </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">l</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>829</span> </span><span class="WHIT">                    </span><span class="NAME">l.push</span><span class="PUNC">(</span><span class="NAME">onload</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>830</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>831</span> </span><span class="WHIT">                    </span><span class="NAME">l</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ProcessObject</span><span class="PUNC">[</span><span class="NAME">file</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="NAME">onload</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>832</span> </span><span class="WHIT">                    </span><span class="NAME">IO</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>833</span> </span><span class="WHIT">                        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">file</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">Suffix</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>834</span> </span><span class="WHIT">                        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">x</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>835</span> </span><span class="WHIT">                            </span><span class="NAME">SafeExec</span><span class="PUNC">(</span><span class="NAME">l</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">x</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>836</span> </span><span class="WHIT">                            </span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">ProcessObject</span><span class="PUNC">[</span><span class="NAME">file</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>837</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>838</span> </span><span class="WHIT">                        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">e</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">m</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>839</span> </span><span class="WHIT">                            </span><span class="NAME">SafeExec</span><span class="PUNC">(</span><span class="NAME">l</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">m</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>840</span> </span><span class="WHIT">                            </span><span class="KEYW">delete</span><span class="WHIT"> </span><span class="NAME">ProcessObject</span><span class="PUNC">[</span><span class="NAME">file</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>841</span> </span><span class="WHIT">                        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>842</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>843</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>844</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>845</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT"> </span><span class="KEYW">else</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>846</span> </span><span class="WHIT">            </span><span class="NAME">fn</span><span class="PUNC">(</span><span class="NAME">tmpl</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>847</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>848</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>849</span> 
+<span class='line'>850</span> </span><span class="WHIT">    </span><span class="NAME">View.extend</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">props</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">ctor</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">statics</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>851</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>852</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">BaseView</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>853</span> </span><span class="WHIT">            </span><span class="NAME">BaseView.superclass.constructor.apply</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">arguments</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>854</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">ctor</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>855</span> </span><span class="WHIT">                </span><span class="NAME">SafeExec</span><span class="PUNC">(</span><span class="NAME">ctor</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">arguments</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>856</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>857</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>858</span> </span><span class="WHIT">        </span><span class="NAME">BaseView.extend</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.extend</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>859</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">S.extend</span><span class="PUNC">(</span><span class="NAME">BaseView</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">me</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">props</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">statics</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>860</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>861</span> </span><span class="WHIT">    </span><span class="NAME">View.prepare</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">oView</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>862</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>863</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">oView.wrapUpdate</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>864</span> </span><span class="WHIT">            </span><span class="NAME">oView.wrapUpdate</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.wrapUpdate</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>865</span> </span><span class="WHIT">            </span><span class="NAME">oView.extend</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.extend</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>866</span> 
+<span class='line'>867</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">aimObject</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">oView.prototype</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>868</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">start</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">oView.superclass</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>869</span> </span><span class="WHIT">            </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">temp</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>870</span> </span><span class="WHIT">            </span><span class="KEYW">while</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">start</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>871</span> </span><span class="WHIT">                </span><span class="NAME">temp</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">start.constructor</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>872</span> </span><span class="WHIT">                </span><span class="NAME">ProcessObject</span><span class="PUNC">(</span><span class="NAME">aimObject</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">temp.prototype</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>873</span> </span><span class="WHIT">                </span><span class="NAME">start</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">temp.superclass</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>874</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>875</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>876</span> </span><span class="WHIT">        </span><span class="NAME">oView.wrapUpdate</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>877</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>878</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">View</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>879</span> </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>880</span> </span><span class="WHIT">    </span><span class="NAME">requires</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="STRN">"magix/magix"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"magix/event"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"magix/body"</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">"ajax"</span><span class="PUNC">]</span><span class="WHIT">
+<span class='line'>881</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
