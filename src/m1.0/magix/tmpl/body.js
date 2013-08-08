@@ -1,7 +1,7 @@
 var Has = Magix.has;
 var Mix = Magix.mix;
 //不支持冒泡的事件
-var UnsupportBubble = Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
+var UnsupportBubble = Magix.listToMap('tap,swipe,tapHold,rotate');
 var RootNode = document.body;
 var RootEvents = {};
 

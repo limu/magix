@@ -556,7 +556,10 @@ var Magix = {
             }
             params.push(p + '=' + v);
         }
-        return pn + '?' + params.join('&');
+        if (params.length) {
+            pn = pn + '?' + params.join('&');
+        }
+        return pn
     },
     /**
      * 读取或设置view的模板
@@ -1225,7 +1228,7 @@ define("magix/body",["magix/magix"],function(require){
     var Has = Magix.has;
 var Mix = Magix.mix;
 //不支持冒泡的事件
-var UnsupportBubble = Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
+var UnsupportBubble = Magix.listToMap('tap,swipe,tapHold,rotate');
 var RootNode = document.body;
 var RootEvents = {};
 
@@ -1495,6 +1498,8 @@ define('magix/vframe',["magix/magix","magix/event","magix/view"],function(requir
     var D = document;
 var VframeIdCounter = 1 << 16;
 
+var SafeExec = Magix.safeExec;
+var Slice = [].slice;
 
 
 var Mix = Magix.mix;
@@ -1890,6 +1895,22 @@ Mix(Mix(Vframe.prototype, Event), {
         return hasVframe;
     },
     /**
+     * 调用view中的方法
+     * @param  {String} methodName 方法名
+     * @param {Object} [args1,args2] 向方法传递的参数
+     * @return {Object}
+     */
+    invokeView: function(methodName) {
+        var me = this;
+        var view = me.view;
+        var args = Slice.call(arguments, 1);
+        var r;
+        if (me.viewInited && view[methodName]) {
+            r = SafeExec(view[methodName], args, view);
+        }
+        return r
+    },
+    /**
      * 通知所有的子view创建完成
      * @private
      */
@@ -2022,7 +2043,7 @@ Mix(Mix(Vframe.prototype, Event), {
                 if (isChanged) { //检测view所关注的相应的参数是否发生了变化
                     //safeExec(view.render,[],view);//如果关注的参数有变化，默认调用render方法
                     //否定了这个想法，有时关注的参数有变化，不一定需要调用render方法
-                    Magix.safeExec(view.locationChange, args, view);
+                    SafeExec(view.locationChange, args, view);
                 }
                 var cs = args.cs || Magix.keys(me.cM);
                 //

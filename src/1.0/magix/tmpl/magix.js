@@ -539,7 +539,10 @@ var Magix = {
             }
             params.push(p + '=' + v);
         }
-        return pn + '?' + params.join('&');
+        if (params.length) {
+            pn = pn + '?' + params.join('&');
+        }
+        return pn
     },
     /**
      * 读取或设置view的模板
