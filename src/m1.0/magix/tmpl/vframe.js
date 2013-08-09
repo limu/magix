@@ -56,7 +56,7 @@ var Vframe = function(id) {
     me.cM = {};
     me.cC = 0;
     me.rC = 0;
-    me.sign = 1 << 31;
+    me.sign = 1 << 30;
     me.rM = {};
 };
 
@@ -162,8 +162,9 @@ Mix(Mix(Vframe.prototype, Event), {
      * 加载对应的view
      * @param {String} viewPath 形如:app/views/home?type=1&page=2 这样的名称
      * @param {Object|Null} viewInitParams view在调用init时传递的参数
+     * @param {Function} callback view加载完成并触发inited事件时的回调
      */
-    mountView: function(viewPath, viewInitParams) {
+    mountView: function(viewPath, viewInitParams, callback) {
         var me = this;
         var node = $(me.id);
         if (!node._bak) {
@@ -235,6 +236,9 @@ Mix(Mix(Vframe.prototype, Event), {
                             me.fire('viewInited', {
                                 view: view
                             });
+                            if (callback) {
+                                SafeExec(callback, view, me);
+                            }
                         });
                     }, 0);
                     viewInitParams = viewInitParams || {};
@@ -270,7 +274,6 @@ Mix(Mix(Vframe.prototype, Event), {
             me.fire('viewUnmounted');
 
         }
-        me.un('viewInited');
         me.sign--;
     },
     /**
@@ -311,9 +314,9 @@ Mix(Mix(Vframe.prototype, Event), {
      */
     mountZoneVframes: function(zoneId, viewInitParams, autoMount) {
         var me = this;
-        me.unmountZoneVframes(zoneId);
         //var owner=me.owner;
         var node = zoneId || me.id;
+        me.unmountZoneVframes(node);
         /* if(!zoneId){
             node=me.id;
         }else{
@@ -596,14 +599,14 @@ Mix(Mix(Vframe.prototype, Event), {
         }
     }*/
     /**
-     * view初始化完成后触发
+     * view初始化完成后触发，由于vframe可以渲染不同的view，也就是可以通过mountView来渲染其它view，所以viewInited可能触发多次
      * @name Vframe#viewInited
      * @event
      * @param {Object} e
      */
 
     /**
-     * view卸载时触发
+     * view卸载时触发，由于vframe可以渲染不同的view，因此该事件可能被触发多次
      * @name Vframe#viewUnmounted
      * @event
      */
