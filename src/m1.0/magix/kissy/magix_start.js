@@ -4,6 +4,7 @@
  * @version 1.0
  **/
 (function(W) {
+    document.createElement('vframe');
     var noop = function() {};
     if (!W.console) {
         W.console = {

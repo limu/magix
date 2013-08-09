@@ -869,7 +869,7 @@ var Router = Mix({
 
         return {
             view: result ? result : Pnr.nf || Pnr.home,
-            pathname: result || SupportState ? pathname : (Pnr.nf ? pathname : Pnr[PATHNAME])
+            pathname: result || UseNativeHistory ? pathname : (Pnr.nf ? pathname : Pnr[PATHNAME])
         }
     },
     /**
@@ -1230,7 +1230,7 @@ define("magix/body", ["magix/magix"], function(Magix) {
     var Has = Magix.has;
 var Mix = Magix.mix;
 //不支持冒泡的事件
-var UnsupportBubble = Magix.listToMap('tap,swipe,tapHold,rotate');
+var UnsupportBubble = Magix.listToMap('');
 var RootNode = document.body;
 var RootEvents = {};
 
@@ -2604,7 +2604,7 @@ Mix(VProto, {
      * 获取渲染当前view的父view
      * @return {View}
      */
-    parentView: function() {
+    /*parentView: function() {
         var me = this,
             vom = me.vom,
             owner = me.owner;
@@ -2614,7 +2614,7 @@ Mix(VProto, {
             r = pVframe.view;
         }
         return r;
-    },
+    },*/
     /**
      * 处理dom事件
      * @param {Event} e dom事件对象
@@ -3162,6 +3162,7 @@ var VOM = Magix.mix({
  * @version 1.0
  **/
 (function(W) {
+    document.createElement('vframe');
     var noop = function() {};
     if (!W.console) {
         W.console = {

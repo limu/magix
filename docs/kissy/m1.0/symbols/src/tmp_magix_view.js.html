@@ -471,17 +471,17 @@
 <span class='line'>464</span>      * 获取渲染当前view的父view
 <span class='line'>465</span>      * @return {View}
 <span class='line'>466</span>      */</span><span class="WHIT">
-<span class='line'>467</span> </span><span class="WHIT">    </span><span class="NAME">parentView</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>468</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">me</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>469</span> </span><span class="WHIT">            </span><span class="NAME">vom</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.vom</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>470</span> </span><span class="WHIT">            </span><span class="NAME">owner</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">me.owner</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>471</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">pVframe</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">vom.get</span><span class="PUNC">(</span><span class="NAME">owner.pId</span><span class="PUNC">)</span><span class="PUNC">,</span><span class="WHIT">
-<span class='line'>472</span> </span><span class="WHIT">            </span><span class="NAME">r</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>473</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">pVframe</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">pVframe.viewInited</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
-<span class='line'>474</span> </span><span class="WHIT">            </span><span class="NAME">r</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">pVframe.view</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>475</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
-<span class='line'>476</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">r</span><span class="PUNC">;</span><span class="WHIT">
-<span class='line'>477</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>467</span> </span><span class="WHIT">    </span><span class="COMM">/*parentView: function() {
+<span class='line'>468</span>         var me = this,
+<span class='line'>469</span>             vom = me.vom,
+<span class='line'>470</span>             owner = me.owner;
+<span class='line'>471</span>         var pVframe = vom.get(owner.pId),
+<span class='line'>472</span>             r = null;
+<span class='line'>473</span>         if (pVframe && pVframe.viewInited) {
+<span class='line'>474</span>             r = pVframe.view;
+<span class='line'>475</span>         }
+<span class='line'>476</span>         return r;
+<span class='line'>477</span>     },*/</span><span class="WHIT">
 <span class='line'>478</span> </span><span class="WHIT">    </span><span class="COMM">/**
 <span class='line'>479</span>      * 处理dom事件
 <span class='line'>480</span>      * @param {Event} e dom事件对象

@@ -155,7 +155,7 @@ var Router = Mix({
 
         return {
             view: result ? result : Pnr.nf || Pnr.home,
-            pathname: result || SupportState ? pathname : (Pnr.nf ? pathname : Pnr[PATHNAME])
+            pathname: result || UseNativeHistory ? pathname : (Pnr.nf ? pathname : Pnr[PATHNAME])
         }
     },
     /**

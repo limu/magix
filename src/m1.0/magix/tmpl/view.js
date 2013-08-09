@@ -457,7 +457,7 @@ Mix(VProto, {
      * 获取渲染当前view的父view
      * @return {View}
      */
-    parentView: function() {
+    /*parentView: function() {
         var me = this,
             vom = me.vom,
             owner = me.owner;
@@ -467,7 +467,7 @@ Mix(VProto, {
             r = pVframe.view;
         }
         return r;
-    },
+    },*/
     /**
      * 处理dom事件
      * @param {Event} e dom事件对象

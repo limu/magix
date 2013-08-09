@@ -28,7 +28,7 @@ var $$ = function(id, tag) {
 var $C = function(tag) {
     return D.createElement(tag);
 };
-$C(TagName);
+
 
 var IdIt = function(dom) {
     return dom.id || (dom.id = 'magix_vf_' + (VframeIdCounter--));

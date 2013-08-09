@@ -868,7 +868,7 @@ var Router = Mix({
 
         return {
             view: result ? result : Pnr.nf || Pnr.home,
-            pathname: result || SupportState ? pathname : (Pnr.nf ? pathname : Pnr[PATHNAME])
+            pathname: result || UseNativeHistory ? pathname : (Pnr.nf ? pathname : Pnr[PATHNAME])
         }
     },
     /**
@@ -1527,7 +1527,7 @@ var $$ = function(id, tag) {
 var $C = function(tag) {
     return D.createElement(tag);
 };
-$C(TagName);
+
 
 var IdIt = function(dom) {
     return dom.id || (dom.id = 'magix_vf_' + (VframeIdCounter--));
@@ -3172,6 +3172,7 @@ var VOM = Magix.mix({
  * @version 1.0
  **/
 (function(W) {
+    document.createElement('vframe');
     var noop = function() {};
     if (!W.console) {
         W.console = {
