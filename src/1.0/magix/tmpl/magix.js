@@ -28,7 +28,7 @@ var GSObj = function(o) {
                 break;
             case 1:
                 if (Magix.isObject(k)) {
-                    r = mix(o, k)
+                    r = mix(o, k);
                 } else {
                     r = has(o, k) ? o[k] : null;
                 }
@@ -43,7 +43,7 @@ var GSObj = function(o) {
                 break;
         }
         return r;
-    }
+    };
 };
 var Cache = function(max) {
     var me = this;
@@ -108,7 +108,7 @@ mix(Cache.prototype, {
         if (!has(c, key)) {
             if (c.length >= me.b) {
                 c.sort(function(a, b) {
-                    return b.f == a.f ? b.t - a.t : b.f - a.f
+                    return b.f == a.f ? b.t - a.t : b.f - a.f;
                 });
                 var t = me.b - me.x;
                 while (t--) {
@@ -141,7 +141,7 @@ mix(Cache.prototype, {
         k = PATHNAME + k;
         return has(this.c, k);
     }
-})
+});
 
 var PathToObjCache = CreateCache(60);
 var PathCache = CreateCache();
@@ -175,7 +175,7 @@ var safeExec = function(fns, args, context, i, r, e) {
 @method imimpl
 **/
 var unimpl = function() {
-    throw new Error("unimplement method");
+    throw new Error('unimplement method');
 };
 /**
  * 空方法
@@ -379,7 +379,9 @@ var Magix = {
             me.libRequire(['magix/router', 'magix/vom'], function(R, V) {
                 R.on('!ul', V.locChged);
                 R.on('changed', V.locChged);
-                progress && V.on('progress', progress);
+                if (progress) {
+                    V.on('progress', progress);
+                }
                 me.libRequire(cfg.extensions, R.start);
             });
         });
@@ -482,13 +484,12 @@ var Magix = {
         //8. /s?src=b#        => pathname /s params:{src:'b'}
         var r = PathToObjCache.get(path);
         if (!r) {
-            var me = this;
-            var r = {};
+            r = {};
             var params = {};
 
             var pathname = EMPTY;
             if (PathTrimParamsReg.test(path)) { //有#?号，表示有pathname
-                pathname = path.replace(PathTrimParamsReg, EMPTY)
+                pathname = path.replace(PathTrimParamsReg, EMPTY);
             } else if (!~path.indexOf('=')) { //没有=号，路径可能是 xxx 相对路径
                 pathname = path;
             }
@@ -542,7 +543,7 @@ var Magix = {
         if (params.length) {
             pn = pn + '?' + params.join('&');
         }
-        return pn
+        return pn;
     },
     /**
      * 读取或设置view的模板
@@ -555,9 +556,10 @@ var Magix = {
             return {
                 v: Templates[key],
                 h: has(Templates, key)
-            }
+            };
         }
-        return Templates[key] = value;
+        Templates[key] = value;
+        return value;
     },
     /**
      * 把列表转化成hash对象

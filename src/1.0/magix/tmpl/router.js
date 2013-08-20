@@ -122,13 +122,12 @@ var Router = Mix({
      * @private
      */
     getView: function(pathname) {
-        var me = Router;
 
         if (!Pnr) {
             Pnr = {
                 rs: MxConfig.routes || {},
                 nf: MxConfig.notFoundView
-            }
+            };
             //var home=pathCfg.defaultView;//处理默认加载的view
             //var dPathname=pathCfg.defaultPathname||EMPTY;
             var defaultView = MxConfig.defaultView;
@@ -156,7 +155,7 @@ var Router = Mix({
         return {
             view: result ? result : Pnr.nf || Pnr.home,
             pathname: result || UseNativeHistory ? pathname : (Pnr.nf ? pathname : Pnr[PATHNAME])
-        }
+        };
     },
     /**
      * 开始路由工作
@@ -220,7 +219,7 @@ var Router = Mix({
                 query: queryObj,
                 hash: hashObj,
                 params: comObj
-            }
+            };
             HrefCache.set(href, result);
         }
         if (!result.view) {
@@ -334,7 +333,6 @@ var Router = Mix({
 
         LLoc = location;
 
-        var fire;
         var changed = me.getChged(oldLocation, location);
         if (changed.occur) {
             TLoc = location;
@@ -390,7 +388,7 @@ var Router = Mix({
             pn = Magix.objectToPath({
                 params: params,
                 pathname: pn
-            }, IsUtf8)
+            }, IsUtf8);
         }
         //TLoc引用
         //pathObj引用

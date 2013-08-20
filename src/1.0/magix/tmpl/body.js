@@ -1,5 +1,4 @@
 var Has = Magix.has;
-var Mix = Magix.mix;
 //不支持冒泡的事件
 var UnsupportBubble = Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
 var RootNode = document.body;
@@ -27,7 +26,6 @@ var Body = {
     unbubble: Magix.unimpl,
 
     process: function(e) {
-        var me = Body;
         var target = e.target || e.srcElement;
         while (target && target.nodeType != 1) {
             target = target.parentNode;
@@ -85,7 +83,6 @@ var Body = {
                 }
             } else {
                 var node;
-                var ignore;
                 while (arr.length) {
                     node = arr.shift();
                     ignore = GetSetAttribute(node, MxIgnore); //node.getAttribute(MxIgnore);
@@ -110,8 +107,10 @@ var Body = {
             } else {
                 RootNode['on' + type] = function(e) {
                     e = e || window.event;
-                    e && me.process(e);
-                }
+                    if (e) {
+                        me.process(e);
+                    }
+                };
             }
         } else {
             RootEvents[type]++;

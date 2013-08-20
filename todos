@@ -4,3 +4,31 @@
 2.MM中，修改回调，所有的回调以error开始，同nodejs
 
 3.registerModels 判断有没有重名的model信息
+
+4.view事件部分，是否改成：
+    return View.extend({
+        enableEvents:["click","mousedown"],
+        save:function(e){
+
+        }
+    });
+
+    还是:
+    return View.extend({
+        click_save:function(e){
+
+        }
+    });
+
+    或者：
+    return View.extend({
+        "save<click>":function(e){
+
+        },
+        "other":function(){
+            this.save({
+
+            });
+        }
+    })
+    //<a href="#!/home" mx-click="save">save</a>

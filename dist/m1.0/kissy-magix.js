@@ -47,7 +47,7 @@ var GSObj = function(o) {
                 break;
             case 1:
                 if (Magix.isObject(k)) {
-                    r = mix(o, k)
+                    r = mix(o, k);
                 } else {
                     r = has(o, k) ? o[k] : null;
                 }
@@ -62,7 +62,7 @@ var GSObj = function(o) {
                 break;
         }
         return r;
-    }
+    };
 };
 var Cache = function(max) {
     var me = this;
@@ -127,7 +127,7 @@ mix(Cache.prototype, {
         if (!has(c, key)) {
             if (c.length >= me.b) {
                 c.sort(function(a, b) {
-                    return b.f == a.f ? b.t - a.t : b.f - a.f
+                    return b.f == a.f ? b.t - a.t : b.f - a.f;
                 });
                 var t = me.b - me.x;
                 while (t--) {
@@ -160,7 +160,7 @@ mix(Cache.prototype, {
         k = PATHNAME + k;
         return has(this.c, k);
     }
-})
+});
 
 var PathToObjCache = CreateCache(20);
 var PathCache = CreateCache();
@@ -194,7 +194,7 @@ var safeExec = function(fns, args, context, i, r, e) {
 @method imimpl
 **/
 var unimpl = function() {
-    throw new Error("unimplement method");
+    throw new Error('unimplement method');
 };
 /**
  * 空方法
@@ -398,7 +398,9 @@ var Magix = {
             me.libRequire(['magix/router', 'magix/vom'], function(R, V) {
                 R.on('!ul', V.locChged);
                 R.on('changed', V.locChged);
-                progress && V.on('progress', progress);
+                if (progress) {
+                    V.on('progress', progress);
+                }
                 me.libRequire(cfg.extensions, R.start);
             });
         });
@@ -501,13 +503,12 @@ var Magix = {
         //8. /s?src=b#        => pathname /s params:{src:'b'}
         var r = PathToObjCache.get(path);
         if (!r) {
-            var me = this;
-            var r = {};
+            r = {};
             var params = {};
 
             var pathname = EMPTY;
             if (PathTrimParamsReg.test(path)) { //有#?号，表示有pathname
-                pathname = path.replace(PathTrimParamsReg, EMPTY)
+                pathname = path.replace(PathTrimParamsReg, EMPTY);
             } else if (!~path.indexOf('=')) { //没有=号，路径可能是 xxx 相对路径
                 pathname = path;
             }
@@ -561,7 +562,7 @@ var Magix = {
         if (params.length) {
             pn = pn + '?' + params.join('&');
         }
-        return pn
+        return pn;
     },
     /**
      * 读取或设置view的模板
@@ -574,9 +575,10 @@ var Magix = {
             return {
                 v: Templates[key],
                 h: has(Templates, key)
-            }
+            };
         }
-        return Templates[key] = value;
+        Templates[key] = value;
+        return value;
     },
     /**
      * 把列表转化成hash对象
@@ -822,13 +824,12 @@ var Router = Mix({
      * @private
      */
     getView: function(pathname) {
-        var me = Router;
 
         if (!Pnr) {
             Pnr = {
                 rs: MxConfig.routes || {},
                 nf: MxConfig.notFoundView
-            }
+            };
             //var home=pathCfg.defaultView;//处理默认加载的view
             //var dPathname=pathCfg.defaultPathname||EMPTY;
             var defaultView = MxConfig.defaultView;
@@ -856,7 +857,7 @@ var Router = Mix({
         return {
             view: result ? result : Pnr.nf || Pnr.home,
             pathname: result || UseNativeHistory ? pathname : (Pnr.nf ? pathname : Pnr[PATHNAME])
-        }
+        };
     },
     /**
      * 开始路由工作
@@ -920,7 +921,7 @@ var Router = Mix({
                 query: queryObj,
                 hash: hashObj,
                 params: comObj
-            }
+            };
             HrefCache.set(href, result);
         }
         if (!result.view) {
@@ -1034,7 +1035,6 @@ var Router = Mix({
 
         LLoc = location;
 
-        var fire;
         var changed = me.getChged(oldLocation, location);
         if (changed.occur) {
             TLoc = location;
@@ -1089,7 +1089,7 @@ var Router = Mix({
             pn = Magix.objectToPath({
                 params: params,
                 pathname: pn
-            }, IsUtf8)
+            }, IsUtf8);
         }
         //TLoc引用
         //pathObj引用
@@ -1214,12 +1214,11 @@ var Router = Mix({
  **/
 KISSY.add("magix/body",function(S,Magix,SE){
     var Has = Magix.has;
-var Mix = Magix.mix;
 //不支持冒泡的事件
 var UnsupportBubble = Magix.listToMap('');
 var RootNode = document.body;
 var RootEvents = {};
-
+var MxEvtSplit = String.fromCharCode(26);
 
 var MxOwner = 'mx-owner';
 var MxIgnore = 'mx-ie';
@@ -1242,7 +1241,6 @@ var Body = {
     
 
     process: function(e) {
-        var me = Body;
         var target = e.target || e.srcElement;
         while (target && target.nodeType != 1) {
             target = target.parentNode;
@@ -1269,7 +1267,13 @@ var Body = {
             }
             if (info) { //有事件
                 //找处理事件的vframe
-                var handler = GetSetAttribute(current, MxOwner); //current.getAttribute(MxOwner);
+                var idx = info.indexOf(MxEvtSplit);
+                var vId;
+                if (idx > -1) {
+                    vId = info.slice(0, idx);
+                    info = info.slice(idx);
+                }
+                var handler = GetSetAttribute(current, MxOwner) || vId; //current.getAttribute(MxOwner);
                 if (!handler) { //如果没有则找最近的vframe
                     var begin = current;
                     var vfs = VOM.all();
@@ -1300,7 +1304,6 @@ var Body = {
                 }
             } else {
                 var node;
-                var ignore;
                 while (arr.length) {
                     node = arr.shift();
                     ignore = GetSetAttribute(node, MxIgnore); //node.getAttribute(MxIgnore);
@@ -1325,8 +1328,10 @@ var Body = {
             } else {
                 RootNode['on' + type] = function(e) {
                     e = e || window.event;
-                    e && me.process(e);
-                }
+                    if (e) {
+                        me.process(e);
+                    }
+                };
             }
         } else {
             RootEvents[type]++;
@@ -1710,9 +1715,7 @@ Mix(Mix(Vframe.prototype, Event), {
                         });
                         view.on('prerender', function() {
                             if (!me.unmountZoneVframes()) {
-                                me.cAlter({
-                                    caused: me.id
-                                });
+                                me.cAlter();
                             }
                         });
 
@@ -1739,11 +1742,9 @@ Mix(Mix(Vframe.prototype, Event), {
         var me = this;
         if (me.view) {
             if (!GlobalAlter) {
-                GlobalAlter = {
-                    caused: me.id
-                };
+                GlobalAlter = {};
             }
-            me.unmountZoneVframes();
+            me.unmountZoneVframes(); //子view中存在!autoMounted的节点
             me.cAlter(GlobalAlter);
             me.view.destroy();
             var node = $(me.id);
@@ -1817,14 +1818,16 @@ Mix(Mix(Vframe.prototype, Event), {
                 key = IdIt(vframe);
                 if (!Has(subs, key)) {
                     mxView = vframe.getAttribute(MxView);
-                    mxBuild = !vframe.getAttribute(MxBuild) == IsDefaultTagName;
+                    mxBuild = !vframe.getAttribute(MxBuild);
+                    mxBuild = mxBuild == IsDefaultTagName;
                     if (mxBuild || mxView) {
                         me.mountVframe(key, mxView, viewInitParams, autoMount);
                         var svs = $$(vframe, TagName);
                         for (var j = 0, c = svs.length, temp; j < c; j++) {
                             temp = svs[j];
                             mxView = temp.getAttribute(MxView);
-                            mxBuild = !vframe.getAttribute(MxBuild) == IsDefaultTagName;
+                            mxBuild = !temp.getAttribute(MxBuild);
+                            mxBuild = mxBuild == IsDefaultTagName;
                             if (!mxBuild && !mxView) {
                                 subs[IdIt(temp)] = 1;
                             }
@@ -1899,7 +1902,7 @@ Mix(Mix(Vframe.prototype, Event), {
         if (me.viewInited && view[methodName]) {
             r = SafeExec(view[methodName], args, view);
         }
-        return r
+        return r;
     },
     /**
      * 通知所有的子view创建完成
@@ -1922,7 +1925,7 @@ Mix(Mix(Vframe.prototype, Event), {
         if (p && !Has(p.rM, mId)) {
 
             p.rM[mId] = p.cM[mId];
-            p.rC++
+            p.rC++;
 
             if (p.rC == p.cC) {
                 p.cCreated(e);
@@ -1935,6 +1938,7 @@ Mix(Mix(Vframe.prototype, Event), {
      */
     cAlter: function(e) {
         var me = this;
+        if (!e) e = {};
         delete me.fcc;
         if (!me.fca) {
             var view = me.view;
@@ -2157,11 +2161,42 @@ var WrapFn = function(fn) {
             r = fn.apply(me, arguments);
         }
         return r;
-    }
+    };
 };
 
 var EvtInfoCache = Magix.cache(40);
 
+
+var MxEvt = /\smx-(?!view|defer|owner)[a-z]+\s*=\s*['"]/g;
+var MxEvtSplit = String.fromCharCode(26);
+
+
+
+
+var WEvent = {
+    prevent: function(e) {
+        e = e || this.domEvent;
+        if (e.preventDefault) {
+            e.preventDefault();
+        } else {
+            e.returnValue = false;
+        }
+    },
+    stop: function(e) {
+        e = e || this.domEvent;
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        } else {
+            e.cancelBubble = true;
+        }
+    },
+    halt: function(e) {
+        this.prevent(e);
+        this.stop(e);
+    }
+};
+var EvtInfoReg = /(\w+)(?:<(\w+)>)?(?:{([\s\S]*)})?/;
+var EvtParamsReg = /(\w+):([^,]+)/g;
 /**
  * View类
  * @name View
@@ -2240,44 +2275,7 @@ Mix(View, {
     }
 });
 
-
-var VProto = View.prototype;
-
-//var MxEvent=/<(\w+)([\s\S]+?mx-[^ohv][a-z]+\s*=\s*"[^"]")/g;
-var MxEvent = /<[a-z]+(?:[^">]|"[^"]*")+(?=>)/g;
-var MxOwner = /\smx-owner\s*=/;
-var MxEvt = /\smx-[^v][a-z]+\s*=/;
-var MxEFun = function(m) {
-    return !MxOwner.test(m) && MxEvt.test(m) ? m + ' mx-owner="' + MxEFun.t + '"' : m;
-};
-var WEvent = {
-    prevent: function(e) {
-        e = e || this.domEvent;
-        if (e.preventDefault) {
-            e.preventDefault();
-        } else {
-            e.returnValue = false;
-        }
-    },
-    stop: function(e) {
-        e = e || this.domEvent;
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        } else {
-            e.cancelBubble = true;
-        }
-    },
-    halt: function(e) {
-        this.prevent(e);
-        this.stop(e);
-    }
-};
-var EvtInfoReg = /(\w+)(?:<(\w+)>)?(?:{([\s\S]*)})?/;
-var EvtParamsReg = /(\w+):([^,]+)/g;
-
-Mix(VProto, Event);
-
-Mix(VProto, {
+Mix(Mix(View.prototype, Event), {
     /**
      * @lends View#
      */
@@ -2435,12 +2433,11 @@ Mix(VProto, {
         return me.sign;
     },
     /**
-     * 包装mx-event，自动添加mx-owner属性
+     * 包装mx-event，自动添加vframe id,用于事件发生时，调用该view处理
      * @param {String} html html字符串
      */
     wrapMxEvent: function(html) {
-        MxEFun.t = this.id;
-        return String(html).replace(MxEvent, MxEFun);
+        return String(html).replace(MxEvt, '$&' + this.id + MxEvtSplit);
     },
     /**
      * 设置view的html内容

@@ -1,10 +1,9 @@
 var Has = Magix.has;
-var Mix = Magix.mix;
 //不支持冒泡的事件
 var UnsupportBubble = Magix.listToMap('');
 var RootNode = document.body;
 var RootEvents = {};
-
+var MxEvtSplit = String.fromCharCode(26);
 
 var MxOwner = 'mx-owner';
 var MxIgnore = 'mx-ie';
@@ -27,7 +26,6 @@ var Body = {
     unbubble: Magix.unimpl,
 
     process: function(e) {
-        var me = Body;
         var target = e.target || e.srcElement;
         while (target && target.nodeType != 1) {
             target = target.parentNode;
@@ -54,7 +52,13 @@ var Body = {
             }
             if (info) { //有事件
                 //找处理事件的vframe
-                var handler = GetSetAttribute(current, MxOwner); //current.getAttribute(MxOwner);
+                var idx = info.indexOf(MxEvtSplit);
+                var vId;
+                if (idx > -1) {
+                    vId = info.slice(0, idx);
+                    info = info.slice(idx);
+                }
+                var handler = GetSetAttribute(current, MxOwner) || vId; //current.getAttribute(MxOwner);
                 if (!handler) { //如果没有则找最近的vframe
                     var begin = current;
                     var vfs = VOM.all();
@@ -85,7 +89,6 @@ var Body = {
                 }
             } else {
                 var node;
-                var ignore;
                 while (arr.length) {
                     node = arr.shift();
                     ignore = GetSetAttribute(node, MxIgnore); //node.getAttribute(MxIgnore);
@@ -110,8 +113,10 @@ var Body = {
             } else {
                 RootNode['on' + type] = function(e) {
                     e = e || window.event;
-                    e && me.process(e);
-                }
+                    if (e) {
+                        me.process(e);
+                    }
+                };
             }
         } else {
             RootEvents[type]++;

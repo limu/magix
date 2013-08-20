@@ -15,11 +15,42 @@ var WrapFn = function(fn) {
             r = fn.apply(me, arguments);
         }
         return r;
-    }
+    };
 };
 
 var EvtInfoCache = Magix.cache(40);
-
+var CollectGarbage = window.CollectGarbage || Magix.noop;
+//var MxEvent=/<(\w+)([\s\S]+?mx-[^ohv][a-z]+\s*=\s*"[^"]")/g;
+var MxEvent = /<[a-z]+(?:[^">]|"[^"]*")+(?=>)/g;
+var MxOwner = /\smx-owner\s*=/;
+var MxEvt = /\smx-[^v][a-z]+\s*=/;
+var MxEFun = function(m) {
+    return !MxOwner.test(m) && MxEvt.test(m) ? m + ' mx-owner="' + MxEFun.t + '"' : m;
+};
+var WEvent = {
+    prevent: function(e) {
+        e = e || this.domEvent;
+        if (e.preventDefault) {
+            e.preventDefault();
+        } else {
+            e.returnValue = false;
+        }
+    },
+    stop: function(e) {
+        e = e || this.domEvent;
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        } else {
+            e.cancelBubble = true;
+        }
+    },
+    halt: function(e) {
+        this.prevent(e);
+        this.stop(e);
+    }
+};
+var EvtInfoReg = /(\w+)(?:<(\w+)>)?(?:{([\s\S]*)})?/;
+var EvtParamsReg = /(\w+):([^,]+)/g;
 /**
  * View类
  * @name View
@@ -98,44 +129,7 @@ Mix(View, {
     }
 });
 
-
-var VProto = View.prototype;
-var CollectGarbage = window.CollectGarbage || Magix.noop;
-//var MxEvent=/<(\w+)([\s\S]+?mx-[^ohv][a-z]+\s*=\s*"[^"]")/g;
-var MxEvent = /<[a-z]+(?:[^">]|"[^"]*")+(?=>)/g;
-var MxOwner = /\smx-owner\s*=/;
-var MxEvt = /\smx-[^v][a-z]+\s*=/;
-var MxEFun = function(m) {
-    return !MxOwner.test(m) && MxEvt.test(m) ? m + ' mx-owner="' + MxEFun.t + '"' : m;
-};
-var WEvent = {
-    prevent: function(e) {
-        e = e || this.domEvent;
-        if (e.preventDefault) {
-            e.preventDefault();
-        } else {
-            e.returnValue = false;
-        }
-    },
-    stop: function(e) {
-        e = e || this.domEvent;
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        } else {
-            e.cancelBubble = true;
-        }
-    },
-    halt: function(e) {
-        this.prevent(e);
-        this.stop(e);
-    }
-};
-var EvtInfoReg = /(\w+)(?:<(\w+)>)?(?:{([\s\S]*)})?/;
-var EvtParamsReg = /(\w+):([^,]+)/g;
-
-Mix(VProto, Event);
-
-Mix(VProto, {
+Mix(Mix(View.prototype, Event), {
     /**
      * @lends View#
      */

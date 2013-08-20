@@ -29,7 +29,7 @@ var WhiteList = {
 var WrapDone = function(fn, model, idx) {
     return function() {
         return fn.apply(model, [model, idx].concat(Slice.call(arguments)));
-    }
+    };
 };
 var UsedModel = function(m, f) {
     if (f) {
@@ -53,7 +53,6 @@ Mix(MManager, {
      * @param {Model} modelClass Model类
      */
     create: function(modelClass) {
-        var me = this;
         if (!modelClass) {
             throw Error('MManager.create:modelClass ungiven');
         }
@@ -66,7 +65,7 @@ var FetchFlags = {
     ORDER: 4
 };
 var Now = Date.now || function() {
-        return +new Date()
+        return +new Date();
     };
 /**
  * model请求类
@@ -130,7 +129,6 @@ Mix(MRequest.prototype, {
             doneArgs = new Array(done.length);
         }
         var doneFn = function(model, idx, data, err) {
-            console.log(me.$destroy, idx, err, model, data);
             if (me.$destroy) return; //销毁，啥也不做
             current++;
             delete reqModels[model.id];
@@ -200,7 +198,6 @@ Mix(MRequest.prototype, {
                     doneArgs.push(last);
                 }
                 me.$ntId = setTimeout(function() { //前面的任务可能从缓存中来，执行很快
-                    console.log('doneArgsdoneArgs', doneArgs);
                     me.doNext(doneArgs);
                 }, 30);
             }
@@ -217,7 +214,7 @@ Mix(MRequest.prototype, {
         for (var i = 0, model; i < models.length; i++) {
             model = models[i];
             if (model) {
-                var modelEntity, modelInfo;
+                var modelEntity;
                 var modelInfo = host.getModel(model, save);
                 var cacheKey = modelInfo.cacheKey;
                 modelEntity = modelInfo.entity;
@@ -358,7 +355,6 @@ Mix(MRequest.prototype, {
         if (queue) {
             var one = queue.shift();
             if (one) {
-                console.log(one, preArgs);
                 SafeExec(one, [me].concat(preArgs), me);
             }
         }
@@ -630,7 +626,6 @@ Mix(MManager.prototype, {
         }
         var meta = metas[name];
         if (!meta) {
-            console.log(modelAttrs);
             throw Error('Not found:' + modelAttrs.name);
         }
         return meta;
@@ -657,7 +652,7 @@ Mix(MManager.prototype, {
             entity: entity,
             cacheKey: entity.$mm.cacheKey,
             needUpdate: needUpdate
-        }
+        };
     },
     /**
      * 保存models，所有请求完成回调done
@@ -733,7 +728,6 @@ Mix(MManager.prototype, {
     clearCacheByName: function(name) {
         var me = this;
         var modelsCache = me.$mCache;
-        var test;
         var list = modelsCache.c;
         for (var i = 0; i < list.length; i++) {
             var one = list[i];

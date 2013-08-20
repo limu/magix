@@ -225,9 +225,7 @@ Mix(Mix(Vframe.prototype, Event), {
                         });
                         view.on('prerender', function() {
                             if (!me.unmountZoneVframes()) {
-                                me.cAlter({
-                                    caused: me.id
-                                });
+                                me.cAlter();
                             }
                         });
 
@@ -254,11 +252,9 @@ Mix(Mix(Vframe.prototype, Event), {
         var me = this;
         if (me.view) {
             if (!GlobalAlter) {
-                GlobalAlter = {
-                    caused: me.id
-                };
+                GlobalAlter = {};
             }
-            me.unmountZoneVframes();
+            me.unmountZoneVframes(); //子view中存在!autoMounted的节点
             me.cAlter(GlobalAlter);
             me.view.destroy();
             var node = $(me.id);
@@ -332,14 +328,16 @@ Mix(Mix(Vframe.prototype, Event), {
                 key = IdIt(vframe);
                 if (!Has(subs, key)) {
                     mxView = vframe.getAttribute(MxView);
-                    mxBuild = !vframe.getAttribute(MxBuild) == IsDefaultTagName;
+                    mxBuild = !vframe.getAttribute(MxBuild);
+                    mxBuild = mxBuild == IsDefaultTagName;
                     if (mxBuild || mxView) {
                         me.mountVframe(key, mxView, viewInitParams, autoMount);
                         var svs = $$(vframe, TagName);
                         for (var j = 0, c = svs.length, temp; j < c; j++) {
                             temp = svs[j];
                             mxView = temp.getAttribute(MxView);
-                            mxBuild = !vframe.getAttribute(MxBuild) == IsDefaultTagName;
+                            mxBuild = !temp.getAttribute(MxBuild);
+                            mxBuild = mxBuild == IsDefaultTagName;
                             if (!mxBuild && !mxView) {
                                 subs[IdIt(temp)] = 1;
                             }
@@ -414,7 +412,7 @@ Mix(Mix(Vframe.prototype, Event), {
         if (me.viewInited && view[methodName]) {
             r = SafeExec(view[methodName], args, view);
         }
-        return r
+        return r;
     },
     /**
      * 通知所有的子view创建完成
@@ -437,7 +435,7 @@ Mix(Mix(Vframe.prototype, Event), {
         if (p && !Has(p.rM, mId)) {
 
             p.rM[mId] = p.cM[mId];
-            p.rC++
+            p.rC++;
 
             if (p.rC == p.cC) {
                 p.cCreated(e);
@@ -450,6 +448,7 @@ Mix(Mix(Vframe.prototype, Event), {
      */
     cAlter: function(e) {
         var me = this;
+        if (!e) e = {};
         delete me.fcc;
         if (!me.fca) {
             var view = me.view;

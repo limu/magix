@@ -15,11 +15,42 @@ var WrapFn = function(fn) {
             r = fn.apply(me, arguments);
         }
         return r;
-    }
+    };
 };
 
 var EvtInfoCache = Magix.cache(40);
 
+
+var MxEvt = /\smx-(?!view|defer|owner)[a-z]+\s*=\s*['"]/g;
+var MxEvtSplit = String.fromCharCode(26);
+
+
+
+
+var WEvent = {
+    prevent: function(e) {
+        e = e || this.domEvent;
+        if (e.preventDefault) {
+            e.preventDefault();
+        } else {
+            e.returnValue = false;
+        }
+    },
+    stop: function(e) {
+        e = e || this.domEvent;
+        if (e.stopPropagation) {
+            e.stopPropagation();
+        } else {
+            e.cancelBubble = true;
+        }
+    },
+    halt: function(e) {
+        this.prevent(e);
+        this.stop(e);
+    }
+};
+var EvtInfoReg = /(\w+)(?:<(\w+)>)?(?:{([\s\S]*)})?/;
+var EvtParamsReg = /(\w+):([^,]+)/g;
 /**
  * View类
  * @name View
@@ -98,44 +129,7 @@ Mix(View, {
     }
 });
 
-
-var VProto = View.prototype;
-
-//var MxEvent=/<(\w+)([\s\S]+?mx-[^ohv][a-z]+\s*=\s*"[^"]")/g;
-var MxEvent = /<[a-z]+(?:[^">]|"[^"]*")+(?=>)/g;
-var MxOwner = /\smx-owner\s*=/;
-var MxEvt = /\smx-[^v][a-z]+\s*=/;
-var MxEFun = function(m) {
-    return !MxOwner.test(m) && MxEvt.test(m) ? m + ' mx-owner="' + MxEFun.t + '"' : m;
-};
-var WEvent = {
-    prevent: function(e) {
-        e = e || this.domEvent;
-        if (e.preventDefault) {
-            e.preventDefault();
-        } else {
-            e.returnValue = false;
-        }
-    },
-    stop: function(e) {
-        e = e || this.domEvent;
-        if (e.stopPropagation) {
-            e.stopPropagation();
-        } else {
-            e.cancelBubble = true;
-        }
-    },
-    halt: function(e) {
-        this.prevent(e);
-        this.stop(e);
-    }
-};
-var EvtInfoReg = /(\w+)(?:<(\w+)>)?(?:{([\s\S]*)})?/;
-var EvtParamsReg = /(\w+):([^,]+)/g;
-
-Mix(VProto, Event);
-
-Mix(VProto, {
+Mix(Mix(View.prototype, Event), {
     /**
      * @lends View#
      */
@@ -293,12 +287,11 @@ Mix(VProto, {
         return me.sign;
     },
     /**
-     * 包装mx-event，自动添加mx-owner属性
+     * 包装mx-event，自动添加vframe id,用于事件发生时，调用该view处理
      * @param {String} html html字符串
      */
     wrapMxEvent: function(html) {
-        MxEFun.t = this.id;
-        return String(html).replace(MxEvent, MxEFun);
+        return String(html).replace(MxEvt, '$&' + this.id + MxEvtSplit);
     },
     /**
      * 设置view的html内容
