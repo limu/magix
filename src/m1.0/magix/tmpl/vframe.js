@@ -34,6 +34,23 @@ var $C = function(tag) {
 var IdIt = function(dom) {
     return dom.id || (dom.id = 'magix_vf_' + (VframeIdCounter--));
 };
+
+var NodeIn = function(a, b, r) {
+    a = $(a);
+    b = $(b);
+    if (a && b) {
+        if (a !== b) {
+            try {
+                r = b.contains ? b.contains(a) : b.compareDocumentPosition(a) & 16;
+            } catch (e) {
+                r = 0;
+            }
+        } else {
+            r = 1;
+        }
+    }
+    return r;
+};
 var ScriptsReg = /<script[^>]*>[\s\S]*?<\/script>/ig;
 var RefLoc;
 /**
@@ -383,20 +400,20 @@ Mix(Mix(Vframe.prototype, Event), {
         var me = this;
         var children;
         var hasVframe;
+        var p;
         if (zoneId) {
-            children = $$(zoneId, TagName);
-            var ids = {}, cs = me.cM;
-            for (var i = children.length - 1, o; i >= 0; i--) {
-                o = children[i].id;
-                if (Has(cs, o)) {
-                    ids[o] = 1;
+            var cm = me.cM;
+            var ids = {};
+            for (p in cm) {
+                if (NodeIn(p, zoneId)) {
+                    ids[p] = 1;
                 }
             }
             children = ids;
         } else {
             children = me.cM;
         }
-        for (var p in children) {
+        for (p in children) {
             hasVframe = 1;
             me.unmountVframe(p, 1);
         }
