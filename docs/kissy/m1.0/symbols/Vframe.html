@@ -419,7 +419,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/Vframe.html#mountVframe">mountVframe</a></b>
-                                                <span class="param">(id, viewPath, viewInitParams, autoMount)</span>
+                                                <span class="param">(id, viewPath, viewInitParams)</span>
                                                 
                                                 
                                                 
@@ -439,7 +439,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/Vframe.html#mountZoneVframes">mountZoneVframes</a></b>
-                                                <span class="param">(HTMLElement|String, viewInitParams, autoMount)</span>
+                                                <span class="param">(HTMLElement|String, viewInitParams)</span>
                                                 
                                                 
                                                 
@@ -469,7 +469,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/Vframe.html#unmountVframe">unmountVframe</a></b>
-                                                <span class="param">(id)</span>
+                                                <span class="param">(id, inner)</span>
                                                 
                                                 
                                                 
@@ -489,7 +489,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/Vframe.html#unmountZoneVframes">unmountZoneVframes</a></b>
-                                                <span class="param">(zoneId)</span>
+                                                <span class="param">(zoneId, inner)</span>
                                                 
                                                 
                                                 
@@ -897,7 +897,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">mountVframe</b>
-                                                <span class="param">(id, viewPath, viewInitParams, autoMount)</span>
+                                                <span class="param">(id, viewPath, viewInitParams)</span>
                                                 
                                                 
                                                 
@@ -941,15 +941,6 @@ dl.data .dd{
                                                             
                                                             <span class="type">{Object}</span> 
                                                             <span class="desc">传递给view init方法的参数</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">autoMount</b>
-                                                            
-                                                            
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">是否自动渲染</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1069,7 +1060,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">mountZoneVframes</b>
-                                                <span class="param">(HTMLElement|String, viewInitParams, autoMount)</span>
+                                                <span class="param">(HTMLElement|String, viewInitParams)</span>
                                                 
                                                 
                                                 
@@ -1102,17 +1093,8 @@ dl.data .dd{
                                                             <b class="name">viewInitParams</b>
                                                             
                                                             
-                                                            
-                                                            <span class="desc"></span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">autoMount</b>
-                                                            
-                                                            
-                                                            
-                                                            <span class="desc"></span>
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">传递给view init方法的参数</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1287,7 +1269,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">unmountVframe</b>
-                                                <span class="param">(id)</span>
+                                                <span class="param">(id, inner)</span>
                                                 
                                                 
                                                 
@@ -1313,6 +1295,15 @@ dl.data .dd{
                                                              ]
                                                             <span class="type">{String}</span> 
                                                             <span class="desc">节点id</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">inner</b>
+                                                            
+                                                            
+                                                            
+                                                            <span class="desc"></span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1379,7 +1370,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">unmountZoneVframes</b>
-                                                <span class="param">(zoneId)</span>
+                                                <span class="param">(zoneId, inner)</span>
                                                 
                                                 
                                                 
@@ -1405,6 +1396,15 @@ dl.data .dd{
                                                              ]
                                                             <span class="type">{HTMLElement|String}</span> 
                                                             <span class="desc">节点对象或id</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">inner</b>
+                                                            
+                                                            
+                                                            
+                                                            <span class="desc"></span>
                                                         </li>
                                                     
                                                     </ul>

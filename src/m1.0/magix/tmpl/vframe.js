@@ -22,8 +22,9 @@ var GlobalAlter;
 var $ = function(id) {
     return typeof id == 'object' ? id : D.getElementById(id);
 };
-var $$ = function(id, tag) {
-    return $(id).getElementsByTagName(tag);
+var $$ = function(id, tag, node) {
+    node = $(id);
+    return node ? node.getElementsByTagName(tag) : [];
 };
 var $C = function(tag) {
     return D.createElement(tag);
@@ -224,7 +225,7 @@ Mix(Mix(Vframe.prototype, Event), {
                             me.mountZoneVframes(0, 0, 1);
                         });
                         view.on('prerender', function() {
-                            if (!me.unmountZoneVframes()) {
+                            if (!me.unmountZoneVframes(0, 1)) {
                                 me.cAlter();
                             }
                         });
@@ -254,7 +255,7 @@ Mix(Mix(Vframe.prototype, Event), {
             if (!GlobalAlter) {
                 GlobalAlter = {};
             }
-            me.unmountZoneVframes(); //子view中存在!autoMounted的节点
+            me.unmountZoneVframes(0, 1); //子view中存在!autoMounted的节点
             me.cAlter(GlobalAlter);
             me.view.destroy();
             var node = $(me.id);
@@ -277,7 +278,6 @@ Mix(Mix(Vframe.prototype, Event), {
      * @param  {String} id             节点id
      * @param  {String} viewPath       view路径
      * @param  {Object} viewInitParams 传递给view init方法的参数
-     * @param  {Boolean} autoMount         是否自动渲染
      * @return {Vframe} vframe对象
      * @example
      * //html
@@ -286,7 +286,7 @@ Mix(Mix(Vframe.prototype, Event), {
      * view.owner.mountVframe('magix_vf_defer','app/views/list',{page:2})
      * //注意：动态向某个节点渲染view时，该节点无须是vframe标签
      */
-    mountVframe: function(id, viewPath, viewInitParams, autoMount) {
+    mountVframe: function(id, viewPath, viewInitParams) {
         var me = this;
         var vom = me.owner;
         var vf = vom.get(id);
@@ -298,7 +298,7 @@ Mix(Mix(Vframe.prototype, Event), {
             if (!Has(me.cM, id)) {
                 me.cC++;
             }
-            me.cM[id] = autoMount;
+            me.cM[id] = 1;
             vom.add(vf);
         }
         vf.mountView(viewPath, viewInitParams);
@@ -307,12 +307,13 @@ Mix(Mix(Vframe.prototype, Event), {
     /**
      * 加载当前view下面的子view，因为view的持有对象是vframe，所以是加载vframes
      * @param {zoneId} HTMLElement|String 节点对象或id
+     * @param  {Object} viewInitParams 传递给view init方法的参数
      */
-    mountZoneVframes: function(zoneId, viewInitParams, autoMount) {
+    mountZoneVframes: function(zoneId, viewInitParams) {
         var me = this;
         //var owner=me.owner;
         var node = zoneId || me.id;
-        me.unmountZoneVframes(node);
+        me.unmountZoneVframes(node, 1);
         /* if(!zoneId){
             node=me.id;
         }else{
@@ -331,7 +332,7 @@ Mix(Mix(Vframe.prototype, Event), {
                     mxBuild = !vframe.getAttribute(MxBuild);
                     mxBuild = mxBuild == IsDefaultTagName;
                     if (mxBuild || mxView) {
-                        me.mountVframe(key, mxView, viewInitParams, autoMount);
+                        me.mountVframe(key, mxView, viewInitParams);
                         var svs = $$(vframe, TagName);
                         for (var j = 0, c = svs.length, temp; j < c; j++) {
                             temp = svs[j];
@@ -346,15 +347,15 @@ Mix(Mix(Vframe.prototype, Event), {
                 }
             }
         }
-        if (me.cC == me.rC) { //有可能在渲染某个vframe时，里面有n个vframes，但立即调用了mountZoneVframes，这个下面没有vframes，所以要等待
-            me.cCreated({});
-        }
+        //if (me.cC == me.rC) { //有可能在渲染某个vframe时，里面有n个vframes，但立即调用了mountZoneVframes，这个下面没有vframes，所以要等待
+        me.cCreated();
+        //}
     },
     /**
      * 销毁vframe
      * @param  {String} [id]      节点id
      */
-    unmountVframe: function(id) {
+    unmountVframe: function(id, inner) { //inner 标识是否是由内部调用，外部不应该传递该参数
         var me = this;
         id = id || me.id;
         var vom = me.owner;
@@ -368,6 +369,9 @@ Mix(Mix(Vframe.prototype, Event), {
             if (p && Has(p.cM, id)) {
                 delete p.cM[id];
                 p.cC--;
+                if (!inner) {
+                    p.cCreated();
+                }
             }
         }
     },
@@ -375,7 +379,7 @@ Mix(Mix(Vframe.prototype, Event), {
      * 销毁某个区域下面的所有子vframes
      * @param {HTMLElement|String} [zoneId]节点对象或id
      */
-    unmountZoneVframes: function(zoneId) {
+    unmountZoneVframes: function(zoneId, inner) {
         var me = this;
         var children;
         var hasVframe;
@@ -394,7 +398,10 @@ Mix(Mix(Vframe.prototype, Event), {
         }
         for (var p in children) {
             hasVframe = 1;
-            me.unmountVframe(p);
+            me.unmountVframe(p, 1);
+        }
+        if (!inner) {
+            me.cCreated();
         }
         return hasVframe;
     },
@@ -420,25 +427,25 @@ Mix(Mix(Vframe.prototype, Event), {
      */
     cCreated: function(e) {
         var me = this;
-        var view = me.view;
-        if (view && !me.fcc) {
-            me.fcc = 1;
-            delete me.fca;
-            view.fire(Created, e);
-            me.fire(Created, e);
-        }
-        var vom = me.owner;
-        vom.vfCreated();
+        if (me.cC == me.rC) {
+            var view = me.view;
+            if (view && !me.fcc) {
+                me.fcc = 1;
+                delete me.fca;
+                view.fire(Created, e);
+                me.fire(Created, e);
+            }
+            var vom = me.owner;
+            vom.vfCreated();
 
-        var mId = me.id;
-        var p = vom.get(me.pId);
-        if (p && !Has(p.rM, mId)) {
+            var mId = me.id;
+            var p = vom.get(me.pId);
+            if (p && !Has(p.rM, mId)) {
 
-            p.rM[mId] = p.cM[mId];
-            p.rC++;
-
-            if (p.rC == p.cC) {
+                p.rM[mId] = p.cM[mId];
+                p.rC++;
                 p.cCreated(e);
+
             }
         }
     },
@@ -463,12 +470,9 @@ Mix(Mix(Vframe.prototype, Event), {
 
 
             if (p && Has(p.rM, mId)) {
-                var autoMount = p.rM[mId];
                 p.rC--;
                 delete p.rM[mId];
-                if (autoMount) {
-                    p.cAlter(e);
-                }
+                p.cAlter(e);
             }
         }
     },
