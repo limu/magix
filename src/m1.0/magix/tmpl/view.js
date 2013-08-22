@@ -23,7 +23,9 @@ var EvtInfoCache = Magix.cache(40);
 
 var MxEvt = /\smx-(?!view|defer|owner)[a-z]+\s*=\s*['"]/g;
 var MxEvtSplit = String.fromCharCode(26);
-
+var DefaultLocationChange = function() {
+    this.render();
+};
 
 
 
@@ -360,6 +362,9 @@ Mix(Mix(View.prototype, Event), {
         }
         if (args) {
             loc.keys = keys.concat(String(args).split(COMMA));
+        }
+        if (me.locationChange == Magix.noop) {
+            me.locationChange = DefaultLocationChange;
         }
     },
     /**

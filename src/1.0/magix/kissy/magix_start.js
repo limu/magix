@@ -22,7 +22,7 @@
                 }
             },
             start: function(cfg) {
-                tempCfg = cfg;
+                tempCfg = cfg || {};
             }
         };
         KISSY.use('magix/magix', function(S, M) {

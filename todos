@@ -32,3 +32,6 @@
         }
     })
     //<a href="#!/home" mx-click="save">save</a>
+
+
+5. 调用observeLocation后，如果当前view没有写locationChange，则自动生成一个刷新用的locationChange

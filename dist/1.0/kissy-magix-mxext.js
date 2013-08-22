@@ -883,7 +883,7 @@ var Router = Mix({
      * @param {String} [href] href
      * @return {Object} 解析的对象
      */
-    parseQH: function(href) {
+    parseQH: function(href, inner) {
         href = href || WIN.location.href;
 
         var me = Router;
@@ -924,7 +924,7 @@ var Router = Mix({
             };
             HrefCache.set(href, result);
         }
-        if (!result.view) {
+        if (inner && !result.view) {
             //
             var tempPathname;
             /*
@@ -1026,7 +1026,7 @@ var Router = Mix({
      */
     route: function() {
         var me = Router;
-        var location = me.parseQH();
+        var location = me.parseQH(0, 1);
         var oldLocation = LLoc || {
             params: {},
             href: '~'
@@ -4838,7 +4838,7 @@ var MxView = View.extend({
                 }
             },
             start: function(cfg) {
-                tempCfg = cfg;
+                tempCfg = cfg || {};
             }
         };
         KISSY.use('magix/magix', function(S, M) {

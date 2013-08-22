@@ -9,6 +9,7 @@ module.exports = function(grunt) {
     var docDir = '../docs';
     var platType = String(grunt.option('platType')).replace(/'/g, ''); //'1.0' or 'm1.0'
     var loaderType = String(grunt.option('loaderType')).replace(/'/g, ''); //'kissy' or 'seajs'
+    var isMobile = platType.charAt(0) == 'm';
     if (!platType || !loaderType) {
         grunt.fail.warn('please enter right params');
     }
@@ -38,7 +39,8 @@ module.exports = function(grunt) {
                 dir: tmpDir,
                 distDir: distDir,
                 loaderType: loaderType,
-                platType: platType
+                platType: platType,
+                isMobile: isMobile
             }
         },
         removeunimpl: {

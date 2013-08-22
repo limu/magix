@@ -22,7 +22,7 @@
                 }
             },
             start: function(cfg) {
-                tempCfg = cfg;
+                tempCfg = cfg || {};
             }
         };
         seajs.use('magix/magix', function(M) {

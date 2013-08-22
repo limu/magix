@@ -897,7 +897,7 @@ var Router = Mix({
      * @param {String} [href] href
      * @return {Object} 解析的对象
      */
-    parseQH: function(href) {
+    parseQH: function(href, inner) {
         href = href || WIN.location.href;
 
         var me = Router;
@@ -938,7 +938,7 @@ var Router = Mix({
             };
             HrefCache.set(href, result);
         }
-        if (!result.view) {
+        if (inner && !result.view) {
             //
             var tempPathname;
             /*
@@ -1040,7 +1040,7 @@ var Router = Mix({
      */
     route: function() {
         var me = Router;
-        var location = me.parseQH();
+        var location = me.parseQH(0, 1);
         var oldLocation = LLoc || {
             params: {},
             href: '~'
@@ -2198,7 +2198,9 @@ var EvtInfoCache = Magix.cache(40);
 
 var MxEvt = /\smx-(?!view|defer|owner)[a-z]+\s*=\s*['"]/g;
 var MxEvtSplit = String.fromCharCode(26);
-
+var DefaultLocationChange = function() {
+    this.render();
+};
 
 
 
@@ -2535,6 +2537,9 @@ Mix(Mix(View.prototype, Event), {
         }
         if (args) {
             loc.keys = keys.concat(String(args).split(COMMA));
+        }
+        if (me.locationChange == Magix.noop) {
+            me.locationChange = DefaultLocationChange;
         }
     },
     /**
@@ -4835,39 +4840,3 @@ var MxView = View.extend({
  */
     return MxView;
 });
-/**
- * @fileOverview Magix启动入口
- * @author 行列<xinglie.lkf@taobao.com>
- * @version 1.0
- **/
-(function(W) {
-    document.createElement('vframe');
-    var noop = function() {};
-    if (!W.console) {
-        W.console = {
-            log: noop,
-            info: noop,
-            warn: noop
-        }
-    };
-    var tempCfg, cCfg = {};
-    if (!W.Magix) {
-        W.Magix = {
-            config: function(cfg) {
-                for (var p in cfg) {
-                    cCfg[p] = cfg[p];
-                }
-            },
-            start: function(cfg) {
-                tempCfg = cfg;
-            }
-        };
-        require(['magix/magix'], function(M) {
-            W.Magix = M;
-            M.config(cCfg);
-            if (tempCfg) {
-                M.start(tempCfg);
-            }
-        });
-    }
-})(this);

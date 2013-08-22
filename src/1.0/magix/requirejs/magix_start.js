@@ -22,7 +22,7 @@
                 }
             },
             start: function(cfg) {
-                tempCfg = cfg;
+                tempCfg = cfg || {};
             }
         };
         require(['magix/magix'], function(M) {

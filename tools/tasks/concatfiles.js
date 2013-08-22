@@ -28,12 +28,13 @@ module.exports = function(grunt) {
     // ==========================================================================
     // TASKS
     // ==========================================================================
-    //concat all useful files 
+    //concat all useful files
     grunt.registerMultiTask('concatfiles', 'concat magix files due to order', function() {
         var dir = this.data.dir;
         var platType = this.data.platType;
         var loaderType = this.data.loaderType;
         var distDir = this.data.distDir;
+        var isMobile = this.data.isMobile;
         var maPrefix = dir + SEP + MAGIX + SEP;
         var mePrefix = dir + SEP + MXEXT + SEP;
         var magixArr = ['magix', 'router', 'body', 'event', 'vframe', 'view', 'vom'];
@@ -61,9 +62,15 @@ module.exports = function(grunt) {
         for (var i = 0; i < mxextArr.length; i++) {
             meFiles.push(mePrefix + mxextArr[i] + '.js');
         }
-
-        var extraFiles = maFiles.concat(meFiles).concat(magixStartFile);
-        var basicFiles = maFiles.concat(magixStartFile);
+        var extraFiles;
+        var basicFiles;
+        if (isMobile) {
+            extraFiles = maFiles.concat(meFiles);
+            basicFiles = maFiles;
+        } else {
+            extraFiles = maFiles.concat(meFiles).concat(magixStartFile);
+            basicFiles = maFiles.concat(magixStartFile);
+        }
 
 
         grunt.config.set('concat', {

@@ -367,6 +367,7 @@ var Magix = {
         var me = this;
         cfg = mix(Cfg, cfg);
         me.libEnv(cfg);
+        console.log(cfg);
         if (cfg.ready) {
             safeExec(cfg.ready);
             delete cfg.ready;
