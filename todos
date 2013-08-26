@@ -35,3 +35,11 @@
 
 
 5. 调用observeLocation后，如果当前view没有写locationChange，则自动生成一个刷新用的locationChange
+
+
+6.modelmanager中 动态调整url，before不好使？
+
+
+7.支持 ?debug&src这样的参数
+
+8.fetchOne fetchOrder 简单处理  回调结果处理成数组（判断是否中断）

@@ -8,16 +8,7 @@
  * @property {String} id model唯一标识
  * @property {Boolean} fromCache 在与ModelManager配合使用时，标识当前model对象是不是从缓存中来
  */
-var ProcessObject = function(props, proto, enterObject) {
-    for (var p in proto) {
-        if (Magix.isObject(proto[p])) {
-            if (!Magix.has(props, p)) props[p] = {};
-            ProcessObject(props[p], proto[p], true);
-        } else if (enterObject) {
-            props[p] = proto[p];
-        }
-    }
-};
+
 var GUID = +new Date();
 var Model = function(ops) {
     if (ops) {
@@ -332,20 +323,12 @@ Magix.mix(Model.prototype, {
      */
     request: function(callback, options) {
         if (!callback) callback = function() {};
-        var callbackIsFn = Magix.isFunction(callback);
-
-        var success = callback.success;
-        var error = callback.error;
-
         var me = this;
         me.$abort = false;
-        var temp = function(data, err) {
+        var temp = function(err, data) {
             if (!me.$abort) {
                 if (err) {
-                    callbackIsFn && callback(data, err, options);
-                    if (error) {
-                        error.call(me, err);
-                    }
+                    callback(err, data, options);
                 } else {
                     if (data) {
                         var val = me.parse(data);
@@ -356,10 +339,7 @@ Magix.mix(Model.prototype, {
                         }
                         me.set(val, null, true);
                     }
-                    callbackIsFn && callback(data, err, options);
-                    if (success) {
-                        success.call(me, data);
-                    }
+                    callback(err, data, options);
                 }
             }
         };

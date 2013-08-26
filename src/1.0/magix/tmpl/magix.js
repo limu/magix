@@ -2,7 +2,7 @@ var PathRelativeReg = /\/\.\/|\/[^\/]+?\/\.{2}\/|([^:\/])\/\/+/;
 var PathTrimFileReg = /\/[^\/]*$/;
 var PathTrimParamsReg = /[#?].*$/;
 var EMPTY = '';
-var ParamsReg = /([^=&?\/#]+)=([^&=#?]*)/g;
+var ParamsReg = /([^=&?\/#]+)=?([^&=#?]*)/g;
 var PATHNAME = 'pathname';
 var ProtocalReg = /^https?:\/\//i;
 var Templates = {};
@@ -493,6 +493,7 @@ var Magix = {
             } else if (!~path.indexOf('=')) { //没有=号，路径可能是 xxx 相对路径
                 pathname = path;
             }
+            path = path.replace(pathname, EMPTY);
 
             if (pathname) {
                 if (ProtocalReg.test(pathname)) { //解析以https?:开头的网址

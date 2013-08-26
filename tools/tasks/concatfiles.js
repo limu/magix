@@ -35,10 +35,12 @@ module.exports = function(grunt) {
         var loaderType = this.data.loaderType;
         var distDir = this.data.distDir;
         var isMobile = this.data.isMobile;
+        var combosDir = this.data.combosDir;
+
         var maPrefix = dir + SEP + MAGIX + SEP;
         var mePrefix = dir + SEP + MXEXT + SEP;
         var magixArr = ['magix', 'router', 'body', 'event', 'vframe', 'view', 'vom'];
-        var mxextArr = ['mmanager', 'model', 'router', 'view'];
+        var mxextArr = ['mmanager', 'model', 'view'];
         //删除dist中原来的文件
         var destMagixPrefix = distDir + SEP + platType + SEP + loaderType + '-magix';
         var distArr = ['.js', '-min.js', '-mxext.js', '-mxext-min.js'];
@@ -52,6 +54,24 @@ module.exports = function(grunt) {
             }
         }
 
+        grunt.config.set('copy', {
+            main: {
+                files: [{
+                    expand: true,
+                    cwd: maPrefix,
+                    src: ['**'],
+                    dest: [combosDir, platType, loaderType, MAGIX].join(SEP)
+                }, {
+                    expand: true,
+                    cwd: mePrefix,
+                    src: ['**'],
+                    dest: [combosDir, platType, loaderType, MXEXT].join(SEP)
+                }]
+
+            }
+        });
+
+        grunt.task.run('copy');
         //concat 生成库文件
         var maFiles = [];
         for (var i = 0; i < magixArr.length; i++) {

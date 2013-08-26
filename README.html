@@ -1,0 +1,255 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+
+body{
+  color:#444;
+  font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman',
+              "Hiragino Sans GB", "STXihei", "微软雅黑", serif;
+  font-size:12px;
+  line-height:1.5em;
+  background:#fefefe;
+  width: 45em;
+  margin: 10px auto;
+  padding: 1em;
+  outline: 1300px solid #FAFAFA;
+}
+
+a{ color: #0645ad; text-decoration:none;}
+a:visited{ color: #0b0080; }
+a:hover{ color: #06e; }
+a:active{ color:#faa700; }
+a:focus{ outline: thin dotted; }
+a:hover, a:active{ outline: 0; }
+
+span.backtick {
+  border:1px solid #EAEAEA;
+  border-radius:3px;
+  background:#F8F8F8;
+  padding:0 3px 0 3px;
+}
+
+::-moz-selection{background:rgba(255,255,0,0.3);color:#000}
+::selection{background:rgba(255,255,0,0.3);color:#000}
+
+a::-moz-selection{background:rgba(255,255,0,0.3);color:#0645ad}
+a::selection{background:rgba(255,255,0,0.3);color:#0645ad}
+
+p{
+margin:1em 0;
+}
+
+img{
+max-width:100%;
+}
+
+h1,h2,h3,h4,h5,h6{
+font-weight:normal;
+color:#111;
+line-height:1em;
+}
+h4,h5,h6{ font-weight: bold; }
+h1{ font-size:2.5em; }
+h2{ font-size:2em; border-bottom:1px solid silver; padding-bottom: 5px; }
+h3{ font-size:1.5em; }
+h4{ font-size:1.2em; }
+h5{ font-size:1em; }
+h6{ font-size:0.9em; }
+
+blockquote{
+color:#666666;
+margin:0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+hr { display: block; height: 2px; border: 0; border-top: 1px solid #aaa;border-bottom: 1px solid #eee; margin: 1em 0; padding: 0; }
+
+
+pre , code, kbd, samp { 
+  color: #000; 
+  font-family: monospace; 
+  font-size: 0.88em; 
+  border-radius:3px;
+  background-color: #F8F8F8;
+  border: 1px solid #CCC; 
+}
+pre { white-space: pre; white-space: pre-wrap; word-wrap: break-word; padding: 5px 12px;}
+pre code { border: 0px !important; padding: 0;}
+code { padding: 0 3px 0 3px; }
+
+b, strong { font-weight: bold; }
+
+dfn { font-style: italic; }
+
+ins { background: #ff9; color: #000; text-decoration: none; }
+
+mark { background: #ff0; color: #000; font-style: italic; font-weight: bold; }
+
+sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+sup { top: -0.5em; }
+sub { bottom: -0.25em; }
+
+ul, ol { margin: 1em 0; padding: 0 0 0 2em; }
+li p:last-child { margin:0 }
+dd { margin: 0 0 0 2em; }
+
+img { border: 0; -ms-interpolation-mode: bicubic; vertical-align: middle; }
+
+table { border-collapse: collapse; border-spacing: 0; }
+td { vertical-align: top; }
+
+@media only screen and (min-width: 480px) {
+body{font-size:14px;}
+}
+
+@media only screen and (min-width: 768px) {
+body{font-size:16px;}
+}
+
+@media print {
+  * { background: transparent !important; color: black !important; filter:none !important; -ms-filter: none !important; }
+  body{font-size:12pt; max-width:100%; outline:none;}
+  a, a:visited { text-decoration: underline; }
+  hr { height: 1px; border:0; border-bottom:1px solid black; }
+  a[href]:after { content: " (" attr(href) ")"; }
+  abbr[title]:after { content: " (" attr(title) ")"; }
+  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }
+  pre, blockquote { border: 1px solid #999; padding-right: 1em; page-break-inside: avoid; }
+  tr, img { page-break-inside: avoid; }
+  img { max-width: 100% !important; }
+  @page :left { margin: 15mm 20mm 15mm 10mm; }
+  @page :right { margin: 15mm 10mm 15mm 20mm; }
+  p, h2, h3 { orphans: 3; widows: 3; }
+  h2, h3 { page-break-after: avoid; }
+}
+</style><title>README</title></head><body><h2 id="magix-m10pc10">Magix m1.0与pc1.0的使用差异：</h2>
+<h5 id="pc10pc11">由于移动版本滞后于pc版本，因此在1.0这个版本上，在移动端进行新功能的开发与测试，稳定后会升级到后续的pc1.1版本中</h5>
+<h4 id="modelmanager4wzxhzdk12">ModelManager中的4处回调参数调整：<br /></h4>
+<p>1.fetchAll调整<br />
+   原来fetchAll回调参数：<br /></p>
+<pre><code>fetchAll([{},{},...],function(m1,m2,m3...,errs){//model对象在前 error对象在后
+
+});
+</code></pre>
+
+<p><br />
+现在调整为：<br /></p>
+<pre><code>fetchAll([{},{},...],function(errs,m1,m2,m3...){//error对象在前，model对象在后
+
+});
+</code></pre>
+
+<p>2.fetchOrder调整<br />
+   原来fetchOrder回调参数：<br /></p>
+<pre><code>fetchOrder([{},{},...],function(model,errs,preErrors,preResults){//
+
+});
+</code></pre>
+
+<p><br />
+现在调整为：<br /></p>
+<pre><code>fetchOrder([{},{},...],function(errs,model,preResults){//err与preError合并
+
+});
+</code></pre>
+
+<p>3.fetchOne调整<br />
+   原来fetchOrder回调参数：<br /></p>
+<pre><code>fetchOne([{},{},...],function(model,errs,preErrors,preResults){//
+
+});
+</code></pre>
+
+<p><br />
+现在调整为：<br /></p>
+<pre><code>fetchOne([{},{},...],function(err,model,preResults){//err与preError合并
+
+});
+</code></pre>
+
+<p>4.next调整<br />
+   原来next回调参数：<br /></p>
+<pre><code>request.next(function(request,preReturned1,preReturned2...,errs){//
+
+});
+</code></pre>
+
+<p><br />
+现在调整为：<br /></p>
+<pre><code>request.next(function(errs,preReturned1,preReturned2...){//去掉了request，同时err前置
+
+});
+</code></pre>
+
+<h4 id="_1">事件部分</h4>
+<p>原来写法：</p>
+<pre><code>return View.extend({
+   //...
+   render:function(){
+      //调用
+      this.events.click.test({});
+   },
+   events:{
+      click{
+         test:function(e){
+            //code
+         }
+      }
+   }
+});
+</code></pre>
+
+<p>现在写法：<br /></p>
+<pre><code>return View.extend({
+   //...
+   render:function(){
+      //调用
+      this.test({});
+   },
+   'test&lt;click&gt;':function(e){
+      //code
+   }
+});
+</code></pre>
+
+<h4 id="_2">其它</h4>
+<p>启动入口：<br />
+原来：</p>
+<pre><code>Magix.start({
+
+});
+</code></pre>
+
+<p>现在<br /></p>
+<pre><code>KISSY.use('magix/magix',function(S,Magix){
+   Magix.start({
+
+   });
+});
+</code></pre>
+
+<p>Magix不再做为全局变量提供，请require相应的模块使用里面的功能
+<br />
+<br />
+<br /></p>
+<h2 id="magix-102013-07-22">Magix 1.0稳定版(2013-07-22)</h2>
+<ol>
+<li>移动版与pc版</li>
+<li>增加seajs与requirejs</li>
+<li>完善API文档</li>
+</ol>
+<h2 id="magix-10">Magix 1.0升级简介</h2>
+<ol>
+<li>拆分出magix核心与magix扩展两大块</li>
+<li>全新的Router解析引擎，全面支持history state和hash，支持二者之间平滑切换</li>
+<li>增强的view，丰富的自定义事件和资源管理，DOM事件全面支持不冒泡的事件</li>
+<li>支持底层类库切换，解除对底层类库MVC的依赖</li>
+<li>全新的代码组织方式，高内聚，低耦合</li>
+<li>改进的渲染流程和事件派发</li>
+</ol>
+<h2 id="_3">简介</h2>
+<p><a href="http://magixjs.github.com/">http://magixjs.github.com/</a></p>
+<p>Magix适合用来构建大型的,面向前后端开发者以及IE6友好的,基于MVC结构和Hash驱动的OPOA(One Page One Application)应用.</p>
+<p>Magix对View进行了父子结构抽象,通过VOM(View Object Model)对象,管理带有父子关系的View的展示生命周期.</p>
+<p>Magix特别注意避免单页应用的浏览器内存大量积累和内存泄露.包括:</p>
+<p>1.采取Dom节点即用即释放的方法,保障永不持有Dom节点</p>
+<p>2.采用全新的事件代理方案,高效解耦Dom节点与事件响应体</p>
+<p>Magix基于"约定大于配置"设计原则,可以快速构建可扩展的大型单页面Web应用.同时也特别注意保障可配置性和可扩展性</p></body></html>

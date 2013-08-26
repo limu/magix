@@ -9,7 +9,7 @@ define('magix/view', ["magix/magix", "magix/event", "magix/body"], function(Magi
     var AppHome = Magix.config('appHome');
     var Suffix = Magix.config('debug') ? '?t=' + Date.now() : '';
 
-    var ProcessObject = function(props, proto, enterObject) {
+    /* var ProcessObject = function(props, proto, enterObject) {
         for (var p in proto) {
             if (Magix.isObject(proto[p])) {
                 if (!Has(props, p)) props[p] = {};
@@ -18,35 +18,35 @@ define('magix/view', ["magix/magix", "magix/event", "magix/body"], function(Magi
                 props[p] = proto[p];
             }
         }
-    };
+    };*/
 
 
+    var Tmpls = {}, Locker;
     View.prototype.fetchTmpl = function(fn) {
         var me = this;
         var hasTemplate = 'template' in me;
         if (!hasTemplate) {
-            var i = Magix.tmpl(me.path);
-            if (i.h) {
-                fn(i.v);
+            if (Has(Tmpls, me.path)) {
+                fn(Tmpls[me.path]);
             } else {
                 var file = AppHome + me.path + '.html';
-                var l = ProcessObject[file];
+                var l = Locker[file];
                 var onload = function(tmpl) {
-                    fn(Magix.tmpl(me.path, tmpl));
+                    fn(Tmpls[me.path] = tmpl);
                 };
                 if (l) {
                     l.push(onload);
                 } else {
-                    l = ProcessObject[file] = [onload];
+                    l = Locker[file] = [onload];
                     $.ajax({
                         url: file + Suffix,
                         success: function(x) {
                             SafeExec(l, x);
-                            delete ProcessObject[file];
+                            delete Locker[file];
                         },
                         error: function(e, m) {
                             SafeExec(l, m);
-                            delete ProcessObject[file];
+                            delete Locker[file];
                         }
                     });
                 }
@@ -66,23 +66,6 @@ define('magix/view', ["magix/magix", "magix/event", "magix/body"], function(Magi
         }
         BaseView.extend = me.extend;
         return Magix.extend(BaseView, me, props, statics);
-    };
-    View.prepare = function(oView) {
-        var me = this;
-        if (!oView.wrapUpdate) {
-            oView.wrapUpdate = me.wrapUpdate;
-            oView.extend = me.extend;
-
-            var aimObject = oView.prototype;
-            var start = oView.superclass;
-            var temp;
-            while (start) {
-                temp = start.constructor;
-                ProcessObject(aimObject, temp.prototype);
-                start = temp.superclass;
-            }
-        }
-        oView.wrapUpdate();
     };
     return View;
 });

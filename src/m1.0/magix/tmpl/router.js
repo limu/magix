@@ -261,6 +261,7 @@ var Router = Mix({
             } else { //指定不用history state ，那咱还能说什么呢，直接用hash
                 tempPathname = result.hash[PATHNAME];
             }
+            console.log(tempPathname);
             var view = me.getView(tempPathname);
             Mix(result, view);
         }

@@ -2,10 +2,10 @@ var PathRelativeReg = /\/\.\/|\/[^\/]+?\/\.{2}\/|([^:\/])\/\/+/;
 var PathTrimFileReg = /\/[^\/]*$/;
 var PathTrimParamsReg = /[#?].*$/;
 var EMPTY = '';
-var ParamsReg = /([^=&?\/#]+)=([^&=#?]*)/g;
+var ParamsReg = /([^=&?\/#]+)=?([^&=#?]*)/g;
 var PATHNAME = 'pathname';
 var ProtocalReg = /^https?:\/\//i;
-var Templates = {};
+//var Templates = {};
 var CacheLatest = 0;
 var Slash = '/';
 var DefaultTagName = 'vframe';
@@ -18,7 +18,7 @@ var Cfg = {
     tagName: DefaultTagName,
     rootId: 'magix_vf_root'
 };
-var Has = Templates.hasOwnProperty;
+var Has = {}.hasOwnProperty;
 
 var GSObj = function(o) {
     return function(k, v, r) {
@@ -367,7 +367,6 @@ var Magix = {
         var me = this;
         cfg = mix(Cfg, cfg);
         me.libEnv(cfg);
-        console.log(cfg);
         if (cfg.ready) {
             safeExec(cfg.ready);
             delete cfg.ready;
@@ -494,6 +493,7 @@ var Magix = {
             } else if (!~path.indexOf('=')) { //没有=号，路径可能是 xxx 相对路径
                 pathname = path;
             }
+            path = path.replace(pathname, EMPTY);
 
             if (pathname) {
                 if (ProtocalReg.test(pathname)) { //解析以https?:开头的网址
@@ -519,6 +519,7 @@ var Magix = {
             r.params = params;
             PathToObjCache.set(path, r);
         }
+        console.log(r);
         return r;
     },
     /**
@@ -552,7 +553,7 @@ var Magix = {
      * @param  {String} [value] 模板字符串
      * @return {String}
      */
-    tmpl: function(key, value) {
+    /*tmpl: function(key, value) {
         if (arguments.length == 1) {
             return {
                 v: Templates[key],
@@ -561,7 +562,7 @@ var Magix = {
         }
         Templates[key] = value;
         return value;
-    },
+    },*/
     /**
      * 把列表转化成hash对象
      * @param  {Array} list 源数组

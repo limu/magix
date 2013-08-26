@@ -21,10 +21,10 @@ KISSY.add('magix/magix', function(S) {
 var PathTrimFileReg = /\/[^\/]*$/;
 var PathTrimParamsReg = /[#?].*$/;
 var EMPTY = '';
-var ParamsReg = /([^=&?\/#]+)=([^&=#?]*)/g;
+var ParamsReg = /([^=&?\/#]+)=?([^&=#?]*)/g;
 var PATHNAME = 'pathname';
 var ProtocalReg = /^https?:\/\//i;
-var Templates = {};
+//var Templates = {};
 var CacheLatest = 0;
 var Slash = '/';
 var DefaultTagName = 'vframe';
@@ -37,7 +37,7 @@ var Cfg = {
     tagName: DefaultTagName,
     rootId: 'magix_vf_root'
 };
-var Has = Templates.hasOwnProperty;
+var Has = {}.hasOwnProperty;
 
 var GSObj = function(o) {
     return function(k, v, r) {
@@ -512,6 +512,7 @@ var Magix = {
             } else if (!~path.indexOf('=')) { //没有=号，路径可能是 xxx 相对路径
                 pathname = path;
             }
+            path = path.replace(pathname, EMPTY);
 
             if (pathname) {
                 if (ProtocalReg.test(pathname)) { //解析以https?:开头的网址
@@ -570,7 +571,7 @@ var Magix = {
      * @param  {String} [value] 模板字符串
      * @return {String}
      */
-    tmpl: function(key, value) {
+    /*tmpl: function(key, value) {
         if (arguments.length == 1) {
             return {
                 v: Templates[key],
@@ -579,7 +580,7 @@ var Magix = {
         }
         Templates[key] = value;
         return value;
-    },
+    },*/
     /**
      * 把列表转化成hash对象
      * @param  {Array} list 源数组
@@ -2171,7 +2172,10 @@ var COMMA = ',';
 var EMPTY_ARRAY = [];
 
 var Mix = Magix.mix;
-var WrapAsynUpdateNames = ['render', 'renderUI'];
+var WrapAsynUpdateNames = {
+    render: 1,
+    renderUI: 1
+};
 var WrapKey = '~';
 var WrapFn = function(fn) {
     return function() {
@@ -2220,6 +2224,7 @@ var WEvent = {
 };
 var EvtInfoReg = /(\w+)(?:<(\w+)>)?(?:{([\s\S]*)})?/;
 var EvtParamsReg = /(\w+):([^,]+)/g;
+var EvtMethodReg = /([$\w]+)<([\w,]+)>/;
 /**
  * View类
  * @name View
@@ -2277,21 +2282,28 @@ Mix(View, {
     /**
      * @lends View
      */
-    /**
-     * 对异步更新view的方法进行一次包装
-     * @private
-     */
-    wrapUpdate: function() {
-        var view = this;
-        if (!view[WrapKey]) { //只处理一次
-            view[WrapKey] = 1;
-            var prop = view.prototype;
-            var old;
-            for (var p = WrapAsynUpdateNames.length - 1, name; p > -1; p--) {
-                name = WrapAsynUpdateNames[p];
-                old = prop[name];
-                if (Magix.isFunction(old) && old != Magix.noop) {
-                    prop[name] = WrapFn(old);
+    prepare: function(oView) {
+        var me = this;
+        if (!oView.extend) {
+            oView.extend = me.extend;
+        }
+        if (!oView[WrapKey]) { //只处理一次
+            oView[WrapKey] = 1;
+            var prop = oView.prototype;
+            var old, temp, name, evts, idx;
+            for (var p in prop) {
+                old = prop[p];
+                temp = p.match(EvtMethodReg);
+                if (temp) {
+                    name = temp[1];
+                    evts = temp[2];
+                    prop[name] = old;
+                    evts = evts.split(COMMA);
+                    for (idx = evts.length - 1; idx > -1; idx--) {
+                        prop[evts[idx] + MxEvtSplit + name] = old;
+                    }
+                } else if (WrapAsynUpdateNames[old]) {
+                    prop[p] = WrapFn(old);
                 }
             }
         }
@@ -2661,24 +2673,19 @@ Mix(Mix(View.prototype, Event), {
                 }
                 EvtInfoCache.set(info, m);
             }
-            var events = me.events;
-            if (events) {
-                var eventsType = events[domEvent.type];
-                var fn = WEvent[m.f];
-                if (fn) {
-                    fn.call(WEvent, domEvent);
+            var name = domEvent.type + MxEvtSplit + m.n;
+            var fn = me[name];
+            if (fn) {
+                var tfn = WEvent[m.f];
+                if (tfn) {
+                    tfn.call(WEvent, domEvent);
                 }
-                fn = eventsType && eventsType[m.n];
-                if (fn) {
-                    SafeExec(fn, Mix({
-                        view: me,
-                        currentId: e.cId,
-                        targetId: e.tId,
-                        domEvent: domEvent,
-                        events: events,
-                        params: m.p
-                    }, WEvent), eventsType);
-                }
+                SafeExec(fn, Mix({
+                    currentId: e.cId,
+                    targetId: e.tId,
+                    domEvent: domEvent,
+                    params: m.p
+                }, WEvent));
             }
         }
     },
@@ -2958,7 +2965,7 @@ Mix(Mix(View.prototype, Event), {
     var AppHome = Magix.config('appHome');
     var Suffix = Magix.config('debug') ? '?t=' + S.now() : '';
 
-    var ProcessObject = function(props, proto, enterObject) {
+    /*var ProcessObject = function(props, proto, enterObject) {
         for (var p in proto) {
             if (S.isObject(proto[p])) {
                 if (!Has(props, p)) props[p] = {};
@@ -2967,35 +2974,34 @@ Mix(Mix(View.prototype, Event), {
                 props[p] = proto[p];
             }
         }
-    };
+    };*/
 
-
+    var Tmpls = {}, Locker = {};
     View.prototype.fetchTmpl = function(fn) {
         var me = this;
         var hasTemplate = 'template' in me;
         if (!hasTemplate) {
-            var i = Magix.tmpl(me.path);
-            if (i.h) {
-                fn(i.v);
+            if (Has(Tmpls, me.path)) {
+                fn(Tmpls[me.path]);
             } else {
                 var file = AppHome + me.path + '.html';
-                var l = ProcessObject[file];
+                var l = Locker[file];
                 var onload = function(tmpl) {
-                    fn(Magix.tmpl(me.path, tmpl));
+                    fn(Tmpls[me.path] = tmpl);
                 };
                 if (l) {
                     l.push(onload);
                 } else {
-                    l = ProcessObject[file] = [onload];
+                    l = Locker[file] = [onload];
                     IO({
                         url: file + Suffix,
                         success: function(x) {
                             SafeExec(l, x);
-                            delete ProcessObject[file];
+                            delete Locker[file];
                         },
                         error: function(e, m) {
                             SafeExec(l, m);
-                            delete ProcessObject[file];
+                            delete Locker[file];
                         }
                     });
                 }
@@ -3012,30 +3018,14 @@ Mix(Mix(View.prototype, Event), {
             if (ctor) {
                 SafeExec(ctor, arguments, this);
             }
-        }
+        };
         BaseView.extend = me.extend;
         return S.extend(BaseView, me, props, statics);
     };
-    View.prepare = function(oView) {
-        var me = this;
-        if (!oView.wrapUpdate) {
-            oView.wrapUpdate = me.wrapUpdate;
-            oView.extend = me.extend;
 
-            var aimObject = oView.prototype;
-            var start = oView.superclass;
-            var temp;
-            while (start) {
-                temp = start.constructor;
-                ProcessObject(aimObject, temp.prototype);
-                start = temp.superclass;
-            }
-        }
-        oView.wrapUpdate();
-    };
     return View;
 }, {
-    requires: ["magix/magix", "magix/event", "magix/body", "ajax"]
+    requires: ['magix/magix', 'magix/event', 'magix/body', 'ajax']
 });
 /**
  * @fileOverview VOM
@@ -3315,8 +3305,8 @@ Mix(MRequest.prototype, {
     send: function(models, done, flag, save) {
         var me = this;
         if (me.$doTask) {
-            me.next(function(request) {
-                request.send(models, done, flag, save);
+            me.next(function() {
+                this.send(models, done, flag, save);
             });
             return me;
         }
@@ -3344,7 +3334,7 @@ Mix(MRequest.prototype, {
         if (doneIsArray) {
             doneArgs = new Array(done.length);
         }
-        var doneFn = function(model, idx, data, err) {
+        var doneFn = function(model, idx, err, data) {
             if (me.$destroy) return; //销毁，啥也不做
             current++;
             delete reqModels[model.id];
@@ -3354,7 +3344,7 @@ Mix(MRequest.prototype, {
             if (err) {
                 hasError = true;
                 errorMsg = err;
-                errorArgs[idx] = data;
+                errorArgs[idx] = err;
             } else {
                 if (!cacheKey || (cacheKey && !modelsCache.has(cacheKey))) {
                     if (cacheKey) {
@@ -3375,9 +3365,10 @@ Mix(MRequest.prototype, {
                 var m = doneIsArray ? done[idx] : done;
                 if (m) {
                     UsedModel(model);
-                    doneArgs[idx] = SafeExec(m, [model, hasError ? {
-                        msg: errorMsg
-                    } : null, hasError ? errorArgs : null], me);
+                    if (hasError) {
+                        errorArgs.msg = errorMsg;
+                    }
+                    doneArgs[idx] = SafeExec(m, [errorArgs, model], me);
                 }
             } else if (flag == FetchFlags.ORDER) {
                 //var m=doneIsArray?done[idx]:done;
@@ -3390,9 +3381,10 @@ Mix(MRequest.prototype, {
                 for (var i = orderlyArr.i || 0, t, d; t = orderlyArr[i]; i++) {
                     d = doneIsArray ? done[i] : done;
                     UsedModel(t.m);
-                    doneArgs[i] = SafeExec(d, [t.m, t.e ? {
-                        msg: t.s
-                    } : null, orderlyArr.e ? errorArgs : null, doneArgs], me);
+                    if (t.e) {
+                        errorArgs.msg = t.s;
+                    }
+                    doneArgs[i] = SafeExec(d, [errorArgs, t.m, doneArgs], me);
                     if (t.e) {
                         errorArgs[i] = t.s;
                         orderlyArr.e = 1;
@@ -3401,17 +3393,16 @@ Mix(MRequest.prototype, {
                 orderlyArr.i = i;
             }
 
-
             if (current >= total) {
                 errorArgs.msg = errorMsg;
                 var last = hasError ? errorArgs : null;
                 if (flag == FetchFlags.ALL) {
                     UsedModel(doneArr, 1);
-                    doneArr.push(last);
-                    doneArgs[0] = SafeExec(done, doneArr, me);
-                    doneArgs[1] = last;
+                    doneArr.unshift(last);
+                    doneArgs[0] = last;
+                    doneArgs[1] = SafeExec(done, doneArr, me);
                 } else {
-                    doneArgs.push(last);
+                    doneArgs.unshift(last);
                 }
                 me.$ntId = setTimeout(function() { //前面的任务可能从缓存中来，执行很快
                     me.doNext(doneArgs);
@@ -3583,7 +3574,7 @@ Mix(MRequest.prototype, {
         me.$queue.push(fn);
         if (!me.$doTask) {
             var args = me.$latest || [];
-            me.doNext.apply(me, [me].concat(args));
+            me.doNext.apply(me, [args]);
         }
         return me;
     },
@@ -3598,7 +3589,7 @@ Mix(MRequest.prototype, {
         if (queue) {
             var one = queue.shift();
             if (one) {
-                SafeExec(one, [me].concat(preArgs), me);
+                SafeExec(one, preArgs, me);
             }
         }
         me.$latest = preArgs;
@@ -4096,18 +4087,17 @@ Mix(MManager.prototype, {
  * @version 1.0
  * @author 行列
  */
-KISSY.add("mxext/model", function(S, Magix) {
+KISSY.add('mxext/model', function(S, Magix) {
     var Extend = function(props, ctor) {
         var BaseModel = function() {
             BaseModel.superclass.constructor.apply(this, arguments);
             if (ctor) {
                 Magix.safeExec(ctor, [], this);
             }
-        }
+        };
         Magix.mix(BaseModel, this, {
             prototype: true
         });
-        ProcessObject(props, this.prototype);
         return S.extend(BaseModel, this, props);
     };
     /**
@@ -4120,16 +4110,7 @@ KISSY.add("mxext/model", function(S, Magix) {
  * @property {String} id model唯一标识
  * @property {Boolean} fromCache 在与ModelManager配合使用时，标识当前model对象是不是从缓存中来
  */
-var ProcessObject = function(props, proto, enterObject) {
-    for (var p in proto) {
-        if (Magix.isObject(proto[p])) {
-            if (!Magix.has(props, p)) props[p] = {};
-            ProcessObject(props[p], proto[p], true);
-        } else if (enterObject) {
-            props[p] = proto[p];
-        }
-    }
-};
+
 var GUID = +new Date();
 var Model = function(ops) {
     if (ops) {
@@ -4444,20 +4425,12 @@ Magix.mix(Model.prototype, {
      */
     request: function(callback, options) {
         if (!callback) callback = function() {};
-        var callbackIsFn = Magix.isFunction(callback);
-
-        var success = callback.success;
-        var error = callback.error;
-
         var me = this;
         me.$abort = false;
-        var temp = function(data, err) {
+        var temp = function(err, data) {
             if (!me.$abort) {
                 if (err) {
-                    callbackIsFn && callback(data, err, options);
-                    if (error) {
-                        error.call(me, err);
-                    }
+                    callback(err, data, options);
                 } else {
                     if (data) {
                         var val = me.parse(data);
@@ -4468,10 +4441,7 @@ Magix.mix(Model.prototype, {
                         }
                         me.set(val, null, true);
                     }
-                    callbackIsFn && callback(data, err, options);
-                    if (success) {
-                        success.call(me, data);
-                    }
+                    callback(err, data, options);
                 }
             }
         };
@@ -4553,7 +4523,7 @@ Magix.mix(Model.prototype, {
     };
     return Model;
 }, {
-    requires: ["magix/magix"]
+    requires: ['magix/magix']
 });
 /**
  * @fileOverview 对magix/view的扩展

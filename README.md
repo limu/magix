@@ -1,4 +1,128 @@
-﻿
+﻿##Magix m1.0与pc1.0的使用差异：
+#####由于移动版本滞后于pc版本，因此在1.0这个版本上，在移动端进行新功能的开发与测试，稳定后会升级到后续的pc1.1版本中
+
+####ModelManager中的4处回调参数调整：<br />
+
+1.fetchAll调整<br />
+   原来fetchAll回调参数：<br />
+```
+fetchAll([{},{},...],function(m1,m2,m3...,errs){//model对象在前 error对象在后
+
+});
+```
+
+<br />
+现在调整为：<br />
+```
+fetchAll([{},{},...],function(errs,m1,m2,m3...){//error对象在前，model对象在后
+
+});
+```
+
+2.fetchOrder调整<br />
+   原来fetchOrder回调参数：<br />
+```
+fetchOrder([{},{},...],function(model,errs,preErrors,preResults){//
+
+});
+```
+
+<br />
+现在调整为：<br />
+```
+fetchOrder([{},{},...],function(errs,model,preResults){//err与preError合并
+
+});
+```
+
+3.fetchOne调整<br />
+   原来fetchOrder回调参数：<br />
+```
+fetchOne([{},{},...],function(model,errs,preErrors,preResults){//
+
+});
+```
+
+<br />
+现在调整为：<br />
+```
+fetchOne([{},{},...],function(err,model,preResults){//err与preError合并
+
+});
+```
+
+4.next调整<br />
+   原来next回调参数：<br />
+```
+request.next(function(request,preReturned1,preReturned2...,errs){//
+
+});
+```
+
+<br />
+现在调整为：<br />
+```
+request.next(function(errs,preReturned1,preReturned2...){//去掉了request，同时err前置
+
+});
+```
+####事件部分
+
+原来写法：
+```
+return View.extend({
+   //...
+   render:function(){
+      //调用
+      this.events.click.test({});
+   },
+   events:{
+      click{
+         test:function(e){
+            //code
+         }
+      }
+   }
+});
+```
+
+现在写法：<br />
+
+```
+return View.extend({
+   //...
+   render:function(){
+      //调用
+      this.test({});
+   },
+   'test<click>':function(e){
+      //code
+   }
+});
+```
+
+####其它
+启动入口：<br />
+原来：
+```
+Magix.start({
+
+});
+```
+现在<br />
+```
+KISSY.use('magix/magix',function(S,Magix){
+   Magix.start({
+
+   });
+});
+```
+Magix不再做为全局变量提供，请require相应的模块使用里面的功能
+<br />
+<br />
+<br />
+
+
 ## Magix 1.0稳定版(2013-07-22)
 1. 移动版与pc版
 2. 增加seajs与requirejs

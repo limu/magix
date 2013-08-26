@@ -7,6 +7,7 @@ module.exports = function(grunt) {
     var tmpDir = '../tmp';
     var distDir = '../dist';
     var docDir = '../docs';
+    var combosDir = '../combos';
     var platType = String(grunt.option('platType')).replace(/'/g, ''); //'1.0' or 'm1.0'
     var loaderType = String(grunt.option('loaderType')).replace(/'/g, ''); //'kissy' or 'seajs'
     var isMobile = platType.charAt(0) == 'm';
@@ -40,6 +41,7 @@ module.exports = function(grunt) {
                 distDir: distDir,
                 loaderType: loaderType,
                 platType: platType,
+                combosDir: combosDir,
                 isMobile: isMobile
             }
         },

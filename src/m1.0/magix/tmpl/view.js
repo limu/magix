@@ -4,7 +4,10 @@ var COMMA = ',';
 var EMPTY_ARRAY = [];
 
 var Mix = Magix.mix;
-var WrapAsynUpdateNames = ['render', 'renderUI'];
+var WrapAsynUpdateNames = {
+    render: 1,
+    renderUI: 1
+};
 var WrapKey = '~';
 var WrapFn = function(fn) {
     return function() {
@@ -53,6 +56,7 @@ var WEvent = {
 };
 var EvtInfoReg = /(\w+)(?:<(\w+)>)?(?:{([\s\S]*)})?/;
 var EvtParamsReg = /(\w+):([^,]+)/g;
+var EvtMethodReg = /([$\w]+)<([\w,]+)>/;
 /**
  * View类
  * @name View
@@ -110,21 +114,28 @@ Mix(View, {
     /**
      * @lends View
      */
-    /**
-     * 对异步更新view的方法进行一次包装
-     * @private
-     */
-    wrapUpdate: function() {
-        var view = this;
-        if (!view[WrapKey]) { //只处理一次
-            view[WrapKey] = 1;
-            var prop = view.prototype;
-            var old;
-            for (var p = WrapAsynUpdateNames.length - 1, name; p > -1; p--) {
-                name = WrapAsynUpdateNames[p];
-                old = prop[name];
-                if (Magix.isFunction(old) && old != Magix.noop) {
-                    prop[name] = WrapFn(old);
+    prepare: function(oView) {
+        var me = this;
+        if (!oView.extend) {
+            oView.extend = me.extend;
+        }
+        if (!oView[WrapKey]) { //只处理一次
+            oView[WrapKey] = 1;
+            var prop = oView.prototype;
+            var old, temp, name, evts, idx;
+            for (var p in prop) {
+                old = prop[p];
+                temp = p.match(EvtMethodReg);
+                if (temp) {
+                    name = temp[1];
+                    evts = temp[2];
+                    prop[name] = old;
+                    evts = evts.split(COMMA);
+                    for (idx = evts.length - 1; idx > -1; idx--) {
+                        prop[evts[idx] + MxEvtSplit + name] = old;
+                    }
+                } else if (WrapAsynUpdateNames[old]) {
+                    prop[p] = WrapFn(old);
                 }
             }
         }
@@ -494,24 +505,19 @@ Mix(Mix(View.prototype, Event), {
                 }
                 EvtInfoCache.set(info, m);
             }
-            var events = me.events;
-            if (events) {
-                var eventsType = events[domEvent.type];
-                var fn = WEvent[m.f];
-                if (fn) {
-                    fn.call(WEvent, domEvent);
+            var name = domEvent.type + MxEvtSplit + m.n;
+            var fn = me[name];
+            if (fn) {
+                var tfn = WEvent[m.f];
+                if (tfn) {
+                    tfn.call(WEvent, domEvent);
                 }
-                fn = eventsType && eventsType[m.n];
-                if (fn) {
-                    SafeExec(fn, Mix({
-                        view: me,
-                        currentId: e.cId,
-                        targetId: e.tId,
-                        domEvent: domEvent,
-                        events: events,
-                        params: m.p
-                    }, WEvent), eventsType);
-                }
+                SafeExec(fn, Mix({
+                    currentId: e.cId,
+                    targetId: e.tId,
+                    domEvent: domEvent,
+                    params: m.p
+                }, WEvent));
             }
         }
     },

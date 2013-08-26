@@ -99,8 +99,9 @@ Mix(MRequest.prototype, {
     send: function(models, done, flag, save) {
         var me = this;
         if (me.$doTask) {
-            me.next(function(request) {
-                request.send(models, done, flag, save);
+            me.next(function() {
+                console.log('next?????????????');
+                this.send(models, done, flag, save);
             });
             return me;
         }
@@ -128,7 +129,7 @@ Mix(MRequest.prototype, {
         if (doneIsArray) {
             doneArgs = new Array(done.length);
         }
-        var doneFn = function(model, idx, data, err) {
+        var doneFn = function(model, idx, err, data) {
             if (me.$destroy) return; //销毁，啥也不做
             current++;
             delete reqModels[model.id];
@@ -138,7 +139,7 @@ Mix(MRequest.prototype, {
             if (err) {
                 hasError = true;
                 errorMsg = err;
-                errorArgs[idx] = data;
+                errorArgs[idx] = err;
             } else {
                 if (!cacheKey || (cacheKey && !modelsCache.has(cacheKey))) {
                     if (cacheKey) {
@@ -159,9 +160,10 @@ Mix(MRequest.prototype, {
                 var m = doneIsArray ? done[idx] : done;
                 if (m) {
                     UsedModel(model);
-                    doneArgs[idx] = SafeExec(m, [model, hasError ? {
-                        msg: errorMsg
-                    } : null, hasError ? errorArgs : null], me);
+                    if (hasError) {
+                        errorArgs.msg = errorMsg;
+                    }
+                    doneArgs[idx] = SafeExec(m, [errorArgs, model], me);
                 }
             } else if (flag == FetchFlags.ORDER) {
                 //var m=doneIsArray?done[idx]:done;
@@ -174,9 +176,10 @@ Mix(MRequest.prototype, {
                 for (var i = orderlyArr.i || 0, t, d; t = orderlyArr[i]; i++) {
                     d = doneIsArray ? done[i] : done;
                     UsedModel(t.m);
-                    doneArgs[i] = SafeExec(d, [t.m, t.e ? {
-                        msg: t.s
-                    } : null, orderlyArr.e ? errorArgs : null, doneArgs], me);
+                    if (t.e) {
+                        errorArgs.msg = t.s;
+                    }
+                    doneArgs[i] = SafeExec(d, [errorArgs, t.m, doneArgs], me);
                     if (t.e) {
                         errorArgs[i] = t.s;
                         orderlyArr.e = 1;
@@ -185,17 +188,16 @@ Mix(MRequest.prototype, {
                 orderlyArr.i = i;
             }
 
-
             if (current >= total) {
                 errorArgs.msg = errorMsg;
                 var last = hasError ? errorArgs : null;
                 if (flag == FetchFlags.ALL) {
                     UsedModel(doneArr, 1);
-                    doneArr.push(last);
-                    doneArgs[0] = SafeExec(done, doneArr, me);
-                    doneArgs[1] = last;
+                    doneArr.unshift(last);
+                    doneArgs[0] = last;
+                    doneArgs[1] = SafeExec(done, doneArr, me);
                 } else {
-                    doneArgs.push(last);
+                    doneArgs.unshift(last);
                 }
                 me.$ntId = setTimeout(function() { //前面的任务可能从缓存中来，执行很快
                     me.doNext(doneArgs);
@@ -340,7 +342,7 @@ Mix(MRequest.prototype, {
         me.$queue.push(fn);
         if (!me.$doTask) {
             var args = me.$latest || [];
-            me.doNext.apply(me, [me].concat(args));
+            me.doNext.apply(me, [args]);
         }
         return me;
     },
@@ -355,7 +357,7 @@ Mix(MRequest.prototype, {
         if (queue) {
             var one = queue.shift();
             if (one) {
-                SafeExec(one, [me].concat(preArgs), me);
+                SafeExec(one, preArgs, me);
             }
         }
         me.$latest = preArgs;

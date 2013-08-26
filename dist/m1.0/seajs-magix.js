@@ -19,10 +19,10 @@ define('magix/magix', function(S) {
 var PathTrimFileReg = /\/[^\/]*$/;
 var PathTrimParamsReg = /[#?].*$/;
 var EMPTY = '';
-var ParamsReg = /([^=&?\/#]+)=([^&=#?]*)/g;
+var ParamsReg = /([^=&?\/#]+)=?([^&=#?]*)/g;
 var PATHNAME = 'pathname';
 var ProtocalReg = /^https?:\/\//i;
-var Templates = {};
+//var Templates = {};
 var CacheLatest = 0;
 var Slash = '/';
 var DefaultTagName = 'vframe';
@@ -35,7 +35,7 @@ var Cfg = {
     tagName: DefaultTagName,
     rootId: 'magix_vf_root'
 };
-var Has = Templates.hasOwnProperty;
+var Has = {}.hasOwnProperty;
 
 var GSObj = function(o) {
     return function(k, v, r) {
@@ -510,6 +510,7 @@ var Magix = {
             } else if (!~path.indexOf('=')) { //没有=号，路径可能是 xxx 相对路径
                 pathname = path;
             }
+            path = path.replace(pathname, EMPTY);
 
             if (pathname) {
                 if (ProtocalReg.test(pathname)) { //解析以https?:开头的网址
@@ -568,7 +569,7 @@ var Magix = {
      * @param  {String} [value] 模板字符串
      * @return {String}
      */
-    tmpl: function(key, value) {
+    /*tmpl: function(key, value) {
         if (arguments.length == 1) {
             return {
                 v: Templates[key],
@@ -577,7 +578,7 @@ var Magix = {
         }
         Templates[key] = value;
         return value;
-    },
+    },*/
     /**
      * 把列表转化成hash对象
      * @param  {Array} list 源数组
@@ -2184,7 +2185,10 @@ var COMMA = ',';
 var EMPTY_ARRAY = [];
 
 var Mix = Magix.mix;
-var WrapAsynUpdateNames = ['render', 'renderUI'];
+var WrapAsynUpdateNames = {
+    render: 1,
+    renderUI: 1
+};
 var WrapKey = '~';
 var WrapFn = function(fn) {
     return function() {
@@ -2233,6 +2237,7 @@ var WEvent = {
 };
 var EvtInfoReg = /(\w+)(?:<(\w+)>)?(?:{([\s\S]*)})?/;
 var EvtParamsReg = /(\w+):([^,]+)/g;
+var EvtMethodReg = /([$\w]+)<([\w,]+)>/;
 /**
  * View类
  * @name View
@@ -2290,21 +2295,28 @@ Mix(View, {
     /**
      * @lends View
      */
-    /**
-     * 对异步更新view的方法进行一次包装
-     * @private
-     */
-    wrapUpdate: function() {
-        var view = this;
-        if (!view[WrapKey]) { //只处理一次
-            view[WrapKey] = 1;
-            var prop = view.prototype;
-            var old;
-            for (var p = WrapAsynUpdateNames.length - 1, name; p > -1; p--) {
-                name = WrapAsynUpdateNames[p];
-                old = prop[name];
-                if (Magix.isFunction(old) && old != Magix.noop) {
-                    prop[name] = WrapFn(old);
+    prepare: function(oView) {
+        var me = this;
+        if (!oView.extend) {
+            oView.extend = me.extend;
+        }
+        if (!oView[WrapKey]) { //只处理一次
+            oView[WrapKey] = 1;
+            var prop = oView.prototype;
+            var old, temp, name, evts, idx;
+            for (var p in prop) {
+                old = prop[p];
+                temp = p.match(EvtMethodReg);
+                if (temp) {
+                    name = temp[1];
+                    evts = temp[2];
+                    prop[name] = old;
+                    evts = evts.split(COMMA);
+                    for (idx = evts.length - 1; idx > -1; idx--) {
+                        prop[evts[idx] + MxEvtSplit + name] = old;
+                    }
+                } else if (WrapAsynUpdateNames[old]) {
+                    prop[p] = WrapFn(old);
                 }
             }
         }
@@ -2674,24 +2686,19 @@ Mix(Mix(View.prototype, Event), {
                 }
                 EvtInfoCache.set(info, m);
             }
-            var events = me.events;
-            if (events) {
-                var eventsType = events[domEvent.type];
-                var fn = WEvent[m.f];
-                if (fn) {
-                    fn.call(WEvent, domEvent);
+            var name = domEvent.type + MxEvtSplit + m.n;
+            var fn = me[name];
+            if (fn) {
+                var tfn = WEvent[m.f];
+                if (tfn) {
+                    tfn.call(WEvent, domEvent);
                 }
-                fn = eventsType && eventsType[m.n];
-                if (fn) {
-                    SafeExec(fn, Mix({
-                        view: me,
-                        currentId: e.cId,
-                        targetId: e.tId,
-                        domEvent: domEvent,
-                        events: events,
-                        params: m.p
-                    }, WEvent), eventsType);
-                }
+                SafeExec(fn, Mix({
+                    currentId: e.cId,
+                    targetId: e.tId,
+                    domEvent: domEvent,
+                    params: m.p
+                }, WEvent));
             }
         }
     },
@@ -2971,7 +2978,7 @@ Mix(Mix(View.prototype, Event), {
     var AppHome = Magix.config('appHome');
     var Suffix = Magix.config('debug') ? '?t=' + Date.now() : '';
 
-    var ProcessObject = function(props, proto, enterObject) {
+    /*var ProcessObject = function(props, proto, enterObject) {
         for (var p in proto) {
             if (Magix.isObject(proto[p])) {
                 if (!Has(props, p)) props[p] = {};
@@ -2980,35 +2987,35 @@ Mix(Mix(View.prototype, Event), {
                 props[p] = proto[p];
             }
         }
-    };
+    };*/
 
 
+    var Tmpls = {}, Locker;
     View.prototype.fetchTmpl = function(fn) {
         var me = this;
         var hasTemplate = 'template' in me;
         if (!hasTemplate) {
-            var i = Magix.tmpl(me.path);
-            if (i.h) {
-                fn(i.v);
+            if (Has(Tmpls, me.path)) {
+                fn(Tmpls[me.path]);
             } else {
                 var file = AppHome + me.path + '.html';
-                var l = ProcessObject[file];
+                var l = Locker[file];
                 var onload = function(tmpl) {
-                    fn(Magix.tmpl(me.path, tmpl));
+                    fn(Tmpls[me.path] = tmpl);
                 };
                 if (l) {
                     l.push(onload);
                 } else {
-                    l = ProcessObject[file] = [onload];
+                    l = Locker[file] = [onload];
                     $.ajax({
                         url: file + Suffix,
                         success: function(x) {
                             SafeExec(l, x);
-                            delete ProcessObject[file];
+                            delete Locker[file];
                         },
                         error: function(e, m) {
                             SafeExec(l, m);
-                            delete ProcessObject[file];
+                            delete Locker[file];
                         }
                     });
                 }
@@ -3028,23 +3035,6 @@ Mix(Mix(View.prototype, Event), {
         }
         BaseView.extend = me.extend;
         return Magix.extend(BaseView, me, props, statics);
-    };
-    View.prepare = function(oView) {
-        var me = this;
-        if (!oView.wrapUpdate) {
-            oView.wrapUpdate = me.wrapUpdate;
-            oView.extend = me.extend;
-
-            var aimObject = oView.prototype;
-            var start = oView.superclass;
-            var temp;
-            while (start) {
-                temp = start.constructor;
-                ProcessObject(aimObject, temp.prototype);
-                start = temp.superclass;
-            }
-        }
-        oView.wrapUpdate();
     };
     return View;
 });
