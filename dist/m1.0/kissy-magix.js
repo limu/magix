@@ -824,7 +824,7 @@ var Router = Mix({
      * @return {String} 返回形如app/views/layouts/index这样的字符串
      * @private
      */
-    getView: function(pathname) {
+    getView: function(pathname, loc) {
 
         if (!Pnr) {
             Pnr = {
@@ -850,7 +850,7 @@ var Router = Mix({
         //
         var r = Pnr.rs;
         if (Magix.isFunction(r)) {
-            result = r.call(MxConfig, pathname);
+            result = r.call(MxConfig, pathname, loc);
         } else {
             result = r[pathname]; //简单的在映射表中找
         }
@@ -964,7 +964,7 @@ var Router = Mix({
             } else { //指定不用history state ，那咱还能说什么呢，直接用hash
                 tempPathname = result.hash[PATHNAME];
             }
-            var view = me.getView(tempPathname);
+            var view = me.getView(tempPathname, result);
             Mix(result, view);
         }
         return result;
@@ -2290,7 +2290,7 @@ Mix(View, {
         if (!oView[WrapKey]) { //只处理一次
             oView[WrapKey] = 1;
             var prop = oView.prototype;
-            var old, temp, name, evts, idx;
+            var old, temp, name, evts, idx, revts = {};
             for (var p in prop) {
                 old = prop[p];
                 temp = p.match(EvtMethodReg);
@@ -2300,12 +2300,15 @@ Mix(View, {
                     prop[name] = old;
                     evts = evts.split(COMMA);
                     for (idx = evts.length - 1; idx > -1; idx--) {
-                        prop[evts[idx] + MxEvtSplit + name] = old;
+                        temp = evts[idx];
+                        revts[temp] = 1;
+                        prop[name + MxEvtSplit + temp] = old;
                     }
                 } else if (WrapAsynUpdateNames[old]) {
                     prop[p] = WrapFn(old);
                 }
             }
+            prop.$evts = revts;
         }
     }
 });
@@ -2673,7 +2676,7 @@ Mix(Mix(View.prototype, Event), {
                 }
                 EvtInfoCache.set(info, m);
             }
-            var name = domEvent.type + MxEvtSplit + m.n;
+            var name = m.n + MxEvtSplit + domEvent.type;
             var fn = me[name];
             if (fn) {
                 var tfn = WEvent[m.f];
@@ -2685,7 +2688,7 @@ Mix(Mix(View.prototype, Event), {
                     targetId: e.tId,
                     domEvent: domEvent,
                     params: m.p
-                }, WEvent));
+                }, WEvent), me);
             }
         }
     },
@@ -2697,7 +2700,7 @@ Mix(Mix(View.prototype, Event), {
      */
     delegateEvents: function(destroy) {
         var me = this;
-        var events = me.events;
+        var events = me.$evts;
         var fn = destroy ? Body.un : Body.on;
         var vom = me.vom;
         for (var p in events) {

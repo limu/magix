@@ -43,3 +43,5 @@
 7.支持 ?debug&src这样的参数
 
 8.fetchOne fetchOrder 简单处理  回调结果处理成数组（判断是否中断）
+
+9.vframe加载与location加载，extra的处理问题

@@ -121,7 +121,7 @@ var Router = Mix({
      * @return {String} 返回形如app/views/layouts/index这样的字符串
      * @private
      */
-    getView: function(pathname) {
+    getView: function(pathname, loc) {
 
         if (!Pnr) {
             Pnr = {
@@ -147,7 +147,7 @@ var Router = Mix({
         //console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',pathname);
         var r = Pnr.rs;
         if (Magix.isFunction(r)) {
-            result = r.call(MxConfig, pathname);
+            result = r.call(MxConfig, pathname, loc);
         } else {
             result = r[pathname]; //简单的在映射表中找
         }
@@ -261,8 +261,7 @@ var Router = Mix({
             } else { //指定不用history state ，那咱还能说什么呢，直接用hash
                 tempPathname = result.hash[PATHNAME];
             }
-            console.log(tempPathname);
-            var view = me.getView(tempPathname);
+            var view = me.getView(tempPathname, result);
             Mix(result, view);
         }
         return result;

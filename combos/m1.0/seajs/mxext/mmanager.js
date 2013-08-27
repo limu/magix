@@ -216,7 +216,7 @@ Mix(MRequest.prototype, {
                     if (t.e) {
                         errorArgs.msg = t.s;
                     }
-                    doneArgs[i] = SafeExec(d, [errorArgs, t.m, doneArgs], me);
+                    doneArgs[i] = SafeExec(d, [errorArgs, t.m].concat(doneArgs), me);
                     if (t.e) {
                         errorArgs[i] = t.s;
                         orderlyArr.e = 1;
