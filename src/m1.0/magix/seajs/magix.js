@@ -26,50 +26,6 @@ define('magix/magix', function(S) {
                 fn();
             }
         },
-        libEnv: function(cfg) {
-            var me = this;
-            var appHome = cfg.appHome;
-            var loc = location;
-            var protocol = loc.protocol;
-            var appName = cfg.appName;
-
-            appHome = me.path(loc.href, appHome + Slash);
-
-            /* if(!S.endsWith(appHome,Slash)){
-                appHome+=Slash;
-            }*/
-
-            cfg.appHome = appHome;
-            var debug = cfg.debug;
-
-            if (debug) {
-                debug = appHome.indexOf(loc.protocol + Slash + Slash + loc.host + Slash) == 0;
-            }
-            /*if(appName.charAt(0)=='~'){
-                var reg=new RegExp(Slash+appName+Slash);
-                S.config({
-                    map:[[reg,Slash]]
-                });
-            }*/
-            var appTag = EMPTY;
-            if (debug) {
-                appTag = Date.now();
-            } else {
-                appTag = cfg.appTag;
-            }
-            if (appTag) {
-                appTag += '.js';
-            }
-            /* var appCombine=cfg.appCombine;
-            if(S.isUndefined(appCombine)){
-                appCombine=S.config('combine');
-            }*/
-            var o = {};
-            o[appName] = appHome + appName + '/';
-            seajs.config({
-                paths: o
-            });
-        },
         isArray: $.isArray,
         isFunction: $.isFunction,
         isObject: function(o) {

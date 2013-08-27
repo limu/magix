@@ -807,7 +807,7 @@ Mix(Mix(View.prototype, Event), {
      * 与prerender不同的是：refresh触发后即删除监听列表
      */
 });
-    var AppHome = Magix.config('appHome');
+    var AppRoot = Magix.config('appRoot');
     var Suffix = Magix.config('debug') ? '?t=' + Date.now() : '';
 
     /*var ProcessObject = function(props, proto, enterObject) {
@@ -830,7 +830,7 @@ Mix(Mix(View.prototype, Event), {
             if (Has(Tmpls, me.path)) {
                 fn(Tmpls[me.path]);
             } else {
-                var file = AppHome + me.path + '.html';
+                var file = AppRoot + me.path + '.html';
                 var l = Locker[file];
                 var onload = function(tmpl) {
                     fn(Tmpls[me.path] = tmpl);

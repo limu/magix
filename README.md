@@ -117,7 +117,11 @@ KISSY.use('magix/magix',function(S,Magix){
    });
 });
 ```
-Magix不再做为全局变量提供，请require相应的模块使用里面的功能
+Magix不再做为全局变量提供，请require magix/magix模块使用里面的功能
+
+项目包配置：<br />
+原来在Magix.start中传递appHome appTag之类的Magix会自动帮你配置包信息，现在需要开发者自已配置<br />
+建议开发者传递appRoot参数，以方便Magix或项目中使用app的根目录
 <br />
 <br />
 <br />

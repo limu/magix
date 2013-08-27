@@ -12,9 +12,7 @@ var DefaultTagName = 'vframe';
 
 var Cfg = {
     debug: '*_*',
-    iniFile: 'app/ini',
-    appName: 'app',
-    appHome: './',
+    appRoot: './',
     tagName: DefaultTagName,
     rootId: 'magix_vf_root'
 };
@@ -259,12 +257,6 @@ var Magix = {
      */
     include: unimpl,
     /**
-     * 设置底层类库的环境
-     * @function
-     * @private
-     */
-    libEnv: unimpl,
-    /**
      * 把src对象的值混入到aim对象上
      * @function
      * @param  {Object} aim    要mix的目标对象
@@ -325,18 +317,17 @@ var Magix = {
      * @example
      * Magix.config({
      *      naviveHistory:true,
-     *      appHome:'./test/app'
+     *      appRoot:'./test/app'
      * });
      *
      * var config=Magix.config();
      *
-     * S.log(config.appHome);
+     * S.log(config.appRoot);
      */
     config: GSObj(Cfg),
     /**
      * 应用初始化入口
      * @param  {Object} cfg 初始化配置参数对象
-     * @param {String} cfg.appHome 当前app所在的文件夹路径 http 形式的 如：http://etao.com/srp/app/
      * @param {Boolean} cfg.debug 指定当前app是否是发布版本，当使用发布版本时，view的html和js应该打包成一个 view-min.js文件，否则Magix在加载view时会分开加载view.js和view.html(view.hasTemplate为true的情况下)
      * @param {Boolean} cfg.nativeHistory 是否使用history state,当为true，并且浏览器支持的情况下会用history.pushState修改url，您应该确保服务器能给予支持。如果nativeHistory为false将使用hash修改url
      * @param {String} cfg.defaultView 默认加载的view
@@ -344,17 +335,14 @@ var Magix = {
      * @param {String} cfg.appName 应用的包名，默认app
      * @param {String} cfg.notFoundView 404时加载的view
      * @param {Object} cfg.routes pathname与view映射关系表
-     * @param {String} cfg.appTag app的资源获取时的后缀tag，增量更新时，清除缓存用
      * @param {String} cfg.iniFile ini文件位置
      * @param {String} cfg.rootId 根view的id
-     * @param {Function} cfg.ready Magix完成配置后触发
      * @param {Array} cfg.extensions 需要加载的扩展
      * @example
      * Magix.start({
      *      useHistoryState:true,
-     *      appHome:'http://etao.com/srp/app/',
+     *      appRoot:'http://etao.com/srp/app/',
      *      debug:true,
-     *      appTag:'20121205',
      *      iniFile:'',//是否有ini配置文件
      *      defaultView:'app/views/layouts/default',//默认加载的view
      *      defaultPathname:'/home',
@@ -366,10 +354,15 @@ var Magix = {
     start: function(cfg) {
         var me = this;
         cfg = mix(Cfg, cfg);
-        me.libEnv(cfg);
-        if (cfg.ready) {
-            safeExec(cfg.ready);
-            delete cfg.ready;
+        var appRoot = cfg.appRoot;
+        if (appRoot) {
+            var loc = window.location;
+            appRoot = me.path(loc.href, appRoot + Slash);
+            var debug = cfg.debug;
+            if (debug) {
+                cfg.debug = appRoot.indexOf(loc.protocol + Slash + Slash + loc.host + Slash) === 0;
+            }
+            cfg.appRoot = appRoot;
         }
         me.libRequire(cfg.iniFile, function(I) {
             Cfg = mix(cfg, I, cfg);
@@ -493,8 +486,7 @@ var Magix = {
             } else if (!~path.indexOf('=')) { //没有=号，路径可能是 xxx 相对路径
                 pathname = path;
             }
-            path = path.replace(pathname, EMPTY);
-
+            var querys = path.replace(pathname, EMPTY);
             if (pathname) {
                 if (ProtocalReg.test(pathname)) { //解析以https?:开头的网址
                     var first = pathname.indexOf(Slash, 8); //找最近的 /
@@ -505,7 +497,7 @@ var Magix = {
                     }
                 }
             }
-            path.replace(ParamsReg, function(match, name, value) {
+            querys.replace(ParamsReg, function(match, name, value) {
                 if (decode) {
                     try {
                         value = decodeURIComponent(value);
@@ -519,7 +511,6 @@ var Magix = {
             r.params = params;
             PathToObjCache.set(path, r);
         }
-        console.log(r);
         return r;
     },
     /**

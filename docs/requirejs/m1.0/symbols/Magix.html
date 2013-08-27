@@ -696,7 +696,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">Magix.config({     naviveHistory:true,     appHome:'./test/app'});var config=Magix.config();S.log(config.appHome);</pre>
+                                                            <pre class="brush: js; ">Magix.config({     naviveHistory:true,     appRoot:'./test/app'});var config=Magix.config();S.log(config.appRoot);</pre>
                                                         
                                                 </dd>
                                                 
@@ -1883,15 +1883,6 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">cfg.appHome</b>
-                                                            
-                                                            
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">当前app所在的文件夹路径 http 形式的 如：http://etao.com/srp/app/</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
                                                             <b class="name">cfg.debug</b>
                                                             
                                                             
@@ -1955,15 +1946,6 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">cfg.appTag</b>
-                                                            
-                                                            
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">app的资源获取时的后缀tag，增量更新时，清除缓存用</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
                                                             <b class="name">cfg.iniFile</b>
                                                             
                                                             
@@ -1978,15 +1960,6 @@ dl.data .dd{
                                                             
                                                             <span class="type">{String}</span> 
                                                             <span class="desc">根view的id</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">cfg.ready</b>
-                                                            
-                                                            
-                                                            <span class="type">{Function}</span> 
-                                                            <span class="desc">Magix完成配置后触发</span>
                                                         </li>
                                                     
                                                         <li class="li">
@@ -2018,7 +1991,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">Magix.start({     useHistoryState:true,     appHome:'http://etao.com/srp/app/',     debug:true,     appTag:'20121205',     iniFile:'',//是否有ini配置文件     defaultView:'app/views/layouts/default',//默认加载的view     defaultPathname:'/home',     routes:{         "/home":"app/views/layouts/default"     }});</pre>
+                                                            <pre class="brush: js; ">Magix.start({     useHistoryState:true,     appRoot:'http://etao.com/srp/app/',     debug:true,     iniFile:'',//是否有ini配置文件     defaultView:'app/views/layouts/default',//默认加载的view     defaultPathname:'/home',     routes:{         "/home":"app/views/layouts/default"     }});</pre>
                                                         
                                                 </dd>
                                                 
