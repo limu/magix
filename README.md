@@ -1,4 +1,54 @@
-﻿##Magix m1.0与pc1.0的使用差异：
+﻿##Magix各版本CDN地址
+
+####桌面版1.1
+http://a.tbcdn.cn/apps/e/magix/1.1/kissy-magix.js(KISSY类库，Magix核心未压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.1/kissy-magix-min.js(KISSY类库，Magix核心压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.1/kissy-magix-mxext.js(KISSY类库，Magix核心与扩展未压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.1/kissy-magix-mxext-min.js(KISSY类库，Magix核心与扩展压缩版)
+
+http://a.tbcdn.cn/apps/e/magix/1.1/seajs-magix.js(sejs+jq类库，Magix核心未压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.1/seajs-magix-min.js(sejs+jq类库，Magix核心压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.1/seajs-magix-mxext.js(sejs+jq类库，Magix核心与扩展未压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.1/seajs-magix-mxext-min.js(sejs+jq类库，Magix核心与扩展压缩版)
+
+http://a.tbcdn.cn/apps/e/magix/1.1/requirejs-magix.js(requirejs+jq类库，Magix核心未压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.1/requirejs-magix-min.js(requirejs+jq类库，Magix核心压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.1/requirejs-magix-mxext.js(requirejs+jq类库，Magix核心与扩展未压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.1/requirejs-magix-mxext-min.js(requirejs+jq类库，Magix核心与扩展压缩版)
+
+####移动版1.1
+http://a.tbcdn.cn/apps/e/magix/m1.1/kissy-magix.js(KISSY类库，Magix核心未压缩版)
+http://a.tbcdn.cn/apps/e/magix/m1.1/kissy-magix-min.js(KISSY类库，Magix核心压缩版)
+http://a.tbcdn.cn/apps/e/magix/m1.1/kissy-magix-mxext.js(KISSY类库，Magix核心与扩展未压缩版)
+http://a.tbcdn.cn/apps/e/magix/m1.1/kissy-magix-mxext-min.js(KISSY类库，Magix核心与扩展压缩版)
+
+http://a.tbcdn.cn/apps/e/magix/m1.1/seajs-magix.js(sejs+jq类库，Magix核心未压缩版)
+http://a.tbcdn.cn/apps/e/magix/m1.1/seajs-magix-min.js(sejs+jq类库，Magix核心压缩版)
+http://a.tbcdn.cn/apps/e/magix/m1.1/seajs-magix-mxext.js(sejs+jq类库，Magix核心与扩展未压缩版)
+http://a.tbcdn.cn/apps/e/magix/m1.1/seajs-magix-mxext-min.js(sejs+jq类库，Magix核心与扩展压缩版)
+
+http://a.tbcdn.cn/apps/e/magix/m1.1/requirejs-magix.js(requirejs+jq类库，Magix核心未压缩版)
+http://a.tbcdn.cn/apps/e/magix/m1.1/requirejs-magix-min.js(requirejs+jq类库，Magix核心压缩版)
+http://a.tbcdn.cn/apps/e/magix/m1.1/requirejs-magix-mxext.js(requirejs+jq类库，Magix核心与扩展未压缩版)
+http://a.tbcdn.cn/apps/e/magix/m1.1/requirejs-magix-mxext-min.js(requirejs+jq类库，Magix核心与扩展压缩版)
+
+####桌面版1.0
+http://a.tbcdn.cn/apps/e/magix/1.0/kissy-magix.js(KISSY类库，Magix核心未压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.0/kissy-magix-min.js(KISSY类库，Magix核心压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.0/kissy-magix-mxext.js(KISSY类库，Magix核心与扩展未压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.0/kissy-magix-mxext-min.js(KISSY类库，Magix核心与扩展压缩版)
+
+http://a.tbcdn.cn/apps/e/magix/1.0/seajs-magix.js(sejs+jq类库，Magix核心未压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.0/seajs-magix-min.js(sejs+jq类库，Magix核心压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.0/seajs-magix-mxext.js(sejs+jq类库，Magix核心与扩展未压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.0/seajs-magix-mxext-min.js(sejs+jq类库，Magix核心与扩展压缩版)
+
+http://a.tbcdn.cn/apps/e/magix/1.0/requirejs-magix.js(requirejs+jq类库，Magix核心未压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.0/requirejs-magix-min.js(requirejs+jq类库，Magix核心压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.0/requirejs-magix-mxext.js(requirejs+jq类库，Magix核心与扩展未压缩版)
+http://a.tbcdn.cn/apps/e/magix/1.0/requirejs-magix-mxext-min.js(requirejs+jq类库，Magix核心与扩展压缩版)
+
+##Magix 1.1与Magix1.0的使用差异：
 #####由于移动版本滞后于pc版本，因此在1.0这个版本上，在移动端进行新功能的开发与测试，稳定后会升级到后续的pc1.1版本中
 
 ####ModelManager中的4处回调参数调整：<br />
@@ -122,6 +172,8 @@ Magix不再做为全局变量提供，请require magix/magix模块使用里面�
 项目包配置：<br />
 原来在Magix.start中传递appHome appTag之类的Magix会自动帮你配置包信息，现在需要开发者自已配置<br />
 建议开发者传递appRoot参数，以方便Magix或项目中使用app的根目录
+
+移除postMessageTo,receiveMessage
 <br />
 <br />
 <br />

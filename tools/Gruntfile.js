@@ -11,6 +11,8 @@ module.exports = function(grunt) {
     var platType = String(grunt.option('platType')).replace(/'/g, ''); //'1.0' or 'm1.0'
     var loaderType = String(grunt.option('loaderType')).replace(/'/g, ''); //'kissy' or 'seajs'
     var isMobile = platType.charAt(0) == 'm';
+    var addMagixStartFile = !isMobile && platType == '1.0';
+
     if (!platType || !loaderType) {
         grunt.fail.warn('please enter right params');
     }
@@ -42,7 +44,8 @@ module.exports = function(grunt) {
                 loaderType: loaderType,
                 platType: platType,
                 combosDir: combosDir,
-                isMobile: isMobile
+                isMobile: isMobile,
+                addMagixStartFile: addMagixStartFile
             }
         },
         removeunimpl: {

@@ -35,6 +35,8 @@ module.exports = function(grunt) {
         var loaderType = this.data.loaderType;
         var distDir = this.data.distDir;
         var isMobile = this.data.isMobile;
+        var addMagixStartFile = this.data.addMagixStartFile;
+
         var combosDir = this.data.combosDir;
 
         var maPrefix = dir + SEP + MAGIX + SEP;
@@ -82,20 +84,23 @@ module.exports = function(grunt) {
         for (var i = 0; i < mxextArr.length; i++) {
             meFiles.push(mePrefix + mxextArr[i] + '.js');
         }
-        var extraFiles;
-        var basicFiles;
-        if (isMobile) {
-            extraFiles = maFiles.concat(meFiles);
-            basicFiles = maFiles;
-        } else {
-            extraFiles = maFiles.concat(meFiles).concat(magixStartFile);
-            basicFiles = maFiles.concat(magixStartFile);
-        }
+        var basicFiles = maFiles;
+        var extraFiles = maFiles.concat(meFiles);
+        var footer = '';
 
+        if (!isMobile) {
+            if (addMagixStartFile) {
+                basicFiles = basicFiles.concat(magixStartFile);
+                extraFiles = extraFiles.concat(magixStartFile);
+            } else {
+                footer = ';document.createElement("vframe")';
+            }
+        }
 
         grunt.config.set('concat', {
             options: {
-                separator: '\n'
+                separator: '\n',
+                footer: footer
             },
             basic: {
                 src: basicFiles,
