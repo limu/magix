@@ -9,7 +9,7 @@ KISSY.add('magix/view', function(S, Magix, Event, Body, IO) {
 var Has = Magix.has;
 var COMMA = ',';
 var EMPTY_ARRAY = [];
-
+var Noop = Magix.noop;
 var Mix = Magix.mix;
 var WrapAsynUpdateNames = {
     render: 1,
@@ -117,40 +117,40 @@ var View = function(ops) {
     me.sign = 1; //标识view是否刷新过，对于托管的函数资源，在回调这个函数时，不但要确保view没有销毁，而且要确保view没有刷新过，如果刷新过则不回调
 };
 
-Mix(View, {
-    /**
-     * @lends View
-     */
-    prepare: function(oView) {
-        var me = this;
-        if (!oView.extend) {
-            oView.extend = me.extend;
-        }
-        if (!oView[WrapKey]) { //只处理一次
-            oView[WrapKey] = 1;
-            var prop = oView.prototype;
-            var old, temp, name, evts, idx, revts = {};
-            for (var p in prop) {
+View.prepare = function(oView) {
+    var me = this;
+    var superclass = oView.superclass;
+    if (superclass) {
+        me.prepare(superclass.constructor);
+    }
+    if (!oView[WrapKey]) { //只处理一次
+        oView[WrapKey] = 1;
+        oView.extend = me.extend;
+        var prop = oView.prototype;
+        var old, temp, name, evts, idx, revts = {};
+        for (var p in prop) {
+            if (Has(prop, p)) {
                 old = prop[p];
                 temp = p.match(EvtMethodReg);
                 if (temp) {
                     name = temp[1];
                     evts = temp[2];
-                    prop[name] = old;
                     evts = evts.split(COMMA);
                     for (idx = evts.length - 1; idx > -1; idx--) {
                         temp = evts[idx];
                         revts[temp] = 1;
                         prop[name + MxEvtSplit + temp] = old;
                     }
-                } else if (WrapAsynUpdateNames[old]) {
+                } else if (WrapAsynUpdateNames[p] && old != Noop) {
                     prop[p] = WrapFn(old);
                 }
             }
+        }
+        if (evts) {
             prop.$evts = revts;
         }
     }
-});
+};
 
 Mix(Mix(View.prototype, Event), {
     /**
@@ -168,7 +168,7 @@ Mix(Mix(View.prototype, Event), {
      * 渲染view，供最终view开发者覆盖
      * @function
      */
-    render: Magix.noop,
+    render: Noop,
     /**
      * 当window.location.href有变化时调用该方法（如果您通过observeLocation指定了相关参数，则这些相关参数有变化时才调用locationChange，否则不会调用），供最终的view开发人员进行覆盖
      * @function
@@ -199,13 +199,13 @@ Mix(Mix(View.prototype, Event), {
      *     //...
      * }
      */
-    locationChange: Magix.noop,
+    locationChange: Noop,
     /**
      * 初始化方法，供最终的view开发人员进行覆盖
      * @param {Object} extra 初始化时，外部传递的参数
      * @function
      */
-    init: Magix.noop,
+    init: Noop,
     /**
      * 标识当前view是否有模板文件
      * @default true
@@ -384,7 +384,7 @@ Mix(Mix(View.prototype, Event), {
         if (args) {
             loc.keys = keys.concat(String(args).split(COMMA));
         }
-        if (me.locationChange == Magix.noop) {
+        if (me.locationChange == Noop) {
             me.locationChange = DefaultLocationChange;
         }
     },
@@ -525,6 +525,7 @@ Mix(Mix(View.prototype, Event), {
                 SafeExec(fn, Mix({
                     currentId: e.cId,
                     targetId: e.tId,
+                    type: e.st,
                     domEvent: domEvent,
                     params: m.p
                 }, WEvent), me);
@@ -803,9 +804,15 @@ Mix(Mix(View.prototype, Event), {
      * @param {Object} e
      * 与prerender不同的是：refresh触发后即删除监听列表
      */
+    /**
+     * 当view准备好模板(模板有可能是异步获取的)，调用init和render之前触发。可在该事件内对template进行一次处理
+     * @name View#interact
+     * @event
+     * @param {Object} e
+     */
 });
     var AppRoot = Magix.config('appRoot');
-    var Suffix = Magix.config('debug') ? '?t=' + S.now() : '';
+    var Suffix = '?t=' + S.now();
 
     /*var ProcessObject = function(props, proto, enterObject) {
         for (var p in proto) {
@@ -849,7 +856,7 @@ Mix(Mix(View.prototype, Event), {
                 }
             }
         } else {
-            fn(tmpl);
+            fn(me.template);
         }
     };
 

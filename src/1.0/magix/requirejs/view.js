@@ -52,7 +52,7 @@ define('magix/view', ["magix/magix", "magix/event", "magix/body"], function(Magi
                 }
             }
         } else {
-            fn(tmpl);
+            fn(me.template);
         }
     };
 

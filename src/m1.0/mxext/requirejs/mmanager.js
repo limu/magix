@@ -5,31 +5,16 @@
  **/
 define("mxext/mmanager", ["magix/magix", "magix/event"], function(Magix, Event) {
     /*
-        #begin example-1#
+        #begin mm_fetchall_1#
         define('testMM',["mxext/mmanager","mxext/model"],function(MM,Model){
-            var TestMM=MM.create(Model);
-            TestMM.registerModels([{
-                name:'Test1',
-                url:'/api/test1.json'
-            },{
-                name:'Test2',
-                url:'/api/test2.json',
-                urlParams:{
-                    type:'2'
-                }
-            }]);
-            return TestMM;
-        });
+        #end#
 
+        #begin mm_fetchall_2#
+        });
+        #end#
+
+        #begin mm_fetchall_3#
         requirejs('testMM',function(TM){
-            TM.fetchAll([{
-                name:'Test1'
-            },{
-                name:'Test2'
-            }],function(m1,m2,err){
-
-            });
-        });
         #end#
      */
     eval(Magix.include('../tmpl/mmanager', 1));

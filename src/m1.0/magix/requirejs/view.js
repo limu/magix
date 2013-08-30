@@ -7,7 +7,7 @@ define('magix/view', ["magix/magix", "magix/event", "magix/body"], function(Magi
 
     eval(Magix.include('../tmpl/view'));
     var AppRoot = Magix.config('appRoot');
-    var Suffix = Magix.config('debug') ? '?t=' + Date.now() : '';
+    var Suffix = '?t=' + Date.now();
 
     /* var ProcessObject = function(props, proto, enterObject) {
         for (var p in proto) {
@@ -52,7 +52,7 @@ define('magix/view', ["magix/magix", "magix/event", "magix/body"], function(Magi
                 }
             }
         } else {
-            fn(tmpl);
+            fn(me.template);
         }
     };
 
@@ -63,7 +63,7 @@ define('magix/view', ["magix/magix", "magix/event", "magix/body"], function(Magi
             if (ctor) {
                 SafeExec(ctor, arguments, this);
             }
-        }
+        };
         BaseView.extend = me.extend;
         return Magix.extend(BaseView, me, props, statics);
     };

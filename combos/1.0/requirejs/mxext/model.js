@@ -87,10 +87,9 @@ Magix.mix(Model.prototype, {
 
     },
     /**
-     * Model调用save或load方法后，与服务器同步的方法，供应用开发人员覆盖
+     * Model调用request方法后，与服务器同步的方法，供应用开发人员覆盖
      * @function
-     * @param {Model} model model对象
-     * @param {Object} ops 包含success error的参数信息对象
+     * @param {Function} callback 请求完成后的回调，回调时第1个参数是数据，第2个是错误对象
      * @return {XHR} 最好返回异步请求的对象
      */
     sync: Magix.noop,

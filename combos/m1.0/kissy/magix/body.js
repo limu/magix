@@ -86,6 +86,7 @@ var Body = {
                         view.processEvent({
                             info: info,
                             se: e,
+                            st: eventType,
                             tId: IdIt(target),
                             cId: IdIt(current)
                         });

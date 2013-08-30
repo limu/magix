@@ -7,7 +7,7 @@ KISSY.add('magix/view', function(S, Magix, Event, Body, IO) {
 
     eval(Magix.include('../tmpl/view'));
     var AppRoot = Magix.config('appRoot');
-    var Suffix = Magix.config('debug') ? '?t=' + S.now() : '';
+    var Suffix = '?t=' + S.now();
 
     /*var ProcessObject = function(props, proto, enterObject) {
         for (var p in proto) {
@@ -51,7 +51,7 @@ KISSY.add('magix/view', function(S, Magix, Event, Body, IO) {
                 }
             }
         } else {
-            fn(tmpl);
+            fn(me.template);
         }
     };
 

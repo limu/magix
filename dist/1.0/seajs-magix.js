@@ -26,14 +26,25 @@ var Templates = {};
 var CacheLatest = 0;
 var Slash = '/';
 var DefaultTagName = 'vframe';
-
+/**
+待重写的方法
+@method imimpl
+**/
+var unimpl = function() {
+    throw new Error('unimplement method');
+};
+/**
+ * 空方法
+ */
+var noop = function() {};
 var Cfg = {
     debug:'*_*',
     iniFile: 'app/ini',
     appName: 'app',
     appHome: './',
     tagName: DefaultTagName,
-    rootId: 'magix_vf_root'
+    rootId: 'magix_vf_root',
+    execError: noop
 };
 var Has = Templates.hasOwnProperty;
 
@@ -182,22 +193,12 @@ var safeExec = function(fns, args, context, i, r, e) {
         e = fns[i];
         r = Magix.isFunction(e) && e.apply(context, args);
         
-        
+         
         
     }
     return r;
 };
-/**
-待重写的方法
-@method imimpl
-**/
-var unimpl = function() {
-    throw new Error('unimplement method');
-};
-/**
- * 空方法
- */
-var noop = function() {};
+
 
 
 /**
@@ -366,6 +367,7 @@ var Magix = {
      * @param {String} cfg.rootId 根view的id
      * @param {Function} cfg.ready Magix完成配置后触发
      * @param {Array} cfg.extensions 需要加载的扩展
+     * @param {Function} cfg.execError 发布版以try catch执行一些用户重写的核心流程，当出错时，允许开发者通过该配置项进行捕获。注意：您不应该在该方法内再次抛出任何错误！
      * @example
      * Magix.start({
      *      useHistoryState:true,
@@ -382,24 +384,24 @@ var Magix = {
      */
     start: function(cfg) {
         var me = this;
-        cfg = mix(Cfg, cfg);
-        me.libEnv(cfg);
-        if (cfg.ready) {
-            safeExec(cfg.ready);
-            delete cfg.ready;
+        mix(Cfg, cfg);
+        me.libEnv(Cfg);
+        if (Cfg.ready) {
+            safeExec(Cfg.ready);
+            delete Cfg.ready;
         }
-        me.libRequire(cfg.iniFile, function(I) {
-            Cfg = mix(cfg, I, cfg);
+        me.libRequire(Cfg.iniFile, function(I) {
+            Cfg = mix(Cfg, I, cfg);
             Cfg.tagNameChanged = Cfg.tagName != DefaultTagName;
 
-            var progress = cfg.progress;
+            var progress = Cfg.progress;
             me.libRequire(['magix/router', 'magix/vom'], function(R, V) {
                 R.on('!ul', V.locChged);
                 R.on('changed', V.locChged);
                 if (progress) {
                     V.on('progress', progress);
                 }
-                me.libRequire(cfg.extensions, R.start);
+                me.libRequire(Cfg.extensions, R.start);
             });
         });
     },
@@ -2986,7 +2988,7 @@ Mix(Mix(View.prototype, Event), {
                 }
             }
         } else {
-            fn(tmpl);
+            fn(me.template);
         }
     };
 
@@ -2997,7 +2999,7 @@ Mix(Mix(View.prototype, Event), {
             if (ctor) {
                 SafeExec(ctor, arguments, this);
             }
-        }
+        };
         BaseView.extend = me.extend;
         return Magix.extend(BaseView, me, props, statics);
     };

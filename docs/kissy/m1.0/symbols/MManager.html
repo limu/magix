@@ -906,6 +906,46 @@ dl.data .dd{
                                                                                                 
                                                 
                                                 
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">
+        //定义
+        
+        KISSY.add('testMM',function(S,MM,Model){
+        
+            var TestMM=MM.create(Model);
+            TestMM.registerModels([{
+                name:'Test1',
+                url:'/api/test1.json'
+            },{
+                name:'Test2',
+                url:'/api/test2.json',
+                urlParams:{
+                    type:'2'
+                }
+            }]);
+            return TestMM;
+        
+        },{
+            requires:["mxext/mmanager","mxext/model"]
+        });
+        
+        //使用
+        
+        KISSY.use('testMM',function(S,TM){
+        
+            TM.fetchAll([{
+                name:'Test1'
+            },{
+                name:'Test2'
+            }],function(err,m1,m2){
+
+            });
+        });</pre>
+                                                        
+                                                </dd>
+                                                
                                                 
                                             </dl>                                            
                                         </li>
@@ -981,6 +1021,45 @@ dl.data .dd{
                                                                                                 
                                                 
                                                 
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">
+        //代码片断：
+        //1：获取多个model，回调只有一个时
+        var r=MM.fetchOrder([
+            {name:'M1'},
+            {name:'M2'},
+            {name:'M3'}
+        ],function(err,model){//m1,m2,m3，谁快先调用谁，且被调用三次
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        });
+
+        //2:获取多个model，回调多于一个时
+        var r=MM.fetchOrder([
+            {name:'M1'},
+            {name:'M2'},
+            {name:'M3'}
+        ],function(err,model){//m1什么时间返回，该回调什么时间被调用
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        },function(err,model){//m2什么时间返回，该回调什么时间被调用
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        });</pre>
+                                                        
+                                                </dd>
+                                                
                                                 
                                             </dl>                                            
                                         </li>
@@ -1055,6 +1134,45 @@ dl.data .dd{
                                                 
                                                                                                 
                                                 
+                                                
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">
+        //代码片断：
+        //1：当按顺序获取多个model，回调只有一个时
+        var r=MM.fetchOrder([
+            {name:'M1'},
+            {name:'M2'},
+            {name:'M3'}
+        ],function(err,model){//回调按M1,M2,M3的顺序被调用3次
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        });
+
+        //2:当按顺序获取多个model，回调多于一个时
+        var r=MM.fetchOrder([
+            {name:'M1'},
+            {name:'M2'},
+            {name:'M3'}
+        ],function(err,model){//首先被调用
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        },function(err,model){//其次被调用
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        });</pre>
+                                                        
+                                                </dd>
                                                 
                                                 
                                             </dl>                                            
@@ -1754,7 +1872,7 @@ dl.data .dd{
                                                             
                                                             
                                                             <span class="type">{Function}</span> 
-                                                            <span class="desc">model在发起请求，并且通过Model.sync调用doneess后的回调</span>
+                                                            <span class="desc">model在结束请求，并且成功后回调</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1773,58 +1891,6 @@ dl.data .dd{
                                                 
                                                                                                 
                                                 
-                                                
-                                                <dt>Example</dt>
-                                                <dd>
-                                                        
-                                                            <pre class="brush: js; ">KISSY.add("app/base/mmanager",function(S,MManager,Model){
-                var MM=MManager.create(Model);
-                MM.registerModels([
-                    {
-                        name:'Home_List',
-                        options:{
-                            uri:'test'
-                        },
-                        urlParams:{
-                            a:'12'
-                        },
-                        cacheKey:'',
-                        cacheTime:20000,//缓存多久
-                        before:function(m){
-                        },
-                        after:function(m){
-                        }
-                    },
-                    {
-                        name:'Home_List1',
-                        options:{
-                            uri:'test'
-                        },
-                        before:function(m){
-                        },
-                        after:function(m){
-                        }
-                    }
-                ]);
-                return MM;
-            },{
-                requires:["mxext/mmanager","app/base/model"]
-            });
-
-            //使用
-
-            KISSY.use('app/base/mmanager',function(S,MM){
-                MM.fetchAll([
-                    {name:'Home_List',cacheKey:'aaa',urlParams:{e:'f'}},
-                    {name:'Home_List1',urlParams:{a:'b'}}
-                ],function(m1,m2){
-
-                },function(msg){
-
-                });
-            });</pre>
-                                                        
-                                                </dd>
                                                 
                                                 
                                             </dl>                                            

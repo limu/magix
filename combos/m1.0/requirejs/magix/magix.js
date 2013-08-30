@@ -26,12 +26,23 @@ var ProtocalReg = /^https?:\/\//i;
 var CacheLatest = 0;
 var Slash = '/';
 var DefaultTagName = 'vframe';
+/**
+待重写的方法
+@method imimpl
+**/
+var unimpl = function() {
+    throw new Error('unimplement method');
+};
+/**
+ * 空方法
+ */
+var noop = function() {};
 
 var Cfg = {
-    debug: '*_*',
     appRoot: './',
     tagName: DefaultTagName,
-    rootId: 'magix_vf_root'
+    rootId: 'magix_vf_root',
+    execError: noop
 };
 var Has = {}.hasOwnProperty;
 
@@ -180,22 +191,11 @@ var safeExec = function(fns, args, context, i, r, e) {
         e = fns[i];
         r = Magix.isFunction(e) && e.apply(context, args);
         /*_*/}catch(x){/*_*/
-        
+             Cfg.execError(x);
         /*_*/}/*_*/
     }
     return r;
 };
-/**
-待重写的方法
-@method imimpl
-**/
-var unimpl = function() {
-    throw new Error('unimplement method');
-};
-/**
- * 空方法
- */
-var noop = function() {};
 
 
 /**
@@ -345,21 +345,20 @@ var Magix = {
     /**
      * 应用初始化入口
      * @param  {Object} cfg 初始化配置参数对象
-     * @param {Boolean} cfg.debug 指定当前app是否是发布版本，当使用发布版本时，view的html和js应该打包成一个 view-min.js文件，否则Magix在加载view时会分开加载view.js和view.html(view.hasTemplate为true的情况下)
      * @param {Boolean} cfg.nativeHistory 是否使用history state,当为true，并且浏览器支持的情况下会用history.pushState修改url，您应该确保服务器能给予支持。如果nativeHistory为false将使用hash修改url
      * @param {String} cfg.defaultView 默认加载的view
      * @param {String} cfg.defaultPathname 默认view对应的pathname
-     * @param {String} cfg.appName 应用的包名，默认app
      * @param {String} cfg.notFoundView 404时加载的view
      * @param {Object} cfg.routes pathname与view映射关系表
      * @param {String} cfg.iniFile ini文件位置
      * @param {String} cfg.rootId 根view的id
      * @param {Array} cfg.extensions 需要加载的扩展
+     * @param {String} cfg.appRoot 应用magix文件所在的根目录
+     * @param {Function} cfg.execError 发布版以try catch执行一些用户重写的核心流程，当出错时，允许开发者通过该配置项进行捕获。注意：您不应该在该方法内再次抛出任何错误！
      * @example
      * Magix.start({
      *      useHistoryState:true,
      *      appRoot:'http://etao.com/srp/app/',
-     *      debug:true,
      *      iniFile:'',//是否有ini配置文件
      *      defaultView:'app/views/layouts/default',//默认加载的view
      *      defaultPathname:'/home',
@@ -375,10 +374,6 @@ var Magix = {
         if (appRoot) {
             var loc = window.location;
             appRoot = me.path(loc.href, appRoot + Slash);
-            var debug = cfg.debug;
-            if (debug) {
-                cfg.debug = appRoot.indexOf(loc.protocol + Slash + Slash + loc.host + Slash) === 0;
-            }
             cfg.appRoot = appRoot;
         }
         me.libRequire(cfg.iniFile, function(I) {

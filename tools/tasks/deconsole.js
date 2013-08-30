@@ -39,10 +39,7 @@ module.exports = function(grunt) {
                         return '';
                     }).replace(/\/\/KEEP\s/g, '');
                 }
-            })
+            });
         });
-
-
-
     });
 };

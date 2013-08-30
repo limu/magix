@@ -80,10 +80,10 @@ module.exports = function(grunt) {
                 process: function(content) {
                     content = content.replace(/\S*\/\*_\*\//g, '');
                     content = content.replace('//debug-*_*', "debug:'*_*',");
-                    content = content.replace('//KEEPCONSOLE', 'console')
+                    content = content.replace('//KEEPCONSOLE', 'console');
                     return content;
                 }
             });
         });
     });
-}
+};

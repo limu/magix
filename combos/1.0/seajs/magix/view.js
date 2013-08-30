@@ -840,7 +840,7 @@ Mix(Mix(View.prototype, Event), {
                 }
             }
         } else {
-            fn(tmpl);
+            fn(me.template);
         }
     };
 
@@ -851,7 +851,7 @@ Mix(Mix(View.prototype, Event), {
             if (ctor) {
                 SafeExec(ctor, arguments, this);
             }
-        }
+        };
         BaseView.extend = me.extend;
         return Magix.extend(BaseView, me, props, statics);
     };

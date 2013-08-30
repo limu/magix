@@ -5,33 +5,18 @@
  **/
 define("mxext/mmanager", ["magix/magix", "magix/event"], function(require) {
     /*
-        #begin example-1#
+        #begin mm_fetchall_1#
         define('testMM',["mxext/mmanager","mxext/model"],function(require){
             var MM=require("mxext/mmanager");
             var Model=require("mxext/model");
-            var TestMM=MM.create(Model);
-            TestMM.registerModels([{
-                name:'Test1',
-                url:'/api/test1.json'
-            },{
-                name:'Test2',
-                url:'/api/test2.json',
-                urlParams:{
-                    type:'2'
-                }
-            }]);
-            return TestMM;
-        });
+        #end#
 
+        #begin mm_fetchall_2#
+        });
+        #end#
+
+        #begin mm_fetchall_3#
         seajs.use('testMM',function(TM){
-            TM.fetchAll([{
-                name:'Test1'
-            },{
-                name:'Test2'
-            }],function(m1,m2,err){
-
-            });
-        });
         #end#
      */
     var Magix = require("magix/magix");
@@ -286,35 +271,6 @@ Mix(MRequest.prototype, {
      * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @return {MRequest}
-     * @example
-            
-        define('testMM',["mxext/mmanager","mxext/model"],function(require){
-            var MM=require("mxext/mmanager");
-            var Model=require("mxext/model");
-            var TestMM=MM.create(Model);
-            TestMM.registerModels([{
-                name:'Test1',
-                url:'/api/test1.json'
-            },{
-                name:'Test2',
-                url:'/api/test2.json',
-                urlParams:{
-                    type:'2'
-                }
-            }]);
-            return TestMM;
-        });
-
-        seajs.use('testMM',function(TM){
-            TM.fetchAll([{
-                name:'Test1'
-            },{
-                name:'Test2'
-            }],function(m1,m2,err){
-
-            });
-        });
-        
      */
     fetchAll: function(models, done) {
         return this.send(models, done, FetchFlags.ALL);
@@ -399,6 +355,18 @@ Mix(MRequest.prototype, {
      * 前一个fetchX或saveX任务做完后的下一个任务
      * @param  {Function} fn 回调
      * @return {MRequest}
+     * @example
+        var r=MM.fetchAll([
+            {name:'M1'},
+            {name:'M2'}
+        ],function(err,m1,m2){
+
+            return 'fetchAllReturned';
+        });
+
+        r.next(function(err,fetchAllReturned){
+            alert(fetchAllReturned);
+        });
      */
     next: function(fn) {
         var me = this;
@@ -441,64 +409,17 @@ Mix(MManager.prototype, {
      * @lends MManager#
      */
     /**
-         * 注册APP中用到的model
-         * @param {Object|Array} models 模块描述信息
-         * @param {String} models.name app中model的唯一标识
-         * @param {Object} models.options 传递的参数信息，如{uri:'test',isJSONP:true,updateIdent:true}
-         * @param {Object} models.urlParams 发起请求时，默认的get参数对象
-         * @param {Object} models.postParams 发起请求时，默认的post参数对象
-         * @param {String} models.cacheKey 指定model缓存的key，当指定后，该model会进行缓存，下次不再发起请求
-         * @param {Integer} models.cacheTime 缓存过期时间，以毫秒为单位，当过期后，再次使用该model时会发起新的请求(前提是该model指定cacheKey被缓存后cacheTime才有效)
-         * @param {Function} models.before model在发起请求前的回调
-         * @param {Function} models.after model在发起请求，并且通过Model.sync调用doneess后的回调
-         * @example
-         * KISSY.add("app/base/mmanager",function(S,MManager,Model){
-                var MM=MManager.create(Model);
-                MM.registerModels([
-                    {
-                        name:'Home_List',
-                        options:{
-                            uri:'test'
-                        },
-                        urlParams:{
-                            a:'12'
-                        },
-                        cacheKey:'',
-                        cacheTime:20000,//缓存多久
-                        before:function(m){
-                        },
-                        after:function(m){
-                        }
-                    },
-                    {
-                        name:'Home_List1',
-                        options:{
-                            uri:'test'
-                        },
-                        before:function(m){
-                        },
-                        after:function(m){
-                        }
-                    }
-                ]);
-                return MM;
-            },{
-                requires:["mxext/mmanager","app/base/model"]
-            });
-
-            //使用
-
-            KISSY.use('app/base/mmanager',function(S,MM){
-                MM.fetchAll([
-                    {name:'Home_List',cacheKey:'aaa',urlParams:{e:'f'}},
-                    {name:'Home_List1',urlParams:{a:'b'}}
-                ],function(m1,m2){
-
-                },function(msg){
-
-                });
-            });
-         */
+     * 注册APP中用到的model
+     * @param {Object|Array} models 模块描述信息
+     * @param {String} models.name app中model的唯一标识
+     * @param {Object} models.options 传递的参数信息，如{uri:'test',isJSONP:true,updateIdent:true}
+     * @param {Object} models.urlParams 发起请求时，默认的get参数对象
+     * @param {Object} models.postParams 发起请求时，默认的post参数对象
+     * @param {String} models.cacheKey 指定model缓存的key，当指定后，该model会进行缓存，下次不再发起请求
+     * @param {Integer} models.cacheTime 缓存过期时间，以毫秒为单位，当过期后，再次使用该model时会发起新的请求(前提是该model指定cacheKey被缓存后cacheTime才有效)
+     * @param {Function} models.before model在发起请求前的回调
+     * @param {Function} models.after model在结束请求，并且成功后回调
+     */
     registerModels: function(models) {
         /*
                 name:'',
@@ -730,6 +651,40 @@ Mix(MManager.prototype, {
      * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @return {MRequest}
+     * @example
+        //定义
+        
+        define('testMM',["mxext/mmanager","mxext/model"],function(require){
+            var MM=require("mxext/mmanager");
+            var Model=require("mxext/model");
+        
+            var TestMM=MM.create(Model);
+            TestMM.registerModels([{
+                name:'Test1',
+                url:'/api/test1.json'
+            },{
+                name:'Test2',
+                url:'/api/test2.json',
+                urlParams:{
+                    type:'2'
+                }
+            }]);
+            return TestMM;
+        
+        });
+        
+        //使用
+        
+        seajs.use('testMM',function(TM){
+        
+            TM.fetchAll([{
+                name:'Test1'
+            },{
+                name:'Test2'
+            }],function(err,m1,m2){
+
+            });
+        });
      */
     fetchAll: function(models, done) {
         return new MRequest(this).fetchAll(models, done);
@@ -749,6 +704,39 @@ Mix(MManager.prototype, {
      * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @return {MRequest}
+     * @example
+        //代码片断：
+        //1：当按顺序获取多个model，回调只有一个时
+        var r=MM.fetchOrder([
+            {name:'M1'},
+            {name:'M2'},
+            {name:'M3'}
+        ],function(err,model){//回调按M1,M2,M3的顺序被调用3次
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        });
+
+        //2:当按顺序获取多个model，回调多于一个时
+        var r=MM.fetchOrder([
+            {name:'M1'},
+            {name:'M2'},
+            {name:'M3'}
+        ],function(err,model){//首先被调用
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        },function(err,model){//其次被调用
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        });
      */
     fetchOrder: function(models, done) {
         var mr = new MRequest(this);
@@ -769,6 +757,39 @@ Mix(MManager.prototype, {
      * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} callback   完成时的回调
      * @return {MRequest}
+     * @example
+        //代码片断：
+        //1：获取多个model，回调只有一个时
+        var r=MM.fetchOrder([
+            {name:'M1'},
+            {name:'M2'},
+            {name:'M3'}
+        ],function(err,model){//m1,m2,m3，谁快先调用谁，且被调用三次
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        });
+
+        //2:获取多个model，回调多于一个时
+        var r=MM.fetchOrder([
+            {name:'M1'},
+            {name:'M2'},
+            {name:'M3'}
+        ],function(err,model){//m1什么时间返回，该回调什么时间被调用
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        },function(err,model){//m2什么时间返回，该回调什么时间被调用
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        });
      */
     fetchOne: function(models, callback) {
         var mr = new MRequest(this);

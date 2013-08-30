@@ -28,14 +28,25 @@ var Templates = {};
 var CacheLatest = 0;
 var Slash = '/';
 var DefaultTagName = 'vframe';
-
+/**
+待重写的方法
+@method imimpl
+**/
+var unimpl = function() {
+    throw new Error('unimplement method');
+};
+/**
+ * 空方法
+ */
+var noop = function() {};
 var Cfg = {
     debug:'*_*',
     iniFile: 'app/ini',
     appName: 'app',
     appHome: './',
     tagName: DefaultTagName,
-    rootId: 'magix_vf_root'
+    rootId: 'magix_vf_root',
+    execError: noop
 };
 var Has = Templates.hasOwnProperty;
 
@@ -184,22 +195,12 @@ var safeExec = function(fns, args, context, i, r, e) {
         e = fns[i];
         r = Magix.isFunction(e) && e.apply(context, args);
         
-        
+         
         
     }
     return r;
 };
-/**
-待重写的方法
-@method imimpl
-**/
-var unimpl = function() {
-    throw new Error('unimplement method');
-};
-/**
- * 空方法
- */
-var noop = function() {};
+
 
 
 /**
@@ -368,6 +369,7 @@ var Magix = {
      * @param {String} cfg.rootId 根view的id
      * @param {Function} cfg.ready Magix完成配置后触发
      * @param {Array} cfg.extensions 需要加载的扩展
+     * @param {Function} cfg.execError 发布版以try catch执行一些用户重写的核心流程，当出错时，允许开发者通过该配置项进行捕获。注意：您不应该在该方法内再次抛出任何错误！
      * @example
      * Magix.start({
      *      useHistoryState:true,
@@ -384,24 +386,24 @@ var Magix = {
      */
     start: function(cfg) {
         var me = this;
-        cfg = mix(Cfg, cfg);
-        me.libEnv(cfg);
-        if (cfg.ready) {
-            safeExec(cfg.ready);
-            delete cfg.ready;
+        mix(Cfg, cfg);
+        me.libEnv(Cfg);
+        if (Cfg.ready) {
+            safeExec(Cfg.ready);
+            delete Cfg.ready;
         }
-        me.libRequire(cfg.iniFile, function(I) {
-            Cfg = mix(cfg, I, cfg);
+        me.libRequire(Cfg.iniFile, function(I) {
+            Cfg = mix(Cfg, I, cfg);
             Cfg.tagNameChanged = Cfg.tagName != DefaultTagName;
 
-            var progress = cfg.progress;
+            var progress = Cfg.progress;
             me.libRequire(['magix/router', 'magix/vom'], function(R, V) {
                 R.on('!ul', V.locChged);
                 R.on('changed', V.locChged);
                 if (progress) {
                     V.on('progress', progress);
                 }
-                me.libRequire(cfg.extensions, R.start);
+                me.libRequire(Cfg.extensions, R.start);
             });
         });
     },
@@ -2971,7 +2973,7 @@ Mix(Mix(View.prototype, Event), {
                 }
             }
         } else {
-            fn(tmpl);
+            fn(me.template);
         }
     };
 
@@ -3589,64 +3591,17 @@ Mix(MManager.prototype, {
      * @lends MManager#
      */
     /**
-         * 注册APP中用到的model
-         * @param {Object|Array} models 模块描述信息
-         * @param {String} models.name app中model的唯一标识
-         * @param {Object} models.options 传递的参数信息，如{uri:'test',isJSONP:true,updateIdent:true}
-         * @param {Object} models.urlParams 发起请求时，默认的get参数对象
-         * @param {Object} models.postParams 发起请求时，默认的post参数对象
-         * @param {String} models.cacheKey 指定model缓存的key，当指定后，该model会进行缓存，下次不再发起请求
-         * @param {Integer} models.cacheTime 缓存过期时间，以毫秒为单位，当过期后，再次使用该model时会发起新的请求(前提是该model指定cacheKey被缓存后cacheTime才有效)
-         * @param {Function} models.before model在发起请求前的回调
-         * @param {Function} models.after model在发起请求，并且通过Model.sync调用doneess后的回调
-         * @example
-         * KISSY.add("app/base/mmanager",function(S,MManager,Model){
-                var MM=MManager.create(Model);
-                MM.registerModels([
-                    {
-                        name:'Home_List',
-                        options:{
-                            uri:'test'
-                        },
-                        urlParams:{
-                            a:'12'
-                        },
-                        cacheKey:'',
-                        cacheTime:20000,//缓存多久
-                        before:function(m){
-                        },
-                        after:function(m){
-                        }
-                    },
-                    {
-                        name:'Home_List1',
-                        options:{
-                            uri:'test'
-                        },
-                        before:function(m){
-                        },
-                        after:function(m){
-                        }
-                    }
-                ]);
-                return MM;
-            },{
-                requires:["mxext/mmanager","app/base/model"]
-            });
-
-            //使用
-
-            KISSY.use('app/base/mmanager',function(S,MM){
-                MM.fetchAll([
-                    {name:'Home_List',cacheKey:'aaa',urlParams:{e:'f'}},
-                    {name:'Home_List1',urlParams:{a:'b'}}
-                ],function(m1,m2){
-
-                },function(msg){
-
-                });
-            });
-         */
+     * 注册APP中用到的model
+     * @param {Object|Array} models 模块描述信息
+     * @param {String} models.name app中model的唯一标识
+     * @param {Object} models.options 传递的参数信息，如{uri:'test',isJSONP:true,updateIdent:true}
+     * @param {Object} models.urlParams 发起请求时，默认的get参数对象
+     * @param {Object} models.postParams 发起请求时，默认的post参数对象
+     * @param {String} models.cacheKey 指定model缓存的key，当指定后，该model会进行缓存，下次不再发起请求
+     * @param {Integer} models.cacheTime 缓存过期时间，以毫秒为单位，当过期后，再次使用该model时会发起新的请求(前提是该model指定cacheKey被缓存后cacheTime才有效)
+     * @param {Function} models.before model在发起请求前的回调
+     * @param {Function} models.after model在请求结束，并且成功后的回调
+     */
     registerModels: function(models) {
         /*
                 name:'',
@@ -4148,10 +4103,9 @@ Magix.mix(Model.prototype, {
 
     },
     /**
-     * Model调用save或load方法后，与服务器同步的方法，供应用开发人员覆盖
+     * Model调用request方法后，与服务器同步的方法，供应用开发人员覆盖
      * @function
-     * @param {Model} model model对象
-     * @param {Object} ops 包含success error的参数信息对象
+     * @param {Function} callback 请求完成后的回调，回调时第1个参数是数据，第2个是错误对象
      * @return {XHR} 最好返回异步请求的对象
      */
     sync: Magix.noop,

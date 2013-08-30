@@ -52,7 +52,7 @@ KISSY.add('magix/view', function(S, Magix, Event, Body, IO) {
                 }
             }
         } else {
-            fn(tmpl);
+            fn(me.template);
         }
     };
 

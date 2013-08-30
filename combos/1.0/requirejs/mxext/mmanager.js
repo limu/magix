@@ -435,64 +435,17 @@ Mix(MManager.prototype, {
      * @lends MManager#
      */
     /**
-         * 注册APP中用到的model
-         * @param {Object|Array} models 模块描述信息
-         * @param {String} models.name app中model的唯一标识
-         * @param {Object} models.options 传递的参数信息，如{uri:'test',isJSONP:true,updateIdent:true}
-         * @param {Object} models.urlParams 发起请求时，默认的get参数对象
-         * @param {Object} models.postParams 发起请求时，默认的post参数对象
-         * @param {String} models.cacheKey 指定model缓存的key，当指定后，该model会进行缓存，下次不再发起请求
-         * @param {Integer} models.cacheTime 缓存过期时间，以毫秒为单位，当过期后，再次使用该model时会发起新的请求(前提是该model指定cacheKey被缓存后cacheTime才有效)
-         * @param {Function} models.before model在发起请求前的回调
-         * @param {Function} models.after model在发起请求，并且通过Model.sync调用doneess后的回调
-         * @example
-         * KISSY.add("app/base/mmanager",function(S,MManager,Model){
-                var MM=MManager.create(Model);
-                MM.registerModels([
-                    {
-                        name:'Home_List',
-                        options:{
-                            uri:'test'
-                        },
-                        urlParams:{
-                            a:'12'
-                        },
-                        cacheKey:'',
-                        cacheTime:20000,//缓存多久
-                        before:function(m){
-                        },
-                        after:function(m){
-                        }
-                    },
-                    {
-                        name:'Home_List1',
-                        options:{
-                            uri:'test'
-                        },
-                        before:function(m){
-                        },
-                        after:function(m){
-                        }
-                    }
-                ]);
-                return MM;
-            },{
-                requires:["mxext/mmanager","app/base/model"]
-            });
-
-            //使用
-
-            KISSY.use('app/base/mmanager',function(S,MM){
-                MM.fetchAll([
-                    {name:'Home_List',cacheKey:'aaa',urlParams:{e:'f'}},
-                    {name:'Home_List1',urlParams:{a:'b'}}
-                ],function(m1,m2){
-
-                },function(msg){
-
-                });
-            });
-         */
+     * 注册APP中用到的model
+     * @param {Object|Array} models 模块描述信息
+     * @param {String} models.name app中model的唯一标识
+     * @param {Object} models.options 传递的参数信息，如{uri:'test',isJSONP:true,updateIdent:true}
+     * @param {Object} models.urlParams 发起请求时，默认的get参数对象
+     * @param {Object} models.postParams 发起请求时，默认的post参数对象
+     * @param {String} models.cacheKey 指定model缓存的key，当指定后，该model会进行缓存，下次不再发起请求
+     * @param {Integer} models.cacheTime 缓存过期时间，以毫秒为单位，当过期后，再次使用该model时会发起新的请求(前提是该model指定cacheKey被缓存后cacheTime才有效)
+     * @param {Function} models.before model在发起请求前的回调
+     * @param {Function} models.after model在请求结束，并且成功后的回调
+     */
     registerModels: function(models) {
         /*
                 name:'',

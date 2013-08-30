@@ -588,11 +588,11 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/Model.html#sync">sync</a></b>
-                                                <span class="param">(model, ops)</span>
+                                                <span class="param">(callback)</span>
                                                 
                                                 
                                                 
-                                                <span class="desc">Model调用save或load方法后，与服务器同步的方法，供应用开发人员覆盖</span>                                                
+                                                <span class="desc">Model调用request方法后，与服务器同步的方法，供应用开发人员覆盖</span>                                                
                                             </li>
                                             
                                         </ul>
@@ -1839,14 +1839,14 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">sync</b>
-                                                <span class="param">(model, ops)</span>
+                                                <span class="param">(callback)</span>
                                                 
                                                 
                                                 
                                             </div>
 
                                             <div class="desc">
-                                                Model调用save或load方法后，与服务器同步的方法，供应用开发人员覆盖
+                                                Model调用request方法后，与服务器同步的方法，供应用开发人员覆盖
                                                 
                                                 
                                             </div>
@@ -1860,20 +1860,11 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">model</b>
+                                                            <b class="name">callback</b>
                                                             
                                                             
-                                                            <span class="type">{<a href="../symbols/Model.html">Model</a>}</span> 
-                                                            <span class="desc">model对象</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">ops</b>
-                                                            
-                                                            
-                                                            <span class="type">{Object}</span> 
-                                                            <span class="desc">包含success error的参数信息对象</span>
+                                                            <span class="type">{Function}</span> 
+                                                            <span class="desc">请求完成后的回调，回调时第1个参数是错误对象，第2个是数据</span>
                                                         </li>
                                                     
                                                     </ul>

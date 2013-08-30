@@ -75,6 +75,7 @@ var RefLoc;
  * @property {View} view view对象
  * @property {VOM} owner VOM对象
  * @property {Boolean} viewInited view是否完成初始化，即view的inited事件有没有派发
+ * @property {String} pId 父vframe的id，如果是根节点则为undefined
  */
 var Vframe = function(id) {
     var me = this;

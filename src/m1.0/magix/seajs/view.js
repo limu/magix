@@ -10,7 +10,7 @@ define('magix/view', function(require) {
 
     eval(Magix.include('../tmpl/view'));
     var AppRoot = Magix.config('appRoot');
-    var Suffix = Magix.config('debug') ? '?t=' + Date.now() : '';
+    var Suffix = '?t=' + Date.now();
 
     /*var ProcessObject = function(props, proto, enterObject) {
         for (var p in proto) {
@@ -55,7 +55,7 @@ define('magix/view', function(require) {
                 }
             }
         } else {
-            fn(tmpl);
+            fn(me.template);
         }
     };
 

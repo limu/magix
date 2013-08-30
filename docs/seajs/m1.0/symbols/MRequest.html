@@ -624,40 +624,6 @@ dl.data .dd{
                                                                                                 
                                                 
                                                 
-                                                <dt>Example</dt>
-                                                <dd>
-                                                        
-                                                            <pre class="brush: js; ">
-            
-        define('testMM',["mxext/mmanager","mxext/model"],function(require){
-            var MM=require("mxext/mmanager");
-            var Model=require("mxext/model");
-            var TestMM=MM.create(Model);
-            TestMM.registerModels([{
-                name:'Test1',
-                url:'/api/test1.json'
-            },{
-                name:'Test2',
-                url:'/api/test2.json',
-                urlParams:{
-                    type:'2'
-                }
-            }]);
-            return TestMM;
-        });
-
-        seajs.use('testMM',function(TM){
-            TM.fetchAll([{
-                name:'Test1'
-            },{
-                name:'Test2'
-            }],function(m1,m2,err){
-
-            });
-        });</pre>
-                                                        
-                                                </dd>
-                                                
                                                 
                                             </dl>                                            
                                         </li>
@@ -873,6 +839,24 @@ dl.data .dd{
                                                 
                                                                                                 
                                                 
+                                                
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">
+        var r=MM.fetchAll([
+            {name:'M1'},
+            {name:'M2'}
+        ],function(err,m1,m2){
+
+            return 'fetchAllReturned';
+        });
+
+        r.next(function(err,fetchAllReturned){
+            alert(fetchAllReturned);
+        });</pre>
+                                                        
+                                                </dd>
                                                 
                                                 
                                             </dl>                                            

@@ -837,7 +837,7 @@ Mix(Mix(View.prototype, Event), {
                 }
             }
         } else {
-            fn(tmpl);
+            fn(me.template);
         }
     };
 

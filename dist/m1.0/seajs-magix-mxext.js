@@ -26,12 +26,23 @@ var ProtocalReg = /^https?:\/\//i;
 var CacheLatest = 0;
 var Slash = '/';
 var DefaultTagName = 'vframe';
+/**
+待重写的方法
+@method imimpl
+**/
+var unimpl = function() {
+    throw new Error('unimplement method');
+};
+/**
+ * 空方法
+ */
+var noop = function() {};
 
 var Cfg = {
-    debug:'*_*',
     appRoot: './',
     tagName: DefaultTagName,
-    rootId: 'magix_vf_root'
+    rootId: 'magix_vf_root',
+    execError: noop
 };
 var Has = {}.hasOwnProperty;
 
@@ -180,22 +191,11 @@ var safeExec = function(fns, args, context, i, r, e) {
         e = fns[i];
         r = Magix.isFunction(e) && e.apply(context, args);
         
-        
+             Cfg.execError(x);
         
     }
     return r;
 };
-/**
-待重写的方法
-@method imimpl
-**/
-var unimpl = function() {
-    throw new Error('unimplement method');
-};
-/**
- * 空方法
- */
-var noop = function() {};
 
 
 /**
@@ -345,21 +345,20 @@ var Magix = {
     /**
      * 应用初始化入口
      * @param  {Object} cfg 初始化配置参数对象
-     * @param {Boolean} cfg.debug 指定当前app是否是发布版本，当使用发布版本时，view的html和js应该打包成一个 view-min.js文件，否则Magix在加载view时会分开加载view.js和view.html(view.hasTemplate为true的情况下)
      * @param {Boolean} cfg.nativeHistory 是否使用history state,当为true，并且浏览器支持的情况下会用history.pushState修改url，您应该确保服务器能给予支持。如果nativeHistory为false将使用hash修改url
      * @param {String} cfg.defaultView 默认加载的view
      * @param {String} cfg.defaultPathname 默认view对应的pathname
-     * @param {String} cfg.appName 应用的包名，默认app
      * @param {String} cfg.notFoundView 404时加载的view
      * @param {Object} cfg.routes pathname与view映射关系表
      * @param {String} cfg.iniFile ini文件位置
      * @param {String} cfg.rootId 根view的id
      * @param {Array} cfg.extensions 需要加载的扩展
+     * @param {String} cfg.appRoot 应用magix文件所在的根目录
+     * @param {Function} cfg.execError 发布版以try catch执行一些用户重写的核心流程，当出错时，允许开发者通过该配置项进行捕获。注意：您不应该在该方法内再次抛出任何错误！
      * @example
      * Magix.start({
      *      useHistoryState:true,
      *      appRoot:'http://etao.com/srp/app/',
-     *      debug:true,
      *      iniFile:'',//是否有ini配置文件
      *      defaultView:'app/views/layouts/default',//默认加载的view
      *      defaultPathname:'/home',
@@ -375,10 +374,6 @@ var Magix = {
         if (appRoot) {
             var loc = window.location;
             appRoot = me.path(loc.href, appRoot + Slash);
-            var debug = cfg.debug;
-            if (debug) {
-                cfg.debug = appRoot.indexOf(loc.protocol + Slash + Slash + loc.host + Slash) === 0;
-            }
             cfg.appRoot = appRoot;
         }
         me.libRequire(cfg.iniFile, function(I) {
@@ -1256,6 +1251,7 @@ var Body = {
                         view.processEvent({
                             info: info,
                             se: e,
+                            st: eventType,
                             tId: IdIt(target),
                             cId: IdIt(current)
                         });
@@ -1517,6 +1513,7 @@ var RefLoc;
  * @property {View} view view对象
  * @property {VOM} owner VOM对象
  * @property {Boolean} viewInited view是否完成初始化，即view的inited事件有没有派发
+ * @property {String} pId 父vframe的id，如果是根节点则为undefined
  */
 var Vframe = function(id) {
     var me = this;
@@ -2131,7 +2128,7 @@ define('magix/view', function(require) {
 var Has = Magix.has;
 var COMMA = ',';
 var EMPTY_ARRAY = [];
-
+var Noop = Magix.noop;
 var Mix = Magix.mix;
 var WrapAsynUpdateNames = {
     render: 1,
@@ -2239,40 +2236,40 @@ var View = function(ops) {
     me.sign = 1; //标识view是否刷新过，对于托管的函数资源，在回调这个函数时，不但要确保view没有销毁，而且要确保view没有刷新过，如果刷新过则不回调
 };
 
-Mix(View, {
-    /**
-     * @lends View
-     */
-    prepare: function(oView) {
-        var me = this;
-        if (!oView.extend) {
-            oView.extend = me.extend;
-        }
-        if (!oView[WrapKey]) { //只处理一次
-            oView[WrapKey] = 1;
-            var prop = oView.prototype;
-            var old, temp, name, evts, idx, revts = {};
-            for (var p in prop) {
+View.prepare = function(oView) {
+    var me = this;
+    var superclass = oView.superclass;
+    if (superclass) {
+        me.prepare(superclass.constructor);
+    }
+    if (!oView[WrapKey]) { //只处理一次
+        oView[WrapKey] = 1;
+        oView.extend = me.extend;
+        var prop = oView.prototype;
+        var old, temp, name, evts, idx, revts = {};
+        for (var p in prop) {
+            if (Has(prop, p)) {
                 old = prop[p];
                 temp = p.match(EvtMethodReg);
                 if (temp) {
                     name = temp[1];
                     evts = temp[2];
-                    prop[name] = old;
                     evts = evts.split(COMMA);
                     for (idx = evts.length - 1; idx > -1; idx--) {
                         temp = evts[idx];
                         revts[temp] = 1;
                         prop[name + MxEvtSplit + temp] = old;
                     }
-                } else if (WrapAsynUpdateNames[old]) {
+                } else if (WrapAsynUpdateNames[p] && old != Noop) {
                     prop[p] = WrapFn(old);
                 }
             }
+        }
+        if (evts) {
             prop.$evts = revts;
         }
     }
-});
+};
 
 Mix(Mix(View.prototype, Event), {
     /**
@@ -2290,7 +2287,7 @@ Mix(Mix(View.prototype, Event), {
      * 渲染view，供最终view开发者覆盖
      * @function
      */
-    render: Magix.noop,
+    render: Noop,
     /**
      * 当window.location.href有变化时调用该方法（如果您通过observeLocation指定了相关参数，则这些相关参数有变化时才调用locationChange，否则不会调用），供最终的view开发人员进行覆盖
      * @function
@@ -2321,13 +2318,13 @@ Mix(Mix(View.prototype, Event), {
      *     //...
      * }
      */
-    locationChange: Magix.noop,
+    locationChange: Noop,
     /**
      * 初始化方法，供最终的view开发人员进行覆盖
      * @param {Object} extra 初始化时，外部传递的参数
      * @function
      */
-    init: Magix.noop,
+    init: Noop,
     /**
      * 标识当前view是否有模板文件
      * @default true
@@ -2506,7 +2503,7 @@ Mix(Mix(View.prototype, Event), {
         if (args) {
             loc.keys = keys.concat(String(args).split(COMMA));
         }
-        if (me.locationChange == Magix.noop) {
+        if (me.locationChange == Noop) {
             me.locationChange = DefaultLocationChange;
         }
     },
@@ -2647,6 +2644,7 @@ Mix(Mix(View.prototype, Event), {
                 SafeExec(fn, Mix({
                     currentId: e.cId,
                     targetId: e.tId,
+                    type: e.st,
                     domEvent: domEvent,
                     params: m.p
                 }, WEvent), me);
@@ -2925,9 +2923,15 @@ Mix(Mix(View.prototype, Event), {
      * @param {Object} e
      * 与prerender不同的是：refresh触发后即删除监听列表
      */
+    /**
+     * 当view准备好模板(模板有可能是异步获取的)，调用init和render之前触发。可在该事件内对template进行一次处理
+     * @name View#interact
+     * @event
+     * @param {Object} e
+     */
 });
     var AppRoot = Magix.config('appRoot');
-    var Suffix = Magix.config('debug') ? '?t=' + Date.now() : '';
+    var Suffix = '?t=' + Date.now();
 
     /*var ProcessObject = function(props, proto, enterObject) {
         for (var p in proto) {
@@ -2972,7 +2976,7 @@ Mix(Mix(View.prototype, Event), {
                 }
             }
         } else {
-            fn(tmpl);
+            fn(me.template);
         }
     };
 
@@ -3138,33 +3142,18 @@ var VOM = Magix.mix({
  **/
 define("mxext/mmanager", ["magix/magix", "magix/event"], function(require) {
     /*
-        #begin example-1#
+        #begin mm_fetchall_1#
         define('testMM',["mxext/mmanager","mxext/model"],function(require){
             var MM=require("mxext/mmanager");
             var Model=require("mxext/model");
-            var TestMM=MM.create(Model);
-            TestMM.registerModels([{
-                name:'Test1',
-                url:'/api/test1.json'
-            },{
-                name:'Test2',
-                url:'/api/test2.json',
-                urlParams:{
-                    type:'2'
-                }
-            }]);
-            return TestMM;
-        });
+        #end#
 
+        #begin mm_fetchall_2#
+        });
+        #end#
+
+        #begin mm_fetchall_3#
         seajs.use('testMM',function(TM){
-            TM.fetchAll([{
-                name:'Test1'
-            },{
-                name:'Test2'
-            }],function(m1,m2,err){
-
-            });
-        });
         #end#
      */
     var Magix = require("magix/magix");
@@ -3419,35 +3408,6 @@ Mix(MRequest.prototype, {
      * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @return {MRequest}
-     * @example
-            
-        define('testMM',["mxext/mmanager","mxext/model"],function(require){
-            var MM=require("mxext/mmanager");
-            var Model=require("mxext/model");
-            var TestMM=MM.create(Model);
-            TestMM.registerModels([{
-                name:'Test1',
-                url:'/api/test1.json'
-            },{
-                name:'Test2',
-                url:'/api/test2.json',
-                urlParams:{
-                    type:'2'
-                }
-            }]);
-            return TestMM;
-        });
-
-        seajs.use('testMM',function(TM){
-            TM.fetchAll([{
-                name:'Test1'
-            },{
-                name:'Test2'
-            }],function(m1,m2,err){
-
-            });
-        });
-        
      */
     fetchAll: function(models, done) {
         return this.send(models, done, FetchFlags.ALL);
@@ -3532,6 +3492,18 @@ Mix(MRequest.prototype, {
      * 前一个fetchX或saveX任务做完后的下一个任务
      * @param  {Function} fn 回调
      * @return {MRequest}
+     * @example
+        var r=MM.fetchAll([
+            {name:'M1'},
+            {name:'M2'}
+        ],function(err,m1,m2){
+
+            return 'fetchAllReturned';
+        });
+
+        r.next(function(err,fetchAllReturned){
+            alert(fetchAllReturned);
+        });
      */
     next: function(fn) {
         var me = this;
@@ -3574,64 +3546,17 @@ Mix(MManager.prototype, {
      * @lends MManager#
      */
     /**
-         * 注册APP中用到的model
-         * @param {Object|Array} models 模块描述信息
-         * @param {String} models.name app中model的唯一标识
-         * @param {Object} models.options 传递的参数信息，如{uri:'test',isJSONP:true,updateIdent:true}
-         * @param {Object} models.urlParams 发起请求时，默认的get参数对象
-         * @param {Object} models.postParams 发起请求时，默认的post参数对象
-         * @param {String} models.cacheKey 指定model缓存的key，当指定后，该model会进行缓存，下次不再发起请求
-         * @param {Integer} models.cacheTime 缓存过期时间，以毫秒为单位，当过期后，再次使用该model时会发起新的请求(前提是该model指定cacheKey被缓存后cacheTime才有效)
-         * @param {Function} models.before model在发起请求前的回调
-         * @param {Function} models.after model在发起请求，并且通过Model.sync调用doneess后的回调
-         * @example
-         * KISSY.add("app/base/mmanager",function(S,MManager,Model){
-                var MM=MManager.create(Model);
-                MM.registerModels([
-                    {
-                        name:'Home_List',
-                        options:{
-                            uri:'test'
-                        },
-                        urlParams:{
-                            a:'12'
-                        },
-                        cacheKey:'',
-                        cacheTime:20000,//缓存多久
-                        before:function(m){
-                        },
-                        after:function(m){
-                        }
-                    },
-                    {
-                        name:'Home_List1',
-                        options:{
-                            uri:'test'
-                        },
-                        before:function(m){
-                        },
-                        after:function(m){
-                        }
-                    }
-                ]);
-                return MM;
-            },{
-                requires:["mxext/mmanager","app/base/model"]
-            });
-
-            //使用
-
-            KISSY.use('app/base/mmanager',function(S,MM){
-                MM.fetchAll([
-                    {name:'Home_List',cacheKey:'aaa',urlParams:{e:'f'}},
-                    {name:'Home_List1',urlParams:{a:'b'}}
-                ],function(m1,m2){
-
-                },function(msg){
-
-                });
-            });
-         */
+     * 注册APP中用到的model
+     * @param {Object|Array} models 模块描述信息
+     * @param {String} models.name app中model的唯一标识
+     * @param {Object} models.options 传递的参数信息，如{uri:'test',isJSONP:true,updateIdent:true}
+     * @param {Object} models.urlParams 发起请求时，默认的get参数对象
+     * @param {Object} models.postParams 发起请求时，默认的post参数对象
+     * @param {String} models.cacheKey 指定model缓存的key，当指定后，该model会进行缓存，下次不再发起请求
+     * @param {Integer} models.cacheTime 缓存过期时间，以毫秒为单位，当过期后，再次使用该model时会发起新的请求(前提是该model指定cacheKey被缓存后cacheTime才有效)
+     * @param {Function} models.before model在发起请求前的回调
+     * @param {Function} models.after model在结束请求，并且成功后回调
+     */
     registerModels: function(models) {
         /*
                 name:'',
@@ -3863,6 +3788,40 @@ Mix(MManager.prototype, {
      * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @return {MRequest}
+     * @example
+        //定义
+        
+        define('testMM',["mxext/mmanager","mxext/model"],function(require){
+            var MM=require("mxext/mmanager");
+            var Model=require("mxext/model");
+        
+            var TestMM=MM.create(Model);
+            TestMM.registerModels([{
+                name:'Test1',
+                url:'/api/test1.json'
+            },{
+                name:'Test2',
+                url:'/api/test2.json',
+                urlParams:{
+                    type:'2'
+                }
+            }]);
+            return TestMM;
+        
+        });
+        
+        //使用
+        
+        seajs.use('testMM',function(TM){
+        
+            TM.fetchAll([{
+                name:'Test1'
+            },{
+                name:'Test2'
+            }],function(err,m1,m2){
+
+            });
+        });
      */
     fetchAll: function(models, done) {
         return new MRequest(this).fetchAll(models, done);
@@ -3882,6 +3841,39 @@ Mix(MManager.prototype, {
      * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @return {MRequest}
+     * @example
+        //代码片断：
+        //1：当按顺序获取多个model，回调只有一个时
+        var r=MM.fetchOrder([
+            {name:'M1'},
+            {name:'M2'},
+            {name:'M3'}
+        ],function(err,model){//回调按M1,M2,M3的顺序被调用3次
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        });
+
+        //2:当按顺序获取多个model，回调多于一个时
+        var r=MM.fetchOrder([
+            {name:'M1'},
+            {name:'M2'},
+            {name:'M3'}
+        ],function(err,model){//首先被调用
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        },function(err,model){//其次被调用
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        });
      */
     fetchOrder: function(models, done) {
         var mr = new MRequest(this);
@@ -3902,6 +3894,39 @@ Mix(MManager.prototype, {
      * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} callback   完成时的回调
      * @return {MRequest}
+     * @example
+        //代码片断：
+        //1：获取多个model，回调只有一个时
+        var r=MM.fetchOrder([
+            {name:'M1'},
+            {name:'M2'},
+            {name:'M3'}
+        ],function(err,model){//m1,m2,m3，谁快先调用谁，且被调用三次
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        });
+
+        //2:获取多个model，回调多于一个时
+        var r=MM.fetchOrder([
+            {name:'M1'},
+            {name:'M2'},
+            {name:'M3'}
+        ],function(err,model){//m1什么时间返回，该回调什么时间被调用
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        },function(err,model){//m2什么时间返回，该回调什么时间被调用
+            if(err){
+                alert(err.msg);
+            }else{
+                alert(model.get('name'));
+            }
+        });
      */
     fetchOne: function(models, callback) {
         var mr = new MRequest(this);
@@ -4125,10 +4150,9 @@ Magix.mix(Model.prototype, {
 
     },*/
     /**
-     * Model调用save或load方法后，与服务器同步的方法，供应用开发人员覆盖
+     * Model调用request方法后，与服务器同步的方法，供应用开发人员覆盖
      * @function
-     * @param {Model} model model对象
-     * @param {Object} ops 包含success error的参数信息对象
+     * @param {Function} callback 请求完成后的回调，回调时第1个参数是错误对象，第2个是数据
      * @return {XHR} 最好返回异步请求的对象
      */
     sync: Magix.noop,

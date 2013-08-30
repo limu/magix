@@ -55,7 +55,7 @@ define('magix/view', ["magix/magix", "magix/event", "magix/body"], function(requ
                 }
             }
         } else {
-            fn(tmpl);
+            fn(me.template);
         }
     };
 
@@ -66,7 +66,7 @@ define('magix/view', ["magix/magix", "magix/event", "magix/body"], function(requ
             if (ctor) {
                 SafeExec(ctor, arguments, this);
             }
-        }
+        };
         BaseView.extend = me.extend;
         return Magix.extend(BaseView, me, props, statics);
     };

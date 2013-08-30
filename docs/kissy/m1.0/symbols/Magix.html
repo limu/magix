@@ -1883,15 +1883,6 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">cfg.debug</b>
-                                                            
-                                                            
-                                                            <span class="type">{Boolean}</span> 
-                                                            <span class="desc">指定当前app是否是发布版本，当使用发布版本时，view的html和js应该打包成一个 view-min.js文件，否则Magix在加载view时会分开加载view.js和view.html(view.hasTemplate为true的情况下)</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
                                                             <b class="name">cfg.nativeHistory</b>
                                                             
                                                             
@@ -1915,15 +1906,6 @@ dl.data .dd{
                                                             
                                                             <span class="type">{String}</span> 
                                                             <span class="desc">默认view对应的pathname</span>
-                                                        </li>
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">cfg.appName</b>
-                                                            
-                                                            
-                                                            <span class="type">{String}</span> 
-                                                            <span class="desc">应用的包名，默认app</span>
                                                         </li>
                                                     
                                                         <li class="li">
@@ -1971,6 +1953,24 @@ dl.data .dd{
                                                             <span class="desc">需要加载的扩展</span>
                                                         </li>
                                                     
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">cfg.appRoot</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">应用magix文件所在的根目录</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">cfg.execError</b>
+                                                            
+                                                            
+                                                            <span class="type">{Function}</span> 
+                                                            <span class="desc">发布版以try catch执行一些用户重写的核心流程，当出错时，允许开发者通过该配置项进行捕获。注意：您不应该在该方法内再次抛出任何错误！</span>
+                                                        </li>
+                                                    
                                                     </ul>
                                                 </dd>
                                                 
@@ -1991,7 +1991,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">Magix.start({     useHistoryState:true,     appRoot:'http://etao.com/srp/app/',     debug:true,     iniFile:'',//是否有ini配置文件     defaultView:'app/views/layouts/default',//默认加载的view     defaultPathname:'/home',     routes:{         "/home":"app/views/layouts/default"     }});</pre>
+                                                            <pre class="brush: js; ">Magix.start({     useHistoryState:true,     appRoot:'http://etao.com/srp/app/',     iniFile:'',//是否有ini配置文件     defaultView:'app/views/layouts/default',//默认加载的view     defaultPathname:'/home',     routes:{         "/home":"app/views/layouts/default"     }});</pre>
                                                         
                                                 </dd>
                                                 
