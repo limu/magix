@@ -87,6 +87,7 @@ define('magix/magix', function() {
         },
         extend: function(ctor, base, props, statics) {
             ctor.superclass = base.prototype;
+            base.prototype.constructor = base;
             var T = function() {};
             T.prototype = base.prototype;
             ctor.prototype = new T();

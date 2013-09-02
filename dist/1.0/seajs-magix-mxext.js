@@ -697,6 +697,7 @@ var Magix = {
         },
         extend: function(ctor, base, props, statics) {
             ctor.superclass = base.prototype;
+            base.prototype.constructor = base;
             var T = function() {};
             T.prototype = base.prototype;
             ctor.prototype = new T();
@@ -4038,7 +4039,7 @@ Mix(MManager.prototype, {
  * @author 行列
  */
 define("mxext/model", ["magix/magix"], function(require) {
-
+    var Magix = require("magix/magix");
     var Extend = function(props, ctor) {
         var me = this;
         var BaseModel = function() {

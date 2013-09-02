@@ -130,7 +130,7 @@ View.prepare = function(oView) {
                         revts[temp] = 1;
                         prop[name + MxEvtSplit + temp] = old;
                     }
-                } else if (WrapAsynUpdateNames[p] && old != Noop) {
+                } else if (Has(WrapAsynUpdateNames, p) && old != Noop) {
                     prop[p] = WrapFn(old);
                 }
             }

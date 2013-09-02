@@ -140,7 +140,7 @@ View.prepare = function(oView) {
                         revts[temp] = 1;
                         prop[name + MxEvtSplit + temp] = old;
                     }
-                } else if (WrapAsynUpdateNames[p] && old != Noop) {
+                } else if (Has(WrapAsynUpdateNames, p) && old != Noop) {
                     prop[p] = WrapFn(old);
                 }
             }
@@ -810,7 +810,7 @@ Mix(Mix(View.prototype, Event), {
      * @param {Object} e
      */
 });
-    var AppRoot = Magix.config('appRoot');
+    var AppRoot;
     var Suffix = '?t=' + Date.now();
 
     /*var ProcessObject = function(props, proto, enterObject) {
@@ -825,7 +825,7 @@ Mix(Mix(View.prototype, Event), {
     };*/
 
 
-    var Tmpls = {}, Locker;
+    var Tmpls = {}, Locker = {};
     View.prototype.fetchTmpl = function(fn) {
         var me = this;
         var hasTemplate = 'template' in me;
@@ -833,7 +833,13 @@ Mix(Mix(View.prototype, Event), {
             if (Has(Tmpls, me.path)) {
                 fn(Tmpls[me.path]);
             } else {
-                var file = AppRoot + me.path + '.html';
+                var idx = me.path.indexOf('/');
+                if (!AppRoot) {
+                    var name = me.path.substring(0, idx);
+                    AppRoot = seajs.data.paths[name];
+                }
+                var path = me.path.substring(idx + 1);
+                var file = AppRoot + path + '.html';
                 var l = Locker[file];
                 var onload = function(tmpl) {
                     fn(Tmpls[me.path] = tmpl);

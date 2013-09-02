@@ -4,7 +4,6 @@
  * @version 1.0
  **/
 define('magix/magix', function() {
-    var Slice = [].slice;
 
     var Include = function(path, mxext) {
         var mPath = require.s.contexts._.config.paths[mxext ? 'mxext' : 'magix'];
@@ -46,6 +45,7 @@ define('magix/magix', function() {
         },
         extend: function(ctor, base, props, statics) {
             ctor.superclass = base.prototype;
+            base.prototype.constructor = base;
             var T = function() {};
             T.prototype = base.prototype;
             ctor.prototype = new T();

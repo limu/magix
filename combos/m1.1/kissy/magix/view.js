@@ -138,7 +138,7 @@ View.prepare = function(oView) {
                         revts[temp] = 1;
                         prop[name + MxEvtSplit + temp] = old;
                     }
-                } else if (WrapAsynUpdateNames[p] && old != Noop) {
+                } else if (Has(WrapAsynUpdateNames, p) && old != Noop) {
                     prop[p] = WrapFn(old);
                 }
             }
@@ -808,7 +808,7 @@ Mix(Mix(View.prototype, Event), {
      * @param {Object} e
      */
 });
-    var AppRoot = Magix.config('appRoot');
+    var AppRoot;
     var Suffix = '?t=' + S.now();
 
     /*var ProcessObject = function(props, proto, enterObject) {
@@ -830,6 +830,11 @@ Mix(Mix(View.prototype, Event), {
             if (Has(Tmpls, me.path)) {
                 fn(Tmpls[me.path]);
             } else {
+                if (!AppRoot) {
+                    var name = me.path.substring(0, me.path.indexOf('/'));
+                    var info = S.Config.packages[name];
+                    AppRoot = info.base || info.path;
+                }
                 var file = AppRoot + me.path + '.html';
                 var l = Locker[file];
                 var onload = function(tmpl) {

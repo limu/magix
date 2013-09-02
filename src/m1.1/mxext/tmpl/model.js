@@ -355,8 +355,9 @@ Magix.mix(Model.prototype, {
      */
     abort: function() {
         var me = this;
-        if (me.$trans && me.$trans.abort) {
-            me.$trans.abort();
+        var trans = me.$trans;
+        if (trans && trans.abort) {
+            trans.abort();
         }
         delete me.$trans;
         me.$abort = true;

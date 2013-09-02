@@ -4,7 +4,7 @@
  * @author 行列
  */
 define("mxext/model", ["magix/magix"], function(require) {
-
+    var Magix = require("magix/magix");
     var Extend = function(props, ctor) {
         var me = this;
         var BaseModel = function() {

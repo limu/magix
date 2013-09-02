@@ -41,7 +41,6 @@ var unimpl = function() {
 var noop = function() {};
 
 var Cfg = {
-    appRoot: './',
     tagName: DefaultTagName,
     rootId: 'magix_vf_root',
     execError: noop
@@ -355,7 +354,6 @@ var Magix = {
      * @param {String} cfg.iniFile ini文件位置
      * @param {String} cfg.rootId 根view的id
      * @param {Array} cfg.extensions 需要加载的扩展
-     * @param {String} cfg.appRoot 应用magix文件所在的根目录
      * @param {Function} cfg.execError 发布版以try catch执行一些用户重写的核心流程，当出错时，允许开发者通过该配置项进行捕获。注意：您不应该在该方法内再次抛出任何错误！
      * @example
      * Magix.start({
@@ -372,12 +370,6 @@ var Magix = {
     start: function(cfg) {
         var me = this;
         mix(Cfg, cfg);
-        var appRoot = Cfg.appRoot;
-        if (appRoot) {
-            var loc = window.location;
-            appRoot = me.path(loc.href, appRoot + Slash);
-            Cfg.appRoot = appRoot;
-        }
         me.libRequire(Cfg.iniFile, function(I) {
             Cfg = mix(Cfg, I, cfg);
             Cfg.tagNameChanged = Cfg.tagName != DefaultTagName;
@@ -927,32 +919,52 @@ var Router = Mix({
             result = ChgdCache.get(tKey);
         }
         if (!result) {
-            var hasChanged;
+            var hasChanged, from, to;
             result = {
                 params: {}
             };
-            if (oldLocation[PATHNAME] != newLocation[PATHNAME]) {
-                result[PATHNAME] = 1;
+            from = oldLocation[PATHNAME];
+            to = newLocation[PATHNAME];
+            if (from != to) {
+                result[PATHNAME] = {
+                    from: from,
+                    to: to
+                };
                 hasChanged = 1;
             }
-            if (oldLocation.view != newLocation.view) {
-                result.view = 1;
+            from = oldLocation.view;
+            to = newLocation.view;
+            if (from != to) {
+                result.view = {
+                    from: from,
+                    to: to
+                };
                 hasChanged = 1;
             }
             var oldParams = oldLocation[PARAMS],
                 newParams = newLocation[PARAMS];
             var p;
             for (p in oldParams) {
+                from = oldParams[p];
+                to = newParams[p];
                 if (oldParams[p] != newParams[p]) {
                     hasChanged = 1;
-                    result[PARAMS][p] = 1;
+                    result[PARAMS][p] = {
+                        from: from,
+                        to: to
+                    };
                 }
             }
 
             for (p in newParams) {
+                from = oldParams[p];
+                to = newParams[p];
                 if (oldParams[p] != newParams[p]) {
                     hasChanged = 1;
-                    result[PARAMS][p] = 1;
+                    result[PARAMS][p] = {
+                        from: from,
+                        to: to
+                    };
                 }
             }
             result.occur = hasChanged;
@@ -1119,7 +1131,7 @@ var Router = Mix({
      * @event
      * @param {Object} e 事件对象
      * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
-     * @param {Object} e.changed 有哪些值发生改变的对象
+     * @param {Object} e.changed 有哪些值发生改变的对象，可通过读取该对象下面的pathname,view或params，来识别值是从(from)什么值变成(to)什么值
      * @param {Boolean} e.force 标识是否是第一次强制触发的changed，对于首次加载完Magix，会强制触发一次changed
      */
 
@@ -2242,7 +2254,7 @@ View.prepare = function(oView) {
                         revts[temp] = 1;
                         prop[name + MxEvtSplit + temp] = old;
                     }
-                } else if (WrapAsynUpdateNames[p] && old != Noop) {
+                } else if (Has(WrapAsynUpdateNames, p) && old != Noop) {
                     prop[p] = WrapFn(old);
                 }
             }
@@ -2912,7 +2924,7 @@ Mix(Mix(View.prototype, Event), {
      * @param {Object} e
      */
 });
-    var AppRoot = Magix.config('appRoot');
+    var AppRoot;
     var Suffix = '?t=' + S.now();
 
     /*var ProcessObject = function(props, proto, enterObject) {
@@ -2934,6 +2946,11 @@ Mix(Mix(View.prototype, Event), {
             if (Has(Tmpls, me.path)) {
                 fn(Tmpls[me.path]);
             } else {
+                if (!AppRoot) {
+                    var name = me.path.substring(0, me.path.indexOf('/'));
+                    var info = S.Config.packages[name];
+                    AppRoot = info.base || info.path;
+                }
                 var file = AppRoot + me.path + '.html';
                 var l = Locker[file];
                 var onload = function(tmpl) {
@@ -4428,8 +4445,9 @@ Magix.mix(Model.prototype, {
      */
     abort: function() {
         var me = this;
-        if (me.$trans && me.$trans.abort) {
-            me.$trans.abort();
+        var trans = me.$trans;
+        if (trans && trans.abort) {
+            trans.abort();
         }
         delete me.$trans;
         me.$abort = true;

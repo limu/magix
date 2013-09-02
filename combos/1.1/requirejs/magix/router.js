@@ -290,32 +290,52 @@ var Router = Mix({
             result = ChgdCache.get(tKey);
         }
         if (!result) {
-            var hasChanged;
+            var hasChanged, from, to;
             result = {
                 params: {}
             };
-            if (oldLocation[PATHNAME] != newLocation[PATHNAME]) {
-                result[PATHNAME] = 1;
+            from = oldLocation[PATHNAME];
+            to = newLocation[PATHNAME];
+            if (from != to) {
+                result[PATHNAME] = {
+                    from: from,
+                    to: to
+                };
                 hasChanged = 1;
             }
-            if (oldLocation.view != newLocation.view) {
-                result.view = 1;
+            from = oldLocation.view;
+            to = newLocation.view;
+            if (from != to) {
+                result.view = {
+                    from: from,
+                    to: to
+                };
                 hasChanged = 1;
             }
             var oldParams = oldLocation[PARAMS],
                 newParams = newLocation[PARAMS];
             var p;
             for (p in oldParams) {
+                from = oldParams[p];
+                to = newParams[p];
                 if (oldParams[p] != newParams[p]) {
                     hasChanged = 1;
-                    result[PARAMS][p] = 1;
+                    result[PARAMS][p] = {
+                        from: from,
+                        to: to
+                    };
                 }
             }
 
             for (p in newParams) {
+                from = oldParams[p];
+                to = newParams[p];
                 if (oldParams[p] != newParams[p]) {
                     hasChanged = 1;
-                    result[PARAMS][p] = 1;
+                    result[PARAMS][p] = {
+                        from: from,
+                        to: to
+                    };
                 }
             }
             result.occur = hasChanged;
@@ -482,7 +502,7 @@ var Router = Mix({
      * @event
      * @param {Object} e 事件对象
      * @param {Object} e.location 地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等
-     * @param {Object} e.changed 有哪些值发生改变的对象
+     * @param {Object} e.changed 有哪些值发生改变的对象，可通过读取该对象下面的pathname,view或params，来识别值是从(from)什么值变成(to)什么值
      * @param {Boolean} e.force 标识是否是第一次强制触发的changed，对于首次加载完Magix，会强制触发一次changed
      */
 

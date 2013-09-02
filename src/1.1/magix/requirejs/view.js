@@ -6,7 +6,7 @@
 define('magix/view', ["magix/magix", "magix/event", "magix/body"], function(Magix, Event, Body) {
 
     eval(Magix.include('../tmpl/view'));
-    var AppRoot = Magix.config('appRoot');
+    var AppRoot;
     var Suffix = '?t=' + Date.now();
 
     /* var ProcessObject = function(props, proto, enterObject) {
@@ -21,7 +21,7 @@ define('magix/view', ["magix/magix", "magix/event", "magix/body"], function(Magi
     };*/
 
 
-    var Tmpls = {}, Locker;
+    var Tmpls = {}, Locker = {};
     View.prototype.fetchTmpl = function(fn) {
         var me = this;
         var hasTemplate = 'template' in me;
@@ -29,7 +29,13 @@ define('magix/view', ["magix/magix", "magix/event", "magix/body"], function(Magi
             if (Has(Tmpls, me.path)) {
                 fn(Tmpls[me.path]);
             } else {
-                var file = AppRoot + me.path + '.html';
+                var idx = me.path.indexOf('/');
+                if (!AppRoot) {
+                    var name = me.path.substring(0, idx);
+                    AppRoot = require.s.contexts._.config.paths[name];
+                }
+                var path = me.path.substring(idx + 1);
+                var file = AppRoot + path + '.html';
                 var l = Locker[file];
                 var onload = function(tmpl) {
                     fn(Tmpls[me.path] = tmpl);

@@ -41,7 +41,6 @@ var unimpl = function() {
 var noop = function() {};
 
 var Cfg = {
-    appRoot: './',
     tagName: DefaultTagName,
     rootId: 'magix_vf_root',
     execError: noop
@@ -355,7 +354,6 @@ var Magix = {
      * @param {String} cfg.iniFile ini文件位置
      * @param {String} cfg.rootId 根view的id
      * @param {Array} cfg.extensions 需要加载的扩展
-     * @param {String} cfg.appRoot 应用magix文件所在的根目录
      * @param {Function} cfg.execError 发布版以try catch执行一些用户重写的核心流程，当出错时，允许开发者通过该配置项进行捕获。注意：您不应该在该方法内再次抛出任何错误！
      * @example
      * Magix.start({
@@ -372,12 +370,6 @@ var Magix = {
     start: function(cfg) {
         var me = this;
         mix(Cfg, cfg);
-        var appRoot = Cfg.appRoot;
-        if (appRoot) {
-            var loc = window.location;
-            appRoot = me.path(loc.href, appRoot + Slash);
-            Cfg.appRoot = appRoot;
-        }
         me.libRequire(Cfg.iniFile, function(I) {
             Cfg = mix(Cfg, I, cfg);
             Cfg.tagNameChanged = Cfg.tagName != DefaultTagName;

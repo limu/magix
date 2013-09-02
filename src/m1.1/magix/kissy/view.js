@@ -6,7 +6,7 @@
 KISSY.add('magix/view', function(S, Magix, Event, Body, IO) {
 
     eval(Magix.include('../tmpl/view'));
-    var AppRoot = Magix.config('appRoot');
+    var AppRoot;
     var Suffix = '?t=' + S.now();
 
     /*var ProcessObject = function(props, proto, enterObject) {
@@ -28,6 +28,11 @@ KISSY.add('magix/view', function(S, Magix, Event, Body, IO) {
             if (Has(Tmpls, me.path)) {
                 fn(Tmpls[me.path]);
             } else {
+                if (!AppRoot) {
+                    var name = me.path.substring(0, me.path.indexOf('/'));
+                    var info = S.Config.packages[name];
+                    AppRoot = info.base || info.path;
+                }
                 var file = AppRoot + me.path + '.html';
                 var l = Locker[file];
                 var onload = function(tmpl) {

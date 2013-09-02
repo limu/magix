@@ -49,7 +49,6 @@ http://a.tbcdn.cn/apps/e/magix/1.0/requirejs-magix-mxext.js (requirejs+jq类库�
 http://a.tbcdn.cn/apps/e/magix/1.0/requirejs-magix-mxext-min.js (requirejs+jq类库，Magix核心与扩展压缩版)<br />
 
 ##Magix 1.1与Magix1.0的使用差异：
-#####由于移动版本滞后于pc版本，因此在1.0这个版本上，在移动端进行新功能的开发与测试，稳定后会升级到后续的pc1.1版本中
 
 ####ModelManager中的4处回调参数调整：<br />
 

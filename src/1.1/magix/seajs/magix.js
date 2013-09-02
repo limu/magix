@@ -3,8 +3,7 @@
  * @author 行列<xinglie.lkf@taobao.com>
  * @version 1.0
  **/
-define('magix/magix', function(S) {
-    var Slice = [].slice;
+define('magix/magix', function() {
 
     var Include = function(path, mxext) {
         var mPath = seajs.data.paths[mxext ? 'mxext' : 'magix'];
@@ -42,6 +41,7 @@ define('magix/magix', function(S) {
         },
         extend: function(ctor, base, props, statics) {
             ctor.superclass = base.prototype;
+            base.prototype.constructor = base;
             var T = function() {};
             T.prototype = base.prototype;
             ctor.prototype = new T();
