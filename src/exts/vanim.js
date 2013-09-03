@@ -19,12 +19,13 @@ KISSY.add('exts/vanim', function(S, Router) {
             var rule = {
                 root: 'magix_vf_root'
             };
-            if (e.changed.isPathname()) {
-                var value = e.changed.pathname;
-                if (value.to.indexOf('slide/down') > 0) {
-                    rule.anim = 'slideBottom';
-                } else if (value.to.indexOf('slide/left') > 0) {
-                    rule.anim = 'slideLeft';
+            var changed = e.changed;
+            var loc = e.location;
+            var anim = loc.get('anim');
+            console.log(changed.isParam('anim'), anim);
+            if (changed.isParam('anim') && anim) {
+                if (me[anim]) {
+                    rule.anim = anim;
                 }
             }
             return rule;
@@ -51,11 +52,11 @@ KISSY.add('exts/vanim', function(S, Router) {
             me.animCounter++;
             new S.Anim(rootNode, {
                 opacity: 0
-            }, 1, null, function() {
+            }, 1, 'easeNone', function() {
                 rootNode.remove();
                 new S.Anim(newRoot, {
                     opacity: 1
-                }, 1, null, function() {
+                }, 1, 'easeNone', function() {
                     me.animCounter--;
                 }).run();
             }).run();
@@ -65,8 +66,10 @@ KISSY.add('exts/vanim', function(S, Router) {
             me.processRoot(root);
             var rootNode = S.one('#' + root);
             var parent = rootNode.parent();
-            var bakPosition = parent.css('position');
-            var bakOverflow = parent.css('overflow');
+            if (!me.animCounter) {
+                me.$bakPosition = parent.css('position');
+                me.$bakOverflow = parent.css('overflow');
+            }
             parent.css({
                 position: 'relative',
                 overflow: 'hidden'
@@ -108,11 +111,14 @@ KISSY.add('exts/vanim', function(S, Router) {
                     top: -rootNode.outerHeight()
                 };
             }
+            newRootIniAnimAttrs.width = oldRootIniAnimAttrs.width;
+            newRootIniAnimAttrs.height = oldRootIniAnimAttrs.height;
 
 
             newRoot.css(newRootIniAnimAttrs).append(rootNode.clone(true).children());
 
             rootNode.css(oldRootIniAnimAttrs);
+
 
             var oldRootAnimAttrs = {};
             var newRootAnimAttrs = {};
@@ -124,25 +130,26 @@ KISSY.add('exts/vanim', function(S, Router) {
                 oldRootAnimAttrs.top = -rootNode.outerHeight();
                 newRootAnimAttrs.top = 0;
             } else if (dir == Dirs.RIGHT) {
-                oldRootAnimAttrs.right = -rootNode.outerWidth();
-                newRootAnimAttrs.right = 0;
+                oldRootAnimAttrs.left = rootNode.outerWidth();
+                newRootAnimAttrs.left = 0;
             } else if (dir == Dirs.BOTTOM) {
                 oldRootAnimAttrs.top = rootNode.outerHeight();
                 newRootAnimAttrs.top = 0;
             }
             me.animCounter++;
-
-            new S.Anim(rootNode, oldRootAnimAttrs, 0.5).run();
-            new S.Anim(newRoot, newRootAnimAttrs, 0.5, null, function() {
+            new S.Anim(rootNode, oldRootAnimAttrs, 0.8, 'easeOut').run();
+            new S.Anim(newRoot, newRootAnimAttrs, 0.8, 'easeOut', function() {
                 rootNode.remove();
                 newRoot.css({
-                    position: 'static'
+                    position: 'static',
+                    width: 'auto',
+                    height: 'auto'
                 });
                 me.animCounter--;
                 if (!me.animCounter) {
                     parent.css({
-                        position: bakPosition,
-                        overflow: bakOverflow
+                        position: me.$bakPosition,
+                        overflow: me.$bakOverflow
                     });
                 }
             }).run();
