@@ -190,7 +190,7 @@ var safeExec = function(fns, args, context, i, r, e) {
     for (i = 0; i < fns.length; i++) {
         /*_*/try{/*_*/
         e = fns[i];
-        r = Magix.isFunction(e) && e.apply(context, args);
+        r = e && e.apply(context, args);
         /*_*/}catch(x){/*_*/
              Cfg.execError(x);/*_*/
         /*_*/}/*_*/

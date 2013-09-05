@@ -40,7 +40,7 @@ var VOM = Magix.mix({
     /**
      * 根据vframe的id获取vframe对象
      * @param {String} id vframe的id
-     * @return {Vframe} vframe对象
+     * @return {Vframe|null} vframe对象
      */
     get: function(id) {
         return Vframes[id];
@@ -77,6 +77,7 @@ var VOM = Magix.mix({
     },
     /**
      * 获取根vframe对象
+     * @returns {Vframe} 根vframe
      */
     root: function() {
         return Vframe.root(VOM, Loc);

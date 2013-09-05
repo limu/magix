@@ -545,12 +545,14 @@ Mix(Mix(Vframe.prototype, Event), {
                 /**
                  * 事件对象
                  * @type {Object}
+                 * @ignore
                  */
                 var args = {
                     location: loc,
                     changed: chged,
                     /**
                      * 阻止向所有的子view传递
+                     * @ignore
                      */
                     prevent: function() {
                         this.cs = [];
@@ -558,6 +560,7 @@ Mix(Mix(Vframe.prototype, Event), {
                     /**
                      * 向特定的子view传递
                      * @param  {Array} c 子view数组
+                     * @ignore
                      */
                     toChildren: function(c) {
                         c = c || [];

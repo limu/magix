@@ -190,7 +190,7 @@ var safeExec = function(fns, args, context, i, r, e) {
     for (i = 0; i < fns.length; i++) {
         
         e = fns[i];
-        r = Magix.isFunction(e) && e.apply(context, args);
+        r = e && e.apply(context, args);
         
              
         
@@ -653,7 +653,7 @@ var PARAMS = 'params';
 var UseNativeHistory = MxConfig.nativeHistory;
 var SupportState, HashAsNativeHistory;
 
-var isParam = function(params, r, ps) {
+var IsParam = function(params, r, ps) {
     if (params) {
         ps = this[PARAMS];
         if (!Magix.isArray(params)) params = params.split(',');
@@ -664,54 +664,15 @@ var isParam = function(params, r, ps) {
     }
     return r;
 };
-var isPathname = function() {
+var IsPathname = function() {
     return Has(this, PATHNAME);
 };
-var isView = function() {
+var IsView = function() {
     return Has(this, 'view');
 };
-/*var isParamChangedExcept=function(args){
-    if(Magix.isString(args)){
-        args=args.split(',');
-    }else if(!Magix.isArray(args)){
-        args=[args];
-    }
-    var temp={};
-    for(var i=0;i<args.length;i++){
-        temp[args[i]]=true;
-    }
-    var keys=Magix.keys(this[PARAMS]);
-    for(i=0;i<keys.length;i++){
-        if(!Has(temp,keys[i])){
-            return true;
-        }
-    }
-    return false;
-};*/
-var pathnameDiff = function() {
-    var me = this;
-    var hash = me.hash;
-    var query = me.query;
-    return hash[PATHNAME] != query[PATHNAME];
-};
-var paramDiff = function(param) {
-    var me = this;
-    var hash = me.hash;
-    var query = me.query;
-    return hash[PARAMS][param] != query[PARAMS][param];
-};
-var hashOwn = function(key) {
-    var me = this;
-    var hash = me.hash;
-    return Has(hash[PARAMS], key);
-};
-var queryOwn = function(key) {
-    var me = this;
-    var query = me.query;
-    return Has(query[PARAMS], key);
-};
 
-var getParam = function(key) {
+
+var GetParam = function(key) {
     var me = this;
     var params = me[PARAMS];
     return params[key];
@@ -844,11 +805,7 @@ var Router = Mix({
             Mix(comObj, queryObj[PARAMS]);
             Mix(comObj, hashObj[PARAMS]);
             result = {
-                pathnameDiff: pathnameDiff,
-                paramDiff: paramDiff,
-                hashOwn: hashOwn,
-                queryOwn: queryOwn,
-                get: getParam,
+                get: GetParam,
                 href: href,
                 srcQuery: query,
                 srcHash: hash,
@@ -968,9 +925,9 @@ var Router = Mix({
                 }
             }
             result.occur = hasChanged;
-            result.isParam = isParam;
-            result.isPathname = isPathname;
-            result.isView = isView;
+            result.isParam = IsParam;
+            result.isPathname = IsPathname;
+            result.isView = IsView;
             ChgdCache.set(tKey, result);
         }
         return result;
@@ -1990,12 +1947,14 @@ Mix(Mix(Vframe.prototype, Event), {
                 /**
                  * 事件对象
                  * @type {Object}
+                 * @ignore
                  */
                 var args = {
                     location: loc,
                     changed: chged,
                     /**
                      * 阻止向所有的子view传递
+                     * @ignore
                      */
                     prevent: function() {
                         this.cs = [];
@@ -2003,6 +1962,7 @@ Mix(Mix(Vframe.prototype, Event), {
                     /**
                      * 向特定的子view传递
                      * @param  {Array} c 子view数组
+                     * @ignore
                      */
                     toChildren: function(c) {
                         c = c || [];
@@ -3041,7 +3001,7 @@ var VOM = Magix.mix({
     /**
      * 根据vframe的id获取vframe对象
      * @param {String} id vframe的id
-     * @return {Vframe} vframe对象
+     * @return {Vframe|null} vframe对象
      */
     get: function(id) {
         return Vframes[id];

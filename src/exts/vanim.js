@@ -61,6 +61,41 @@ KISSY.add('exts/vanim', function(S, Router) {
                 }).run();
             }).run();
         },
+        threed: function(root) {
+            var me = VAnim;
+            me.processRoot(root);
+            var rootNode = S.one('#' + root);
+            var parent = rootNode.parent();
+            if (!me.animCounter) {
+                me.$bakPosition = parent.css('position');
+                me.$bakOverflow = parent.css('overflow');
+            }
+            parent.css({
+                position: 'relative',
+                overflow: 'hidden',
+                webkitPerspective: parent.height()
+            });
+            rootNode.before('<div id="' + root + '"></div>');
+            rootNode.attr('id', '');
+            var newRoot = S.one('#' + root);
+            newRoot.append(rootNode.clone(true).children());
+            var start = 0;
+            rootNode.css({
+                position: 'absolute',
+                width: parent.width()
+            });
+            var timer = setInterval(function() {
+                if (start >= -120) {
+                    rootNode.css({
+                        webkitTransformOrigin: '0 0',
+                        webkitTransform: 'rotateY(' + start + 'deg)'
+                    });
+                    start -= 2;
+                } else {
+                    clearInterval(timer);
+                }
+            }, 20);
+        },
         slide: function(root, dir) {
             var me = VAnim;
             me.processRoot(root);

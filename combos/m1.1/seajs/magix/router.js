@@ -26,7 +26,7 @@ var PARAMS = 'params';
 var UseNativeHistory = MxConfig.nativeHistory;
 var SupportState, HashAsNativeHistory;
 
-var isParam = function(params, r, ps) {
+var IsParam = function(params, r, ps) {
     if (params) {
         ps = this[PARAMS];
         if (!Magix.isArray(params)) params = params.split(',');
@@ -37,54 +37,14 @@ var isParam = function(params, r, ps) {
     }
     return r;
 };
-var isPathname = function() {
+var IsPathname = function() {
     return Has(this, PATHNAME);
 };
-var isView = function() {
+var IsView = function() {
     return Has(this, 'view');
 };
-/*var isParamChangedExcept=function(args){
-    if(Magix.isString(args)){
-        args=args.split(',');
-    }else if(!Magix.isArray(args)){
-        args=[args];
-    }
-    var temp={};
-    for(var i=0;i<args.length;i++){
-        temp[args[i]]=true;
-    }
-    var keys=Magix.keys(this[PARAMS]);
-    for(i=0;i<keys.length;i++){
-        if(!Has(temp,keys[i])){
-            return true;
-        }
-    }
-    return false;
-};*/
-var pathnameDiff = function() {
-    var me = this;
-    var hash = me.hash;
-    var query = me.query;
-    return hash[PATHNAME] != query[PATHNAME];
-};
-var paramDiff = function(param) {
-    var me = this;
-    var hash = me.hash;
-    var query = me.query;
-    return hash[PARAMS][param] != query[PARAMS][param];
-};
-var hashOwn = function(key) {
-    var me = this;
-    var hash = me.hash;
-    return Has(hash[PARAMS], key);
-};
-var queryOwn = function(key) {
-    var me = this;
-    var query = me.query;
-    return Has(query[PARAMS], key);
-};
 
-var getParam = function(key) {
+var GetParam = function(key) {
     var me = this;
     var params = me[PARAMS];
     return params[key];
@@ -217,11 +177,7 @@ var Router = Mix({
             Mix(comObj, queryObj[PARAMS]);
             Mix(comObj, hashObj[PARAMS]);
             result = {
-                pathnameDiff: pathnameDiff,
-                paramDiff: paramDiff,
-                hashOwn: hashOwn,
-                queryOwn: queryOwn,
-                get: getParam,
+                get: GetParam,
                 href: href,
                 srcQuery: query,
                 srcHash: hash,
@@ -341,9 +297,9 @@ var Router = Mix({
                 }
             }
             result.occur = hasChanged;
-            result.isParam = isParam;
-            result.isPathname = isPathname;
-            result.isView = isView;
+            result.isParam = IsParam;
+            result.isPathname = IsPathname;
+            result.isView = IsView;
             ChgdCache.set(tKey, result);
         }
         return result;
