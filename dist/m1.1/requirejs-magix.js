@@ -689,9 +689,9 @@ var IsView = function() {
     return Has(this, 'view');
 };
 
-var GetParam = function(key) {
-    var me = this;
-    var params = me[PARAMS];
+var GetParam = function(key, me, params) {
+    me = this;
+    params = me[PARAMS];
     return params[key];
 };
 

@@ -672,11 +672,12 @@ var IsView = function() {
 };
 
 
-var GetParam = function(key) {
-    var me = this;
-    var params = me[PARAMS];
+var GetParam = function(key, me, params) {
+    me = this;
+    params = me[PARAMS];
     return params[key];
 };
+
 
 var Path = function(path) {
     var o = Magix.pathToObject(path, IsUtf8);

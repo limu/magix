@@ -767,6 +767,13 @@ Mix(MManager.prototype, {
         return mr.fetchOne.apply(mr, arguments);
     },
     /**
+     * 创建MRequest对象
+     * @return {MRequest} 返回MRequest对象
+     */
+    createMRequest: function() {
+        return new MRequest(this);
+    },
+    /**
      * 根据key清除缓存的models
      * @param  {String} key 字符串
      */

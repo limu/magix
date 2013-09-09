@@ -690,11 +690,12 @@ var IsView = function() {
 };
 
 
-var GetParam = function(key) {
-    var me = this;
-    var params = me[PARAMS];
+var GetParam = function(key, me, params) {
+    me = this;
+    params = me[PARAMS];
     return params[key];
 };
+
 
 var Path = function(path) {
     var o = Magix.pathToObject(path, IsUtf8);
@@ -3261,7 +3262,8 @@ Mix(MRequest.prototype, {
             doneArr[idx] = model;
             if (err) {
                 hasError = true;
-                errorMsg = err;
+                errorMsg.latestMsg = err;
+                errorMsg.currentMsg = err;
                 errorArgs[idx] = err;
             } else {
                 if (!cacheKey || (cacheKey && !modelsCache.has(cacheKey))) {
@@ -3283,9 +3285,6 @@ Mix(MRequest.prototype, {
                 var m = doneIsArray ? done[idx] : done;
                 if (m) {
                     UsedModel(model);
-                    if (hasError) {
-                        errorArgs.msg = errorMsg;
-                    }
                     doneArgs[idx] = SafeExec(m, [errorArgs, model], me);
                 }
             } else if (flag == FetchFlags.ORDER) {
@@ -3293,14 +3292,17 @@ Mix(MRequest.prototype, {
                 orderlyArr[idx] = {
                     m: model,
                     e: hasError,
-                    s: errorMsg
+                    s: err
                 };
                 //
                 for (var i = orderlyArr.i || 0, t, d; t = orderlyArr[i]; i++) {
                     d = doneIsArray ? done[i] : done;
                     UsedModel(t.m);
                     if (t.e) {
-                        errorArgs.msg = t.s;
+                        errorArgs.latestMsg = t.s;
+                        errorArgs.currentMsg = t.s;
+                    } else {
+                        errorArgs.currentMsg = '';
                     }
                     doneArgs[i] = SafeExec(d, [errorArgs, t.m].concat(doneArgs), me);
                     if (t.e) {
@@ -3312,15 +3314,16 @@ Mix(MRequest.prototype, {
             }
 
             if (current >= total) {
-                errorArgs.msg = errorMsg;
-                var last = hasError ? errorArgs : null;
+                if (hasError) {
+                    errorArgs.currentMsg = errorArgs.latestMsg;
+                }
                 if (flag == FetchFlags.ALL) {
                     UsedModel(doneArr, 1);
-                    doneArr.unshift(last);
-                    doneArgs[0] = last;
+                    doneArr.unshift(errorArgs);
+                    doneArgs[0] = errorArgs;
                     doneArgs[1] = SafeExec(done, doneArr, me);
                 } else {
-                    doneArgs.unshift(last);
+                    doneArgs.unshift(errorArgs);
                 }
                 me.$ntId = setTimeout(function() { //前面的任务可能从缓存中来，执行很快
                     me.doNext(doneArgs);
@@ -3893,6 +3896,13 @@ Mix(MManager.prototype, {
     fetchOne: function(models, callback) {
         var mr = new MRequest(this);
         return mr.fetchOne.apply(mr, arguments);
+    },
+    /**
+     * 创建MRequest对象
+     * @return {MRequest} 返回MRequest对象
+     */
+    createMRequest: function() {
+        return new MRequest(this);
     },
     /**
      * 根据key清除缓存的models

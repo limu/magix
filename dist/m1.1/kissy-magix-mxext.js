@@ -671,9 +671,9 @@ var IsView = function() {
     return Has(this, 'view');
 };
 
-var GetParam = function(key) {
-    var me = this;
-    var params = me[PARAMS];
+var GetParam = function(key, me, params) {
+    me = this;
+    params = me[PARAMS];
     return params[key];
 };
 
@@ -3891,6 +3891,13 @@ Mix(MManager.prototype, {
     fetchOne: function(models, callback) {
         var mr = new MRequest(this);
         return mr.fetchOne.apply(mr, arguments);
+    },
+    /**
+     * 创建MRequest对象
+     * @return {MRequest} 返回MRequest对象
+     */
+    createMRequest: function() {
+        return new MRequest(this);
     },
     /**
      * 根据key清除缓存的models
