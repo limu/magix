@@ -3253,8 +3253,9 @@ Mix(MRequest.prototype, {
         }
         var total = models.length;
         var current = 0;
-        var errorMsg;
         var hasError;
+        var latestMsg;
+        var currentError;
 
         var doneArr = new Array(total);
         var doneArgs = [];
@@ -3274,10 +3275,12 @@ Mix(MRequest.prototype, {
             doneArr[idx] = model;
             if (err) {
                 hasError = true;
-                errorMsg.latestMsg = err;
-                errorMsg.currentMsg = err;
+                currentError = true;
+                latestMsg = err;
+                errorArgs.msg = err;
                 errorArgs[idx] = err;
             } else {
+                currentError = false;
                 if (!cacheKey || (cacheKey && !modelsCache.has(cacheKey))) {
                     if (cacheKey) {
                         modelsCache.set(cacheKey, model);
@@ -3297,13 +3300,13 @@ Mix(MRequest.prototype, {
                 var m = doneIsArray ? done[idx] : done;
                 if (m) {
                     UsedModel(model);
-                    doneArgs[idx] = SafeExec(m, [errorArgs, model], me);
+                    doneArgs[idx] = SafeExec(m, [currentError ? errorArgs : null, model, errorArgs], me);
                 }
             } else if (flag == FetchFlags.ORDER) {
                 //var m=doneIsArray?done[idx]:done;
                 orderlyArr[idx] = {
                     m: model,
-                    e: hasError,
+                    e: currentError,
                     s: err
                 };
                 //
@@ -3311,12 +3314,9 @@ Mix(MRequest.prototype, {
                     d = doneIsArray ? done[i] : done;
                     UsedModel(t.m);
                     if (t.e) {
-                        errorArgs.latestMsg = t.s;
-                        errorArgs.currentMsg = t.s;
-                    } else {
-                        errorArgs.currentMsg = '';
+                        errorArgs.msg = t.s;
                     }
-                    doneArgs[i] = SafeExec(d, [errorArgs, t.m].concat(doneArgs), me);
+                    doneArgs[i] = SafeExec(d, [t.e ? errorArgs : null, t.m, errorArgs].concat(doneArgs), me);
                     if (t.e) {
                         errorArgs[i] = t.s;
                         orderlyArr.e = 1;
@@ -3326,8 +3326,8 @@ Mix(MRequest.prototype, {
             }
 
             if (current >= total) {
-                if (hasError) {
-                    errorArgs.currentMsg = errorArgs.latestMsg;
+                if (!hasError) {
+                    errorArgs = null;
                 }
                 if (flag == FetchFlags.ALL) {
                     UsedModel(doneArr, 1);

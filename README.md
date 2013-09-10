@@ -79,7 +79,7 @@ fetchOrder([{},{},...],function(model,errs,preErrors,preResults){//
 <br />
 现在调整为：<br />
 ```
-fetchOrder([{},{},...],function(errs,model,preResults){//err与preError合并
+fetchOrder([{},{},...],function(errs,model,preErrors,preResults){//
 
 });
 ```
@@ -95,7 +95,7 @@ fetchOne([{},{},...],function(model,errs,preErrors,preResults){//
 <br />
 现在调整为：<br />
 ```
-fetchOne([{},{},...],function(err,model,preResults){//err与preError合并
+fetchOne([{},{},...],function(err,model,preErrors,preResults){//
 
 });
 ```
