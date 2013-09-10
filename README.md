@@ -149,7 +149,83 @@ return View.extend({
    }
 });
 ```
+####model与modelmanager
+原来：
+```
+//app base model
 
+return MxextMode.extend({
+   urlMap:{
+      groups:{
+         i1:'/api/userinfo.json',
+         i2:'/api/list.json'
+      }
+   },
+   sync:function(options){
+      var url=this.url();
+      IO({
+         url:url,
+         //...
+         success:options.success,
+         error:options.error
+      });
+   }
+});
+
+//app model manager
+
+var MM=MxextManager.create(AppBaseModel);
+
+MM.registerModels([
+   name:'Interface_1',
+   uri:'groups:i1',
+   urlParams:{
+      action:'get'
+   }
+]);
+
+```
+
+现在：
+
+```
+//app base model
+
+return MxextMode.extend({
+   sync:function(callback){
+      var url=this.get('url');
+
+      IO({
+         url:url,
+         //...
+         success:function(data){
+            callback(null,data);
+         },
+         error:function(msg){
+            callback(msg||'request error');
+         }
+      });
+   }
+});
+
+//app model manager
+
+var MM=MxextManager.create(AppBaseModel);
+
+MM.registerModels([
+   name:'Interface_1',
+   url:'/api/getuserinfo.json',
+   urlParams:{
+      action:'get'
+   }
+]);
+
+```
+原来需要在model的urlMaps中定义之后，在modelmanager中再次定义，1.1直接把url放在modelmanager中进行维护，model只做parse和sync<br />
+即：原来在model中填写的三个空：urlMaps,parse,sync在1.1中变为两个空：parse,sync
+
+
+<br /><br />
 ####其它
 启动入口：<br />
 原来：
