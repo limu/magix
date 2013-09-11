@@ -138,6 +138,7 @@ var MxView = View.extend({
         var wrapObj = {
             hasKey: hasKey,
             res: res,
+            sign: me.sign,
             destroy: destroy
         };
         me.$res[key] = wrapObj;
@@ -151,7 +152,6 @@ var MxView = View.extend({
     getManaged: function(key) {
         var me = this;
         var cache = me.$res;
-        var sign = me.sign;
         if (cache && Has(cache, key)) {
             var wrapObj = cache[key];
             var resource = wrapObj.res;
@@ -168,19 +168,9 @@ var MxView = View.extend({
         var me = this,
             res = null;
         var cache = me.$res;
-        if (cache) {
-            if (Has(cache, param)) {
-                res = cache[param].res;
-                delete cache[param];
-            } else {
-                for (var p in cache) {
-                    if (cache[p].res === param) {
-                        res = cache[p].res;
-                        delete cache[p];
-                        break;
-                    }
-                }
-            }
+        if (cache && Has(cache, param)) {
+            res = cache[param].res;
+            delete cache[param];
         }
         return res;
     },
@@ -188,32 +178,30 @@ var MxView = View.extend({
      * 销毁托管的资源
      * @private
      */
-    destroyManaged: function(e) {
+    destroyManaged: function() {
         var me = this;
         var cache = me.$res;
         //
         if (cache) {
             for (var p in cache) {
                 var o = cache[p];
-                //var processed=false;
-                var res = o.res;
-                var destroy = o.destroy;
-                var processed = false;
-                if (destroy) {
-                    destroy(res);
-                    processed = true;
+                if (o.sign != me.sign) {
+                    //var processed=false;
+                    var res = o.res;
+                    var destroy = o.destroy;
+                    var processed = false;
+                    if (destroy) {
+                        destroy(res);
+                        processed = true;
+                    }
+                    if (!o.hasKey) { //如果托管时没有给key值，则表示这是一个不会在其它方法内共享托管的资源，view刷新时可以删除掉
+                        delete cache[p];
+                    }
+                    me.fire('destroyManaged', {
+                        resource: res,
+                        processed: processed
+                    });
                 }
-                if (!o.hasKey) { //如果托管时没有给key值，则表示这是一个不会在其它方法内共享托管的资源，view刷新时可以删除掉
-                    delete cache[p];
-                }
-                me.fire('destroyManaged', {
-                    resource: res,
-                    processed: processed
-                });
-            }
-            if (e.type == 'destroy') { //如果不是刷新，则是view的销毁
-                //me.un('destroyResource');
-                delete me.$res;
             }
         }
     },

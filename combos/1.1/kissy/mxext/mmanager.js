@@ -65,6 +65,21 @@ var UsedModel = function(m, f) {
         mm.used++;
     }
 };
+var IsMxView = function(view) {
+    return view && view.manage;
+};
+var GenMRequest = function(method) {
+    return function() {
+        var mr = new MRequest(this);
+        var args = arguments;
+        var last = args[args.length - 1];
+        if (IsMxView(last)) {
+            last.manage(mr);
+            args = Slice.call(args, 0, -1);
+        }
+        return mr[method].apply(mr, args);
+    };
+};
 Mix(MManager, {
     /**
      * @lends MManager
@@ -100,9 +115,6 @@ var MRequest = function(host) {
     this.$doTask = false;
     this.$reqModels = {};
 };
-
-var BEFORE = '_before';
-var AFTER = '_after';
 
 Mix(MRequest.prototype, {
     /**
@@ -636,17 +648,19 @@ Mix(MManager.prototype, {
     },
     /**
      * 保存models，所有请求完成回调done
+     * @function
      * @param {String|Array} models 保存models时的描述信息，如:{name:'Home'urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
+     * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest}
      */
-    saveAll: function(models, done) {
-        return new MRequest(this).saveAll(models, done);
-    },
+    saveAll: GenMRequest('saveAll'),
     /**
      * 获取models，所有请求完成回调done
+     * @function
      * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
+     * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest}
      * @example
         //定义
@@ -683,23 +697,22 @@ Mix(MManager.prototype, {
             });
         });
      */
-    fetchAll: function(models, done) {
-        return new MRequest(this).fetchAll(models, done);
-    },
+    fetchAll: GenMRequest('fetchAll'),
     /**
      * 保存models，按顺序回回调done
+     * @function
      * @param {String|Array} models 保存models时的描述信息，如:{name:'Home'urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
+     * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest}
      */
-    saveOrder: function(models, done) {
-        var mr = new MRequest(this);
-        return mr.saveOrder.apply(mr, arguments);
-    },
+    saveOrder: GenMRequest('saveOrder'),
     /**
      * 获取models，按顺序回回调done
+     * @function
      * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
+     * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest}
      * @example
         //代码片断：
@@ -735,24 +748,22 @@ Mix(MManager.prototype, {
             }
         });
      */
-    fetchOrder: function(models, done) {
-        var mr = new MRequest(this);
-        return mr.fetchOrder.apply(mr, arguments);
-    },
+    fetchOrder: GenMRequest('fetchOrder'),
     /**
      * 保存models，其中任意一个成功均立即回调，回调会被调用多次
+     * @function
      * @param {String|Array} models 保存models时的描述信息，如:{name:'Home',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} callback   完成时的回调
+     * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest}
      */
-    saveOne: function(models, callback) {
-        var mr = new MRequest(this);
-        return mr.saveOne.apply(mr, arguments);
-    },
+    saveOne: GenMRequest('saveOne'),
     /**
      * 获取models，其中任意一个成功均立即回调，回调会被调用多次
+     * @function
      * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} callback   完成时的回调
+     * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest}
      * @example
         //代码片断：
@@ -788,16 +799,18 @@ Mix(MManager.prototype, {
             }
         });
      */
-    fetchOne: function(models, callback) {
-        var mr = new MRequest(this);
-        return mr.fetchOne.apply(mr, arguments);
-    },
+    fetchOne: GenMRequest('fetchOne'),
     /**
      * 创建MRequest对象
+     * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest} 返回MRequest对象
      */
-    createMRequest: function() {
-        return new MRequest(this);
+    createMRequest: function(view) {
+        var mr = new MRequest(this);
+        if (IsMxView(view)) {
+            view.manage(mr);
+        }
+        return mr;
     },
     /**
      * 根据key清除缓存的models
@@ -827,20 +840,6 @@ Mix(MManager.prototype, {
                 }
             }
         }
-    },
-    /**
-     * 获取model的url
-     * @param  {String|Object} name model元信息名称
-     * @return {String}
-     */
-    getModelUrl: function(name) {
-        var me = this;
-        var meta = me.getModelMeta(name);
-        if (meta.url) {
-            return meta.url;
-        }
-
-
     },
     /**
      * 从缓存中获取model对象

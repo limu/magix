@@ -1,7 +1,7 @@
 /*
     扩展路由示例，仅KISSY版
  */
-KISSY.add("mxext/router", function(S, R, E) {
+KISSY.add('mxext/router', function(S, R, E, View) {
     var W = window;
     R.useState = function() {
         var me = this,
@@ -9,11 +9,11 @@ KISSY.add("mxext/router", function(S, R, E) {
         var lastHref = initialURL;
         var newHref;
         E.on(W, 'popstate', function(e) {
-            var newHref = location.href;
+            newHref = location.href;
             var equal = newHref == initialURL;
             if (!me.poped && equal) return;
             me.poped = 1;
-            if (newHash != lastHref) {
+            if (newHref != lastHref) {
                 e = {
                     backward: function() {
                         e.p = 1;
@@ -69,7 +69,44 @@ KISSY.add("mxext/router", function(S, R, E) {
                 }
             }
         });
-    }
+    };
+    /**
+     * 页面改变后的提示
+     * @param  {Function} changedFun 是否发生改变的回调方法
+     * @param  {String}  tipMsg       提示信息
+     */
+    View.prototype.observePageChange = function(changedFun, tipMsg) {
+        var me = this;
+        var changeListener = function(e) {
+            if (changedFun.call(me)) {
+                if (!me.$waitPC) {
+                    me.$waitPC = true;
+                    if (W.confirm(tipMsg)) {
+                        delete me.$waitPC;
+                        e.forward();
+                    } else {
+                        delete me.$waitPC;
+                        e.backward();
+                    }
+                } else {
+                    e.prevent();
+                }
+            }
+        };
+        R.on('change', changeListener);
+        W.onbeforeunload = function(e) {
+            if (changedFun.call(me)) {
+                e = e || W.event;
+                if (e) e.returnValue = tipMsg;
+                return tipMsg;
+            }
+        };
+
+        me.on('destroy', function() {
+            R.un('change', changeListener);
+            W.onbeforeunload = null;
+        });
+    };
 }, {
-    requires: ["magix/router", "event"]
+    requires: ['magix/router', 'event', 'magix/view']
 });

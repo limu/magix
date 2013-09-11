@@ -350,7 +350,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/MManager.html#createMRequest">createMRequest</a></b>
-                                                <span class="param">()</span>
+                                                <span class="param">(view)</span>
                                                 
                                                 
                                                 
@@ -360,7 +360,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/MManager.html#fetchAll">fetchAll</a></b>
-                                                <span class="param">(models, done)</span>
+                                                <span class="param">(models, done, view)</span>
                                                 
                                                 
                                                 
@@ -370,7 +370,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/MManager.html#fetchOne">fetchOne</a></b>
-                                                <span class="param">(models, callback)</span>
+                                                <span class="param">(models, callback, view)</span>
                                                 
                                                 
                                                 
@@ -380,7 +380,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/MManager.html#fetchOrder">fetchOrder</a></b>
-                                                <span class="param">(models, done)</span>
+                                                <span class="param">(models, done, view)</span>
                                                 
                                                 
                                                 
@@ -419,16 +419,6 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/MManager.html#getModelUrl">getModelUrl</a></b>
-                                                <span class="param">(name)</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">获取model的url</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/MManager.html#registerMethods">registerMethods</a></b>
                                                 <span class="param">(methods)</span>
                                                 
@@ -450,7 +440,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/MManager.html#saveAll">saveAll</a></b>
-                                                <span class="param">(models, done)</span>
+                                                <span class="param">(models, done, view)</span>
                                                 
                                                 
                                                 
@@ -460,7 +450,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/MManager.html#saveOne">saveOne</a></b>
-                                                <span class="param">(models, callback)</span>
+                                                <span class="param">(models, callback, view)</span>
                                                 
                                                 
                                                 
@@ -470,7 +460,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/MManager.html#saveOrder">saveOrder</a></b>
-                                                <span class="param">(models, done)</span>
+                                                <span class="param">(models, done, view)</span>
                                                 
                                                 
                                                 
@@ -790,7 +780,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">createMRequest</b>
-                                                <span class="param">()</span>
+                                                <span class="param">(view)</span>
                                                 
                                                 
                                                 
@@ -804,6 +794,22 @@ dl.data .dd{
                                             
                                             <dl>                                            
                                                 
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            [ 
+                                                            <b class="name">view</b>
+                                                            
+                                                             ]
+                                                            <span class="type">{<a href="../symbols/MxView.html">MxView</a>}</span> 
+                                                            <span class="desc">当传递MxView对象时，自动帮你托管MRequest</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
                                                 
                                                 
                                                 
@@ -840,7 +846,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">fetchAll</b>
-                                                <span class="param">(models, done)</span>
+                                                <span class="param">(models, done, view)</span>
                                                 
                                                 
                                                 
@@ -875,6 +881,15 @@ dl.data .dd{
                                                             
                                                             <span class="type">{Function}</span> 
                                                             <span class="desc">完成时的回调</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            [ 
+                                                            <b class="name">view</b>
+                                                            
+                                                             ]
+                                                            <span class="type">{<a href="../symbols/MxView.html">MxView</a>}</span> 
+                                                            <span class="desc">当传递MxView对象时，自动帮你托管MRequest</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -953,7 +968,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">fetchOne</b>
-                                                <span class="param">(models, callback)</span>
+                                                <span class="param">(models, callback, view)</span>
                                                 
                                                 
                                                 
@@ -988,6 +1003,15 @@ dl.data .dd{
                                                             
                                                             <span class="type">{Function}</span> 
                                                             <span class="desc">完成时的回调</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            [ 
+                                                            <b class="name">view</b>
+                                                            
+                                                             ]
+                                                            <span class="type">{<a href="../symbols/MxView.html">MxView</a>}</span> 
+                                                            <span class="desc">当传递MxView对象时，自动帮你托管MRequest</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1067,7 +1091,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">fetchOrder</b>
-                                                <span class="param">(models, done)</span>
+                                                <span class="param">(models, done, view)</span>
                                                 
                                                 
                                                 
@@ -1102,6 +1126,15 @@ dl.data .dd{
                                                             
                                                             <span class="type">{Function}</span> 
                                                             <span class="desc">完成时的回调</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            [ 
+                                                            <b class="name">view</b>
+                                                            
+                                                             ]
+                                                            <span class="type">{<a href="../symbols/MxView.html">MxView</a>}</span> 
+                                                            <span class="desc">当传递MxView对象时，自动帮你托管MRequest</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1397,72 +1430,6 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
-                                            <a name="getModelUrl"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">getModelUrl</b>
-                                                <span class="param">(name)</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                获取model的url
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                <dt>Parameters</dt>
-                                                <dd>
-                                                    <ul class="list param-list">
-                                                    
-                                                        <li class="li">
-                                                            &nbsp;
-                                                            <b class="name">name</b>
-                                                            
-                                                            
-                                                            <span class="type">{String|Object}</span> 
-                                                            <span class="desc">model元信息名称</span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                <dt>Returns</dt>
-                                                <dd>
-                                                    <ul class="list">
-                                                    
-                                                        <li class="li">
-                                                            <span class="type">{String}</span> 
-                                                            <span></span>
-                                                        </li>
-                                                    
-                                                    </ul>
-                                                </dd>
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
                                             <a name="registerMethods"> </a>
                                             <div class="title" >
                                                 
@@ -1647,7 +1614,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">saveAll</b>
-                                                <span class="param">(models, done)</span>
+                                                <span class="param">(models, done, view)</span>
                                                 
                                                 
                                                 
@@ -1682,6 +1649,15 @@ dl.data .dd{
                                                             
                                                             <span class="type">{Function}</span> 
                                                             <span class="desc">完成时的回调</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            [ 
+                                                            <b class="name">view</b>
+                                                            
+                                                             ]
+                                                            <span class="type">{<a href="../symbols/MxView.html">MxView</a>}</span> 
+                                                            <span class="desc">当传递MxView对象时，自动帮你托管MRequest</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1722,7 +1698,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">saveOne</b>
-                                                <span class="param">(models, callback)</span>
+                                                <span class="param">(models, callback, view)</span>
                                                 
                                                 
                                                 
@@ -1757,6 +1733,15 @@ dl.data .dd{
                                                             
                                                             <span class="type">{Function}</span> 
                                                             <span class="desc">完成时的回调</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            [ 
+                                                            <b class="name">view</b>
+                                                            
+                                                             ]
+                                                            <span class="type">{<a href="../symbols/MxView.html">MxView</a>}</span> 
+                                                            <span class="desc">当传递MxView对象时，自动帮你托管MRequest</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1797,7 +1782,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">saveOrder</b>
-                                                <span class="param">(models, done)</span>
+                                                <span class="param">(models, done, view)</span>
                                                 
                                                 
                                                 
@@ -1832,6 +1817,15 @@ dl.data .dd{
                                                             
                                                             <span class="type">{Function}</span> 
                                                             <span class="desc">完成时的回调</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            [ 
+                                                            <b class="name">view</b>
+                                                            
+                                                             ]
+                                                            <span class="type">{<a href="../symbols/MxView.html">MxView</a>}</span> 
+                                                            <span class="desc">当传递MxView对象时，自动帮你托管MRequest</span>
                                                         </li>
                                                     
                                                     </ul>
