@@ -1,6 +1,6 @@
 ﻿##Magix各版本CDN地址
 
-####桌面版1.1
+####1.1
 http://a.tbcdn.cn/apps/e/magix/1.1/kissy-magix.js (KISSY类库，Magix核心未压缩版)<br />
 http://a.tbcdn.cn/apps/e/magix/1.1/kissy-magix-min.js (KISSY类库，Magix核心压缩版)<br />
 http://a.tbcdn.cn/apps/e/magix/1.1/kissy-magix-mxext.js (KISSY类库，Magix核心与扩展未压缩版)<br />
@@ -16,23 +16,8 @@ http://a.tbcdn.cn/apps/e/magix/1.1/requirejs-magix-min.js (requirejs+jq类库，
 http://a.tbcdn.cn/apps/e/magix/1.1/requirejs-magix-mxext.js (requirejs+jq类库，Magix核心与扩展未压缩版)<br />
 http://a.tbcdn.cn/apps/e/magix/1.1/requirejs-magix-mxext-min.js (requirejs+jq类库，Magix核心与扩展压缩版)<br />
 
-####移动版1.1
-http://a.tbcdn.cn/apps/e/magix/m1.1/kissy-magix.js (KISSY类库，Magix核心未压缩版)<br />
-http://a.tbcdn.cn/apps/e/magix/m1.1/kissy-magix-min.js (KISSY类库，Magix核心压缩版)<br />
-http://a.tbcdn.cn/apps/e/magix/m1.1/kissy-magix-mxext.js (KISSY类库，Magix核心与扩展未压缩版)<br />
-http://a.tbcdn.cn/apps/e/magix/m1.1/kissy-magix-mxext-min.js (KISSY类库，Magix核心与扩展压缩版)<br />
 
-http://a.tbcdn.cn/apps/e/magix/m1.1/seajs-magix.js (sejs+jq类库，Magix核心未压缩版)<br />
-http://a.tbcdn.cn/apps/e/magix/m1.1/seajs-magix-min.js (sejs+jq类库，Magix核心压缩版)<br />
-http://a.tbcdn.cn/apps/e/magix/m1.1/seajs-magix-mxext.js (sejs+jq类库，Magix核心与扩展未压缩版)<br />
-http://a.tbcdn.cn/apps/e/magix/m1.1/seajs-magix-mxext-min.js (sejs+jq类库，Magix核心与扩展压缩版)<br />
-
-http://a.tbcdn.cn/apps/e/magix/m1.1/requirejs-magix.js (requirejs+jq类库，Magix核心未压缩版)<br />
-http://a.tbcdn.cn/apps/e/magix/m1.1/requirejs-magix-min.js (requirejs+jq类库，Magix核心压缩版)<br />
-http://a.tbcdn.cn/apps/e/magix/m1.1/requirejs-magix-mxext.js (requirejs+jq类库，Magix核心与扩展未压缩版)<br />
-http://a.tbcdn.cn/apps/e/magix/m1.1/requirejs-magix-mxext-min.js (requirejs+jq类库，Magix核心与扩展压缩版)<br />
-
-####桌面版1.0
+####1.0
 http://a.tbcdn.cn/apps/e/magix/1.0/kissy-magix.js (KISSY类库，Magix核心未压缩版)<br />
 http://a.tbcdn.cn/apps/e/magix/1.0/kissy-magix-min.js (KISSY类库，Magix核心压缩版)<br />
 http://a.tbcdn.cn/apps/e/magix/1.0/kissy-magix-mxext.js (KISSY类库，Magix核心与扩展未压缩版)<br />
@@ -221,8 +206,8 @@ MM.registerModels([
 ]);
 
 ```
-原来需要在model的urlMaps中定义之后，在modelmanager中再次定义，1.1直接把url放在modelmanager中进行维护，model只做parse和sync<br />
-即：原来在model中填写的三个空：urlMaps,parse,sync在1.1中变为两个空：parse,sync
+原来需要在model的urlMap中定义之后，在modelmanager中再次定义，1.1直接把url放在modelmanager中进行维护，model只做parse和sync<br />
+即：原来在model中填写的三个空：urlMap,parse,sync在1.1中变为两个空：parse,sync
 
 
 <br /><br />

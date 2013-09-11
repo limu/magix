@@ -3,7 +3,7 @@
  * @author 行列
  * @version 1.0
  **/
-define("mxext/mmanager", ["magix/magix", "magix/event"], function(Magix, Event) {
+define("mxext/mmanager", ["magix/magix"], function(Magix) {
     /*
         #begin mm_fetchall_1#
         define('testMM',["mxext/mmanager","mxext/model"],function(MM,Model){
@@ -174,7 +174,6 @@ Mix(MRequest.prototype, {
                     if (after) { //有after
                         SafeExec(after, [model, meta]);
                     }
-                    host.fireAfter(meta.name, [model]);
                 }
             }
 
@@ -561,8 +560,6 @@ Mix(MManager.prototype, {
         };
         var before = modelAttrs.before || meta.before;
 
-        me.fireBefore(meta.name, [entity]);
-
         if (Magix.isFunction(before)) {
             SafeExec(before, [entity, meta, modelAttrs]);
         }
@@ -840,54 +837,6 @@ Mix(MManager.prototype, {
         }
 
 
-    },
-    /**
-     * 监听某个model的before
-     * @param  {String}   name     注册时元信息中的名称
-     * @param  {Function} callback 回调
-     */
-    listenBefore: function(name, callback) {
-        Event.on.call(this, name + BEFORE, callback);
-    },
-    /**
-     * 监听某个model的after
-     * @param  {String}   name     注册时元信息中的名称
-     * @param  {Function} callback 回调
-     */
-    listenAfter: function(name, callback) {
-        Event.on.call(this, name + AFTER, callback);
-    },
-    /**
-     * 取消before监听
-     * @param  {String}   name     注册时元信息的名称
-     * @param  {Function} [callback] 回调
-     */
-    unlistenBefore: function(name, callback) {
-        Event.un.call(this, name + BEFORE, callback);
-    },
-    /**
-     * 取消after监听
-     * @param  {String}   name     注册时元信息的名称
-     * @param  {Function} [callback] 回调
-     */
-    unlistenAfter: function(name, callback) {
-        Event.un.call(this, name + AFTER, callback);
-    },
-    /**
-     * 触发某个model的before监听
-     * @param  {String} name 注册时元信息中的名称
-     * @param  {Object} [args] 数据
-     */
-    fireBefore: function(name, args) {
-        Event.fire.call(this, name + BEFORE, args);
-    },
-    /**
-     * 触发某个model的after监听
-     * @param  {String} name 注册时元信息中的名称
-     * @param  {Object} [args] 数据
-     */
-    fireAfter: function(name, args) {
-        Event.fire.call(this, name + AFTER, args);
     },
     /**
      * 从缓存中获取model对象

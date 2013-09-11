@@ -3,7 +3,7 @@
  * @author 行列
  * @version 1.0
  **/
-define("mxext/mmanager", ["magix/magix", "magix/event"], function(require) {
+define("mxext/mmanager", ["magix/magix"], function(require) {
     /*
         #begin mm_fetchall_1#
         define('testMM',["mxext/mmanager","mxext/model"],function(require){
@@ -20,7 +20,6 @@ define("mxext/mmanager", ["magix/magix", "magix/event"], function(require) {
         #end#
      */
     var Magix = require("magix/magix");
-    var Event = require("magix/event");
     eval(Magix.include('../tmpl/mmanager', 1));
     return MManager;
 });

@@ -8,7 +8,7 @@ define("magix/body",["magix/magix"],function(require){
     var Magix=require("magix/magix");
     var Has = Magix.has;
 //不支持冒泡的事件
-var UnsupportBubble = Magix.listToMap('');
+var UnsupportBubble = Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
 var RootNode = document.body;
 var RootEvents = {};
 var MxEvtSplit = String.fromCharCode(26);

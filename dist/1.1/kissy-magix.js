@@ -1127,7 +1127,7 @@ var Router = Mix({
 KISSY.add("magix/body",function(S,Magix,SE){
     var Has = Magix.has;
 //不支持冒泡的事件
-var UnsupportBubble = Magix.listToMap('');
+var UnsupportBubble = Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
 var RootNode = document.body;
 var RootEvents = {};
 var MxEvtSplit = String.fromCharCode(26);

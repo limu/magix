@@ -1127,7 +1127,7 @@ var Router = Mix({
 KISSY.add("magix/body",function(S,Magix,SE){
     var Has = Magix.has;
 //不支持冒泡的事件
-var UnsupportBubble = Magix.listToMap('');
+var UnsupportBubble = Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
 var RootNode = document.body;
 var RootEvents = {};
 var MxEvtSplit = String.fromCharCode(26);
@@ -3100,7 +3100,7 @@ var VOM = Magix.mix({
  * @author 行列
  * @version 1.0
  **/
-KISSY.add("mxext/mmanager", function(S, Magix, Event) {
+KISSY.add("mxext/mmanager", function(S, Magix) {
     /*
         #begin mm_fetchall_1#
         KISSY.add('testMM',function(S,MM,Model){
@@ -3273,7 +3273,6 @@ Mix(MRequest.prototype, {
                     if (after) { //有after
                         SafeExec(after, [model, meta]);
                     }
-                    host.fireAfter(meta.name, [model]);
                 }
             }
 
@@ -3660,8 +3659,6 @@ Mix(MManager.prototype, {
         };
         var before = modelAttrs.before || meta.before;
 
-        me.fireBefore(meta.name, [entity]);
-
         if (Magix.isFunction(before)) {
             SafeExec(before, [entity, meta, modelAttrs]);
         }
@@ -3943,54 +3940,6 @@ Mix(MManager.prototype, {
 
     },
     /**
-     * 监听某个model的before
-     * @param  {String}   name     注册时元信息中的名称
-     * @param  {Function} callback 回调
-     */
-    listenBefore: function(name, callback) {
-        Event.on.call(this, name + BEFORE, callback);
-    },
-    /**
-     * 监听某个model的after
-     * @param  {String}   name     注册时元信息中的名称
-     * @param  {Function} callback 回调
-     */
-    listenAfter: function(name, callback) {
-        Event.on.call(this, name + AFTER, callback);
-    },
-    /**
-     * 取消before监听
-     * @param  {String}   name     注册时元信息的名称
-     * @param  {Function} [callback] 回调
-     */
-    unlistenBefore: function(name, callback) {
-        Event.un.call(this, name + BEFORE, callback);
-    },
-    /**
-     * 取消after监听
-     * @param  {String}   name     注册时元信息的名称
-     * @param  {Function} [callback] 回调
-     */
-    unlistenAfter: function(name, callback) {
-        Event.un.call(this, name + AFTER, callback);
-    },
-    /**
-     * 触发某个model的before监听
-     * @param  {String} name 注册时元信息中的名称
-     * @param  {Object} [args] 数据
-     */
-    fireBefore: function(name, args) {
-        Event.fire.call(this, name + BEFORE, args);
-    },
-    /**
-     * 触发某个model的after监听
-     * @param  {String} name 注册时元信息中的名称
-     * @param  {Object} [args] 数据
-     */
-    fireAfter: function(name, args) {
-        Event.fire.call(this, name + AFTER, args);
-    },
-    /**
      * 从缓存中获取model对象
      * @param  {String|Object} modelAttrs
      * @return {Model}
@@ -4037,7 +3986,7 @@ Mix(MManager.prototype, {
 });
     return MManager;
 }, {
-    requires: ["magix/magix", "magix/event"]
+    requires: ["magix/magix"]
 });
 /**
  * @fileOverview Model
