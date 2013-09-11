@@ -2539,6 +2539,11 @@ Mix(Mix(View.prototype, Event), {
      */
     destroy: function() {
         var me = this;
+        if (me.sign > 0) {
+            me.sign = 0;
+        }
+        me.sign--;
+
         //me.fire('refresh', null, true, true); //先清除绑定在上面的app中的刷新
         me.fire('refresh', 0, 1);
         me.fire('destroy', 0, 1, 1); //同上
@@ -2554,7 +2559,7 @@ Mix(Mix(View.prototype, Event), {
 
         //me.un('prerender',null,true); 销毁的话也就访问不到view对象了，这些事件不解绑也没问题
         //me.un('rendered',null,true);
-        me.sign = 0;
+
         //
     },
     /**
