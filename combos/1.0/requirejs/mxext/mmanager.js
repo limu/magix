@@ -378,9 +378,11 @@ Mix(MRequest.prototype, {
                 var m = reqModels[p];
                 var cacheKey = m.$mm.cacheKey;
                 if (cacheKey && Has(modelsCacheKeys, cacheKey)) {
-                    var fns = modelsCacheKeys[cacheKey];
+                    var fns = modelsCacheKeys[cacheKey].q;
                     delete modelsCacheKeys[cacheKey];
-                    SafeExec(fns, [true, m, 'aborted'], m);
+                    if (!me.$destroy) {
+                        SafeExec(fns, [null, 'aborted'], m);
+                    }
                 }
                 m.abort();
             }
