@@ -544,7 +544,7 @@ Mix(Mix(Vframe.prototype, Event), {
 
                 0.3把块放在view中了，在vom中取出vframe，但这块的职责应该在vframe中做才对，view只管显示，vframe负责父子关系
          */
-        if (view && view.sign) {
+        if (view && view.sign > 0) {
             //view.location=loc;
             if (view.rendered) { //存在view时才进行广播，对于加载中的可在加载完成后通过调用view.location拿到对应的window.location.href对象，对于销毁的也不需要广播
                 var isChanged = view.olChanged(chged);

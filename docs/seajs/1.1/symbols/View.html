@@ -310,7 +310,7 @@ dl.data .dd{
                                                         
                                                         
                                                         
-                                                        <span class="desc">是否启用DOM事件(test<click,mousedown>事件是否生效)</span>
+                                                        <span class="desc">是否启用DOM事件(test&lt;click,mousedown&gt;事件是否生效)</span>
                                                     </li>
                                                 
                                             
@@ -382,7 +382,7 @@ dl.data .dd{
                                                         
                                                         
                                                         
-                                                        <span class="desc">view的签名，用于刷新，销毁等的异步标识判断</span>
+                                                        <span class="desc">view的签名，用于刷新，销毁等的异步标识判断，当view销毁时，该属性是小于等于零的数</span>
                                                     </li>
                                                 
                                             
@@ -538,7 +538,7 @@ dl.data .dd{
                                                 
                                                 
                                                 
-                                                <span class="desc">指定要监视地址栏中的哪些值有变化时，或pathname有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数</span>                                                
+                                                <span class="desc">监视地址栏中的参数或pathname，有变动时，才调用当前view的locationChange方法。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些参数有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -794,7 +794,7 @@ dl.data .dd{
                      
 					</div>
 					<div class="desc">
-						是否启用DOM事件(test<click,mousedown>事件是否生效)
+						是否启用DOM事件(test&lt;click,mousedown&gt;事件是否生效)
 						
 						
 					</div>
@@ -944,7 +944,7 @@ dl.data .dd{
                      
 					</div>
 					<div class="desc">
-						view的签名，用于刷新，销毁等的异步标识判断
+						view的签名，用于刷新，销毁等的异步标识判断，当view销毁时，该属性是小于等于零的数
 						
 						
 					</div>
@@ -1386,7 +1386,7 @@ dl.data .dd{
                                             </div>
 
                                             <div class="desc">
-                                                指定要监视地址栏中的哪些值有变化时，或pathname有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
+                                                监视地址栏中的参数或pathname，有变动时，才调用当前view的locationChange方法。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些参数有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
                                                 
                                                 
                                             </div>

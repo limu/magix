@@ -160,7 +160,6 @@ Magix.mix(Model.prototype, {
      * @param {String} [obj2] 参数内容
      * @param {String}   type      参数分组的key
      * @param {Boolean}   ignoreIfExist   如果存在同名的参数则不覆盖，忽略掉这次传递的参数
-     * @param {Function} callback 对每一项参数设置时的回调
      */
     setParams: function(obj1, obj2, type, ignoreIfExist) {
         if (!type) {
@@ -245,33 +244,6 @@ Magix.mix(Model.prototype, {
             delete me.$keys;
         }
     },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * 获取属性
      * @param {String} type type
@@ -299,7 +271,7 @@ Magix.mix(Model.prototype, {
         }
         if (Magix.isObject(key)) {
             if (!Magix.isObject(val)) {
-                val = {}
+                val = {};
             }
             for (var p in key) {
                 if (saveKeyList) {
@@ -340,14 +312,10 @@ Magix.mix(Model.prototype, {
                     }
                     callback(err, data, options);
                 }
+            } else {
+                callback('abort', null, options);
             }
         };
-
-
-
-
-
-
         me.$trans = me.sync(temp, options);
     },
     /**

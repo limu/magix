@@ -1941,7 +1941,7 @@ Mix(Mix(Vframe.prototype, Event), {
 
                 0.3把块放在view中了，在vom中取出vframe，但这块的职责应该在vframe中做才对，view只管显示，vframe负责父子关系
          */
-        if (view && view.sign) {
+        if (view && view.sign > 0) {
             //view.location=loc;
             if (view.rendered) { //存在view时才进行广播，对于加载中的可在加载完成后通过调用view.location拿到对应的window.location.href对象，对于销毁的也不需要广播
                 var isChanged = view.olChanged(chged);
@@ -2153,7 +2153,7 @@ var EvtMethodReg = /([$\w]+)<([\w,]+)>/;
  * @property {String} id 当前view与页面vframe节点对应的id
  * @property {Vframe} owner 拥有当前view的vframe对象
  * @property {Object} vom vom对象
- * @property {Integer} sign view的签名，用于刷新，销毁等的异步标识判断
+ * @property {Integer} sign view的签名，用于刷新，销毁等的异步标识判断，当view销毁时，该属性是小于等于零的数
  * @property {String} template 当前view对应的模板字符串(当hasTmpl为true时)，该属性在interact事件触发后才存在
  * @property {Boolean} rendered 标识当前view有没有渲染过，即primed事件有没有触发过
  * @property {Object} location window.locaiton.href解析出来的对象
@@ -2285,7 +2285,7 @@ Mix(Mix(View.prototype, Event), {
      */
     hasTmpl: true,
     /**
-     * 是否启用DOM事件(test<click,mousedown>事件是否生效)
+     * 是否启用DOM事件(test&lt;click,mousedown&gt;事件是否生效)
      * @default true
      * @example
      * 该属性在做浏览器兼容时有用：支持pushState的浏览器阻止a标签的默认行为，转用pushState，不支持时直接a标签跳转，view不启用事件
@@ -2421,7 +2421,7 @@ Mix(Mix(View.prototype, Event), {
         me.endUpdate();
     },
     /**
-     * 指定要监视地址栏中的哪些值有变化时，或pathname有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
+     * 监视地址栏中的参数或pathname，有变动时，才调用当前view的locationChange方法。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些参数有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
      * @param {Array|String|Object} args  数组字符串或对象
      * @example
      * return View.extend({
@@ -3124,6 +3124,7 @@ KISSY.add("mxext/mmanager", function(S, Magix) {
     var Has = Magix.has;
 var SafeExec = Magix.safeExec;
 var Mix = Magix.mix;
+var IsFunction = Magix.isFunction;
 /**
  * Model管理对象，可方便的对Model进行缓存和更新
  * @name MManager
@@ -3168,7 +3169,7 @@ var UsedModel = function(m, f) {
     }
 };
 var IsMxView = function(view) {
-    return view && view.manage;
+    return view && view.mxViewCtor && view.manage;
 };
 var GenMRequest = function(method) {
     return function() {
@@ -3182,6 +3183,12 @@ var GenMRequest = function(method) {
         return mr[method].apply(mr, args);
     };
 };
+var GenRequestMethod = function(flag, save) {
+    return function(models, done) {
+        var cbs = Slice.call(arguments, 1);
+        return this.send(models, cbs.length > 1 ? cbs : done, flag, save);
+    };
+};
 Mix(MManager, {
     /**
      * @lends MManager
@@ -3192,7 +3199,7 @@ Mix(MManager, {
      */
     create: function(modelClass) {
         if (!modelClass) {
-            throw Error('MManager.create:modelClass ungiven');
+            throw Error('ungiven modelClass');
         }
         return new MManager(modelClass);
     }
@@ -3205,6 +3212,7 @@ var FetchFlags = {
 var Now = Date.now || function() {
         return +new Date();
     };
+var Guid = Now();
 /**
  * model请求类
  * @name MRequest
@@ -3216,6 +3224,7 @@ var MRequest = function(host) {
     this.$host = host;
     this.$doTask = false;
     this.$reqModels = {};
+    this.id = 'mr' + Guid--;
 };
 
 Mix(MRequest.prototype, {
@@ -3264,7 +3273,7 @@ Mix(MRequest.prototype, {
         if (doneIsArray) {
             doneArgs = new Array(done.length);
         }
-        var doneFn = function(model, idx, err, data) {
+        var doneFn = function(model, idx, err) {
             if (me.$destroy) return; //销毁，啥也不做
             current++;
             delete reqModels[model.id];
@@ -3291,12 +3300,12 @@ Mix(MRequest.prototype, {
                         SafeExec(after, [model, meta]);
                     }
                 }
+                UsedModel(model);
             }
 
             if (flag == FetchFlags.ONE) { //如果是其中一个成功，则每次成功回调一次
                 var m = doneIsArray ? done[idx] : done;
                 if (m) {
-                    UsedModel(model);
                     doneArgs[idx] = SafeExec(m, [currentError ? errorArgs : null, model, errorArgs], me);
                 }
             } else if (flag == FetchFlags.ORDER) {
@@ -3309,15 +3318,11 @@ Mix(MRequest.prototype, {
                 //
                 for (var i = orderlyArr.i || 0, t, d; t = orderlyArr[i]; i++) {
                     d = doneIsArray ? done[i] : done;
-                    UsedModel(t.m);
                     if (t.e) {
                         errorArgs.msg = t.s;
+                        errorArgs[i] = t.s;
                     }
                     doneArgs[i] = SafeExec(d, [t.e ? errorArgs : null, t.m, errorArgs].concat(doneArgs), me);
-                    if (t.e) {
-                        errorArgs[i] = t.s;
-                        orderlyArr.e = 1;
-                    }
                 }
                 orderlyArr.i = i;
             }
@@ -3327,7 +3332,6 @@ Mix(MRequest.prototype, {
                     errorArgs = null;
                 }
                 if (flag == FetchFlags.ALL) {
-                    UsedModel(doneArr, 1);
                     doneArr.unshift(errorArgs);
                     doneArgs[0] = errorArgs;
                     doneArgs[1] = SafeExec(done, doneArr, me);
@@ -3339,23 +3343,24 @@ Mix(MRequest.prototype, {
                 }, 30);
             }
 
-            if (cacheKey && Has(modelsCacheKeys, cacheKey)) {
-                var fns = modelsCacheKeys[cacheKey].q;
-                delete modelsCacheKeys[cacheKey];
-                SafeExec(fns, [data, err], model);
-            }
-
         };
-        //
-
+        var cacheDone = function(err, data, ops) {
+            var cacheKey = ops.key;
+            var cache = modelsCacheKeys[cacheKey];
+            if (cache) {
+                var fns = cache.q;
+                delete modelsCacheKeys[cacheKey];
+                SafeExec(fns, err);
+            }
+        };
         for (var i = 0, model; i < models.length; i++) {
             model = models[i];
             if (model) {
-                var modelEntity;
                 var modelInfo = host.getModel(model, save);
                 var cacheKey = modelInfo.cacheKey;
-                modelEntity = modelInfo.entity;
+                var modelEntity = modelInfo.entity;
                 var wrapDoneFn = WrapDone(doneFn, modelEntity, i);
+                wrapDoneFn.id = me.id;
 
                 if (cacheKey && Has(modelsCacheKeys, cacheKey)) {
                     modelsCacheKeys[cacheKey].q.push(wrapDoneFn);
@@ -3364,11 +3369,14 @@ Mix(MRequest.prototype, {
                         reqModels[modelEntity.id] = modelEntity;
                         if (cacheKey) {
                             modelsCacheKeys[cacheKey] = {
-                                q: [],
+                                q: [wrapDoneFn],
                                 e: modelEntity
                             };
+                            wrapDoneFn = cacheDone;
                         }
-                        modelEntity.request(wrapDoneFn);
+                        modelEntity.request(wrapDoneFn, {
+                            key: cacheKey
+                        });
                     } else {
                         wrapDoneFn();
                     }
@@ -3381,7 +3389,7 @@ Mix(MRequest.prototype, {
     },
     /**
      * 获取models，所有请求完成回调done
-     * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
+     * @param {Object|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @return {MRequest}
      */
@@ -3390,7 +3398,7 @@ Mix(MRequest.prototype, {
     },
     /**
      * 保存models，所有请求完成回调done
-     * @param {String|Array} models 保存models时的描述信息，如:{name:'Home'urlParams:{a:'12'},postParams:{b:2}}
+     * @param {Object|Array} models 保存models时的描述信息，如:{name:'Home'urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @return {MRequest}
      */
@@ -3399,47 +3407,39 @@ Mix(MRequest.prototype, {
     },
     /**
      * 获取models，按顺序执行回调done
-     * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
+     * @function
+     * @param {Object|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @return {MRequest}
      */
-    fetchOrder: function(models, done) {
-        var cbs = Slice.call(arguments, 1);
-        return this.send(models, cbs.length > 1 ? cbs : done, FetchFlags.ORDER);
-    },
+    fetchOrder: GenRequestMethod(FetchFlags.ORDER),
     /**
      * 保存models，按顺序执行回调done
-     * @param {String|Array} models 保存models时的描述信息，如:{name:'Home'urlParams:{a:'12'},postParams:{b:2}}
+     * @function
+     * @param {Object|Array} models 保存models时的描述信息，如:{name:'Home'urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @return {MRequest}
      */
-    saveOrder: function(models, done) {
-        var cbs = Slice.call(arguments, 1);
-        return this.send(models, cbs.length > 1 ? cbs : done, FetchFlags.ORDER, 1);
-    },
+    saveOrder: GenRequestMethod(FetchFlags.ORDER, 1),
     /**
      * 保存models，其中任意一个成功均立即回调，回调会被调用多次
-     * @param {String|Array} models 保存models时的描述信息，如:{name:'Home',urlParams:{a:'12'},postParams:{b:2}}
+     * @function
+     * @param {Object|Array} models 保存models时的描述信息，如:{name:'Home',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} callback   完成时的回调
      * @return {MRequest}
      */
-    saveOne: function(models, callback) {
-        var cbs = Slice.call(arguments, 1);
-        return this.send(models, cbs.length > 1 ? cbs : callback, FetchFlags.ONE, 1);
-    },
+    saveOne: GenRequestMethod(FetchFlags.ONE, 1),
     /**
      * 获取models，其中任意一个成功均立即回调，回调会被调用多次
-     * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
+     * @function
+     * @param {Object|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} callback   完成时的回调
      * @return {MRequest}
      */
-    fetchOne: function(models, callback) {
-        var cbs = Slice.call(arguments, 1);
-        return this.send(models, cbs.length > 1 ? cbs : callback, FetchFlags.ONE);
-    },
+    fetchOne: GenRequestMethod(FetchFlags.ONE),
     /**
      * 中止所有model的请求
-     * 注意：调用该方法后会中止请求，并回调error方法
+     * 注意：调用该方法后会中止请求，并调用回调传递aborted异常消息
      */
     abort: function() {
         var me = this;
@@ -3448,25 +3448,39 @@ Mix(MRequest.prototype, {
         var reqModels = me.$reqModels;
         var modelsCacheKeys = host.$mCacheKeys;
 
-        if (reqModels) {
-            for (var p in reqModels) {
-                var m = reqModels[p];
-                var cacheKey = m.$mm.cacheKey;
-                if (cacheKey && Has(modelsCacheKeys, cacheKey)) {
-                    var fns = modelsCacheKeys[cacheKey];
-                    delete modelsCacheKeys[cacheKey];
-                    SafeExec(fns, [true, m, 'aborted'], m);
+        for (var p in reqModels) {
+            var m = reqModels[p];
+            var cacheKey = m.$mm.cacheKey;
+            if (cacheKey && Has(modelsCacheKeys, cacheKey)) {
+                var cache = modelsCacheKeys[cacheKey];
+                var fns = cache.q;
+                var nfns = [];
+                for (var i = 0, fn; i < fns.length; i++) {
+                    fn = fns[i];
+                    if (fn.id != me.id) {
+                        nfns.push(fn);
+                    } else if (!me.$destroy) {
+                        SafeExec(fn, ['abort'], me);
+                    }
                 }
+                if (nfns.length) {
+                    cache.q = nfns;
+                } else {
+                    delete modelsCacheKeys[cacheKey];
+                    m.abort();
+                }
+            } else {
                 m.abort();
             }
         }
+
         me.$reqModels = {};
         me.$queue = [];
         me.$doTask = false;
     },
     /**
      * 前一个fetchX或saveX任务做完后的下一个任务
-     * @param  {Function} fn 回调
+     * @param  {Function} callback 当前面的任务完成后调用该回调
      * @return {MRequest}
      * @example
         var r=MM.fetchAll([
@@ -3481,10 +3495,10 @@ Mix(MRequest.prototype, {
             alert(fetchAllReturned);
         });
      */
-    next: function(fn) {
+    next: function(callback) {
         var me = this;
         if (!me.$queue) me.$queue = [];
-        me.$queue.push(fn);
+        me.$queue.push(callback);
         if (!me.$doTask) {
             var args = me.$latest || [];
             me.doNext.apply(me, [args]);
@@ -3508,7 +3522,7 @@ Mix(MRequest.prototype, {
         me.$latest = preArgs;
     },
     /**
-     * 销毁当前请求，与abort的区别是：abort后还可以继续发起新请求，而destroy后则不可以，而且不再回调相应的error方法
+     * 销毁当前请求，与abort的区别是：abort后还可以继续发起新请求，而destroy后则不可以，而且不再调用相应的回调
      */
     destroy: function() {
         var me = this;
@@ -3676,7 +3690,7 @@ Mix(MManager.prototype, {
         };
         var before = modelAttrs.before || meta.before;
 
-        if (Magix.isFunction(before)) {
+        if (IsFunction(before)) {
             SafeExec(before, [entity, meta, modelAttrs]);
         }
 
@@ -3686,7 +3700,7 @@ Mix(MManager.prototype, {
 
         var cacheKey = modelAttrs.cacheKey || meta.cacheKey;
 
-        if (Magix.isFunction(cacheKey)) {
+        if (IsFunction(cacheKey)) {
             cacheKey = SafeExec(cacheKey, [meta, modelAttrs]);
         }
 
@@ -3720,7 +3734,7 @@ Mix(MManager.prototype, {
         }
         var meta = metas[name];
         if (!meta) {
-            throw Error('Not found:' + modelAttrs.name);
+            throw Error('Unfound:' + modelAttrs.name);
         }
         return meta;
     },
@@ -3751,7 +3765,7 @@ Mix(MManager.prototype, {
     /**
      * 保存models，所有请求完成回调done
      * @function
-     * @param {String|Array} models 保存models时的描述信息，如:{name:'Home'urlParams:{a:'12'},postParams:{b:2}}
+     * @param {Object|Array} models 保存models时的描述信息，如:{name:'Home'urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest}
@@ -3760,7 +3774,7 @@ Mix(MManager.prototype, {
     /**
      * 获取models，所有请求完成回调done
      * @function
-     * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
+     * @param {Object|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest}
@@ -3801,18 +3815,18 @@ Mix(MManager.prototype, {
      */
     fetchAll: GenMRequest('fetchAll'),
     /**
-     * 保存models，按顺序回回调done
+     * 保存models，按顺序回调done
      * @function
-     * @param {String|Array} models 保存models时的描述信息，如:{name:'Home'urlParams:{a:'12'},postParams:{b:2}}
+     * @param {Object|Array} models 保存models时的描述信息，如:{name:'Home'urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest}
      */
     saveOrder: GenMRequest('saveOrder'),
     /**
-     * 获取models，按顺序回回调done
+     * 获取models，按顺序回调done
      * @function
-     * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
+     * @param {Object|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} done   完成时的回调
      * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest}
@@ -3854,7 +3868,7 @@ Mix(MManager.prototype, {
     /**
      * 保存models，其中任意一个成功均立即回调，回调会被调用多次
      * @function
-     * @param {String|Array} models 保存models时的描述信息，如:{name:'Home',urlParams:{a:'12'},postParams:{b:2}}
+     * @param {Object|Array} models 保存models时的描述信息，如:{name:'Home',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} callback   完成时的回调
      * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest}
@@ -3863,7 +3877,7 @@ Mix(MManager.prototype, {
     /**
      * 获取models，其中任意一个成功均立即回调，回调会被调用多次
      * @function
-     * @param {String|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
+     * @param {Object|Array} models 获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}
      * @param {Function} callback   完成时的回调
      * @param {MxView} [view] 当传递MxView对象时，自动帮你托管MRequest
      * @return {MRequest}
@@ -3959,7 +3973,7 @@ Mix(MManager.prototype, {
         } else {
             meta = me.getModelMeta(modelAttrs);
             cacheKey = modelAttrs.cacheKey || meta.cacheKey;
-            if (Magix.isFunction(cacheKey)) {
+            if (IsFunction(cacheKey)) {
                 cacheKey = SafeExec(cacheKey, [meta, modelAttrs]);
             }
         }
@@ -3969,18 +3983,21 @@ Mix(MManager.prototype, {
             var info = requestCacheKeys[cacheKey];
             if (info) {
                 entity = info.e;
-            } else if (entity = modelsCache.get(cacheKey)) { //缓存
-                if (!meta) meta = entity.$mm.meta;
-                var cacheTime = modelAttrs.cacheTime || meta.cacheTime || 0;
+            } else { //缓存
+                entity = modelsCache.get(cacheKey);
+                if (entity) {
+                    if (!meta) meta = entity.$mm.meta;
+                    var cacheTime = modelAttrs.cacheTime || meta.cacheTime || 0;
 
-                if (Magix.isFunction(cacheTime)) {
-                    cacheTime = SafeExec(cacheTime, [meta, modelAttrs]);
-                }
+                    if (IsFunction(cacheTime)) {
+                        cacheTime = SafeExec(cacheTime, [meta, modelAttrs]);
+                    }
 
-                if (cacheTime > 0) {
-                    if (Now() - entity.$mm.doneAt > cacheTime) {
-                        me.clearCacheByKey(cacheKey);
-                        entity = null;
+                    if (cacheTime > 0) {
+                        if (Now() - entity.$mm.doneAt > cacheTime) {
+                            me.clearCacheByKey(cacheKey);
+                            entity = null;
+                        }
                     }
                 }
             }
@@ -4172,7 +4189,6 @@ Magix.mix(Model.prototype, {
      * @param {String} [obj2] 参数内容
      * @param {String}   type      参数分组的key
      * @param {Boolean}   ignoreIfExist   如果存在同名的参数则不覆盖，忽略掉这次传递的参数
-     * @param {Function} callback 对每一项参数设置时的回调
      */
     setParams: function(obj1, obj2, type, ignoreIfExist) {
         if (!type) {
@@ -4257,33 +4273,6 @@ Magix.mix(Model.prototype, {
             delete me.$keys;
         }
     },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * 获取属性
      * @param {String} type type
@@ -4311,7 +4300,7 @@ Magix.mix(Model.prototype, {
         }
         if (Magix.isObject(key)) {
             if (!Magix.isObject(val)) {
-                val = {}
+                val = {};
             }
             for (var p in key) {
                 if (saveKeyList) {
@@ -4352,14 +4341,10 @@ Magix.mix(Model.prototype, {
                     }
                     callback(err, data, options);
                 }
+            } else {
+                callback('abort', null, options);
             }
         };
-
-
-
-
-
-
         me.$trans = me.sync(temp, options);
     },
     /**

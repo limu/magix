@@ -79,7 +79,7 @@ var EvtMethodReg = /([$\w]+)<([\w,]+)>/;
  * @property {String} id 当前view与页面vframe节点对应的id
  * @property {Vframe} owner 拥有当前view的vframe对象
  * @property {Object} vom vom对象
- * @property {Integer} sign view的签名，用于刷新，销毁等的异步标识判断
+ * @property {Integer} sign view的签名，用于刷新，销毁等的异步标识判断，当view销毁时，该属性是小于等于零的数
  * @property {String} template 当前view对应的模板字符串(当hasTmpl为true时)，该属性在interact事件触发后才存在
  * @property {Boolean} rendered 标识当前view有没有渲染过，即primed事件有没有触发过
  * @property {Object} location window.locaiton.href解析出来的对象
@@ -211,7 +211,7 @@ Mix(Mix(View.prototype, Event), {
      */
     hasTmpl: true,
     /**
-     * 是否启用DOM事件(test<click,mousedown>事件是否生效)
+     * 是否启用DOM事件(test&lt;click,mousedown&gt;事件是否生效)
      * @default true
      * @example
      * 该属性在做浏览器兼容时有用：支持pushState的浏览器阻止a标签的默认行为，转用pushState，不支持时直接a标签跳转，view不启用事件
@@ -347,7 +347,7 @@ Mix(Mix(View.prototype, Event), {
         me.endUpdate();
     },
     /**
-     * 指定要监视地址栏中的哪些值有变化时，或pathname有变化时，当前view的locationChange才会被调用。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些值有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
+     * 监视地址栏中的参数或pathname，有变动时，才调用当前view的locationChange方法。通常情况下location有变化就会引起当前view的locationChange被调用，但这会带来一些不必要的麻烦，所以你可以指定地址栏中哪些参数有变化时才引起locationChange调用，使得view只关注与自已需要刷新有关的参数
      * @param {Array|String|Object} args  数组字符串或对象
      * @example
      * return View.extend({

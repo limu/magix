@@ -314,7 +314,7 @@ dl.data .dd{
                                                 
                                                 
                                                 
-                                                <span class="desc">中止所有model的请求注意：调用该方法后会中止请求，并回调error方法</span>                                                
+                                                <span class="desc">中止所有model的请求注意：调用该方法后会中止请求，并调用回调传递aborted异常消息</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -324,7 +324,7 @@ dl.data .dd{
                                                 
                                                 
                                                 
-                                                <span class="desc">销毁当前请求，与abort的区别是：abort后还可以继续发起新请求，而destroy后则不可以，而且不再回调相应的error方法</span>                                                
+                                                <span class="desc">销毁当前请求，与abort的区别是：abort后还可以继续发起新请求，而destroy后则不可以，而且不再调用相应的回调</span>                                                
                                             </li>
                                             
                                             <li class="li">                                                
@@ -360,7 +360,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 
                                                 <b class="name"><a href="../symbols/MRequest.html#next">next</a></b>
-                                                <span class="param">(fn)</span>
+                                                <span class="param">(callback)</span>
                                                 
                                                 
                                                 
@@ -489,7 +489,7 @@ dl.data .dd{
                                             </div>
 
                                             <div class="desc">
-                                                中止所有model的请求注意：调用该方法后会中止请求，并回调error方法
+                                                中止所有model的请求注意：调用该方法后会中止请求，并调用回调传递aborted异常消息
                                                 
                                                 
                                             </div>
@@ -527,7 +527,7 @@ dl.data .dd{
                                             </div>
 
                                             <div class="desc">
-                                                销毁当前请求，与abort的区别是：abort后还可以继续发起新请求，而destroy后则不可以，而且不再回调相应的error方法
+                                                销毁当前请求，与abort的区别是：abort后还可以继续发起新请求，而destroy后则不可以，而且不再调用相应的回调
                                                 
                                                 
                                             </div>
@@ -582,7 +582,7 @@ dl.data .dd{
                                                             <b class="name">models</b>
                                                             
                                                             
-                                                            <span class="type">{String|Array}</span> 
+                                                            <span class="type">{Object|Array}</span> 
                                                             <span class="desc">获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}</span>
                                                         </li>
                                                     
@@ -657,7 +657,7 @@ dl.data .dd{
                                                             <b class="name">models</b>
                                                             
                                                             
-                                                            <span class="type">{String|Array}</span> 
+                                                            <span class="type">{Object|Array}</span> 
                                                             <span class="desc">获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}</span>
                                                         </li>
                                                     
@@ -732,7 +732,7 @@ dl.data .dd{
                                                             <b class="name">models</b>
                                                             
                                                             
-                                                            <span class="type">{String|Array}</span> 
+                                                            <span class="type">{Object|Array}</span> 
                                                             <span class="desc">获取models时的描述信息，如:{name:'Home',cacheKey:'key',urlParams:{a:'12'},postParams:{b:2}}</span>
                                                         </li>
                                                     
@@ -783,7 +783,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 
                                                 <b class="name">next</b>
-                                                <span class="param">(fn)</span>
+                                                <span class="param">(callback)</span>
                                                 
                                                 
                                                 
@@ -804,11 +804,11 @@ dl.data .dd{
                                                     
                                                         <li class="li">
                                                             &nbsp;
-                                                            <b class="name">fn</b>
+                                                            <b class="name">callback</b>
                                                             
                                                             
                                                             <span class="type">{Function}</span> 
-                                                            <span class="desc">回调</span>
+                                                            <span class="desc">当前面的任务完成后调用该回调</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -891,7 +891,7 @@ dl.data .dd{
                                                             <b class="name">models</b>
                                                             
                                                             
-                                                            <span class="type">{String|Array}</span> 
+                                                            <span class="type">{Object|Array}</span> 
                                                             <span class="desc">保存models时的描述信息，如:{name:'Home'urlParams:{a:'12'},postParams:{b:2}}</span>
                                                         </li>
                                                     
@@ -966,7 +966,7 @@ dl.data .dd{
                                                             <b class="name">models</b>
                                                             
                                                             
-                                                            <span class="type">{String|Array}</span> 
+                                                            <span class="type">{Object|Array}</span> 
                                                             <span class="desc">保存models时的描述信息，如:{name:'Home',urlParams:{a:'12'},postParams:{b:2}}</span>
                                                         </li>
                                                     
@@ -1041,7 +1041,7 @@ dl.data .dd{
                                                             <b class="name">models</b>
                                                             
                                                             
-                                                            <span class="type">{String|Array}</span> 
+                                                            <span class="type">{Object|Array}</span> 
                                                             <span class="desc">保存models时的描述信息，如:{name:'Home'urlParams:{a:'12'},postParams:{b:2}}</span>
                                                         </li>
                                                     
