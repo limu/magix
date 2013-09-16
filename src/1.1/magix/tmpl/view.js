@@ -83,18 +83,18 @@ var EvtMethodReg = /([$\w]+)<([\w,]+)>/;
  *
  *   view写法：
  *
- *     'test<click>':function(e){
+ *     'test&lt;click&gt;':function(e){
  *          //e.currentId 处理事件的dom节点id(即带有mx-click属性的节点)
  *          //e.targetId 触发事件的dom节点id(即鼠标点中的节点，在currentId里包含其它节点时，currentId与targetId有可能不一样)
  *          //e.params  传递的参数
  *          //e.params.com,e.params.id,e.params.name
  *      },
- *      'test<mousedown':function(e){
+ *      'test&lt;mousedown&gt;':function(e){
  *
  *       }
  *
  *  //上述示例对test方法标注了click与mousedown事件，也可以合写成：
- *  'test<click,mousedown>':function(e){
+ *  'test&lt;click,mousedown&gt;':function(e){
  *      alert(e.type);//可通过type识别是哪种事件类型
  *  }
  */

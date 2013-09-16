@@ -469,6 +469,16 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 Magix.
+                                                <b class="name"><a href="../symbols/Magix.html#.path">path</a></b>
+                                                <span class="param">(url, part)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                                <span class="desc">路径</span>                                                
+                                            </li>
+                                            
+                                            <li class="li">                                                
+                                                Magix.
                                                 <b class="name"><a href="../symbols/Magix.html#.pathToObject">pathToObject</a></b>
                                                 <span class="param">(path, decode)</span>
                                                 
@@ -1676,6 +1686,88 @@ dl.data .dd{
                                         </li>
                                         
                                         <li class="li">
+                                            <a name=".path"> </a>
+                                            <div class="title" >
+                                                <span>Magix.</span>
+                                                <b class="name">path</b>
+                                                <span class="param">(url, part)</span>
+                                                
+                                                
+                                                <span class="attr">&lt;static&gt;</span>
+                                            </div>
+
+                                            <div class="desc">
+                                                路径
+                                                
+                                                
+                                            </div>
+                                            
+                                            <dl>                                            
+                                                
+                                                
+                                                <dt>Parameters</dt>
+                                                <dd>
+                                                    <ul class="list param-list">
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">url</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">参考地址</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            &nbsp;
+                                                            <b class="name">part</b>
+                                                            
+                                                            
+                                                            <span class="type">{String}</span> 
+                                                            <span class="desc">相对参考地址的片断</span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                <dt>Returns</dt>
+                                                <dd>
+                                                    <ul class="list">
+                                                    
+                                                        <li class="li">
+                                                            <span class="type">{String}</span> 
+                                                            <span></span>
+                                                        </li>
+                                                    
+                                                    </ul>
+                                                </dd>
+                                                
+                                                
+                                                
+                                                
+                                                                                                
+                                                
+                                                
+                                                <dt>Example</dt>
+                                                <dd>
+                                                        
+                                                            <pre class="brush: js; ">http://www.a.com/a/b.html?a=b#!/home?e=f   /http://www.a.com/a/b.html?a=b#!/home?e=f   ./http://www.a.com/a/b.html?a=b#!/home?e=f   ../../http://www.a.com/a/b.html?a=b#!/home?e=f   ./../</pre>
+                                                        
+                                                </dd>
+                                                
+                                                
+                                            </dl>                                            
+                                        </li>
+                                        
+                                        <li class="li">
                                             <a name=".pathToObject"> </a>
                                             <div class="title" >
                                                 <span>Magix.</span>
@@ -1749,7 +1841,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">var obj=Magix.pathToObject)('/xxx/?a=b&c=d');//obj={pathname:'/xxx/',params:{a:'b',c:'d'}}</pre>
+                                                            <pre class="brush: js; ">var obj=Magix.pathToObject('/xxx/?a=b&c=d');//obj={pathname:'/xxx/',params:{a:'b',c:'d'}}</pre>
                                                         
                                                 </dd>
                                                 

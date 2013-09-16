@@ -379,9 +379,8 @@ Mix(Mix(Vframe.prototype, Event), {
         var vom = me.owner;
         var vf = vom.get(id);
         if (vf) {
-            var cc = vf.fcc;
             vf.unmountView();
-            vom.remove(id, cc);
+            vom.remove(id);
             me.fire('destroy');
             var p = vom.get(vf.pId);
             if (p && Has(p.cM, id)) {

@@ -69,14 +69,12 @@ var GSObj = function(o) {
         return r;
     };
 };
-var Cache = function(max) {
+var Cache = function(max, buffer) {
     var me = this;
+    if (!me.get) return new Cache(max, buffer);
     me.c = [];
     me.x = max || 20;
-    me.b = me.x + 5;
-};
-var CreateCache = function(max) {
-    return new Cache(max);
+    me.b = me.x + (isNaN(buffer) ? 5 : buffer);
 };
 /**
  * 检测某个对象是否拥有某个属性
@@ -122,11 +120,11 @@ mix(Cache.prototype, {
         }
         return r;
     },
-    set: function(key, value) {
+    set: function(okey, value, onRemove) {
         var me = this;
         var c = me.c;
 
-        key = PATHNAME + key;
+        var key = PATHNAME + okey;
         var r = c[key];
 
         if (!has(c, key)) {
@@ -139,16 +137,21 @@ mix(Cache.prototype, {
                     r = c.pop();
                     //
                     delete c[r.k];
+                    if (r.m) {
+                        safeExec(r.m, r.o, r);
+                    }
                 }
             }
             r = {};
             c.push(r);
             c[key] = r;
         }
+        r.o = okey;
         r.k = key;
         r.v = value;
         r.f = 1;
         r.t = CacheLatest++;
+        r.m = onRemove;
         return r;
     },
     del: function(k) {
@@ -159,6 +162,10 @@ mix(Cache.prototype, {
             r.f = -1E5;
             r.v = EMPTY;
             delete c[k];
+            if (r.m) {
+                safeExec(r.m, r.o, r);
+                r.m = 0;
+            }
         }
     },
     has: function(k) {
@@ -167,8 +174,8 @@ mix(Cache.prototype, {
     }
 });
 
-var PathToObjCache = CreateCache(60);
-var PathCache = CreateCache();
+var PathToObjCache = Cache(60);
+var PathCache = Cache();
 
 /**
  * 以try cache方式执行方法，忽略掉任何异常
@@ -419,10 +426,10 @@ var Magix = {
     local: GSObj({}),
     /**
      * 路径
-     * @private
      * @param  {String} url  参考地址
      * @param  {String} part 相对参考地址的片断
      * @return {String}
+     * @example
      * http://www.a.com/a/b.html?a=b#!/home?e=f   /
      * http://www.a.com/a/b.html?a=b#!/home?e=f   ./
      * http://www.a.com/a/b.html?a=b#!/home?e=f   ../../
@@ -466,7 +473,7 @@ var Magix = {
      * @param {Boolean} decode 是否对value进行decodeURIComponent
      * @return {Object} 解析后的对象
      * @example
-     * var obj=Magix.pathToObject)('/xxx/?a=b&c=d');
+     * var obj=Magix.pathToObject('/xxx/?a=b&c=d');
      * //obj={pathname:'/xxx/',params:{a:'b',c:'d'}}
      */
     pathToObject: function(path, decode) {
@@ -602,7 +609,7 @@ var Magix = {
      * c.has('key1');//判断
      * //注意：缓存通常配合其它方法使用，不建议单独使用。在Magix中，对路径的解释等使用了缓存。在使用缓存优化性能时，可以达到节省CPU和内存的双赢效果
      */
-    cache: CreateCache
+    cache: Cache
 };
     var ToString = Object.prototype.toString;
     return mix(Magix, {
@@ -660,7 +667,7 @@ var D = document;
 var IsUtf8 = /^UTF-8$/i.test(D.charset || D.characterSet || 'UTF-8');
 var MxConfig = Magix.config();
 var HrefCache = Magix.cache();
-var ChgdCache = Magix.cache();
+var ChgdCache = Magix.cache(40);
 
 var TLoc, LLoc, Pnr;
 var TrimHashReg = /#.*$/,
@@ -672,7 +679,7 @@ var SupportState, HashAsNativeHistory;
 var IsParam = function(params, r, ps) {
     if (params) {
         ps = this[PARAMS];
-        if (!Magix.isArray(params)) params = params.split(',');
+        if (Magix.isString(params)) params = params.split(',');
         for (var i = 0; i < params.length; i++) {
             r = Has(ps, params[i]);
             if (r) break;
@@ -1798,9 +1805,8 @@ Mix(Mix(Vframe.prototype, Event), {
         var vom = me.owner;
         var vf = vom.get(id);
         if (vf) {
-            var cc = vf.fcc;
             vf.unmountView();
-            vom.remove(id, cc);
+            vom.remove(id);
             me.fire('destroy');
             var p = vom.get(vf.pId);
             if (p && Has(p.cM, id)) {
@@ -2184,18 +2190,18 @@ var EvtMethodReg = /([$\w]+)<([\w,]+)>/;
  *
  *   view写法：
  *
- *     'test<click>':function(e){
+ *     'test&lt;click&gt;':function(e){
  *          //e.currentId 处理事件的dom节点id(即带有mx-click属性的节点)
  *          //e.targetId 触发事件的dom节点id(即鼠标点中的节点，在currentId里包含其它节点时，currentId与targetId有可能不一样)
  *          //e.params  传递的参数
  *          //e.params.com,e.params.id,e.params.name
  *      },
- *      'test<mousedown':function(e){
+ *      'test&lt;mousedown&gt;':function(e){
  *
  *       }
  *
  *  //上述示例对test方法标注了click与mousedown事件，也可以合写成：
- *  'test<click,mousedown>':function(e){
+ *  'test&lt;click,mousedown&gt;':function(e){
  *      alert(e.type);//可通过type识别是哪种事件类型
  *  }
  */
@@ -3035,11 +3041,11 @@ var VOM = Magix.mix({
      * 删除已注册的vframe对象
      * @param {String} id vframe对象的id
      */
-    remove: function(id, cc) {
+    remove: function(id) {
         var vf = Vframes[id];
         if (vf) {
             VframesCount--;
-            if (cc) FirstVframesLoaded--;
+            if (vf.fcc) FirstVframesLoaded--;
             delete Vframes[id];
             VOM.fire('remove', {
                 vframe: vf

@@ -14,7 +14,7 @@ var D = document;
 var IsUtf8 = /^UTF-8$/i.test(D.charset || D.characterSet || 'UTF-8');
 var MxConfig = Magix.config();
 var HrefCache = Magix.cache();
-var ChgdCache = Magix.cache();
+var ChgdCache = Magix.cache(40);
 
 var TLoc, LLoc, Pnr;
 var TrimHashReg = /#.*$/,
@@ -26,7 +26,7 @@ var SupportState, HashAsNativeHistory;
 var IsParam = function(params, r, ps) {
     if (params) {
         ps = this[PARAMS];
-        if (!Magix.isArray(params)) params = params.split(',');
+        if (Magix.isString(params)) params = params.split(',');
         for (var i = 0; i < params.length; i++) {
             r = Has(ps, params[i]);
             if (r) break;

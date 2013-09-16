@@ -32,21 +32,18 @@ var WrapDone = function(fn, model, idx) {
         return fn.apply(model, [model, idx].concat(Slice.call(arguments)));
     };
 };
-var UsedModel = function(m, f) {
-    if (f) {
-        for (var i = m.length - 1; i > -1; i--) {
-            UsedModel(m[i]);
-        }
-    } else {
-        var mm = m.$mm;
-        if (!m.fromCache && mm.used > 0) {
-            m.fromCache = true;
-        }
-        mm.used++;
-    }
-};
 var IsMxView = function(view) {
     return view && view.mxViewCtor && view.manage;
+};
+var CacheDone = function(err, data, ops) {
+    var cacheKey = ops.key;
+    var modelsCacheKeys = ops.cKeys;
+    var cache = modelsCacheKeys[cacheKey];
+    if (cache) {
+        var fns = cache.q;
+        delete modelsCacheKeys[cacheKey];
+        SafeExec(fns, err);
+    }
 };
 var GenMRequest = function(method) {
     return function() {
@@ -177,7 +174,10 @@ Mix(MRequest.prototype, {
                         SafeExec(after, [model, meta]);
                     }
                 }
-                UsedModel(model);
+                if (!model.fromCache && mm.used > 0) {
+                    model.fromCache = true;
+                }
+                mm.used++;
             }
 
             if (flag == FetchFlags.ONE) { //如果是其中一个成功，则每次成功回调一次
@@ -219,22 +219,13 @@ Mix(MRequest.prototype, {
                     me.doNext(doneArgs);
                 }, 30);
             }
+        };
 
-        };
-        var cacheDone = function(err, data, ops) {
-            var cacheKey = ops.key;
-            var cache = modelsCacheKeys[cacheKey];
-            if (cache) {
-                var fns = cache.q;
-                delete modelsCacheKeys[cacheKey];
-                SafeExec(fns, err);
-            }
-        };
         for (var i = 0, model; i < models.length; i++) {
             model = models[i];
             if (model) {
                 var modelInfo = host.getModel(model, save);
-                var cacheKey = modelInfo.cacheKey;
+                var cacheKey = modelInfo.cKey;
                 var modelEntity = modelInfo.entity;
                 var wrapDoneFn = WrapDone(doneFn, modelEntity, i);
                 wrapDoneFn.id = me.id;
@@ -242,17 +233,18 @@ Mix(MRequest.prototype, {
                 if (cacheKey && Has(modelsCacheKeys, cacheKey)) {
                     modelsCacheKeys[cacheKey].q.push(wrapDoneFn);
                 } else {
-                    if (modelInfo.needUpdate) {
+                    if (modelInfo.update) {
                         reqModels[modelEntity.id] = modelEntity;
                         if (cacheKey) {
                             modelsCacheKeys[cacheKey] = {
                                 q: [wrapDoneFn],
                                 e: modelEntity
                             };
-                            wrapDoneFn = cacheDone;
+                            wrapDoneFn = CacheDone;
                         }
                         modelEntity.request(wrapDoneFn, {
-                            key: cacheKey
+                            key: cacheKey,
+                            cKeys: modelsCacheKeys
                         });
                     } else {
                         wrapDoneFn();
@@ -332,18 +324,19 @@ Mix(MRequest.prototype, {
                 var cache = modelsCacheKeys[cacheKey];
                 var fns = cache.q;
                 var nfns = [];
+                var rfns = [];
                 for (var i = 0, fn; i < fns.length; i++) {
                     fn = fns[i];
                     if (fn.id != me.id) {
                         nfns.push(fn);
                     } else if (!me.$destroy) {
-                        SafeExec(fn, ['abort'], me);
+                        rfns.push(fn);
                     }
                 }
+                SafeExec(rfns, ['abort'], me);
                 if (nfns.length) {
                     cache.q = nfns;
                 } else {
-                    delete modelsCacheKeys[cacheKey];
                     m.abort();
                 }
             } else {
@@ -377,8 +370,8 @@ Mix(MRequest.prototype, {
         if (!me.$queue) me.$queue = [];
         me.$queue.push(callback);
         if (!me.$doTask) {
-            var args = me.$latest || [];
-            me.doNext.apply(me, [args]);
+            var args = me.$latest;
+            me.doNext(args);
         }
         return me;
     },
@@ -611,7 +604,7 @@ Mix(MManager.prototype, {
         }
         var meta = metas[name];
         if (!meta) {
-            throw Error('Unfound:' + modelAttrs.name);
+            throw Error('Unfound:' + name);
         }
         return meta;
     },
@@ -635,8 +628,8 @@ Mix(MManager.prototype, {
         }
         return {
             entity: entity,
-            cacheKey: entity.$mm.cacheKey,
-            needUpdate: needUpdate
+            cKey: entity.$mm.cacheKey,
+            update: needUpdate
         };
     },
     /**

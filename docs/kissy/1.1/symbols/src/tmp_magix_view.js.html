@@ -97,18 +97,18 @@
 <span class='line'> 90</span>  *
 <span class='line'> 91</span>  *   view写法：
 <span class='line'> 92</span>  *
-<span class='line'> 93</span>  *     'test&lt;click>':function(e){
+<span class='line'> 93</span>  *     'test&lt;click&gt;':function(e){
 <span class='line'> 94</span>  *          //e.currentId 处理事件的dom节点id(即带有mx-click属性的节点)
 <span class='line'> 95</span>  *          //e.targetId 触发事件的dom节点id(即鼠标点中的节点，在currentId里包含其它节点时，currentId与targetId有可能不一样)
 <span class='line'> 96</span>  *          //e.params  传递的参数
 <span class='line'> 97</span>  *          //e.params.com,e.params.id,e.params.name
 <span class='line'> 98</span>  *      },
-<span class='line'> 99</span>  *      'test&lt;mousedown':function(e){
+<span class='line'> 99</span>  *      'test&lt;mousedown&gt;':function(e){
 <span class='line'>100</span>  *
 <span class='line'>101</span>  *       }
 <span class='line'>102</span>  *
 <span class='line'>103</span>  *  //上述示例对test方法标注了click与mousedown事件，也可以合写成：
-<span class='line'>104</span>  *  'test&lt;click,mousedown>':function(e){
+<span class='line'>104</span>  *  'test&lt;click,mousedown&gt;':function(e){
 <span class='line'>105</span>  *      alert(e.type);//可通过type识别是哪种事件类型
 <span class='line'>106</span>  *  }
 <span class='line'>107</span>  */</span><span class="WHIT">
