@@ -3,5 +3,4 @@
 *.idea
 .DS_Store
 test/
-libs/
 tools/node_modules/
