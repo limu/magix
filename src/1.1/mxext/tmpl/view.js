@@ -1,5 +1,5 @@
 var WIN = window;
-
+var Mix = Magix.mix;
 var DestroyTimer = function(id) {
     WIN.clearTimeout(id);
     WIN.clearInterval(id);
@@ -13,40 +13,6 @@ var ResCounter = 0;
 var SafeExec = Magix.safeExec;
 var Has = Magix.has;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
  * @name MxView
  * @namespace
@@ -57,11 +23,6 @@ var MxView = View.extend({
     /**
      * @lends MxView#
      */
-    /**
-     * 当前view实例化后调用，供子类重写
-     * @function
-     */
-    mxViewCtor: Magix.noop, //供扩展用
     /**
      * 调用magix/router的navigate方法
      */
@@ -195,38 +156,6 @@ var MxView = View.extend({
             }
         }
     },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * @private
      */
@@ -246,14 +175,18 @@ var MxView = View.extend({
     }
 }, function() {
     var me = this;
-
-
     me.on('interact', function() {
         me.on('rendercall', me.destroyMRequest);
         me.on('prerender', me.destroyManaged);
         me.on('destroy', me.destroyManaged);
     });
-    me.mxViewCtor();
+    SafeExec(MxView.ms, arguments, me);
+}, {
+    ms: [],
+    mixin: function(props, ctor) {
+        MxView.ms.push(ctor);
+        Mix(MxView.prototype, props);
+    }
 });
 
 /**

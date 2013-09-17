@@ -31,7 +31,6 @@ var DefaultLocationChange = function() {
 };
 
 
-
 var WEvent = {
     prevent: function(e) {
         e = e || this.domEvent;
@@ -104,8 +103,9 @@ var View = function(ops) {
     var me = this;
     Mix(me, ops);
     me.sign = 1; //标识view是否刷新过，对于托管的函数资源，在回调这个函数时，不但要确保view没有销毁，而且要确保view没有刷新过，如果刷新过则不回调
+    SafeExec(View.ms, [ops], me);
 };
-
+View.ms = [];
 View.prepare = function(oView) {
     var me = this;
     var superclass = oView.superclass;
@@ -139,6 +139,11 @@ View.prepare = function(oView) {
             prop.$evts = revts;
         }
     }
+};
+
+View.mixin = function(props, ctor) {
+    View.ms.push(ctor);
+    Mix(View.prototype, props);
 };
 
 Mix(Mix(View.prototype, Event), {

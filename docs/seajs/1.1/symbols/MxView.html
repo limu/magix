@@ -339,16 +339,6 @@ dl.data .dd{
                                             
                                             <li class="li">                                                
                                                 
-                                                <b class="name"><a href="../symbols/MxView.html#mxViewCtor">mxViewCtor</a></b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                                <span class="desc">当前view实例化后调用，供子类重写</span>                                                
-                                            </li>
-                                            
-                                            <li class="li">                                                
-                                                
                                                 <b class="name"><a href="../symbols/MxView.html#navigate">navigate</a></b>
                                                 <span class="param">()</span>
                                                 
@@ -618,44 +608,6 @@ dl.data .dd{
                                                             <pre class="brush: js; ">init:function(){     this.manage('user_list',[//管理对象资源         {id:1,name:'a'},         {id:2,name:'b'}     ]);},render:function(){     var _self=this;     var m=new Model();     m.load({         success:function(resp){             //TODO             var brix=new BrixDropdownList();             _self.manage(brix);//管理组件             var pagination=_self.manage(new BrixPagination());//也可以这样             var timer=_self.manage(setTimeout(function(){                 S.log('timer');             },2000));//也可以管理定时器             var userList=_self.getManaged('user_list');//通过key取托管的资源             S.log(userList);         },         error:function(msg){             //TODO         }     });     _self.manage(m);}</pre>
                                                         
                                                 </dd>
-                                                
-                                                
-                                            </dl>                                            
-                                        </li>
-                                        
-                                        <li class="li">
-                                            <a name="mxViewCtor"> </a>
-                                            <div class="title" >
-                                                
-                                                <b class="name">mxViewCtor</b>
-                                                <span class="param">()</span>
-                                                
-                                                
-                                                
-                                            </div>
-
-                                            <div class="desc">
-                                                当前view实例化后调用，供子类重写
-                                                
-                                                
-                                            </div>
-                                            
-                                            <dl>                                            
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                
-                                                                                                
-                                                
                                                 
                                                 
                                             </dl>                                            
