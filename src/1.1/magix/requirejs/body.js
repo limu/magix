@@ -6,7 +6,7 @@
 define("magix/body", ["magix/magix"], function(Magix) {
     //todo dom event and sizzle
     eval(Magix.include('../tmpl/body'));
-    Body.unbubble = function(remove, node, type) {
+    Body.lib = function(remove, node, type) {
         var fn = remove ? 'undelegate' : 'delegate';
         $(node)[fn]('[mx-' + type + ']', type, Body.process);
     };

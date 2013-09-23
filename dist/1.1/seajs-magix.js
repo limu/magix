@@ -29,21 +29,29 @@ var DefaultTagName = 'vframe';
 待重写的方法
 @method imimpl
 **/
-var unimpl = function() {
+var Unimpl = function() {
     throw new Error('unimplement method');
 };
 /**
  * 空方法
  */
-var noop = function() {};
+var Noop = function() {};
 
 var Cfg = {
     tagName: DefaultTagName,
     rootId: 'magix_vf_root',
-    execError: noop
+    execError: Noop
 };
-var Has = {}.hasOwnProperty;
-
+var HasProp = {}.hasOwnProperty;
+/**
+ * 检测某个对象是否拥有某个属性
+ * @param  {Object}  owner 检测对象
+ * @param  {String}  prop  属性
+ * @return {Boolean} 是否拥有prop属性
+ */
+var Has = function(owner, prop) {
+    return owner ? HasProp.call(owner, prop) : owner; //false 0 null '' undefined
+};
 var GSObj = function(o) {
     return function(k, v, r) {
         switch (arguments.length) {
@@ -52,9 +60,9 @@ var GSObj = function(o) {
                 break;
             case 1:
                 if (Magix.isObject(k)) {
-                    r = mix(o, k);
+                    r = Mix(o, k);
                 } else {
-                    r = has(o, k) ? o[k] : null;
+                    r = Has(o, k) ? o[k] : null;
                 }
                 break;
             case 2:
@@ -69,21 +77,15 @@ var GSObj = function(o) {
         return r;
     };
 };
+var CacheSort = function(a, b) {
+    return b.f == a.f ? b.t - a.t : b.f - a.f;
+};
 var Cache = function(max, buffer) {
     var me = this;
     if (!me.get) return new Cache(max, buffer);
     me.c = [];
     me.x = max || 20;
     me.b = me.x + (isNaN(buffer) ? 5 : buffer);
-};
-/**
- * 检测某个对象是否拥有某个属性
- * @param  {Object}  owner 检测对象
- * @param  {String}  prop  属性
- * @return {Boolean} 是否拥有prop属性
- */
-var has = function(owner, prop) {
-    return owner ? Has.call(owner, prop) : owner; //false 0 null '' undefined
 };
 
 /**
@@ -93,22 +95,22 @@ var has = function(owner, prop) {
  * @param  {Object} ignore 在复制时，忽略的值
  * @return {Object}
  */
-var mix = function(aim, src, ignore) {
+var Mix = function(aim, src, ignore) {
     for (var p in src) {
-        if (!ignore || !has(ignore, p)) {
+        if (!ignore || !Has(ignore, p)) {
             aim[p] = src[p];
         }
     }
     return aim;
 };
 
-mix(Cache.prototype, {
+Mix(Cache.prototype, {
     get: function(key) {
         var me = this;
         var c = me.c;
         var r;
         key = PATHNAME + key;
-        if (has(c, key)) {
+        if (Has(c, key)) {
             r = c[key];
             if (r.f >= 1) {
                 r.f++;
@@ -127,18 +129,16 @@ mix(Cache.prototype, {
         var key = PATHNAME + okey;
         var r = c[key];
 
-        if (!has(c, key)) {
+        if (!Has(c, key)) {
             if (c.length >= me.b) {
-                c.sort(function(a, b) {
-                    return b.f == a.f ? b.t - a.t : b.f - a.f;
-                });
+                c.sort(CacheSort);
                 var t = me.b - me.x;
                 while (t--) {
                     r = c.pop();
                     //
                     delete c[r.k];
                     if (r.m) {
-                        safeExec(r.m, r.o, r);
+                        SafeExec(r.m, r.o, r);
                     }
                 }
             }
@@ -163,14 +163,14 @@ mix(Cache.prototype, {
             r.v = EMPTY;
             delete c[k];
             if (r.m) {
-                safeExec(r.m, r.o, r);
+                SafeExec(r.m, r.o, r);
                 r.m = 0;
             }
         }
     },
     has: function(k) {
         k = PATHNAME + k;
-        return has(this.c, k);
+        return Has(this.c, k);
     }
 });
 
@@ -184,7 +184,7 @@ var PathCache = Cache();
  * @param  {Object} context 在待执行的方法内部，this的指向
  * @return {Object} 返回执行的最后一个方法的返回值
  */
-var safeExec = function(fns, args, context, i, r, e) {
+var SafeExec = function(fns, args, context, i, r, e) {
     if (!Magix.isArray(fns)) {
         fns = [fns];
     }
@@ -218,42 +218,42 @@ var Magix = {
      * @param {Object} o 待检测的对象
      * @return {Boolean}
      */
-    
+    isArray: Unimpl,
     /**
      * 判断o是否为对象
      * @function
      * @param {Object} o 待检测的对象
      * @return {Boolean}
      */
-    
+    isObject: Unimpl,
     /**
      * 判断o是否为函数
      * @function
      * @param {Object} o 待检测的对象
      * @return {Boolean}
      */
-    
+    isFunction: Unimpl,
     /**
      * 判断o是否为正则
      * @function
      * @param {Object} o 待检测的对象
      * @return {Boolean}
      */
-    
+    isRegExp: Unimpl,
     /**
      * 判断o是否为字符串
      * @function
      * @param {Object} o 待检测的对象
      * @return {Boolean}
      */
-    
+    isString: Unimpl,
     /**
      * 判断o是否为数字
      * @function
      * @param {Object} o 待检测的对象
      * @return {Boolean}
      */
-    
+    isNumber: Unimpl,
     /**
      * 判断是否可转为数字
      * @param  {Object}  o 待检测的对象
@@ -269,7 +269,7 @@ var Magix = {
      * @param {Function} fn 加载完成后的回调方法
      * @private
      */
-    
+    libRequire: Unimpl,
     /**
      * 通过xhr同步获取文件的内容，仅开发magix时使用
      * @function
@@ -277,7 +277,7 @@ var Magix = {
      * @return {String} 文件内容
      * @private
      */
-    
+    include: Unimpl,
     /**
      * 把src对象的值混入到aim对象上
      * @function
@@ -286,14 +286,14 @@ var Magix = {
      * @param  {Object} [ignore] 在复制时，需要忽略的key
      * @return {Object}
      */
-    mix: mix,
+    mix: Mix,
     /**
      * 未实现的方法
      * @function
      * @type {Function}
      * @private
      */
-    
+    unimpl: Unimpl,
     /**
      * 检测某个对象是否拥有某个属性
      * @function
@@ -301,7 +301,7 @@ var Magix = {
      * @param  {String}  prop  属性
      * @return {Boolean} 是否拥有prop属性
      */
-    has: has,
+    has: Has,
     /**
      * 以try catch的方式执行方法，忽略掉任何异常
      * @function
@@ -322,12 +322,12 @@ var Magix = {
      *
      * S.log(result);//得到f2的返回值
      */
-    safeExec: safeExec,
+    safeExec: SafeExec,
     /**
      * 空方法
      * @function
      */
-    noop: noop,
+    noop: Noop,
     /**
      * 配置信息对象
      */
@@ -373,9 +373,9 @@ var Magix = {
      */
     start: function(cfg) {
         var me = this;
-        mix(Cfg, cfg);
+        Mix(Cfg, cfg);
         me.libRequire(Cfg.iniFile, function(I) {
-            Cfg = mix(Cfg, I, cfg);
+            Cfg = Mix(Cfg, I, cfg);
             Cfg.tagNameChanged = Cfg.tagName != DefaultTagName;
 
             var progress = Cfg.progress;
@@ -398,7 +398,7 @@ var Magix = {
     keys: Object.keys || function(obj) {
         var keys = [];
         for (var p in obj) {
-            if (has(obj, p)) {
+            if (Has(obj, p)) {
                 keys.push(p);
             }
         }
@@ -501,10 +501,10 @@ var Magix = {
             if (pathname) {
                 if (ProtocalReg.test(pathname)) { //解析以https?:开头的网址
                     var first = pathname.indexOf(Slash, 8); //找最近的 /
-                    if (first == -1) { //未找到，比如 http://etao.com
-                        pathname = Slash; //则pathname为  /
-                    } else {
+                    if (~first) { //未找到，比如 http://etao.com
                         pathname = pathname.substring(first); //截取
+                    } else {
+                        pathname = Slash; //则pathname为  /
                     }
                 }
             }
@@ -527,23 +527,34 @@ var Magix = {
     /**
      * 把对象内容转换成字符串路径
      * @param  {Object} obj 对象
-     * @param {Boolean} encode 是否对value进行encodeURIComponent
+     * @param {Boolean} [encode] 是否对value进行encodeURIComponent
+     * @param {Object} [keo] 是否保留空白值的对象
      * @return {String} 字符串路径
      * @example
      * var str=Magix.objectToPath({pathname:'/xxx/',params:{a:'b',c:'d'}});
      * //str==/xxx/?a=b&c=d
+     *
+     * var str=Magix.objectToPath({pathname:'/xxx/',params:{a:'',c:2}});
+     *
+     * //str==/xxx/?c=2
+     *
+     * var str=Magix.objectToPath({pathname:'/xxx/',params:{a:'',c:2}},{a:1});
+     *
+     * //str==/xxx/?a=&c=2
      */
-    objectToPath: function(obj, encode) { //上个方法的逆向
+    objectToPath: function(obj, encode, keo) { //上个方法的逆向
         var pn = obj[PATHNAME];
         var params = [];
         var oPs = obj.params;
         var v;
         for (var p in oPs) {
             v = oPs[p];
-            if (encode) {
-                encodeURIComponent(v);
+            if (!keo || v || Has(keo, p)) {
+                if (encode) {
+                    v = encodeURIComponent(v);
+                }
+                params.push(p + '=' + v);
             }
-            params.push(p + '=' + v);
         }
         if (params.length) {
             pn = pn + '?' + params.join('&');
@@ -999,20 +1010,6 @@ var Router = Mix({
      *      })
      * });
      */
-    /*
-        1.
-            render:function(){
-            },
-            events:{
-                click:{
-                    changeHash:function(e){
-                        Router.navigate('a='+S.now());
-                        Router.navigate('b='+S.now());
-                        e.view.render();
-                    }
-                }
-            }
-     */
     navigate: function(pn, params, replace) {
         var me = Router;
 
@@ -1044,12 +1041,10 @@ var Router = Mix({
 
             if (temp[PATHNAME]) {
                 if (HashAsNativeHistory) { //指定使用history state但浏览器不支持，需要把query中的存在的参数以空格替换掉
-                    var query = TLoc.query;
-                    if (query && (query = query[PARAMS])) {
-                        for (var p in query) {
-                            if (Has(query, p) && !Has(temp[PARAMS], p)) {
-                                temp[PARAMS][p] = EMPTY;
-                            }
+                    var query = TLoc.query[PARAMS];
+                    for (var p in query) {
+                        if (Has(query, p) && !Has(temp[PARAMS], p)) {
+                            temp[PARAMS][p] = EMPTY;
                         }
                     }
                 }
@@ -1058,8 +1053,7 @@ var Router = Mix({
                 temp[PARAMS] = Mix(ps, temp[PARAMS]);
                 temp[PATHNAME] = TLoc[PATHNAME];
             }
-            var tempPath = Magix.objectToPath(temp);
-
+            var tempPath = Magix.objectToPath(temp, IsUtf8, TLoc.query[PARAMS]);
             var navigate;
 
             if (SupportState) {
@@ -1145,18 +1139,19 @@ var Router = Mix({
  * @author 行列<xinglie.lkf@taobao.com>
  * @version 1.0
  **/
-define("magix/body",["magix/magix"],function(require){
+define("magix/body", ["magix/magix"], function(require) {
     //todo dom event and sizzle
-    var Magix=require("magix/magix");
+    var Magix = require("magix/magix");
     var Has = Magix.has;
-//不支持冒泡的事件
-var UnsupportBubble = Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
+var Mix = Magix.mix;
+//依赖类库才能支持冒泡的事件
+var DependLibEvents = {};
 var RootNode = document.body;
 var RootEvents = {};
 var MxEvtSplit = String.fromCharCode(26);
 
 var MxOwner = 'mx-owner';
-var MxIgnore = 'mx-ie';
+var MxIgnore = 'mx-ei';
 var TypesRegCache = {};
 var IdCounter = 1 << 16;
 
@@ -1174,7 +1169,9 @@ var GetSetAttribute = function(dom, attrKey, attrVal) {
 var VOM;
 var Body = {
     
-
+    special: function(events) {
+        Mix(DependLibEvents, events);
+    },
     process: function(e) {
         var target = e.target || e.srcElement;
         while (target && target.nodeType != 1) {
@@ -1257,10 +1254,10 @@ var Body = {
         if (!RootEvents[type]) {
 
             VOM = vom;
-            RootEvents[type] = 1;
-            var unbubble = UnsupportBubble[type];
-            if (unbubble) {
-                me.unbubble(0, RootNode, type);
+            RootEvents[type] = 0;
+            var lib = DependLibEvents[type];
+            if (lib) {
+                me.lib(0, RootNode, type);
             } else {
                 RootNode['on' + type] = function(e) {
                     e = e || window.event;
@@ -1269,9 +1266,8 @@ var Body = {
                     }
                 };
             }
-        } else {
-            RootEvents[type]++;
         }
+        RootEvents[type]++;
     },
     un: function(type) {
         var me = this;
@@ -1279,9 +1275,9 @@ var Body = {
         if (counter > 0) {
             counter--;
             if (!counter) {
-                var unbubble = UnsupportBubble[type];
-                if (unbubble) {
-                    me.unbubble(1, RootNode, type);
+                var lib = DependLibEvents[type];
+                if (lib) {
+                    me.lib(1, RootNode, type);
                 } else {
                     RootNode['on' + type] = null;
                 }
@@ -1290,9 +1286,9 @@ var Body = {
         }
     }
 };
-    Body.unbubble=function(remove,node,type){
-    	var fn=remove?'undelegate':'delegate';
-        $(node)[fn]('[mx-'+type+']',type,Body.process);
+    Body.lib = function(remove, node, type) {
+        var fn = remove ? 'undelegate' : 'delegate';
+        $(node)[fn]('[mx-' + type + ']', type, Body.process);
     };
     return Body;
 });

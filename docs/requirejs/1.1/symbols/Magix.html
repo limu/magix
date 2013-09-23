@@ -460,7 +460,7 @@ dl.data .dd{
                                             <li class="li">                                                
                                                 Magix.
                                                 <b class="name"><a href="../symbols/Magix.html#.objectToPath">objectToPath</a></b>
-                                                <span class="param">(obj, encode)</span>
+                                                <span class="param">(obj, encode, keo)</span>
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
@@ -1608,7 +1608,7 @@ dl.data .dd{
                                             <div class="title" >
                                                 <span>Magix.</span>
                                                 <b class="name">objectToPath</b>
-                                                <span class="param">(obj, encode)</span>
+                                                <span class="param">(obj, encode, keo)</span>
                                                 
                                                 
                                                 <span class="attr">&lt;static&gt;</span>
@@ -1637,12 +1637,21 @@ dl.data .dd{
                                                         </li>
                                                     
                                                         <li class="li">
-                                                            &nbsp;
+                                                            [ 
                                                             <b class="name">encode</b>
                                                             
-                                                            
+                                                             ]
                                                             <span class="type">{Boolean}</span> 
                                                             <span class="desc">是否对value进行encodeURIComponent</span>
+                                                        </li>
+                                                    
+                                                        <li class="li">
+                                                            [ 
+                                                            <b class="name">keo</b>
+                                                            
+                                                             ]
+                                                            <span class="type">{Object}</span> 
+                                                            <span class="desc">是否保留空白值的对象</span>
                                                         </li>
                                                     
                                                     </ul>
@@ -1677,7 +1686,7 @@ dl.data .dd{
                                                 <dt>Example</dt>
                                                 <dd>
                                                         
-                                                            <pre class="brush: js; ">var str=Magix.objectToPath({pathname:'/xxx/',params:{a:'b',c:'d'}});//str==/xxx/?a=b&c=d</pre>
+                                                            <pre class="brush: js; ">var str=Magix.objectToPath({pathname:'/xxx/',params:{a:'b',c:'d'}});//str==/xxx/?a=b&c=dvar str=Magix.objectToPath({pathname:'/xxx/',params:{a:'',c:2}});//str==/xxx/?c=2var str=Magix.objectToPath({pathname:'/xxx/',params:{a:'',c:2}},{a:1});//str==/xxx/?a=&c=2</pre>
                                                         
                                                 </dd>
                                                 

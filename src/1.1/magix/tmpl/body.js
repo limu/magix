@@ -1,12 +1,13 @@
 var Has = Magix.has;
-//不支持冒泡的事件
-var UnsupportBubble = Magix.listToMap('submit,focusin,focusout,mouseenter,mouseleave,mousewheel,change');
+var Mix = Magix.mix;
+//依赖类库才能支持冒泡的事件
+var DependLibEvents = {};
 var RootNode = document.body;
 var RootEvents = {};
 var MxEvtSplit = String.fromCharCode(26);
 
 var MxOwner = 'mx-owner';
-var MxIgnore = 'mx-ie';
+var MxIgnore = 'mx-ei';
 var TypesRegCache = {};
 var IdCounter = 1 << 16;
 
@@ -23,8 +24,10 @@ var GetSetAttribute = function(dom, attrKey, attrVal) {
 };
 var VOM;
 var Body = {
-    unbubble: Magix.unimpl,
-
+    lib: Magix.unimpl,
+    special: function(events) {
+        Mix(DependLibEvents, events);
+    },
     process: function(e) {
         var target = e.target || e.srcElement;
         while (target && target.nodeType != 1) {
@@ -107,10 +110,10 @@ var Body = {
         if (!RootEvents[type]) {
 
             VOM = vom;
-            RootEvents[type] = 1;
-            var unbubble = UnsupportBubble[type];
-            if (unbubble) {
-                me.unbubble(0, RootNode, type);
+            RootEvents[type] = 0;
+            var lib = DependLibEvents[type];
+            if (lib) {
+                me.lib(0, RootNode, type);
             } else {
                 RootNode['on' + type] = function(e) {
                     e = e || window.event;
@@ -119,9 +122,8 @@ var Body = {
                     }
                 };
             }
-        } else {
-            RootEvents[type]++;
         }
+        RootEvents[type]++;
     },
     un: function(type) {
         var me = this;
@@ -129,9 +131,9 @@ var Body = {
         if (counter > 0) {
             counter--;
             if (!counter) {
-                var unbubble = UnsupportBubble[type];
-                if (unbubble) {
-                    me.unbubble(1, RootNode, type);
+                var lib = DependLibEvents[type];
+                if (lib) {
+                    me.lib(1, RootNode, type);
                 } else {
                     RootNode['on' + type] = null;
                 }

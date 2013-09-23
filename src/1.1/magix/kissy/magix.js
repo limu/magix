@@ -18,7 +18,7 @@ KISSY.add('magix/magix', function(S) {
         return r.responseText;
     };
     eval(Include('../tmpl/magix'));
-    return mix(Magix, {
+    return Mix(Magix, {
         include: Include,
         libRequire: function(name, fn) {
             if (name) {

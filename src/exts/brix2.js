@@ -88,7 +88,9 @@ KISSY.add('exts/brix2', function(S, View) {
                             var queue = me.$pageletQueue;
                             delete me.$pageletQueue;
                             if (sign == me.sign) {
-                                ready && ready.call(me, pagelet);
+                                if (ready) {
+                                    ready.call(me, pagelet);
+                                }
                                 while (queue.length) {
                                     var q = queue.shift();
                                     me.setViewPagelet(q.data, q.ready);

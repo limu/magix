@@ -346,20 +346,6 @@ var Router = Mix({
      *      })
      * });
      */
-    /*
-        1.
-            render:function(){
-            },
-            events:{
-                click:{
-                    changeHash:function(e){
-                        Router.navigate('a='+S.now());
-                        Router.navigate('b='+S.now());
-                        e.view.render();
-                    }
-                }
-            }
-     */
     navigate: function(pn, params, replace) {
         var me = Router;
 
@@ -391,12 +377,10 @@ var Router = Mix({
 
             if (temp[PATHNAME]) {
                 if (HashAsNativeHistory) { //指定使用history state但浏览器不支持，需要把query中的存在的参数以空格替换掉
-                    var query = TLoc.query;
-                    if (query && (query = query[PARAMS])) {
-                        for (var p in query) {
-                            if (Has(query, p) && !Has(temp[PARAMS], p)) {
-                                temp[PARAMS][p] = EMPTY;
-                            }
+                    var query = TLoc.query[PARAMS];
+                    for (var p in query) {
+                        if (Has(query, p) && !Has(temp[PARAMS], p)) {
+                            temp[PARAMS][p] = EMPTY;
                         }
                     }
                 }
@@ -405,8 +389,7 @@ var Router = Mix({
                 temp[PARAMS] = Mix(ps, temp[PARAMS]);
                 temp[PATHNAME] = TLoc[PATHNAME];
             }
-            var tempPath = Magix.objectToPath(temp);
-
+            var tempPath = Magix.objectToPath(temp, IsUtf8, TLoc.query[PARAMS]);
             var navigate;
 
             if (SupportState) {
