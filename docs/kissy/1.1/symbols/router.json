@@ -1,0 +1,189 @@
+{
+    "alias": "Router",
+    "methods": [{
+        "type": "Object",
+        "desc": "解析href的query和hash，默认href为window.location.href",
+        "alias": "Router.parseQH",
+        "memberOf": "Router",
+        "returns": [{
+            "title": "return",
+            "desc": "解析的对象",
+            "type": "Object"
+        }],
+        "srcFile": "../tmp\\magix\\router.js",
+        "_name": "parseQH",
+        "_params": [{
+            "title": "param",
+            "desc": "href",
+            "type": "String",
+            "name": "href"
+        }, {
+            "title": "param",
+            "name": "inner"
+        }]
+    }, {
+        "desc": "根据window.location.href路由并派发相应的事件",
+        "alias": "Router.route",
+        "memberOf": "Router",
+        "srcFile": "../tmp\\magix\\router.js",
+        "_name": "route"
+    }, {
+        "desc": "导航到新的地址",
+        "alias": "Router.navigate",
+        "memberOf": "Router",
+        "srcFile": "../tmp\\magix\\router.js",
+        "_name": "navigate",
+        "_params": [{
+            "title": "param",
+            "desc": "pathname或参数字符串或参数对象",
+            "type": "Object|String",
+            "name": "pn"
+        }, {
+            "title": "param",
+            "desc": "参数对象",
+            "type": "String|Object",
+            "name": "params"
+        }, {
+            "title": "param",
+            "desc": "是否替换当前历史记录",
+            "type": "Boolean",
+            "name": "replace"
+        }],
+        "example": [{
+            "title": "example",
+            "desc": "KISSY.use('magix/router',function(S,R){\r     R.navigate('/list?page=2&rows=20');//改变pathname和相关的参数，地址栏上的其它参数会进行丢弃，不会保留\r     R.navigate('page=2&rows=20');//只修改参数，地址栏上的其它参数会保留\r     R.navigate({//通过对象修改参数，地址栏上的其它参数会保留\r         page:2,\r         rows:20\r     });\r     R.navigate('/list',{\r         page:2,\r         rows:20\r     })\r});"
+        }]
+    }, {
+        "desc": "绑定事件",
+        "alias": "Router.on",
+        "memberOf": "Router",
+        "srcFile": "../tmp\\magix\\event.js",
+        "_name": "on",
+        "_params": [{
+            "title": "param",
+            "desc": "事件名称",
+            "type": "String",
+            "name": "name"
+        }, {
+            "title": "param",
+            "desc": "事件回调",
+            "type": "Function",
+            "name": "fn"
+        }, {
+            "title": "param",
+            "desc": "事件监听插入的位置或触发后是否移除监听",
+            "type": "Interger|Boolean",
+            "name": "insertOrRemove"
+        }],
+        "example": [{
+            "title": "example",
+            "desc": "var T=Magix.mix({},Event);\rT.on('done',function(e){\r\r});\r\rT.on('done',function(e){\r\r},0)//监听插入到开始位置\r\rT.on('done',function(e){\r\r},true)//触发后即删除该监听\r\rT.fire('done',{\r    data:'test'\r})"
+        }]
+    }, {
+        "desc": "触发事件",
+        "alias": "Router.fire",
+        "memberOf": "Router",
+        "srcFile": "../tmp\\magix\\event.js",
+        "_name": "fire",
+        "_params": [{
+            "title": "param",
+            "desc": "事件名称",
+            "type": "String",
+            "name": "name"
+        }, {
+            "title": "param",
+            "desc": "事件对象",
+            "type": "Object",
+            "name": "data"
+        }, {
+            "title": "param",
+            "desc": "事件触发完成后是否移除这个事件的所有监听",
+            "type": "Boolean",
+            "name": "remove"
+        }, {
+            "title": "param",
+            "desc": "是否从后向前触发事件的监听列表",
+            "type": "Boolean",
+            "name": "lastToFirst"
+        }]
+    }, {
+        "desc": "解除事件绑定",
+        "alias": "Router.un",
+        "memberOf": "Router",
+        "srcFile": "../tmp\\magix\\event.js",
+        "_name": "un",
+        "_params": [{
+            "title": "param",
+            "desc": "事件名称",
+            "type": "String",
+            "name": "name"
+        }, {
+            "title": "param",
+            "desc": "事件回调",
+            "type": "Function",
+            "name": "fn"
+        }]
+    }],
+    "events": [{
+        "desc": "当window.location.href有改变化时触发",
+        "alias": "Router.event:changed",
+        "memberOf": "Router",
+        "srcFile": "../tmp\\magix\\router.js",
+        "_name": "changed",
+        "_params": [{
+            "title": "param",
+            "desc": "事件对象",
+            "type": "Object",
+            "name": "e"
+        }, {
+            "title": "param",
+            "desc": "地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等",
+            "type": "Object",
+            "name": "e.location"
+        }, {
+            "title": "param",
+            "desc": "有哪些值发生改变的对象，可通过读取该对象下面的pathname,view或params，来识别值是从(from)什么值变成(to)什么值",
+            "type": "Object",
+            "name": "e.changed"
+        }, {
+            "title": "param",
+            "desc": "标识是否是第一次强制触发的changed，对于首次加载完Magix，会强制触发一次changed",
+            "type": "Boolean",
+            "name": "e.force"
+        }]
+    }, {
+        "desc": "当window.location.href有改变化时触发（该事件在扩展中实现）",
+        "alias": "Router.event:change",
+        "memberOf": "Router",
+        "srcFile": "../tmp\\magix\\router.js",
+        "_name": "change",
+        "_params": [{
+            "title": "param",
+            "desc": "事件对象",
+            "type": "Object",
+            "name": "e"
+        }, {
+            "title": "param",
+            "desc": "地址解析出来的对象，包括query hash 以及 query和hash合并出来的params等",
+            "type": "Object",
+            "name": "e.location"
+        }, {
+            "title": "param",
+            "desc": "回退到变化前的地址上，阻止跳转",
+            "type": "Function",
+            "name": "e.back"
+        }]
+    }],
+    "srcFile": "../tmp\\magix\\router.js",
+    "_name": "Router",
+    "inherits": [{
+        "alias": "Event.on",
+        "as": "Router.on"
+    }, {
+        "alias": "Event.fire",
+        "as": "Router.fire"
+    }, {
+        "alias": "Event.un",
+        "as": "Router.un"
+    }]
+}

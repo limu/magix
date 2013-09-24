@@ -1,0 +1,113 @@
+{
+    "desc": "VOM对象",
+    "alias": "VOM",
+    "methods": [{
+        "type": "Object",
+        "desc": "获取所有的vframe对象",
+        "alias": "VOM.all",
+        "memberOf": "VOM",
+        "returns": [{
+            "title": "return",
+            "type": "Object"
+        }],
+        "srcFile": "../tmp\\magix\\vom.js",
+        "_name": "all"
+    }, {
+        "desc": "注册vframe对象",
+        "alias": "VOM.add",
+        "memberOf": "VOM",
+        "srcFile": "../tmp\\magix\\vom.js",
+        "_name": "add",
+        "_params": [{
+            "title": "param",
+            "desc": "Vframe对象",
+            "type": "Vframe",
+            "name": "vf"
+        }]
+    }, {
+        "type": "Vframe|null",
+        "desc": "根据vframe的id获取vframe对象",
+        "alias": "VOM.get",
+        "memberOf": "VOM",
+        "returns": [{
+            "title": "return",
+            "desc": "vframe对象",
+            "type": "Vframe|null"
+        }],
+        "srcFile": "../tmp\\magix\\vom.js",
+        "_name": "get",
+        "_params": [{
+            "title": "param",
+            "desc": "vframe的id",
+            "type": "String",
+            "name": "id"
+        }]
+    }, {
+        "desc": "删除已注册的vframe对象",
+        "alias": "VOM.remove",
+        "memberOf": "VOM",
+        "srcFile": "../tmp\\magix\\vom.js",
+        "_name": "remove",
+        "_params": [{
+            "title": "param",
+            "desc": "vframe对象的id",
+            "type": "String",
+            "name": "id"
+        }]
+    }, {
+        "desc": "获取根vframe对象",
+        "alias": "VOM.root",
+        "memberOf": "VOM",
+        "srcFile": "../tmp\\magix\\vom.js",
+        "_name": "root"
+    }],
+    "events": [{
+        "desc": "view加载完成进度",
+        "alias": "VOM.event:progress",
+        "memberOf": "VOM",
+        "srcFile": "../tmp\\magix\\vom.js",
+        "_name": "progress",
+        "_params": [{
+            "title": "param",
+            "type": "Object",
+            "name": "e"
+        }, {
+            "title": "param",
+            "desc": "百分比",
+            "type": "Object",
+            "name": "e.precent"
+        }]
+    }, {
+        "desc": "注册vframe对象时触发",
+        "alias": "VOM.event:add",
+        "memberOf": "VOM",
+        "srcFile": "../tmp\\magix\\vom.js",
+        "_name": "add",
+        "_params": [{
+            "title": "param",
+            "type": "Object",
+            "name": "e"
+        }, {
+            "title": "param",
+            "type": "Vframe",
+            "name": "e.vframe"
+        }]
+    }, {
+        "desc": "删除vframe对象时触发",
+        "alias": "VOM.event:remove",
+        "memberOf": "VOM",
+        "srcFile": "../tmp\\magix\\vom.js",
+        "_name": "remove",
+        "_params": [{
+            "title": "param",
+            "type": "Object",
+            "name": "e"
+        }, {
+            "title": "param",
+            "type": "Vframe",
+            "name": "e.vframe"
+        }]
+    }],
+    "srcFile": "../tmp\\magix\\vom.js",
+    "_name": "VOM"
+}
