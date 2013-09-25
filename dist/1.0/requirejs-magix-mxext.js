@@ -556,7 +556,7 @@ var Magix = {
         for (var p in oPs) {
             v = oPs[p];
             if (encode) {
-                encodeURIComponent(v);
+                v=encodeURIComponent(v);
             }
             params.push(p + '=' + v);
         }
@@ -1140,7 +1140,7 @@ var Router = Mix({
                 temp[PARAMS] = Mix(ps, temp[PARAMS]);
                 temp[PATHNAME] = TLoc[PATHNAME];
             }
-            var tempPath = Magix.objectToPath(temp);
+            var tempPath = Magix.objectToPath(temp,IsUtf8);
 
             var navigate;
 

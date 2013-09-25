@@ -539,7 +539,7 @@ var Magix = {
         for (var p in oPs) {
             v = oPs[p];
             if (encode) {
-                encodeURIComponent(v);
+                v=encodeURIComponent(v);
             }
             params.push(p + '=' + v);
         }

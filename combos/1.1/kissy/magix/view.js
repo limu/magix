@@ -521,7 +521,7 @@ Mix(Mix(View.prototype, Event), {
                 }
                 EvtInfoCache.set(info, m);
             }
-            var name = m.n + MxEvtSplit + domEvent.type;
+            var name = m.n + MxEvtSplit + e.st;
             var fn = me[name];
             if (fn) {
                 var tfn = WEvent[m.f];
@@ -817,7 +817,7 @@ Mix(Mix(View.prototype, Event), {
      * @param {Object} e
      */
 });
-    var AppRoot;
+    var AppRoot, AppInfo;
     var Suffix = '?t=' + S.now();
 
     /*var ProcessObject = function(props, proto, enterObject) {
@@ -841,8 +841,12 @@ Mix(Mix(View.prototype, Event), {
             } else {
                 if (!AppRoot) {
                     var name = me.path.substring(0, me.path.indexOf('/'));
-                    var info = S.Config.packages[name];
-                    AppRoot = info.base || info.path;
+                    AppInfo = S.Config.packages[name];
+                    AppRoot = AppInfo.base || AppInfo.path;
+                }
+                var path = me.path;
+                if (AppInfo.ignorePackageNameInUri) {
+                    path = path.replace(AppInfo.name, '');
                 }
                 var file = AppRoot + me.path + '.html';
                 var l = Locker[file];

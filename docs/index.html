@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Magix API</title>
+    <link rel="stylesheet" type="text/css" href="http://a.tbcdn.cn/apps/e/brix/1.0/brix-min.css" />
+    <link rel="stylesheet" type="text/css" href="apiapp/assets/global.css" />
+</head>
+<body>
+    <div id="magix_vf_root"></div>
+    <div class="app_progress_bar" id="magix_percent"></div>
+    <script type="text/javascript" src="http://a.tbcdn.cn/??s/kissy/1.3.0/seed.js,apps/e/magix/1.1/kissy-magix-mxext.js"></script>
+    <script type="text/javascript" src="apiapp/progress.js"></script>
+    <script type="text/javascript">
+    KISSY.use('magix/magix',function(S,Magix){
+        S.config({
+            packages:[{
+                name:'apiapp',
+                tag:'20130924',
+                path:'./'
+            }]
+        });
+        Magix.start({
+            defaultView:'apiapp/views/default',
+            defaultPathname:'/home',
+            routes:function(pathname){
+                return this.defaultView;
+            }
+        });
+    });
+    </script>
+</body>
+</html>

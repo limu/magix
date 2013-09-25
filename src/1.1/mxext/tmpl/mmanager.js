@@ -2,6 +2,7 @@ var Has = Magix.has;
 var SafeExec = Magix.safeExec;
 var Mix = Magix.mix;
 var IsFunction = Magix.isFunction;
+var DefaultCacheTime = 20 * 60 * 1000;
 /**
  * Model管理对象，可方便的对Model进行缓存和更新
  * @name MManager
@@ -447,6 +448,10 @@ Mix(MManager.prototype, {
                 throw Error('miss name attribute');
             } else if (metas[name]) {
                 throw Error('already exist:' + name);
+            }
+            if (model.cache) {
+                if (!model.cacheKey) model.cacheKey = name;
+                if (!model.cacheTime) model.cacheTime = DefaultCacheTime;
             }
             metas[name] = model;
         }

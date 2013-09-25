@@ -521,7 +521,7 @@ Mix(Mix(View.prototype, Event), {
                 }
                 EvtInfoCache.set(info, m);
             }
-            var name = m.n + MxEvtSplit + domEvent.type;
+            var name = m.n + MxEvtSplit + e.st;
             var fn = me[name];
             if (fn) {
                 var tfn = WEvent[m.f];

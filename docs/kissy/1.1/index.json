@@ -1,1 +1,31 @@
-[{"isCore":false,"name":"event"},{"isCore":false,"name":"magix"},{"isCore":false,"name":"mmanager"},{"isCore":false,"name":"model"},{"isCore":false,"name":"mrequest"},{"isCore":false,"name":"mxview"},{"isCore":false,"name":"router"},{"isCore":false,"name":"vframe"},{"isCore":false,"name":"view"},{"isCore":false,"name":"vom"}]
+[{
+    "isCore": true,
+    "name": "event"
+}, {
+    "isCore": false,
+    "name": "magix"
+}, {
+    "isCore": false,
+    "name": "mmanager"
+}, {
+    "isCore": false,
+    "name": "model"
+}, {
+    "isCore": false,
+    "name": "mrequest"
+}, {
+    "isCore": false,
+    "name": "mxview"
+}, {
+    "isCore": false,
+    "name": "router"
+}, {
+    "isCore": false,
+    "name": "vframe"
+}, {
+    "isCore": false,
+    "name": "view"
+}, {
+    "isCore": false,
+    "name": "vom"
+}]

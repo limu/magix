@@ -1,0 +1,11 @@
+.app_progress_bar {
+  position: fixed;
+  _position: absolute;
+  left: 0;
+  width: 0;
+  height: 3px;
+  top: 0;
+  background: #377BEE;
+  overflow: hidden;
+  display: block;
+}
