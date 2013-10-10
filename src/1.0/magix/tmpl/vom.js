@@ -31,11 +31,11 @@ var VOM = Magix.mix({
         if (!Has(Vframes, vf.id)) {
             VframesCount++;
             Vframes[vf.id] = vf;
-            vf.owner = VOM;
             VOM.fire('add', {
                 vframe: vf
             });
         }
+        vf.owner = VOM;
     },
     /**
      * 根据vframe的id获取vframe对象

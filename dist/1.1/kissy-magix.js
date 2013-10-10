@@ -1125,7 +1125,7 @@ var Router = Mix({
  * @author 行列<xinglie.lkf@taobao.com>
  * @version 1.0
  **/
-KISSY.add('magix/body', function(S, Magix, SE) {
+KISSY.add('magix/body', function(S, Magix) {
     var Has = Magix.has;
 var Mix = Magix.mix;
 //依赖类库才能支持冒泡的事件
@@ -1145,7 +1145,7 @@ var IdIt = function(dom) {
 var GetSetAttribute = function(dom, attrKey, attrVal) {
     if (attrVal) {
         dom.setAttribute(attrKey, attrVal);
-    } else {
+    } else if (dom && dom.getAttribute) {
         attrVal = dom.getAttribute(attrKey);
     }
     return attrVal;
@@ -1270,13 +1270,9 @@ var Body = {
         }
     }
 };
-    Body.lib = function(remove, node, type) {
-        var fn = remove ? SE.undelegate : SE.delegate;
-        fn.call(SE, node, type, '[mx-' + type + ']', Body.process);
-    };
     return Body;
 }, {
-    requires: ['magix/magix', 'event', 'sizzle']
+    requires: ['magix/magix']
 });
 /**
  * @fileOverview 多播事件对象
@@ -2927,7 +2923,7 @@ Mix(Mix(View.prototype, Event), {
                 if (AppInfo.ignorePackageNameInUri) {
                     path = path.replace(AppInfo.name, '');
                 }
-                var file = AppRoot + me.path + '.html';
+                var file = AppRoot + path + '.html';
                 var l = Locker[file];
                 var onload = function(tmpl) {
                     fn(Tmpls[me.path] = tmpl);
@@ -3009,11 +3005,11 @@ var VOM = Magix.mix({
         if (!Has(Vframes, vf.id)) {
             VframesCount++;
             Vframes[vf.id] = vf;
-            vf.owner = VOM;
             VOM.fire('add', {
                 vframe: vf
             });
         }
+        vf.owner = VOM;
     },
     /**
      * 根据vframe的id获取vframe对象

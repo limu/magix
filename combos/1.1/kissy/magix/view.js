@@ -848,7 +848,7 @@ Mix(Mix(View.prototype, Event), {
                 if (AppInfo.ignorePackageNameInUri) {
                     path = path.replace(AppInfo.name, '');
                 }
-                var file = AppRoot + me.path + '.html';
+                var file = AppRoot + path + '.html';
                 var l = Locker[file];
                 var onload = function(tmpl) {
                     fn(Tmpls[me.path] = tmpl);

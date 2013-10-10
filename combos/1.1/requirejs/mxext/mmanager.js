@@ -3,7 +3,7 @@
  * @author 行列
  * @version 1.0
  **/
-define("mxext/mmanager", ["magix/magix"], function(Magix) {
+define("mxext/mmanager", ["magix/magix", "magix/event"], function(Magix, Event) {
     /*
         #begin mm_fetchall_1#
         define('testMM',["mxext/mmanager","mxext/model"],function(MM,Model){
@@ -21,6 +21,11 @@ define("mxext/mmanager", ["magix/magix"], function(Magix) {
 var SafeExec = Magix.safeExec;
 var Mix = Magix.mix;
 var IsFunction = Magix.isFunction;
+var DefaultCacheTime = 20 * 60 * 1000;
+var Now = Date.now || function() {
+        return +new Date();
+    };
+var Guid = Now();
 /**
  * Model管理对象，可方便的对Model进行缓存和更新
  * @name MManager
@@ -34,6 +39,7 @@ var MManager = function(modelClass) {
     me.$mCache = Magix.cache();
     me.$mCacheKeys = {};
     me.$mMetas = {};
+    me.id = 'mm' + Guid--;
 };
 
 var Slice = [].slice;
@@ -42,6 +48,7 @@ var WhiteList = {
     postParams: 1,
     cacheKey: 1,
     cacheTime: 1,
+    cache: 1,
     before: 1,
     after: 1
 };
@@ -102,10 +109,7 @@ var FetchFlags = {
     ONE: 2,
     ORDER: 4
 };
-var Now = Date.now || function() {
-        return +new Date();
-    };
-var Guid = Now();
+
 /**
  * model请求类
  * @name MRequest
@@ -192,6 +196,10 @@ Mix(MRequest.prototype, {
                     if (after) { //有after
                         SafeExec(after, [model, meta]);
                     }
+                    Event.fire.call(host, 'done', {
+                        model: mm,
+                        meta: meta
+                    });
                 }
                 if (!model.fromCache && mm.used > 0) {
                     model.fromCache = true;
@@ -467,6 +475,10 @@ Mix(MManager.prototype, {
             } else if (metas[name]) {
                 throw Error('already exist:' + name);
             }
+            if (model.cache) {
+                if (!model.cacheKey) model.cacheKey = name;
+                if (!model.cacheTime) model.cacheTime = DefaultCacheTime;
+            }
             metas[name] = model;
         }
     },
@@ -577,6 +589,7 @@ Mix(MManager.prototype, {
         entity.$mm = {
             used: 0
         };
+
         var before = modelAttrs.before || meta.before;
 
         if (IsFunction(before)) {
@@ -603,7 +616,10 @@ Mix(MManager.prototype, {
         //临时传递的
         entity.setUrlParams(modelAttrs.urlParams);
         entity.setPostParams(modelAttrs.postParams);
-
+        Event.fire.call(me, 'init', {
+            model: entity,
+            meta: meta
+        });
         return entity;
     },
     /**

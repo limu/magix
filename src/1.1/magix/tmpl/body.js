@@ -17,7 +17,7 @@ var IdIt = function(dom) {
 var GetSetAttribute = function(dom, attrKey, attrVal) {
     if (attrVal) {
         dom.setAttribute(attrKey, attrVal);
-    } else {
+    } else if (dom && dom.getAttribute) {
         attrVal = dom.getAttribute(attrKey);
     }
     return attrVal;

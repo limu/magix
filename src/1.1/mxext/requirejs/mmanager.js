@@ -3,7 +3,7 @@
  * @author 行列
  * @version 1.0
  **/
-define("mxext/mmanager", ["magix/magix"], function(Magix) {
+define("mxext/mmanager", ["magix/magix", "magix/event"], function(Magix, Event) {
     /*
         #begin mm_fetchall_1#
         define('testMM',["mxext/mmanager","mxext/model"],function(MM,Model){
