@@ -1,0 +1,298 @@
+.app_progress_bar {
+  position: fixed;
+  _position: absolute;
+  left: 0;
+  width: 0;
+  height: 2px;
+  top: 0;
+  background: #377BEE;
+  overflow: hidden;
+  display: block;
+}
+
+
+/**
+ * Reset CSS for Subway layouts Pages
+ */
+.fl {
+  float: left;
+  display: inline;
+}
+.fr {
+  float: right;
+  display: inline;
+}
+.mt15 {
+  margin-top: 15px;
+}
+.mb15 {
+  margin-bottom: 15px;
+}
+.ml15 {
+  margin-left: 15px;
+}
+.mr15 {
+  margin-right: 15px;
+}
+.mt8 {
+  margin-top: 8px;
+}
+.mt10 {
+  margin-top: 10px;
+}
+.mb10 {
+  margin-bottom: 10px;
+}
+.ml10 {
+  margin-left: 10px;
+}
+.mr10 {
+  margin-right: 10px;
+}
+.mt5 {
+  margin-top: 5px;
+}
+.mb5 {
+  margin-bottom: 5px;
+}
+.ml5 {
+  margin-left: 5px;
+}
+.mr5 {
+  margin-right: 5px;
+}
+.pt15 {
+  padding-top: 15px;
+}
+.pb15 {
+  padding-bottom: 15px;
+}
+.pl15 {
+  padding-left: 15px;
+}
+.pr15 {
+  padding-right: 15px;
+}
+.pt10 {
+  padding-top: 10px;
+}
+.pb10 {
+  padding-bottom: 10px;
+}
+.pl10 {
+  padding-left: 10px;
+}
+.pr10 {
+  padding-right: 10px;
+}
+.pt5 {
+  padding-top: 5px;
+}
+.pb5 {
+  padding-bottom: 5px;
+}
+.pl5 {
+  padding-left: 5px;
+}
+.pr5 {
+  padding-right: 5px;
+}
+.pr {
+  position: relative;
+}
+.tl {
+  text-align: left;
+}
+.tr {
+  text-align: right;
+}
+.tc {
+  text-align: center;
+}
+.cl {
+  clear: left;
+  font-size: 0;
+  height: 0;
+  line-height: 0;
+}
+.cr {
+  clear: right;
+  font-size: 0;
+  height: 0;
+  line-height: 0;
+}
+.cb {
+  clear: both;
+  font-size: 0;
+  height: 0;
+  line-height: 0;
+}
+.bc {
+  margin: 0 auto;
+}
+.vt {
+  vertical-align: top;
+}
+.vm {
+  vertical-align: middle;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.cursor-default {
+  cursor: default;
+}
+.none {
+  display: none;
+}
+.hidden {
+  visibility: hidden;
+}
+
+.f10 {
+  font-size: 10px;
+}
+.f11 {
+  font-size: 11px !important;
+}
+.f12 {
+  font-size: 12px;
+}
+.f14 {
+  font-size: 14px;
+}
+.f16 {
+  font-size: 16px;
+}
+.f18 {
+  font-size: 18px;
+}
+.f20 {
+  font-size: 20px;
+}
+.f24 {
+  font-size: 24px;
+}
+.f48 {
+  font-size: 48px;
+}
+.fb {
+  font-weight: bold;
+}
+.tu {
+  text-decoration: underline;
+}
+.lh14 {
+  line-height: 14px;
+}
+.lh18 {
+  line-height: 18px;
+}
+.lh21 {
+  line-height: 21px;
+}
+.lh23 {
+  line-height: 23px;
+}
+.lh25 {
+  line-height: 25px;
+}
+.lh28 {
+  line-height: 28px;
+}
+.ti1 {
+  text-indent: 1em;
+}
+.ti2 {
+  text-indent: 2em;
+}
+.w60 {
+  width: 60px !important;
+}
+.w80 {
+  width: 80px !important;
+}
+.w100 {
+  width: 100px !important;
+}
+.w130 {
+  width: 130px;
+}
+.ul-disc li {
+  list-style: disc outside;
+}
+.ol-decimal li {
+  list-style: decimal inside;
+}
+/*layout-布局css*/
+html {
+  overflow-y: scroll;
+}
+#magix_vf_root {
+  min-width: 1250px;
+}
+#main {
+  width: 100%;
+}
+#main #left {
+  background: #f5f5f5;
+  vertical-align: top;
+  width: 180px;
+}
+#main #right {
+  vertical-align: top;
+  width: 100%;
+}
+#main #right .inmain {
+  padding: 20px 20px 100px;
+  min-width: 1030px;
+}
+h1 {
+  font-size: 28px;
+  line-height: 28px;
+  color: #101010;
+  margin-top: 15px;
+}
+a:hover {
+  text-decoration: none;
+}
+*:focus {
+  outline: none;
+}
+
+
+/*module：common-header 头部*/
+.common-header {
+  height: 40px;
+}
+.common-header .logo {
+  font-size: 22px;
+  line-height: 34px;
+}
+
+/*module:左侧菜单*/
+.common-left .topnav {
+  width: 140px;
+  padding: 20px;
+}
+.common-left .topnav .topnav-list {
+  font-size: 16px;
+}
+
+.common-left .topnav .subnav-list {
+  font-size: 14px;
+}
+
+.common-left .topnav a .iconfont {
+  font-size: 12px;
+  color: #999;
+  vertical-align: top;
+  *vertical-align: middle;
+}
+.common-left .topnav a.text {
+  margin-left: 17px;
+}
+.common-left .service-list {
+  line-height: 25px;
+  list-style: disc inside none;
+}

@@ -2,7 +2,7 @@
     author:xinglie.lkf@taobao.com
     页面切换时间统计插件，在log方法内记录页面切换的用时
  */
-KISSY.add('exts/statistics', function(S, Router, VOM, Magix) {
+KISSY.add('app/statistics', function(S, Router, VOM, Magix) {
     var MS = window.MS || {
         start: new Date()
     };

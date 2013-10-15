@@ -2,7 +2,7 @@
     author:xinglie.lkf@taobao.com
     接口请求统计插件
  */
-KISSY.add('exts/mmstatistics', function(S, MM) {
+KISSY.add('app/mmstatistics', function(S, MM) {
     var OldCreate = MM.create;
     var MS = {
 

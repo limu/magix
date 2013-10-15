@@ -1,0 +1,103 @@
+[{
+    "campaignId": "4956820",
+    "title": "明星店铺",
+    "type": "1",
+    "onlineState": "1",
+    "settleState": "1",
+    "discount": "100%"
+}, {
+    "campaignId": "2804049",
+    "title": "立如计划立如计划立如计划立如计划立如",
+    "type": "0",
+    "onlineState": "1",
+    "settleState": "1",
+    "discount": "249%"
+}, {
+    "campaignId": "4948049",
+    "title": "sid = 131234567890",
+    "type": "0",
+    "onlineState": "1",
+    "settleState": "1",
+    "discount": "100%"
+}, {
+
+    "campaignId": "4949219",
+    "title": "修改campaign-操作日志",
+    "type": "0",
+    "onlineState": "1",
+    "settleState": "1",
+    "discount": "1000%"
+}, {
+
+    "campaignId": "1000090709",
+    "title": "专用Campaign",
+    "type": "0",
+    "onlineState": "1",
+    "settleState": "0",
+    "discount": "100%"
+}, {
+
+    "campaignId": "1000096773",
+    "title": "1",
+    "type": "0",
+    "onlineState": "1",
+    "settleState": "0",
+    "discount": "100%"
+}, {
+
+    "campaignId": "4949061",
+    "title": "曲舞量子数据测试-勿删勿改",
+    "type": "0",
+    "onlineState": "1",
+    "settleState": "1",
+    "discount": "0%"
+}, {
+
+    "campaignId": "2000065",
+    "title": "qqqqqq33",
+    "type": "0",
+    "onlineState": "1",
+    "settleState": "1",
+    "discount": "250%"
+}, {
+
+    "campaignId": "1000007722",
+    "title": "sem-test-quwu",
+    "type": "0",
+    "onlineState": "1",
+    "settleState": "1",
+    "discount": "100%"
+}, {
+
+    "campaignId": "1000090088",
+    "title": "服务化新增全店[勿动]",
+    "type": "2",
+    "onlineState": "1",
+    "settleState": "0",
+    "discount": "100%"
+}, {
+
+    "campaignId": "1000058968",
+    "title": "活动专区",
+    "type": "3",
+    "onlineState": "1",
+    "settleState": "1",
+    "discount": "100%"
+}, {
+
+    "campaignId": "1000105371",
+    "title": "defaulttitle",
+    "type": "4",
+    "onlineState": "1",
+    "settleState": "0",
+    "discount": "100%"
+}, {
+
+    "campaignId": "1000105590",
+    "title": "defaulttitle",
+    "type": "4",
+    "onlineState": "1",
+    "settleState": "0",
+    "discount": "100%"
+}
+]

@@ -1,0 +1,36 @@
+@charset "UTF-8";
+.common-header{
+    background: #fa8f23;
+}
+
+.common-header .header-right {
+  color: #fff;
+}
+.common-header .header-right a {
+  color: #fff;
+}
+
+.common-left .topnav .topnav-list .hover {
+  color: #ff8400;
+}
+.common-left .topnav .topnav-list .hover .iconfont {
+  color: #ff8400;
+}
+
+.common-left .topnav a {
+  color: #333;
+  display: inline-block;
+  line-height: 23px;
+  margin: 5px 0;
+  border-bottom: 2px solid #f5f5f5;
+}
+.common-left .topnav a:hover {
+  color: #ff8400;
+}
+.common-left .topnav a:hover .iconfont {
+  color: #ff8400;
+}
+.common-left .topnav a.current {
+  color: #ff8400;
+  border-bottom: 2px solid #ff8400;
+}

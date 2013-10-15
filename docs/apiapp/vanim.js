@@ -1,13 +1,31 @@
 /*
     author:xinglie.lkf@taobao.com
  */
-KISSY.add('apiapp/vanim', function(S, Router) {
+KISSY.add('apiapp/vanim', function(S, Router, Magix) {
     var Dirs = {
         TOP: 1,
         RIGHT: 2,
         BOTTOM: 4,
         LEFT: 8
     };
+    var Rules = [{
+        from: /^\/home$/,
+        to: /^\/(?:kissy|seajs|requirejs)\/1\.[01]\/index$/,
+        aAnim: 'slideLeft',
+        bAnim: 'slideRight'
+    }, {
+        from: /^\/(?:kissy|seajs|requirejs)\/1\.[01]\/index$/,
+        to: /^\/(?:kissy|seajs|requirejs)\/1\.[01]\/\w+$/,
+        aAnim: 'slideLeft',
+        bAnim: 'slideRight'
+    }, {
+        from: /^\/home$/,
+        to: /^\/(?:kissy|seajs|requirejs)\/1\.[01]\/\w+$/,
+        aAnim: 'slideTop',
+        bAnim: 'slideBottom'
+    }];
+    var RulesCache = Magix.cache();
+
     var VAnim = {
         animCounter: 0,
         getAnimRule: function(e) {
@@ -15,10 +33,29 @@ KISSY.add('apiapp/vanim', function(S, Router) {
             var rule = {
                 root: 'magix_vf_root'
             };
-            var loc = e.location;
-            var anim = loc.get('anim');
-            if (anim && me[anim]) {
-                rule.anim = anim;
+            var changed = e.changed;
+            if (changed.isPathname()) {
+                var pn = changed.pathname;
+                var key1 = pn.from + '&' + pn.to;
+                var key2 = pn.to + '&' + pn.from;
+                if (RulesCache.has(key1)) {
+                    rule.anim = RulesCache.get(key1);
+                } else {
+                    for (var i = 0, r; i < Rules.length; i++) {
+                        r = Rules[i];
+                        if (r.from.test(pn.from) && r.to.test(pn.to)) {
+                            rule.anim = r.aAnim;
+                            RulesCache.set(key2, r.bAnim);
+                            RulesCache.set(key1, r.aAnim);
+                            break;
+                        } else if (r.to.test(pn.from) && r.from.test(pn.to)) {
+                            rule.anim = r.bAnim;
+                            RulesCache.set(key1, r.bAnim);
+                            RulesCache.set(key2, r.aAnim);
+                            break;
+                        }
+                    }
+                }
             }
             return rule;
         },
@@ -31,7 +68,25 @@ KISSY.add('apiapp/vanim', function(S, Router) {
                 rootNode.append(children);
             }
         },
-        fade: function(root) {
+        registerAnim: function(key, anim) {
+            var me = VAnim;
+            if (!me.$anims) {
+                me.$anims = {};
+            }
+            me.$anims[key] = anim;
+        },
+        stopAnims: function() {
+            var me = VAnim;
+            var anims = me.$anims;
+            var anim;
+            for (var p in anims) {
+                anim = anims[p];
+                if (anim && anim.stop) {
+                    anim.stop(true);
+                }
+            }
+        },
+        /*fade: function(root) {
             var me = VAnim;
             me.processRoot(root);
             var rootNode = S.one('#' + root);
@@ -56,9 +111,10 @@ KISSY.add('apiapp/vanim', function(S, Router) {
                     me.animCounter--;
                 }).run();
             }).run();
-        },
+        },*/
         slide: function(root, dir) {
             var me = VAnim;
+            me.stopAnims();
             me.processRoot(root);
             var rootNode = S.one('#' + root);
             var parent = rootNode.parent();
@@ -92,7 +148,7 @@ KISSY.add('apiapp/vanim', function(S, Router) {
                 newRootIniAnimAttrs = {
                     position: 'absolute',
                     left: 0,
-                    top: rootNode.outerHeight()
+                    top: Math.max(rootNode.outerHeight(), S.DOM.docHeight())
                 };
             } else if (dir == Dirs.RIGHT) {
                 newRootIniAnimAttrs = {
@@ -104,7 +160,7 @@ KISSY.add('apiapp/vanim', function(S, Router) {
                 newRootIniAnimAttrs = {
                     position: 'absolute',
                     left: 0,
-                    top: -rootNode.outerHeight()
+                    top: -Math.max(rootNode.outerHeight(), S.DOM.docHeight())
                 };
             }
             newRootIniAnimAttrs.width = oldRootIniAnimAttrs.width;
@@ -123,18 +179,18 @@ KISSY.add('apiapp/vanim', function(S, Router) {
                 oldRootAnimAttrs.left = -rootNode.outerWidth();
                 newRootAnimAttrs.left = 0;
             } else if (dir == Dirs.TOP) {
-                oldRootAnimAttrs.top = -rootNode.outerHeight();
+                oldRootAnimAttrs.top = -Math.max(rootNode.outerHeight(), S.DOM.docHeight());
                 newRootAnimAttrs.top = 0;
             } else if (dir == Dirs.RIGHT) {
                 oldRootAnimAttrs.left = rootNode.outerWidth();
                 newRootAnimAttrs.left = 0;
             } else if (dir == Dirs.BOTTOM) {
-                oldRootAnimAttrs.top = rootNode.outerHeight();
+                oldRootAnimAttrs.top = Math.max(rootNode.outerHeight(), S.DOM.docHeight());
                 newRootAnimAttrs.top = 0;
             }
             me.animCounter++;
-            new S.Anim(rootNode, oldRootAnimAttrs, 0.8, 'easeOut').run();
-            new S.Anim(newRoot, newRootAnimAttrs, 0.8, 'easeOut', function() {
+            me.registerAnim('slideOld', new S.Anim(rootNode, oldRootAnimAttrs, 0.8, 'easeOut').run());
+            me.registerAnim('slideNew', new S.Anim(newRoot, newRootAnimAttrs, 0.8, 'easeOut', function() {
                 rootNode.remove();
                 newRoot.css({
                     position: 'static',
@@ -148,7 +204,7 @@ KISSY.add('apiapp/vanim', function(S, Router) {
                         overflow: me.$bakOverflow
                     });
                 }
-            }).run();
+            }).run());
         },
         slideLeft: function(root) {
             VAnim.slide(root, Dirs.LEFT);
@@ -177,5 +233,5 @@ KISSY.add('apiapp/vanim', function(S, Router) {
     };
     Router.on('changed', VAnim.locationChange, 0);
 }, {
-    requires: ['magix/router', 'node', 'anim']
+    requires: ['magix/router', 'magix/magix', 'node', 'anim']
 });

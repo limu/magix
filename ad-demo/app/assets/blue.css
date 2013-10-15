@@ -1,0 +1,36 @@
+@charset "UTF-8";
+.common-header{
+    background: blue;
+}
+
+.common-header .header-right {
+  color: #fcc;
+}
+.common-header .header-right a {
+  color: #fcc;
+}
+
+.common-left .topnav .topnav-list .hover {
+  color: blue;
+}
+.common-left .topnav .topnav-list .hover .iconfont {
+  color:blue;
+}
+
+.common-left .topnav a {
+  color: #333;
+  display: inline-block;
+  line-height: 23px;
+  margin: 5px 0;
+  border-bottom: 2px solid #f5f5f5;
+}
+.common-left .topnav a:hover {
+  color: blue;
+}
+.common-left .topnav a:hover .iconfont {
+  color: blue;
+}
+.common-left .topnav a.current {
+  color: blue;
+  border-bottom: 2px solid blue;
+}
