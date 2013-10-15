@@ -61,7 +61,7 @@ var WrapDone = function(fn, model, idx) {
     };
 };
 var IsMxView = function(view) {
-    return view && view.mxViewCtor && view.manage;
+    return view && view.manage;
 };
 var CacheDone = function(err, data, ops) {
     var cacheKey = ops.key;
@@ -79,7 +79,7 @@ var GenMRequest = function(method) {
         var args = arguments;
         var last = args[args.length - 1];
         if (IsMxView(last)) {
-            last.manage(mr);
+            last.manage(mr.id, mr);
             args = Slice.call(args, 0, -1);
         }
         return mr[method].apply(mr, args);
@@ -831,7 +831,7 @@ Mix(MManager.prototype, {
     createMRequest: function(view) {
         var mr = new MRequest(this);
         if (IsMxView(view)) {
-            view.manage(mr);
+            view.manage(mr.id, mr);
         }
         return mr;
     },

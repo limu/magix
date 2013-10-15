@@ -1,12 +1,12 @@
 /*
     author:xinglie.lkf@taobao.com
  */
-KISSY.add("index",function(S,View,){
+KISSY.add('apiapp/views/partials/index', function(S, View) {
     return View.extend({
-        render:function(){
-            
+        render: function() {
+            this.setViewHTML(this.template);
         }
-    })
-},{
-    requires:["mxext/view"]
+    });
+}, {
+    requires: ['mxext/view']
 });

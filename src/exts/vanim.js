@@ -9,10 +9,6 @@ KISSY.add('exts/vanim', function(S, Router) {
         LEFT: 8
     };
     var VAnim = {
-        DEFAULT_ANIM_RULE: {
-            anim: 'slideLeft',
-            root: 'magix_vf_root'
-        },
         animCounter: 0,
         getAnimRule: function(e) {
             var me = VAnim;
@@ -214,7 +210,7 @@ KISSY.add('exts/vanim', function(S, Router) {
             }
         }
     };
-    Router.on('changed', VAnim.locationChange);
+    Router.on('changed', VAnim.locationChange, 0);
 }, {
     requires: ['magix/router', 'node', 'anim']
 });

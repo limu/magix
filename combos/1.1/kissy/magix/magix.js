@@ -155,7 +155,7 @@ Mix(Cache.prototype, {
         r.f = 1;
         r.t = CacheLatest++;
         r.m = onRemove;
-        return r;
+        return value;
     },
     del: function(k) {
         k = PATHNAME + k;

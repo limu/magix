@@ -5,8 +5,7 @@ function publish(symbolSet) {
 		ext: ".html",
 		outDir: JSDOC.opt.d || SYS.pwd + "../out/jsdoc/",
 		templatesDir: JSDOC.opt.t || SYS.pwd + "../templates/jsdoc/",
-		symbolsDir: "symbols/",
-		srcDir: "symbols/src/"
+		symbolsDir: "symbols/"
 	};
 
 	// is source output is suppressed, just display the links to the source file
@@ -17,7 +16,7 @@ function publish(symbolSet) {
 	}
 
 	// create the folders and subfolders to hold the output
-	IO.mkPath((publish.conf.outDir + "symbols/src").split("/"));
+	IO.mkPath((publish.conf.outDir + "symbols").split("/"));
 
 	// used to allow Link to check the details of things being linked to
 	Link.symbolSet = symbolSet;
@@ -46,12 +45,12 @@ function publish(symbolSet) {
 		return ($.is("CONSTRUCTOR") || $.isNamespace)
 	}
 	var CoreMap = {
-		'Magix': 1,
-		'Event': 1,
-		'Router': 1,
-		'View': 1,
-		'Vframe': 1,
-		'VOM': 1
+		'magix': 1,
+		'event': 1,
+		'router': 1,
+		'view': 1,
+		'vframe': 1,
+		'vom': 1
 	};
 
 	function isCore($) {
@@ -70,12 +69,13 @@ function publish(symbolSet) {
 	var symbols = symbolSet.toArray();
 
 	// create the hilited source code files
-	var files = JSDOC.opt.srcFiles;
+	/*var files = JSDOC.opt.srcFiles;
 	for (var i = 0, l = files.length; i < l; i++) {
 		var file = files[i];
 		var srcDir = publish.conf.outDir + "symbols/src/";
 		makeSrcFile(file, srcDir);
-	}
+	}*/
+
 
 	// get a list of all the classes in the symbolset
 	var classes = symbols.filter(isaClass).sort(makeSortby("alias"));
@@ -113,18 +113,26 @@ function publish(symbolSet) {
 		//var output = "";
 		//output = classTemplate.process(symbol);
 		name = ((JSDOC.opt.u) ? Link.filemap[symbol.alias] : symbol.alias);
+		var dName = name;
 		name = name.toLowerCase();
 		IO.saveFile(publish.conf.outDir + "symbols/", name + ".json", JSON.stringify(symbol, function(key, value) {
-			if (key != 'comment' && key != 'isa' && key != '$args') {
-				if (value && value !== false && value !== "") {
-					if (value.length || !isEO(value)) {
+			if (key != 'comment' && key != '$args' && key != 'srcFile' && key != 'id') {
+				if (value) {
+					//if (value === true || value.length || !isEO(value)) {
+					if (value.slice) {
+						if (value.length) {
+							return value;
+						}
+					} else {
 						return value;
 					}
+					//}
 				}
 			}
 		}));
 		files.push({
 			name: name,
+			dName: dName,
 			isCore: isCore(name)
 		});
 		//IO.saveFile(publish.conf.outDir + "symbols/", ((JSDOC.opt.u) ? Link.filemap[symbol.alias] : symbol.alias) + publish.conf.ext, output);

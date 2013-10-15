@@ -1,12 +1,17 @@
 /*
     author:xinglie.lkf@taobao.com
  */
-KISSY.add("class",function(S,View,){
+KISSY.add('apiapp/views/partials/class', function(S, View, MM) {
     return View.extend({
-        render:function(){
-            
+        render: function() {
+            var me = this;
+            me.setViewHTML(me.template);
+            var s = MM.searchInfos('setviewhml', function(e, m) {
+                console.log(e, m);
+            }, me);
+            //s.stop();
         }
-    })
-},{
-    requires:["mxext/view"]
+    });
+}, {
+    requires: ['mxext/view', 'apiapp/models/manager']
 });

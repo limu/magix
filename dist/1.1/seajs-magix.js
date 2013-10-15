@@ -152,7 +152,7 @@ Mix(Cache.prototype, {
         r.f = 1;
         r.t = CacheLatest++;
         r.m = onRemove;
-        return r;
+        return value;
     },
     del: function(k) {
         k = PATHNAME + k;
@@ -623,7 +623,7 @@ var Magix = {
     cache: Cache
 };
     var ToString = Object.prototype.toString;
-    return mix(Magix, {
+    return Mix(Magix, {
         
         libRequire: function(name, fn) {
             if (name) {
@@ -680,7 +680,10 @@ var MxConfig = Magix.config();
 var HrefCache = Magix.cache();
 var ChgdCache = Magix.cache(40);
 
-var TLoc, LLoc, Pnr;
+var TLoc, LLoc = {
+    params: {},
+    href: EMPTY
+}, Pnr;
 var TrimHashReg = /#.*$/,
     TrimQueryReg = /^[^#]*#?!?/;
 var PARAMS = 'params';
@@ -842,6 +845,7 @@ var Router = Mix({
             result = {
                 get: GetParam,
                 href: href,
+                refHref: LLoc.href,
                 srcQuery: query,
                 srcHash: hash,
                 query: queryObj,
@@ -973,15 +977,9 @@ var Router = Mix({
     route: function() {
         var me = Router;
         var location = me.parseQH(0, 1);
-        var oldLocation = LLoc || {
-            params: {},
-            href: '~'
-        };
-        var firstFire = !LLoc; //是否强制触发的changed，对于首次加载会强制触发一次
-
+        var firstFire = !LLoc.get; //是否强制触发的changed，对于首次加载会强制触发一次
+        var changed = me.getChged(LLoc, location);
         LLoc = location;
-
-        var changed = me.getChged(oldLocation, location);
         if (changed.occur) {
             TLoc = location;
             me.fire('changed', {
@@ -1448,10 +1446,6 @@ var $$ = function(id, tag, node) {
     node = $(id);
     return node ? node.getElementsByTagName(tag) : [];
 };
-var $C = function(tag) {
-    return D.createElement(tag);
-};
-
 
 var IdIt = function(dom) {
     return dom.id || (dom.id = 'magix_vf_' + (VframeIdCounter--));
@@ -1516,7 +1510,7 @@ Mix(Vframe, {
             RefLoc = refLoc;
             var e = $(RootId);
             if (!e) {
-                e = $C(TagName);
+                e = D.createElement(TagName);
                 e.id = RootId;
                 D.body.insertBefore(e, D.body.firstChild);
             }
@@ -1801,8 +1795,9 @@ Mix(Mix(Vframe.prototype, Event), {
         var vom = me.owner;
         var vf = vom.get(id);
         if (vf) {
+            var fcc = vf.fcc;
             vf.unmountView();
-            vom.remove(id);
+            vom.remove(id, fcc);
             me.fire('destroy');
             var p = vom.get(vf.pId);
             if (p && Has(p.cM, id)) {
@@ -3042,11 +3037,11 @@ var VOM = Magix.mix({
      * 删除已注册的vframe对象
      * @param {String} id vframe对象的id
      */
-    remove: function(id) {
+    remove: function(id, fcc) {
         var vf = Vframes[id];
         if (vf) {
             VframesCount--;
-            if (vf.fcc) FirstVframesLoaded--;
+            if (fcc) FirstVframesLoaded--;
             delete Vframes[id];
             VOM.fire('remove', {
                 vframe: vf

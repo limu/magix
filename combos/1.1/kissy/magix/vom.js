@@ -55,11 +55,11 @@ var VOM = Magix.mix({
      * 删除已注册的vframe对象
      * @param {String} id vframe对象的id
      */
-    remove: function(id) {
+    remove: function(id, fcc) {
         var vf = Vframes[id];
         if (vf) {
             VframesCount--;
-            if (vf.fcc) FirstVframesLoaded--;
+            if (fcc) FirstVframesLoaded--;
             delete Vframes[id];
             VOM.fire('remove', {
                 vframe: vf

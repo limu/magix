@@ -1,32 +1,34 @@
 /*
     author:xinglie.lkf@taobao.com
  */
-KISSY.add('apiapp/views/default', function(S, View, Magix) {
+KISSY.add('apiapp/views/default', function(S, View, Magix, VOM, Router) {
     return View.extend({
         render: function() {
             var me = this;
             me.setViewHTML(me.template);
-            var loc = me.location;
-            var pathname = loc.pathname;
-            var pns = pathname.split('/');
-
-            var loader = pns[1];
-            var ver = pns[2];
-            var tmpl = pns[3];
-            var data = pns[4];
-            if (!data && tmpl == 'index') {
-                data = 'index';
+            me.mountMainVframe();
+        },
+        mountMainVframe: function() {
+            var pnReg = /\/([^\/]+)\/(\d+\.\d+)\/([^\/]+)/;
+            var loc = this.location;
+            var infos = loc.pathname.match(pnReg);
+            if (infos) {
+                Magix.local('APIPathInfo', {
+                    loader: infos[1],
+                    ver: infos[2],
+                    action: infos[3]
+                });
+                var vf = VOM.get('magix_vf_main');
+                var view = infos[3] == 'index' ? infos[3] : 'class';
+                vf.mountView('apiapp/views/partials/' + view);
             } else {
-                data = 'symbols/' + data;
+                Router.navigate('/home');
             }
-
-            Magix.local('APInfo', {
-                loader: loader,
-                ver: ver,
-                data: data
-            });
+        },
+        locationChange: function() {
+            this.mountMainVframe();
         }
     });
 }, {
-    requires: ['magix/view', 'magix/magix']
+    requires: ['magix/view', 'magix/magix', 'magix/vom', 'magix/router']
 });

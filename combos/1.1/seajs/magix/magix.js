@@ -152,7 +152,7 @@ Mix(Cache.prototype, {
         r.f = 1;
         r.t = CacheLatest++;
         r.m = onRemove;
-        return r;
+        return value;
     },
     del: function(k) {
         k = PATHNAME + k;
@@ -623,7 +623,7 @@ var Magix = {
     cache: Cache
 };
     var ToString = Object.prototype.toString;
-    return mix(Magix, {
+    return Mix(Magix, {
         include: Include,
         libRequire: function(name, fn) {
             if (name) {

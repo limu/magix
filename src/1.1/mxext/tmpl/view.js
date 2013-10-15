@@ -16,6 +16,7 @@ var Has = Magix.has;
 /**
  * @name MxView
  * @namespace
+ * @constructor
  * @requires View
  * @augments View
  */

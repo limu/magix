@@ -17,7 +17,7 @@ define('magix/magix', function() {
     eval(Include('../tmpl/magix'));
     var ToString = Object.prototype.toString;
 
-    return mix(Magix, {
+    return Mix(Magix, {
         include: Include,
         libRequire: function(name, fn) {
             if (!Magix.isArray(name)) {

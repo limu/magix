@@ -316,7 +316,7 @@ Magix.mix(Model.prototype, {
                 callback('abort', null, options);
             }
         };
-        me.$trans = me.sync(temp, options);
+        me.$trans = me.sync(temp);
     },
     /**
      * 中止请求

@@ -28,7 +28,7 @@ module.exports = function(grunt) {
     // ==========================================================================
     // TASKS
     // ==========================================================================
-    //generate doc 
+    //generate doc
     grunt.registerMultiTask('generatedoc', 'generatedoc', function() {
         var dir = this.data.dir;
         var platType = this.data.platType;
@@ -52,7 +52,7 @@ module.exports = function(grunt) {
         grunt.config.set('exec', {
             docfy: {
                 //  cmd:'jsduck '+inputDocDir+' --builtin-classes --output='+outPutDocDir+' --encoding=utf-8'
-                cmd: 'java -jar jsdoc-toolkit/jsrun.jar jsdoc-toolkit/app/run.js  -e=utf-8 -t=jsdoc-toolkit/templates/mgdoc -d=' + outPutDocDir + ' ' + inputDocFiles
+                cmd: 'java -jar jsdoc-toolkit/jsrun.jar jsdoc-toolkit/app/run.js -p=true -e=utf-8 -t=jsdoc-toolkit/templates/mgdoc -d=' + outPutDocDir + ' ' + inputDocFiles
             }
         });
         grunt.task.run('exec');

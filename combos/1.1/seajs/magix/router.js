@@ -19,7 +19,10 @@ var MxConfig = Magix.config();
 var HrefCache = Magix.cache();
 var ChgdCache = Magix.cache(40);
 
-var TLoc, LLoc, Pnr;
+var TLoc, LLoc = {
+    params: {},
+    href: EMPTY
+}, Pnr;
 var TrimHashReg = /#.*$/,
     TrimQueryReg = /^[^#]*#?!?/;
 var PARAMS = 'params';
@@ -181,6 +184,7 @@ var Router = Mix({
             result = {
                 get: GetParam,
                 href: href,
+                refHref: LLoc.href,
                 srcQuery: query,
                 srcHash: hash,
                 query: queryObj,
@@ -312,15 +316,9 @@ var Router = Mix({
     route: function() {
         var me = Router;
         var location = me.parseQH(0, 1);
-        var oldLocation = LLoc || {
-            params: {},
-            href: '~'
-        };
-        var firstFire = !LLoc; //是否强制触发的changed，对于首次加载会强制触发一次
-
+        var firstFire = !LLoc.get; //是否强制触发的changed，对于首次加载会强制触发一次
+        var changed = me.getChged(LLoc, location);
         LLoc = location;
-
-        var changed = me.getChged(oldLocation, location);
         if (changed.occur) {
             TLoc = location;
             me.fire('changed', {

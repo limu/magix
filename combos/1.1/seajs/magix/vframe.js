@@ -35,10 +35,6 @@ var $$ = function(id, tag, node) {
     node = $(id);
     return node ? node.getElementsByTagName(tag) : [];
 };
-var $C = function(tag) {
-    return D.createElement(tag);
-};
-
 
 var IdIt = function(dom) {
     return dom.id || (dom.id = 'magix_vf_' + (VframeIdCounter--));
@@ -103,7 +99,7 @@ Mix(Vframe, {
             RefLoc = refLoc;
             var e = $(RootId);
             if (!e) {
-                e = $C(TagName);
+                e = D.createElement(TagName);
                 e.id = RootId;
                 D.body.insertBefore(e, D.body.firstChild);
             }
@@ -388,8 +384,9 @@ Mix(Mix(Vframe.prototype, Event), {
         var vom = me.owner;
         var vf = vom.get(id);
         if (vf) {
+            var fcc = vf.fcc;
             vf.unmountView();
-            vom.remove(id);
+            vom.remove(id, fcc);
             me.fire('destroy');
             var p = vom.get(vf.pId);
             if (p && Has(p.cM, id)) {
