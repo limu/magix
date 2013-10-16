@@ -37,6 +37,23 @@
             defaultView:'apiapp/'+views+'/default',
             defaultPathname:'/home',
             extensions:exts,
+            safeExec:function(e){
+                if (Math.random()<0.5) {
+                    new Image().src='http://gm.mmstat.com/ued.1.1.2?'+[
+                        'type=9',
+                        'id=jstracker',
+                        'v=0.01',
+                        'nick=magixapi',
+                        'islogin=0',
+                        'msg=' + encodeURIComponent(o.message),
+                        'file=' + encodeURIComponent(o.fileName || o.stack || ''),
+                        'line=' + encodeURIComponent(o.lineNumber || ''),
+                        'scrolltop=' + (document.documentElement.scrollTop || document.body.scrollTop || 0),
+                        'screen=' + screen.width + 'x' + screen.height,
+                        't=' + new Date().valueOf()
+                    ].join('&');
+                }
+            },
             routes:function(pathname){
                 if(pathname==this.defaultPathname){
                     return 'apiapp/'+views+'/index';

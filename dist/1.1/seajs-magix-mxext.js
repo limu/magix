@@ -4308,17 +4308,32 @@ Magix.mix(Model.prototype, {
     },
     /**
      * 获取属性
-     * @param {String} type type
+     * @param {String} [key] 要获取数据的key
+     * @param {Object} [dValue] 当根据key取到的值为falsy时，使用默认值替代，防止代码出错
      * @return {Object}
+     * @example
+     * MM.fetchAll({
+     *     name:'Test'
+     * },function(e,m){
+     *     var obj=m.get();//获取所有数据
+     *
+     *     var list=m.get('list',[]);//获取list数据，如果不存在list则使用空数组
+     *
+     * });
      */
-    get: function(type) {
+    get: function(key, dValue) {
         var me = this;
-        var getAll = !arguments.length;
+        var alen = arguments.length;
+        var getAll = !alen;
+        var hasDValue = alen == 2;
         var attrs = me.$attrs;
         if (attrs) {
-            return getAll ? attrs : attrs[type];
+            attrs = getAll ? attrs : attrs[key];
         }
-        return null;
+        if (hasDValue && !attrs) {
+            attrs = dValue;
+        }
+        return attrs;
     },
     /**
      * 设置属性
