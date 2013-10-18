@@ -5,9 +5,18 @@ KISSY.add('app/views/brixes/tip', function(S, View) {
         },
         render: function() {
             var me = this;
-            me.setViewHTML(me.template);
+            me.renderByPagelet();
+        },
+        'changeValue<click>': function(e) {
+            var pagelet = this.getManaged('pagelet');
+            if (pagelet) {
+                var tooltip = pagelet.getBrick('tooltip');
+                if (tooltip) {
+                    tooltip.set('content', '我是测试tooltip_tl_bl，改变啦');
+                }
+            }
         }
     });
 }, {
-    requires: ['mxext/view']
+    requires: ['mxext/view', 'brix/gallery/tooltip/index.css']
 });

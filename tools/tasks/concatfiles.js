@@ -93,7 +93,7 @@ module.exports = function(grunt) {
                 basicFiles = basicFiles.concat(magixStartFile);
                 extraFiles = extraFiles.concat(magixStartFile);
             } else {
-                footer = ';document.createElement("vframe")';
+                footer = ';document.createElement("vframe");';
             }
         }
 

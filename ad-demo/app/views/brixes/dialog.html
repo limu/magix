@@ -1,0 +1,21 @@
+<div class="container">
+    <a href="#" id="btnShowleft" class="btn" mx-click="showLeft<prevent>">显示左</a>
+
+    <a href="#" id="btnShowright" class="btn" mx-click="showRight<prevent>">显示右</a>
+
+    <a href="#" id="btnShowup" class="btn" mx-click="showTop<prevent>">显示上</a>
+
+    <a href="#" id="btnShowdown" class="btn" mx-click="showBottom<prevent>">显示下</a>
+
+    <a href="#" id="btnShow" class="btn" mx-click="showModal<prevent>">显示模态</a>
+
+    <a href="#" id="btnHide" class="btn" mx-click="hide<prevent>">隐藏</a>
+</div>
+
+{{#bx-tmpl-dialogcontent}}
+<div style="margin-top:-10px">
+    <h2 class="h2" style="margin:0">标题</h2>
+        没有共产党就没有新中国，没有共产党就没有新中国。
+    <div style="margin-top:15px"><a class="btn" mx-click="done<prevent>">确定</a></div>
+</div>
+{{/bx-tmpl}}

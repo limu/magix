@@ -68,7 +68,7 @@ KISSY.add('app/brix2', function(S, View) {
                         me.beginUpdate();
                         pagelet = new Pglt({
                             container: '#' + me.id,
-                            tmpl: me.wrapMxEvent(me.template),
+                            tmpl: me.template,
                             data: data,
                             destroyAction: 'empty'
                         });

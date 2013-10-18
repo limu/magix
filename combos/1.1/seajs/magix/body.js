@@ -63,11 +63,11 @@ var Body = {
             }
             if (info) { //有事件
                 //找处理事件的vframe
-                var idx = info.indexOf(MxEvtSplit);
                 var vId;
-                if (idx > -1) {
-                    vId = info.slice(0, idx);
-                    info = info.slice(idx);
+                var ts = info.split(MxEvtSplit);
+                if (ts.length > 1) {
+                    vId = ts[0];
+                    info = ts.pop();
                 }
                 var handler = GetSetAttribute(current, MxOwner) || vId; //current.getAttribute(MxOwner);
                 if (!handler) { //如果没有则找最近的vframe

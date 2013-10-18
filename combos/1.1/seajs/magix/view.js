@@ -34,7 +34,7 @@ var WrapFn = function(fn) {
 var EvtInfoCache = Magix.cache(40);
 
 
-var MxEvt = /\smx-(?!view|defer|owner)[a-z]+\s*=\s*['"]/g;
+var MxEvt = /\smx-(?!view|defer|owner)[a-z]+\s*=\s*"/g;
 var MxEvtSplit = String.fromCharCode(26);
 var DefaultLocationChange = function() {
     this.render();
