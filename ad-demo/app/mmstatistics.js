@@ -11,7 +11,7 @@ KISSY.add('app/mmstatistics', function(S, MM) {
         MS[this.id][e.meta.name] = new Date();
     };
     var OnDone = function(e) {
-        console.log(new Date() - MS[this.id][e.meta.name]);
+        console.log(e.meta.name, new Date() - MS[this.id][e.meta.name]);
     };
     MM.create = function() {
         var mm = OldCreate.apply(this, arguments);

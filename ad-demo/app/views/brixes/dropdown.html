@@ -1,0 +1,83 @@
+<div class="container">
+    <table>
+        <tr>
+            <td>手动渲染：</td>
+            <td id="test_container"></td>
+        </tr>
+        <tr>
+            <td>自动渲染：</td>
+            <td>
+                <div bx-name="dropdown" style="width:200px" class="dropdown dropdown-arrow" id="brick_14">
+                    <span class="dropdown-hd">
+                        <span class="dropdown-text" value="3">计划列表3</span>
+                        <i class="iconfont icon-arrow-down">&#459</i>
+                      </span>
+                    <ul class="dropdown-list">
+                        <li class="dropdown-item"><span value="1">计划列表</span><i class="iconfont icon-ok">&#126</i></li>
+                        <li class="dropdown-item"><span value="2">计划列表2</span><i class="iconfont icon-ok">&#126</i></li>
+                        <li class="dropdown-item dropdown-itemselected "><span value="3">计划列表3</span><i class="iconfont icon-ok">&#126</i></li>
+                        <li class="dropdown-item"><span value="4">计划列表4</span><i class="iconfont icon-ok">&#126</i></li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>mouseenter：</td>
+            <td>
+                <div bx-name="dropdown" style="width:200px" class="dropdown" id="brick_15" bx-config={mode:2}>
+                    <span class="dropdown-hd">
+                        <span class="dropdown-text" value="3">计划列表3</span>
+                    </span>
+                    <ul class="dropdown-list" style="height:120px">
+                        <li class="dropdown-item"><span value="1">计划列表</span><i class="iconfont icon-ok">&#126</i></li>
+                        <li class="dropdown-item"><span value="2">计划列表2</span><i class="iconfont icon-ok">&#126</i></li>
+                        <li class="dropdown-item dropdown-itemselected "><span value="3">计划列表3</span><i class="iconfont icon-ok">&#126</i></li>
+                        <li class="dropdown-item"><span value="4">计划列表4</span><i class="iconfont icon-ok">&#126</i></li>
+                        <li class="dropdown-item"><span value="2">计划列表2</span><i class="iconfont icon-ok">&#126</i></li>
+                        <li class="dropdown-item"><span value="3">计划列表3</span><i class="iconfont icon-ok">&#126</i></li>
+                        <li class="dropdown-item"><span value="4">计划列表4</span><i class="iconfont icon-ok">&#126</i></li>
+                        <li class="dropdown-item"><span value="2">计划列表2</span><i class="iconfont icon-ok">&#126</i></li>
+                        <li class="dropdown-item"><span value="3">计划列表3</span><i class="iconfont icon-ok">&#126</i></li>
+                        <li class="dropdown-item"><span value="4">计划列表4</span><i class="iconfont icon-ok">&#126</i></li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>数字示例：</td>
+            <td>
+                <div class="dropdown" bx-name="dropdown">
+                    <span class="dropdown-hd">
+                        <span class="dropdown-text">10</span>
+                    </span>
+                    <ul class="dropdown-list dropdown-list-noicon" style="display: none; ">
+                        <li class="dropdown-item"><span value="0">10</span></li><li class="dropdown-item"><span value="1">15</span></li><li class="dropdown-item"><span value="2">20</span></li><li class="dropdown-item"><span value="3">25</span></li><li class="dropdown-item dropdown-itemselected"><span value="4">30</span></li>
+                    </ul>
+                    <input name="testInput" type="hidden">
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+{{#bx-tmpl-dropdown}}
+<div style="width:200px" id="brick13" bx-name="dropdown" bx-tmpl="dropdown" bx-datakey="dropdown_list" class="dropdown">
+    {{#dropdown_list}}
+    {{#selected}}
+    <span class="dropdown-hd">
+    <span style="{{#if(color==red)}}color:{{color}}{{/if(color==red)}}" class="dropdown-text" value="{{value}}">{{text}}</span>
+    </span>
+    {{/selected}}
+    {{/dropdown_list}}
+    <ul class="dropdown-list dropdown-list-noicon">
+        {{#dropdown_list}}
+        <li class="dropdown-item{{#selected}} dropdown-itemselected{{/selected}}"><span value="{{value}}">{{text}}</span></li>
+        {{/dropdown_list}}
+    </ul>
+    {{#dropdown_list}}
+    {{#selected}}
+    <input value="{{value}}" type="hidden" />
+    {{/selected}}
+    {{/dropdown_list}}
+</div>
+{{/bx-tmpl}}

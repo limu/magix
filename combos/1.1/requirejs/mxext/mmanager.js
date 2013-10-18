@@ -196,7 +196,7 @@ Mix(MRequest.prototype, {
                     if (after) { //有after
                         SafeExec(after, [model, meta]);
                     }
-                    Event.fire.call(host, 'done', {
+                    host.fire('done', {
                         model: mm,
                         meta: meta
                     });
@@ -428,7 +428,7 @@ Mix(MRequest.prototype, {
     }
 });
 
-Mix(MManager.prototype, {
+Mix(Mix(MManager.prototype, Event), {
     /**
      * @lends MManager#
      */
@@ -616,7 +616,7 @@ Mix(MManager.prototype, {
         //临时传递的
         entity.setUrlParams(modelAttrs.urlParams);
         entity.setPostParams(modelAttrs.postParams);
-        Event.fire.call(me, 'init', {
+        me.fire('init', {
             model: entity,
             meta: meta
         });
