@@ -45,7 +45,7 @@ module.exports = function(grunt) {
      */
     var minifyTmpl = function(html) {
         var t = mtmin(html);
-        t = quote(t);
+       // t = quote(t);
         return t;
     }
 

@@ -2,8 +2,8 @@
  * magix 项目打包脚本
  */
 module.exports = function(grunt) {
-    var appDir = grunt.option("appDir") || '../../public/app/';
-    var destDir = grunt.option("destDir") || '../../public/build/';
+    var appDir = grunt.option("appDir");
+    var destDir = grunt.option("destDir");
     var isDelSourceJs=grunt.option('isDelSourceJs')||true;
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
