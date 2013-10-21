@@ -1,0 +1,28 @@
+<table class="table" bx-tmpl="sortable" bx-datakey="sortDesc,list">
+    <thead>
+      <tr>
+        <th width="20"></th>
+        <th width="60">计划ID</th>
+        <th class="left">计划名称</th>
+        <th width="90">折扣(%)<i class="iconfont cursor-pointer" mx-click="sort{key:discount}">{{#sortDesc}}&#320;{{/sortDesc}}{{^sortDesc}}&#322;{{/sortDesc}}</i></th>
+        <th width="90">类型</th>
+        <th width="90">在线状态</th>
+      </tr>
+    </thead>
+    <tbody>
+        {{#list}}
+        <tr>
+            <td>
+                <label class="checkbox">
+                  <input type="checkbox" class="selectLine" value="{{campaignId}}" />
+                </label>
+            </td>
+            <td>{{campaignId}}</td>
+            <td>{{title}}</td>
+            <td>{{discount}}</td>
+            <td>{{list_type}}</td>
+            <td>{{list_onlineState}}</td>
+        </tr>
+        {{/list}}
+    </tbody>
+</table>
