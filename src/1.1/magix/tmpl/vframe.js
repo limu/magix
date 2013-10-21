@@ -47,7 +47,7 @@ var NodeIn = function(a, b, r) {
     }
     return r;
 };
-var ScriptsReg = /<script[^>]*>[\s\S]*?<\/script>/ig;
+//var ScriptsReg = /<script[^>]*>[\s\S]*?<\/script>/ig;
 var RefLoc;
 /**
  * Vframe类
@@ -184,7 +184,7 @@ Mix(Mix(Vframe.prototype, Event), {
         var node = $(me.id);
         if (!node._bak) {
             node._bak = 1;
-            node._tmpl = node.innerHTML.replace(ScriptsReg, '');
+            node._tmpl = node.innerHTML; //.replace(ScriptsReg, '');
         } else {
             node._chgd = 1;
         }

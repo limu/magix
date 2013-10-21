@@ -29,44 +29,13 @@ module.exports = function(grunt) {
 
     var formatFileContent = function(js, html) {
         var newViewContent = '';
-        var minTempContent = minifyTmpl(html);
+        var minTempContent = mtmin(html);
         //生成view属性
         var viewObj = new jsProc(js);
         newViewContent = viewObj.addProp("template", minTempContent).getCode();
         //中文转unicode
         newViewContent = Converter.chineseToUnicode(newViewContent);
         return newViewContent;
-    };
-
-    /**
-     * 返回压缩后的html内容
-     * @param  {[type]} html [description]
-     * @return {[type]}      [description]
-     */
-    var minifyTmpl = function(html) {
-        var t = mtmin(html);
-       // t = quote(t);
-        return t;
-    }
-
-    //替换内容
-    var quote = function(s) {
-        return '"' + s.replace(/["\\\n\r\u2028\u2029]/g, function(a) {
-            switch (a) {
-                case '"':
-                    return '\\"';
-                case '\\':
-                    return '\\\\';
-                case '\n':
-                    return '\\n';
-                case '\r':
-                    return '\\r';
-                case '\u2028':
-                    return '\\u2028';
-                default:
-                    return '\\u2029';
-            }
-        }) + '"';
     };
 
 
